@@ -1,0 +1,418 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+<style type="text/css">
+    .modal-body td {
+        height: 30px;
+    }
+</style>
+<h1>Add Block</h1>
+<p style="display:none;">
+    Welcome: @if (Session["NAME"] != null)
+    {@Session["NAME"].ToString()}
+    else { Response.Redirect("~/DeoPortal/Index"); }
+</p>
+
+@using (Html.BeginForm("ADDCLUSTER", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+
+    <div class="row">
+    <div class="col-md-12">        
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            <div class="col-md-2">
+                <label>Total : @ViewBag.TotalCount1</label></div>
+            <div class="col-md-2"></div>
+                <div class="col-md-2">
+                    @Html.DropDownList("SelDist", new SelectList(ViewBag.Dist, "Value", "Text"), "--Select District---", new { @class = "", onchange = "deechange()" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+
+                </div>
+                <div class="col-md-2">
+                    @{
+                    List<SelectListItem>
+                        SelectList = new List<SelectListItem>
+                            ();
+                            SelectList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                            SelectList.Add(new SelectListItem { Text = "Centre Code", Value = "1" });
+                            SelectList.Add(new SelectListItem { Text = "Centre Name", Value = "2" });
+                            SelectList.Add(new SelectListItem { Text = "Building Name", Value = "3" });
+                            SelectList.Add(new SelectListItem { Text = "CCode", Value = "4" });
+                            }
+
+                            @Html.DropDownList("Category", SelectList, new { id = "Category" })
+
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                    <span id="reqsellist" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-1"><input type="Submit" value="Search" name="cmd" onclick="return dee()" /></div>
+</fieldset>
+            </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-right">
+            <input type="button" value="Back" onclick="history.go(-1);" />
+            </div>
+        </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="t01">
+                            <tbody>
+                                <tr class="active-tr">
+                                    <th>S.No</th>
+                                    <th>Centre</th>
+                                    <th>Centre Name</th>
+                                    <th>Building Name</th>
+                                    <th>District</th>
+                                    <th>CCODE</th>
+                                    <th>Matric</th>
+                                    <th>Sr.Sec</th>
+                                    <th>Action</th>
+                                </tr>
+                                @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                Count = 0;
+                                }
+                                else
+                                {
+                                Count = 10 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                d = d + 1;
+                                var Center = Model.StoreAllData.Tables[0].Rows[i]["CENT"].ToString();
+                                var CenterName = Model.StoreAllData.Tables[0].Rows[i]["ECENTRE"].ToString();
+                                var Buildingname = Model.StoreAllData.Tables[0].Rows[i]["SCHOOLE"].ToString() + "" + Model.StoreAllData.Tables[0].Rows[i]["Blocke"].ToString();
+                                var District = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                                var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+                                int RMatric = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["matreg"].ToString());
+                                int OMatric = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["matopn"].ToString());
+                                var TotMatric = RMatric + OMatric;
+                                int RSEC = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["ssreg"].ToString());
+                                int OSEC = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["ssopn"].ToString());
+                                var TotSrSEC = RSEC + OSEC;
+
+
+                                Count = Count + 1;
+                                <tr>
+                                    <td>@Count</td>
+                                    <td>@Center</td>
+                                    <td>@CenterName</td>
+                                    <td>@Buildingname</td>
+                                    <td>@District</td>
+                                    <td>@CCODE</td>
+                                    <td>@TotMatric</td>
+                                    <td>@TotSrSEC</td>
+
+                                    <td>
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal-@d">Create Block</button>
+
+                                    </td>
+                                </tr>
+                                if (d == ViewBag.TotalCount)
+                                {
+                                <tr>
+                                    <td colspan="9">
+
+                                        Page @ViewBag.pagesize of @ViewBag.pn
+
+                                        &nbsp;
+
+                                        @if (ViewBag.pagesize == 1)
+
+                                        {
+                                        @:<<
+
+                                        @Html.Raw("&nbsp;");
+
+                                        @:< Prev
+                                        @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                        if (ViewBag.pn > ViewBag.pagesize)
+                                        {
+                                        @Html.ActionLink("Next >", "ADDCLUSTER", new { page = ViewBag.pagesize + 1 })
+
+                                        @Html.Raw("&nbsp;");
+
+                                        @Html.ActionLink(">>", "ADDCLUSTER", new { page = ViewBag.pn })
+                                        }
+                                        }
+                                        else
+                                        {
+                                        if (TempData["CenterListSelDist"] != null)
+                                        {
+                                        string str1 = TempData.Peek("CenterListSelDist").ToString();
+                                        string str2 = TempData.Peek("CenterListSelectList").ToString();
+                                        string str3 = TempData.Peek("CenterListSearchString").ToString();
+                                        //string str4 = TempData.Peek("ImportData10thClassSession").ToString();
+                                        TempData["CenterListSelDist"] = str1;
+                                        TempData["CenterListSelectList"] = str2;
+                                        TempData["CenterListSearchString"] = str3;
+                                        // TempData["ImportData10thClassSession"] = str4;
+                                        }
+                                        @Html.ActionLink("<<", "ADDCLUSTER", new { page = 1 })
+
+                                        @Html.Raw("&nbsp;");
+
+                                        @Html.ActionLink("< Prev", "CenterList", new { page = ViewBag.pagesize - 1 })
+                                        @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                        if (ViewBag.pn > ViewBag.pagesize)
+                                        {
+                                        @Html.ActionLink("Next >", "ADDCLUSTER", new { page = ViewBag.pagesize + 1 })
+
+                                        @Html.Raw("&nbsp;");
+
+                                        @Html.ActionLink(">>", "ADDCLUSTER", new { page = ViewBag.pn })
+                                        }
+
+                                        }
+
+
+                                    </td>
+                                </tr>
+                                }
+                                }
+                                }
+                                else
+                                {
+                                <tr>
+                                    <td colspan="9">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                                }
+                                }
+
+                            </tbody>
+                        </table>
+                        <p>Total Records(Filtered): @ViewBag.TotalCount1</p>
+                    </div>
+                </div>
+            </div>
+            if (Model != null)
+            {
+            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+            {
+
+            var CENT = Model.StoreAllData.Tables[0].Rows[i]["CENT"];
+            var CSC = Model.StoreAllData.Tables[0].Rows[i]["CSCHL"].ToString();
+            var DISTCODE = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();
+            // var ClusterName = Model.StoreAllData.Tables[0].Rows[i]["clusternam"].ToString();
+            var CENTRE = Model.StoreAllData.Tables[0].Rows[i]["ECENTRE"].ToString();
+            var SCHLBuildBlock = Model.StoreAllData.Tables[0].Rows[i]["SCHOOLE"].ToString() + "" + Model.StoreAllData.Tables[0].Rows[i]["Blocke"].ToString();
+            var SB = Model.StoreAllData.Tables[0].Rows[i]["SCHOOLE"].ToString();
+            var DIST = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+            var SCHTYPE = Model.StoreAllData.Tables[0].Rows[i]["userType"].ToString();
+            var PRINCIPAL = Model.StoreAllData.Tables[0].Rows[i]["PRINCIPAL"].ToString();
+            var MOB = Model.StoreAllData.Tables[0].Rows[i]["MOBILE"].ToString();
+            var EmailID = Model.StoreAllData.Tables[0].Rows[i]["EmailiD"].ToString();
+            var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+            var RMatric = Model.StoreAllData.Tables[0].Rows[i]["matreg"].ToString();
+            var OMatric = Model.StoreAllData.Tables[0].Rows[i]["matopn"].ToString();
+            var RSEC = Model.StoreAllData.Tables[0].Rows[i]["ssreg"].ToString();
+            var OSEC = Model.StoreAllData.Tables[0].Rows[i]["ssopn"].ToString();
+
+            int k = i + 1;
+            <div class="container">
+                <!-- Trigger the modal with a button -->
+                <!-- Modal -->
+                <div class="modal fade" id="myModal-@k" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <span style="font-size:24px">Add Block Details</span>
+                           </div>
+                            <div class="modal-body">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td width="30%">Center Code</td>
+                                        <td width="70%">@CENT</td>
+                                        </tr>
+                                    <tr>
+                                        <td>Center School Code</td>
+                                        <td>@CSC</td>
+                                    </tr>                                    
+                                    <tr>
+                                        <td>District</td>
+                                        <td>@DIST</td>
+                                    </tr>
+                                    <tr>
+                                        <td>School Name</td>
+                                        <td>@SCHLBuildBlock</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Principal Name</td>
+                                        <td>@PRINCIPAL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mobile Number</td>
+                                        <td>@MOB</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email ID</td>
+                                        <td>@EmailID</td>
+                                    </tr>
+                                    <tr>
+                                        <td>School Type</td>
+                                        <td>@SCHTYPE</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Block Code</td>
+                                        <td>@CCODE</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Block Name</td>
+                                        <td><input type="text" id="ClusterName-@k" name="ClusterName" value="@CENTRE" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td> Person 1</td>
+                                        <td><input type="text" id="Person1-@k" name="Person1" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mobile 1</td>
+                                        <td><input type="text" id="Mobile1-@k" name="Mobile1" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Person 2</td>
+                                        <td><input type="text" id="Person2-@k" name="Person2" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mobile 2</td>
+                                        <td><input type="text" id="Mobile2-@k" name="Mobile2" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pincode</td>
+                                        <td><input type="text" id="Pincode-@k" name="Pincode" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Remarks</td>
+                                        <td><input type="text" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><input type="button" class="btn" value="Save Block Details" id="btnCreateCluster" onclick="CreateCluster(@k,@CENT)" /> <input type="button" value="Cancel" /> </td>
+                                    </tr>
+                                        </table>
+                            </div>                          
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+            </div>
+            }
+            }
+            }
+
+            <script>
+
+                function dee() {
+
+                    if ($("#SelDist").val() == "") {
+
+                        $("#reqsession").slideDown("slow");
+                        return false;
+                    }
+                    if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+
+                        $("#reqsellist").slideDown("slow");
+                        return false;
+                    }
+
+                        //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+                        //    $("#reqsellist").slideUp("slow");
+                        //    $("#reqsstring").slideDown("slow");
+                        //    return false;
+                        //}
+                    else
+                        return true;
+
+                }
+                $(document).ready(function () {
+
+                    $("#SelDist").change(function () {
+                        if ($("#SelDist").val() == "") {
+                            // $("#SearchString").focus(function () { $("#reqsellist").slideUp("slow"); });
+                            $("#reqsession").slideDown("slow");
+                        }
+                        else {
+                            $("#reqsession").slideUp("slow");
+                        }
+
+                    });
+
+                });
+
+
+                var form = $("#searchform").serialize();
+                $("#btnNext").click(function () {
+                    $.ajax({
+                        url: 'DeoPortal/Next',
+                        data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                        success: function (response) {
+                            $("body").html(response);
+                        }
+                    });
+                });
+
+                $("#btnPrevious").click(function () {
+                    $.ajax({
+                        url: 'DeoPortal/Previous',
+                        data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                        success: function (response) {
+                            $("body").html(response);
+                        }
+                    });
+                });
+
+
+
+            </script>
+            <script type="text/javascript">
+                function CreateCluster(k, CENT) {
+                    // alert(CENT);
+                    var DC = '@Request.RequestContext.HttpContext.Session["Dist"]'; //'<%= Session["Dist"].ToString() %>';
+                    var UID = '@Request.RequestContext.HttpContext.Session["UID"]'; //'<%= Session["UID"].ToString() %>';
+                    //alert(UID)
+                    //alert(DC);
+                    //alert($("#ClusterName-" + k).val());
+                    //alert($("#Person1-" + k).val());
+                    //alert($("#Mobile1-" + k).val());
+                    $.ajax({
+                        type: "POST",
+                        url: "../DeoPortal/CreateCluster", // this for calling the web method function in cs code.
+                        data: '{ClusterName: "' + $("#ClusterName-" + k).val() + '",Person1: "' + $("#Person1-" + k).val() + '",Mobile1: "' + $("#Mobile1-" + k).val() + '",Person2: "' + $("#Person2-" + k).val() + '",Mobile2: "' + $("#Mobile2-" + k).val() + '",Pincode: "' + $("#Pincode-" + k).val() + '",CENT: "' + CENT + '",DISTCODE:"' + DC + '",USERID:"' + UID + '"}',// user name or email value
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.sn=="Yes")
+                            {
+                                alert("Block Created Successfully");
+                                window.location.href = "/DeoPortal/ClusterList";
+                                $(".modal").hide();
+                            }
+                            else
+                            {
+                                alert("Block Failed.");
+                            }
+                        },
+                        failure: function (response) {
+                            alert(response);
+                        }
+                    });
+
+
+                }
+
+            </script>

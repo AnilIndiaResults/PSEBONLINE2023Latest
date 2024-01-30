@@ -1,0 +1,205 @@
+﻿@model PSEBONLINE.Models.PunAddModels
+@{
+    ViewBag.Title = "Punjabi Additional Result";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprintc.css" />
+<style type="text/css">body {font-size: 11px;}  td {vertical-align:top;line-height:20px}legend{margin-bottom:0 !importent}</style>
+<h1 class="noprint" style="font-size:22px;padding:10px 0">Punjabi Additional Result</h1> 
+@using (Html.BeginForm("PunAddResults", "PunAdd", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="col-md-12 noprint">
+        <fieldset style="margin-bottom:15px">
+            <legend style="margin-bottom:0 !importent">Search</legend>        
+            <div class="col-md-3">                
+                Select Batch/Year  @Html.DropDownList("batchYear", new SelectList(ViewBag.ResultBatchList, "Value", "Text", ViewBag.MybatchYear), "--Select Batch---", new { @class = "", required = "required" })
+
+            </div>
+            <div class="col-md-3">Search By
+                @{
+                    List<SelectListItem> SearchBy = new List<SelectListItem>();
+                    SearchBy.Add(new SelectListItem { Text = "---Select----", Value = "0" });
+                    SearchBy.Add(new SelectListItem { Text = "Roll No.", Value = "1" });
+                    SearchBy.Add(new SelectListItem { Text = "Ref No.", Value = "2" });
+                    //SearchBy.Add(new SelectListItem { Text = "Name", Value = "3" });
+                    //SearchBy.Add(new SelectListItem { Text = "Father's Name", Value = "4" });
+                }
+                @Html.DropDownList("SearchBy", SearchBy, new { id = "SearchBy", ViewBag.MySearchBy })                
+            </div>  
+            <div class="col-md-3"><br />
+                <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+
+            </div>
+
+                <div class="col-md-3">
+            <br />
+            <input type="submit" value="Search" onclick="return formVal();" /></div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 rqf">Note : Kindly select search criteria &amp; then click search button to show records.</div>
+</fieldset>
+    </div>
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Print" class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>       
+    </table>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                if (ViewBag.TotalCount > 0)
+                {
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        var roll = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                        var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                        var batch = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+                        var yr = Model.StoreAllData.Tables[0].Rows[i]["batchyear"].ToString();
+                        var bch = "";
+                        if (batch == "1") { bch = "April";}
+                        if (batch == "2") { bch = "July"; }
+                        if (batch == "3") { bch = "October"; }
+                        if (batch == "4") { bch = "January"; }
+                        var cnm = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                        var fnm = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                        // var mnm = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                        var name = cnm;
+                        //var cnmp = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name_P"].ToString();
+                        //var fnmp = Model.StoreAllData.Tables[0].Rows[i]["Father_Name_P"].ToString();
+                        //var mnmp = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name_P"].ToString();
+
+                        //var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                        //var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                        //var emailid = Model.StoreAllData.Tables[0].Rows[i]["emailid"].ToString();
+                        var Sub = Model.StoreAllData.Tables[0].Rows[i]["Sub"].ToString();
+                        //var th1 = Model.StoreAllData.Tables[0].Rows[i]["th1"].ToString();
+                        //var th2 = Model.StoreAllData.Tables[0].Rows[i]["th2"].ToString();
+                        //var grc = Model.StoreAllData.Tables[0].Rows[i]["grc"].ToString();
+                        var resultdtl = Model.StoreAllData.Tables[0].Rows[i]["resultdtl"].ToString();
+                        //var total = Model.StoreAllData.Tables[0].Rows[i]["total"].ToString();
+
+                        <table style="width:100%;" border="1">
+                            <tr>
+                                <td colspan="4">
+                                    <table width="100%">
+                                        <tr>
+                                            <td width="15%" style="text-align:left"><div style="padding:2px"><img src="https://registration2018.pseb.ac.in/Images/Printlogo.jpg" alt="PSEB" /></div></td>
+                                            <td width="70%" style="font-size:26px;text-align:center;line-height:25px;padding-top:5px" class="kdsfont">
+                                                <span style="font-size:36px;">Punjab School Education Board</span><br />
+                                                Result Sheet of Punjabi Additional Special Exam, @bch - @yr
+                                            </td>
+                                            <td width="15%" style="font-size:10px;text-align:right">
+                                                Print Date: @DateTime.Now.ToString("dd/MM/yyyy")&nbsp;
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="color:#fff !important;background-color:#000 !important;text-align:center">Personal Details</td>
+                            </tr>
+                            <tr>
+                                <td width="15%">&nbsp;Roll No.</td>
+                                <td width="85%">&nbsp;@roll</td>
+                            </tr>
+                            <tr>
+
+                                <td width="15%">&nbsp;Reference No.</td>
+                                <td width="85%">&nbsp;@refno</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;Name</td>
+                                <td>&nbsp;@name</td>
+                                </tr>
+                                <tr>
+                                <td>&nbsp;Father's Name</td>
+                                <td>&nbsp;@fnm</td>
+                            </tr>                                                    
+                            <tr>
+                                <td colspan="4" style="color:#fff !important;background-color:#000 !important;text-align:center">Marks Details</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <table width="100%" border="1">
+                                        <tr>
+                                            <td width="10%">
+                                                &nbsp;Sr No.
+                                            </td>
+                                            <td width="70%">
+                                                &nbsp;Subject Name
+                                            </td>
+                                            @*<td width="15%">&nbsp;Obtained Marks</td>*@
+                                            <td width="20%">&nbsp;Result</td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;01</td>
+                                            <td>&nbsp;@Sub</td>
+                                            @*<td>&nbsp;@total</td>*@
+                                            <td>&nbsp;@resultdtl</td>
+                                        </tr>                                        
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                }
+                else
+                {
+                    
+                    <p style="color:#ff0000">@ViewBag.Message</p>
+                    @* <table style="width:100%;" border="1">
+                                               <tr>
+                                <td colspan="4">
+                                    <table width="80%">
+                                        <tr>
+                                            <td width="15%" style="text-align:left"><div style="padding:2px"><img src="https://test.psebonline.in/Images/Printlogo.jpg" alt="PSEB" /></div></td>
+                                            <td width="70%" style="font-size:26px;text-align:center;line-height:25px;padding-top:5px" class="kdsfont">
+                                                <span style="font-size:36px;">Punjab School Education Board</span><br />
+                                                Result Sheet of Punjabi Additional Special Exam, 2017
+                                            </td>
+                                            <td width="15%" style="font-size:10px">
+                                                Print Date: @DateTime.Now.ToString("dd/MM/yyyy")
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+
+                                </td>
+                            </tr>
+                        </table>   *@
+                }
+            }
+        </div>
+    </div>
+}
+<script>
+    function goBack() {
+        window.history.back();
+    }
+    function formVal() {
+        var batchYear = document.getElementById('batchYear').value;
+        if (batchYear == '0' || batchYear == '') {
+            alert("Select Batch Year");
+            document.getElementById("batchYear").focus();
+            return false;
+        }
+    var schlList = document.getElementById('SearchBy').value;
+    if (schlList == '0' || schlList == '') {
+        alert("Select SearchBy");
+        document.getElementById("SearchBy").focus();
+        return false;
+    }
+    var setNolList = document.getElementById('SearchString').value;
+    if (setNolList.trim() == '') {
+        //alert("Enter " + schlList);
+        document.getElementById("SearchString").focus();
+        return false;
+    }
+
+}
+</script>

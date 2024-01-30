@@ -1,0 +1,777 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    ViewBag.Title = "Staff Letter";
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<style type="text/css">ol {
+    counter-reset: section;
+    list-style-type: none;padding-left:20px
+}
+li:before {
+    counter-increment: section;
+    content: counters(section, ".") ". ";
+}
+
+li li:before {
+    counter-increment: section;
+    content: counters(section, ".") " ";
+}
+
+ol ol ol {
+    counter-reset: list;
+    margin: 0;
+}
+
+ol ol ol > li {
+    list-style: none;
+    position: relative;
+}
+
+ol ol ol > li:before {
+    counter-increment: list;
+    content: "(" counter(list, lower-alpha) ") ";
+    position: absolute;
+    left: -1.4em;
+}
+.algtop {text-align:center;vertical-align:top
+    }
+.kds-pnb{font-size:8px}
+.kds-big{font-size:16px}
+body {font-size: 9px;}</style>   
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+@*StaffLetter_sp*@
+@using (Html.BeginForm("StaffLetter", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+<div class="container">
+    <h1 class="noprint">Staff Letter</h1>
+    <div class="row">
+        <div class="col-md-12 noprint">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                @*<div class="col-md-2"> <label>Total : @ViewBag.TotalCount1</label></div>*@
+                @*<div class="col-md-2"></div>*@
+                <div class="col-md-3">
+                    @Html.DropDownList("SelDist", new SelectList(ViewBag.Dist, "Value", "Text"), "--Select District---", new { @class = "", onchange = "deechange()" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-3">
+                    @{
+                List<SelectListItem> SelectList = new List<SelectListItem>();
+                SelectList.Add(new SelectListItem { Text = "--Select Category--", Value = "0" });
+                SelectList.Add(new SelectListItem { Text = "Centre Code", Value = "1" });
+                SelectList.Add(new SelectListItem { Text = "Block Code", Value = "2" });
+                SelectList.Add(new SelectListItem { Text = "Staff ID", Value = "3" });
+                SelectList.Add(new SelectListItem { Text = "Mobile number", Value = "4" });
+                SelectList.Add(new SelectListItem { Text = "Aadhar Number", Value = "5" });
+                    }
+
+                    @Html.DropDownList("Category", SelectList, new { id = "Category", onchange = "catchange()" })
+                    <span id="reqcatglist" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                    <span id="reqsellist" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-1"><input type="Submit" value="Search" name="cmd" onclick="return dee()" /></div>
+            </fieldset>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 noprint">
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        <input type="button" value="Print" class="btn" onclick="window.print()" />
+                        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+   </div>
+    </div>
+                        {
+                            <table style="width:100%" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table border="0" style="width:98%;">
+                                                                                        @{
+                                                                                            if (ViewBag.TotalCount > 0)
+                                                                                            {
+                                                                                                int d = 0;
+                                                                                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                                                                                {
+                                                                                                    var CCODE = Model.StoreAllData.Tables[0].Rows[i]["ccode"].ToString();
+                                                                                                    var CCENT = Model.StoreAllData.Tables[0].Rows[i]["CENT"].ToString();
+                                                                                                    var CENTRENAME = Model.StoreAllData.Tables[0].Rows[i]["ecentre"].ToString();
+                                                                                                    var pcentre = Model.StoreAllData.Tables[0].Rows[i]["pcentre"].ToString();
+                                                                                                    var DC = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();
+                                                                                                    var DISTNAME = Model.StoreAllData.Tables[0].Rows[i]["Distnm"].ToString();
+                                                                                                    var schlooe = Model.StoreAllData.Tables[0].Rows[i]["schoole"].ToString();
+                                                                                                    var schloop = Model.StoreAllData.Tables[0].Rows[i]["schoolp"].ToString();
+                                                                                                    var EMAILID = Model.StoreAllData.Tables[0].Rows[i]["EMAILID"].ToString();
+                                                                                                    var PHONE = Model.StoreAllData.Tables[0].Rows[i]["PHONE"].ToString();
+                                                                                                    var MOBILE = Model.StoreAllData.Tables[0].Rows[i]["MOBILE"].ToString();
+                                                                                                    //var MOBILE1 = Model.StoreAllData.Tables[0].Rows[i]["PMOBILE1"].ToString();
+                                                                                                    var aadhar = Model.StoreAllData.Tables[0].Rows[i]["adharno"].ToString();
+
+                                                                                                    var dutytype = Model.StoreAllData.Tables[0].Rows[i]["dutytype"].ToString();
+                                                                                                    var staffid = Model.StoreAllData.Tables[0].Rows[i]["staffid"].ToString();
+                                                                                                    var sname = Model.StoreAllData.Tables[0].Rows[i]["name"].ToString();
+                                                                                                    var fname = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                                                                                                    var sub = Model.StoreAllData.Tables[0].Rows[i]["Subject"].ToString();
+                                                                                                    var schlnm = Model.StoreAllData.Tables[0].Rows[i]["schlnm"].ToString();
+                                                                                                    var epunjabid = Model.StoreAllData.Tables[0].Rows[i]["epunjabid"].ToString();
+                                                                                                    var pdate = Model.StoreAllData.Tables[0].Rows[i]["PrintDate"].ToString();
+                                                                                                    var StaffMobile = Model.StoreAllData.Tables[0].Rows[i]["StaffMobile"].ToString();
+                                                                                                    //var aadhar = Model.StoreAllData.Tables[0].Rows[i]["adharno"].ToString();
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="2" style="padding-bottom:3px">
+                                                        <table width="100%">
+                                                            <tr>
+                                                                <td width="10%"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="55" height="55" /></td>
+                                                                <td width="90%" colspan="2" style="font-size:22px;text-align:center;line-height:23px;" class="kdsfont">
+                                                                    <span style="font-size:42px;">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span><br />ÌØÏ° 2021 ÂïÏØÅ ÚÅ¬ÏØÅ ¤ÌÐã Ð¥Û ÚÅÍÝ¨¼Û Æó¼Ï
+                                                                </td>
+                                                            </tr>
+                                                        </table>@*¤ó·ÒÛ×/*@   
+                                                        <table width="100%" style="border-bottom:4px solid #000000 !important">
+                                                            <tr>
+                                                                <td width="25%" class="kdsfont" style="vertical-align:top">
+                                                                    ÒóÐë×<br /><span style="display:block;padding-left:25px">
+                                                                        Ó¨ó¼Ï,<br />
+                                                                        Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸,<br />¤èóÓ. ¥ã. ¤èóÓ. Å¬Ï¢<br />
+                                                                    </span>
+                                                                </td>
+                                                                <td width="5%" class="kdsfont" style="vertical-align:top">ÒóÐ</td>
+                                                                <td width="70%" style="vertical-align:top;">
+                                                                    Staff ID: @staffid, Block Code: @CCODE, Centre Code: @CCENT, Dist: @DC, Mob No.: @StaffMobile<br />
+                                                                    @sname / @fname<br />
+                                                                    @sub<br />
+                                                                    @schlnm<br />
+                                                                </td>
+                                                            </tr>
+                                                            <tr><td colspan="3" style="height:3px"></td></tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                @if (dutytype == "Deputy Controller(Vigilance)")
+                                                {
+												<tr>
+												<td colspan="2" style="text-align:center"><span style="font-size:13px">ਪ੍ਰੀਖਿਆ ਦਾ ਸਮਾਂ :- ਸਵੇਰੇ </span><span style="font-size:14px">09</span> <span style="font-size:13px">ਵਜੇ ਤੋਂ ਦੁਪਹਿਰ</span> <span style="font-size:14px">12.15</span> <span style="font-size:13px">ਤੱਕ</span></td>
+												</tr>
+                                                    <tr>
+                                                        <td style="text-align:left;padding:0 0 2px 0">&nbsp;<span class="kdsfont">ÅâÉÏ</span> : PSEB-CB-2021/SPLD001-999</td>
+                                                        <td style="text-align:right;padding:0 0 2px 0">&nbsp;<span class='kds-pnb'>ਪ੍ਰੀਖਿਆ ਸ਼ੁਰੂ ਹੋਣ ਦੀ ਮਿਤੀ : </span> :  22/03/2021</td>
+                                                    </tr>
+                                                }
+                                                @if (dutytype == "Deputy Superintendent")
+                                                {
+                                                    <tr>
+                                                        <td style="text-align:left;padding:0 0 2px 0">&nbsp;<span class="kdsfont">ÅâÉÏ</span> : PSEB-CB-2021/2601-5200</td>
+                                                        <td style="text-align:right;padding:0 0 2px 0">&nbsp;<span class="kdsfont">ÚÌ¼Û</span> : 22/03/2021</td>
+                                                    </tr>
+                                                }
+                                                @if (dutytype == "Invigilator")
+                                                {
+                                                    <tr>
+                                                        <td style="text-align:left;padding:0 0 2px 0">&nbsp;<span class="kdsfont">ÅâÉÏ</span> : PSEB-CB-2017/59031-75131</td>
+                                                        <td style="text-align:right;padding:0 0 2px 0">&nbsp;<span class="kdsfont">ÚÌ¼Û</span> : 22/03/2021</td>
+                                                    </tr>
+                                                }
+                                                @if (dutytype == "Superintendent")
+                                                {
+												<tr>
+												<td colspan="2" style="text-align:center"><span style="font-size:13px">ਪ੍ਰੀਖਿਆ ਦਾ ਸਮਾਂ :- ਸਵੇਰੇ </span><span style="font-size:14px">09</span> <span style="font-size:13px">ਵਜੇ ਤੋਂ ਦੁਪਹਿਰ</span> <span style="font-size:14px">12.15</span> <span style="font-size:13px">ਤੱਕ</span></td>
+												</tr>
+                                                    <tr>
+                                                        <td style="text-align:left;padding:0 0 2px 0">
+                                                            &nbsp;<span class="kdsfont">ÅâÉÏ</span> : PSEB-CB-2021/SPL0001-2600
+                                                        </td>
+                                                        <td style="text-align:right;padding:0 0 2px 0">&nbsp;<span class='kds-pnb'>ਪ੍ਰੀਖਿਆ ਸ਼ੁਰੂ ਹੋਣ ਦੀ ਮਿਤੀ : </span> : 22/03/2021 </td>
+                                                    </tr>
+                                                }
+                                                @if (dutytype == "Flying Squid")
+                                                {
+
+                                                }
+                                                @if (dutytype == "Observer")
+                                                {
+
+                                                }
+
+
+                                                <tr style="display:none">
+                                                    <td colspan="2">
+                                                        <table width="100%" border="1">
+                                                            <tr>
+                                                                <td width="28%">&nbsp;<span class="kdsfont">ÂÓÒÛ× ÂÛ ÆñÛÚª¤Ø ÓÖÝÏÞ Õë» ÂÛ ÚÌ¼Û</span></td>
+                                                                <td width="29%">&nbsp;24.07.2019</td>
+                                                                <td width="28%">&nbsp;<span class="kdsfont">ÉØÏÒÛ× ÂÛ ÆñÛÚª¤Ø ÓÖÏÞ Õë» ÂÛ ÚÌ¼Û</span></td>
+                                                                <td width="15%">&nbsp;24.07.2019</td>
+                                                            </tr>
+                                                        </table>
+
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="padding:4px 0">
+                                                        <table width="100%" border="0">
+                                                            <tr>
+                                                                <td width="40%" style="text-align:left;">&nbsp;Type of Duty : <span style="font-size:13px">@dutytype</span></td>
+                                                                <td width="30%" style="text-align:center;">&nbsp;E-Punjab ID : <span style="font-size:13px">@epunjabid</span></td>
+                                                                <td width="30%" style="text-align:right;">@*Aadhar No. : <span style="font-size:13px">@aadhar</span>&nbsp;*@</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <table width="100%" border="1">
+                                                            <tr>
+                                                                <td width="28%">
+                                                                    &nbsp;Centre Name<br />&nbsp;<span class="kdsfont">ÆñÛÚª¤Ø ¨ã×ÂÏ ÂØ ÅÙ</span>
+                                                                </td>
+                                                                <td width="39%">&nbsp;@CENTRENAME<br />&nbsp;<span class="kdsfont">@pcentre</span></td>
+                                                                <td width="18%" style="vertical-align:top">
+                                                                    &nbsp;Centre Code<br />&nbsp;<span class="kdsfont">ÆñÛÚª¤Ø ¨ã×ÂÏ ÂØ ¨ë¸</span>
+                                                                </td>
+                                                                <td width="15%" style="vertical-align:top">&nbsp;@CCENT</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    &nbsp;Exam Centre Building Name<br />&nbsp;<span class="kdsfont">ÆñÛÚª¤Ø ¨ã×ÂÏ ÂÛ ÚÉÐÚ¸â¬ ÂØ ÅÙ</span>
+                                                                </td>
+                                                                <td colspan="3">&nbsp;@schlooe<br />&nbsp;<span class="kdsfont">@schloop</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    &nbsp;Exam Centre Contact Details
+                                                                </td>
+                                                                <td colspan="3">&nbsp;<b>Email :</b>&nbsp;@EMAILID&nbsp;&nbsp;<b>Phone :</b>&nbsp;@PHONE,&nbsp;@MOBILE</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                @if (dutytype == "Deputy Controller(Vigilance)")
+                                                {
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <table width="100%" class="kdsfont" style="font-size:15px;line-height:12px">
+                                                                <tr>
+                                                                    <td colspan="2" style="font-size:26px;padding:4px 0">
+                                                                        ÌØÏ° 2021 ÂïÏØÅ ¨ã×ÂÏ ÓÝÆÏ¸â¶ Ð¥Û ÕÂØÚ¥¼Ù :-
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="5%" class="algtop">1</td>
+                                                                    <td width="95%">¨ã×ÂÏ ÚÒó° ¼ÝÕØ¸Ø ¤Æ»Ø ¨ë¥Û Å²ÖÂÛ¨Û ÚÏÓÖ¼ãÂØÏ ²Ù ¼ÝÕØ¸ã/¼ÝÕØ¸Û ²Ù Æ¼Û/Æ¼ÅÛ ÒóÐë× Æ¾ðØÚ¥¤Ø ÕëÚ¥¤Ø ÆñÛÚª¤ØÏÁÛ ÆñÛÚª¤Ø ÅØ Âã ÚÏÕØ ÕëÒã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">2</td>
+                                                                    <td><span class="kds-pnb">ਮਿਤੀ</span> <span class="kds-big">22-03-2021</span> <span class="kds-pnb">ਨੂੰ</span> ÓÒãÏã <span class="kds-big">08:00</span> Ò²ã ÆñÛÚª¤Ø ¨ã×ÂÏ ÚÒó° ÕØ²Ï ÕëÚ¥¤Ø ²ØÒã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">3</td>
+                                                                    <td>¼ÝÕØÅâÞ ÚÌÕÅ¼ØÅã ¶Û Ö¥ã Ö, ¸Û Ö¥ãÖ ÂÛ ¨ë¥Û ¤ÂØÚ¥¬Û ÅÕÛ× ÚÂó¼Û ²ØÒã¬Û¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">4</td>
+                                                                    <td>Ú¸¦Þ¶Û ÂïÏØÅ ¤ÅÝÓÖØÓÖÅ Êâ¬ ¨ÏÅ, Ú¸¦Þ¶Û Æñ¼Û ¨Ý¼ØÕÛ Ð¥Û ¦ÝÕ ªÝÂ Ú²âÌãÒØÏ ÕëÒã¬Ø¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">5</td>
+                                                                    <td>Ú¥ÌÚ¼ÕØÅÙ ÓÉâÄÛ Ú¸¦Þ¶Û ÐØ²ÖÌÛ ¨ÏØÏ ÚÂó¼Û Õë¥Û Õè¢ Ú¨Óã ÒÛ ÕØÐ¼ ÚÒó° Ú¸¦Þ¶Û ¼ë× ±ë¶ ÅÕÛ× ÚÂó¼Û ²ØÒã¬Û¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">6</td>
+                                                                    <td>Ú¸Æ¶Û ¨â¶ÏëÐÏ ÚÒ²ÛÐè×Ó ¤ØÆ»Û ÒóªÏÛ ÆÚÕ°Ø» Ð¥Û ÅãÌÆÐã¶/¤Ø¥ÛÖ ¨ØÏ¸ Ð¬Ø¦Ý»¬ã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">7</td>
+                                                                    <td>ÆñÛÚª¤Ø ¨ã×ÂÏ Âã ÉØÕÏ ¤¼ã ¤ØÓÆØÓ ÉØÕÏÛ ÚÒ¤¨¼Û¤Ù ÂØ <span class="kds-pnb">ਇੱਕਠ ਜਾਂ ਭੀੜ </span> ÅÕÛ× Õë» Âã»¬ã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">8</td>
+                                                                    <td>¤»-¦ÝÚ°¼ ¬¼ÛÚÒÄÛ¤Ù ÓÉâÄÛ ¨ã×ÂÏ ¨â¶ÏëÐÏ ÅâÞ ÓÞÚ°¼ ¨ÏÂã Õë¥ã Ú²ÐðØ ÚÓóÚª¤Ø ¤ÇÓÏ, ÉëÏ¸ ÂÇ¼Ï ÅâÞ ÓÞÚ°¼ ¨ÏÅ¬ã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">9</td>
+                                                                    <td>Ú¸Æ¶Û ¨â¶ÏëÐÏ ÚÒ²ÛÐè×Ó ÅâÞ ÆñÛÚª¤Ø ¨ã×ÂÏ Âã ¤âÂÏ ²Ø» ÂÛ ¤ØÚ¬¤Ø ÅÕÛ× Õè¢¨ãÒÐ ÆñÉâÄ/ÓÖÙ¼Û É»Ø¥ã Ïóª» ¼ó¨ ÕÛ ÓÛÌ¼ ÏÚÕ»¬ã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">10</td>
+                                                                    <td>ÕÏ ÓÌã× ¨ã×ÂÏ ¨â¶ÏëÐÏ Âã ÓâÆÏ¨ ÚÒó° ÏÚÕ»¬ã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">11</td>
+                                                                    <td class="kds-pnb">ਸਕੂਲ ਲਾਗਇੰਨ ਤੇ ਅਪਲੋਡ ਕੇਂਦਰ ਸੁਪਰਡੰਟ ਨਾਲ ਸਬੰਧਤ ਹਦਾਇਤਾ ਅਤੇ ਸਰਕਾਰ ਵੱਲੋਂ ਸਮੇਂ ਸਮੇਂ ਤੇ ਜਾਰੀ ਕੋਵਿਡ<span class="kds-big">19</span> ਸਬੰਧੀ ਹਦਾਇਤਾ ਦੀ ਇੰਨ-ਬਿੰਨ ਪਾਲਨਾ ਕੀਤੀ ਜਾਵੇ।</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">12</td>
+                                                                    <td class=""><span class="kds-big">Department of Home Affairs and Justice</span> <span class="kds-pnb">ਦੇ ਪੱਤਰ ਨੰ:</span> <span class="kds-big">PA/ACSH/2021/9</span> <span class="kds-pnb">ਮਿਤੀ:</span> 12-10-2020 <span class="kds-pnb">ਵਿੱਚ ਦਰਜ ਹਦਾਇਤਾਂ ਦੀ  ਪਾਲਣਾ ਕਰਵਾਈ ਜਾਵੇ| </span></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    @*<tr>
+                <td colspan="2">
+                    <table width="100%" class="kdsfont" style="font-size:16px;line-height:14px">
+                        <tr>
+                            <td width="5%"></td>
+                            <td width="10%" style="vertical-align:top">ÉØÏðÒÛ× ÓÖã»Û</td>
+                            <td colspan="2" style="vertical-align:top">ÓØÏã Ú²Ððã 0172-5227301,303,305,334 Çè¨Ó Åâ: 0172-5227302</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="vertical-align:top">ÂÓÒÛ× ÓÖñã»Û</td>
+                            <td width="4%" style="vertical-align:top">(¦)</td>
+                            <td style="vertical-align:top">¬ÝÏÂØÓÆÝÏ, Æ​·​ØÅ¨ë¶, ÕÝÚÓÖ¤ØÏÆÝÏ, ²ÐâÄÏ, ¨ÆÞÏÁÐØ, ¤èÓ.ÉÛ.¤èÓ. Å¬Ï, ÇÚ¼Õ¬¾ð ÓØÚÕÉ, ÆÚ¶¤ØÐØ, Óâ¬ÏÞÏ,  ÓÖñÛ ÌÝ¨¼ÓÏ ÓØÚÕÉ, ÉÏÅØÐØ, °â¸Û¬¾ð (0172-5227269,271,272,334) Çè¨Ó Åâ: (0172-5227270)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td style="vertical-align:top">(¤)</td>
+                            <td style="vertical-align:top">¤âÚÌñ¼ÓÏ, ÉÚ​·​â¸Ø, ÇÏÛÂ¨ë¶, ÚÇÏë²ÆÝÏ, ÇØÚ²ÖÐ¨Ø, ÌØÅÓØ, Ìë¬Ø, ÐÝÚÄ¤Ø»Ø, ÏÞÆÅ¬Ï, ¼ÏÅ¼ØÏÅ, ¤èÓ Ö¥ã Ö¤èÓ ÖÅ¬Ï (0172-5227285,287,288,334) Çè¨Ó Åâ: (0172-5227286)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="font-weight:bold;">Åë¶:- ÕëÏ ²Ø»¨ØÏÛ Ð¥Û ÉëÏ¸ Âã ¨â¶ÏëÐ ÏÞÌ Âã ÇëÅ Åâ: 0172-5227140    ¤¼ã Çè¨Ó Åâ: 0172-5227139 ¼ã ÓâÆÏ¨ ¨Û¼Ø ²Ø Ó¨ÂØ Õè¢   </td>
+                        </tr>
+
+                    </table>
+                </td>
+            </tr>*@
+                                                    <tr>
+                                                        <td style="text-align:left;vertical-align:bottom">@if (Session["USER"] != null){@Session["USER"].ToString()}
+                            else { Response.Redirect("/DeoPortal"); } / @pdate</td>
+                                                        <td style="font-size:13px;text-align:right;vertical-align:bottom">
+                                                            <br />
+                                                            <img src="~/Images/MohinderSingh-Sign.jpg" /><br />
+                                                            @*Deputy Secretary*@Assistant Secretary (Middle Conduct)<br />
+                                                            For Secretary.
+                                                        </td>
+                                                    </tr>
+                                                    <tr><td colspan="2" height="400px"></td></tr>
+
+                                                }
+
+
+                                                @if (dutytype == "Superintendent")
+                                                {
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <table width="100%" class="kdsfont" style="font-size:15px;line-height:12px">
+                                                                <tr>
+                                                                    <td colspan="2" style="font-size:26px;padding:2px 0">
+																	ÌØÏ° 2021 ÂïÏØÅ ¨ã×ÂÏ ÓÝÆÏ¸â¶ Ð¥Û ÕÂØÚ¥¼Ù :-</td>
+                                                                </tr>
+                                                                @*<tr>
+                                                                    <td colspan="2">¨ã×ÂÏ ÚÒó° ¼ÝÕØ¸ã ¤ØÆ»ã Ó¨ÞÐ Âã ¦ÝÌÛÂÒØÏ ÆñÛÚª¤Ø ÅØ Âã ÏÕã Õë» ²Ù ¼ÝÕØ¸Ø ¤ØÆ»Ø ¨ë¥Û Å²ÖÂÛ¨Û ÚÏÓÖ¼ãÂØÏ ²Ù ¼ÝÕØ¸ã/¼ÝÕØ¸Û/Æ¼Û/Æ¼ÅÛ ÒóÐë× Æ¾ðØÚ¥¤Ø ÕëÚ¥¤Ø ÆñÛÚª¤ØÏÁÛ ÆñÛÚª¤Ø ÅØ Âã ÚÏÕØ ÕëÒã ¤¼ã ÅØ ÕÛ ¼ÝÕØÅÞâ ÉëÏ¸ ÒóÐë× Ú¨Óã ÒÛ ÓãÒØÇÐ ÆØ¦Ý» ÒØÐã ¨âÌ ¼ë× ¤Íë¬ ·ÚÕÏØÚ¥¤Ø Ú¬¤Ø ÕëÒã¢ Ú¥Ó ÓÉâÄÛ ÚÅ¬ÏØÅ ¤ÌÐã ¼ë× ÒÛ ÓÏ¶ÛÚÇ¨ã¶ ÚÐ¤Ø ²ØÒã¢</td>
+                                                                </tr>*@
+
+                                                                <tr>
+                                                                    <td width="5%" class="algtop">1</td>
+                                                                    <td width="95%" class="kds-pnb">ਕੇਂਦਰ ਸੁਪਰਡੰਟ ਹਰੇਕ ਪਰੀਖਿਆਰਥੀ ਤੋਂ  <span class="kds-big">(COVID-19)</span> ਸਬੰਧੀ ਸਵੈ ਘੋਸ਼ਣਾ ਪੱਤਰ ਲਵੇਗਾ| </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">2</td>
+                                                                    <td class="kds-pnb">ਪ੍ਰੀਖਿਆਰਥੀਆਂ ਨੂੰ ਸਰਕਾਰੀ ਹਦਾਇਤਾਂ ਅਨੁਸਾਰ ਸਮਾਜਿਕ ਦੂਰੀ  <span class="kds-big">6</span> ਫੁੱਟ ਨੂੰ ਧਿਆਨ ਵਿੱਚ ਰੱਖਦੇ ਹੋਏ ਸੀਟਿੰਗ ਪਲਾਨ ਕੀਤਾ ਜਾਵੇ| </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">3</td>
+                                                                    <td class="kds-pnb">ਸਫਾਈ/ ਸੈਨੇਟਾਈਜੇਸ਼ਨ ਲਈ ਕੇਂਦਰ ਕੰਟਰੋਲਰ ਨਾਲ ਸੰਪਰਕ ਰਖਿਆ ਜਾਵੇ|  </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">4</td>
+                                                                    <td class="kds-pnb">
+																	ਐਂਟਰੀ  ਗੇਟ ਤੇ ਹੀ ਪ੍ਰੀਖਿਆਰਥੀ ਦੀ ਸਿਹਤ ਬਾਰੇ ਜਾਣਕਾਰੀ ਲਈ ਜਾਵੇ । ਜੇਕਰ <span class="kds-big">Covid19</span> ਦੇ ਲਛਣ ਪਾਏ ਜਾਂਦੇ ਹਨ ਤਾਂ ਉਸ ਨੂੰ ਵਾਪਿਸ ਘਰ ਭੇਜ ਦਿੱਤਾ ਜਾਵੇ । ਅਜਿਹੇ ਪ੍ਰੀਖਿਆਰਥੀਆ ਦੇ ਵੇਰਵੇ / ਸੂਚੀ ਵੱਖਰੇ ਤੌਰ ਤੇ ਸਹਾਇਕ ਸਕੱਤਰ (ਪੰਜਵੀ / ਅੱਠਵੀਂ ) ਨੂੰ ਭੇਜੀ ਜਾਵੇ ।
+																	
+																	</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">5</td>
+                                                                    <td class="kds-pnb">ਅਜਿਹੇ ਪ੍ਰਬੰਧ ਕੀਤੇ ਜਾਣ ਕਿ ਪਾਣੀ ਪੀਣ /ਹੱਥ ਧੋਣ ਜਾਂ ਬਾਥਰੂਮਾਂ ਵਿੱਚ ਇੱਕ ਤੋਂ ਵੱਧ ਪਰੀਖਿਆਰਥੀ ਨਾ ਜਾਵੇ|</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">6</td>
+                                                                    <td class="kds-pnb">ਆਪਣੀ ਕੋਈ ਵੀ ਚੀਜ/ ਵਸਤੂ ਇੱਕ ਦੂਸਰੇ ਨਾਲ ਸ਼ੇਅਰ ਨਾ ਕਰਨ ਲਈ ਪ੍ਰੇਰਿਤ ਕੀਤਾ ਜਾਵੇ|</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">7</td>
+                                                                    <td class="kds-pnb">ਪਰੀਖਿਆਰਥੀਆਂ ਲਈ ਪਰੀਖਿਆ ਕੇਂਦਰ ਵਿੱਚ ਇੱਕ ਘੰਟਾ ਪਹਿਲਾਂ (ਭਾਵ-<span class="kds-big">8</span> ਵਜੇ) ਪਹੁੰਚਣਾ ਲਾਜਮੀ ਕੀਤਾ ਗਿਆ ਹੈ|</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">8</td>
+                                                                    <td class="kds-pnb">ਪ੍ਰਸ਼ਨ ਪੱਤਰ/ਉੱਤਰ ਪੱਤਰੀਆਂ ਦੀ ਵੰਡ/ਕੁਲੈਕਸ਼ਨ ਅਤੇ ਹਸਤਾਖਰ ਚਾਰਟ ਤੇ ਹਾਜਰੀ ਲੈਂਦੇ ਸਮੇਂ ਹੈਂਡ ਗਲਵਜ਼ ਦੀ ਵਰਤੋਂ ਕੀਤੀ ਜਾਵੇ|  </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">9</td>
+                                                                    <td class="kds-pnb">ਹਰੇਕ ਪਰੀਖਿਆਰਥੀ ਲਈ ਮਾਸਕ ਪਾਉਂਣਾ ਜਰੂਰੀ ਕੀਤਾ ਜਾਵੇ| </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="algtop">10</td>
+                                                                    <td class="kds-pnb">ਰੋਲ ਨੰਬਰ  ਸਲਿਪ ਤੋਂ ਬਿਨ੍ਹਾਂ ਕਿਸੇ ਪਰੀਖਿਆਰਥੀ ਨੂੰ ਪਰੀਖਿਆ ਕੇਂਦਰ ਵਿੱਚ ਦਾਖਲ ਨਾ ਹੋਣ ਦਿੱਤਾ ਜਾਵੇ|</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">11</td>
+                                                                    <td class="">Department of Home Affairs and Justice <span class="kds-pnb">ਦੇ ਪੱਤਰ ਨੰ: </span> PA/ACSH/2021/9 <span class="kds-pnb">ਮਿਤੀ: </span> 12-10-2020 <span class="kds-pnb"> ਵਿੱਚ ਦਰਜ ਹਦਾਇਤਾਂ ਦੀ 	ਪਾਲਣਾ ਕਰਵਾਈ ਜਾਵੇ| </span></td>
+                                                                </tr>
+                                                                <!-- <tr> -->
+                                                                    <!-- <td class="algtop">12</td> -->
+                                                                    <!-- <td class="kds-pnb">ਮੈਟ੍ਰਿਕ ਓਪਨ ਸਕੂਲ ਦੇ ਜਿਨ੍ਹਾਂ ਪਰੀਖਿਆਰਥੀਆਂ ਵੱਲੋਂ ਮਾਰਚ-2020 ਵਿੱਚ ਪੰਜਾਬੀ-ਏ ਵਿਸ਼ੇ ਦਾ ਪੇਪਰ ਦਿੱਤਾ ਹੈ, ਉਹਨਾਂ ਪਰੀਖਿਆਰਥੀਆਂ ਨੂੰ  	ਹੁਣ ਪੰਜਾਬੀ-ਏ ਵਿਸ਼ੇ ਦਾ ਪੇਪਰ ਦੇਣ ਦੀ ਜਰੂਰਤ ਨਹੀਂ ਹੈ|</td> -->
+                                                                <!-- </tr> -->
+                                                                <tr>
+                                                                    <td class="algtop">12</td>
+                                                                    <td>¨ã×ÂÏ ÚÒó° ¼ÝÕØ¸ã ¤ØÆ»ã Ó¨ÞÐ Âã ¦ÝÌÛÂÒØÏ ÆñÛÚª¤Ø ÅØ Âã ÏÕã Õë» ²Ù ¼ÝÕØ¸Ø ¤ØÆ»Ø ¨ë¥Û Å²ÖÂÛ¨Û ÚÏÓÖ¼ãÂØÏ ²Ù 	¼ÝÕØ¸ã/¼ÝÕØ¸Û/Æ¼Û/Æ¼ÅÛ ÒóÐë× Æ¾ðØÚ¥¤Ø ÕëÚ¥¤Ø ÆñÛÚª¤ØÏÁÛ ÆñÛÚª¤Ø ÅØ Âã ÚÏÕØ ÕëÒã ¤¼ã ÅØ ÕÛ ¼ÝÕØÅÞâ ÉëÏ¸ ÒóÐë× 		Ú¨Óã ÒÛ ÓãÒØÇÐ ÆØ¦Ý» ÒØÐã ¨âÌ ¼ë× ¤Íë¬ ·ÚÕÏØÚ¥¤Ø Ú¬¤Ø ÕëÒã¢ Ú¥Ó ÓÉâÄÛ ÚÅ¬ÏØÅ ¤ÌÐã ¼ë× ÒÛ ÓÏ¶ÛÚÇ¨ã¶ 		ÚÐ¤Ø ²ØÒã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">13</td>
+                                                                    <td><span class="kds-pnb">ਮਿਤੀ</span> 21-03-2021 <span class="kds-pnb">ਨੂੰ</span> ÓÒãÏã 10 Ö00 Ò²ã ÆñÛÚª¤Ø ¨ã×ÂÏ ÚÒó° ÕØ²ÖÏ ÕëÚ¥¤Ø ²ØÒã¢ ¨ã×ÂÏ ¨â¶ÏëÐÏ ¼ë× ÓÝÆÏ¸â¶ Æè¨¶ ÆñØÆ¼ ¨Ï¨ã 	Ðë×¾ÛÂã ÆñÉâÄ ¨Ï Ð¥ã ²Ø» ¤¼ã ÚÅ¬ÏØÅ ¤ÌÐã ÂÛ ÕØ²ÖÏÛ Í¨ÛÅÛ É»Ø¥Û ²ØÒã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">14</td>
+                                                                    <td>¼ÝÕØÅÞâ ÚÌÕÅ¼ØÅã ÂÛ ¤ÂØÚ¥¬Û ÚÅÏÄØÚÏ¼ ÂÏÙ ¤ÅÝÓØÏ ¨Û¼Û ²ØÒã¬Û¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">15</td>
+                                                                    <td>¦ÝÆÏë¨¼ ¤ÂØÚ¥¬Û ¼ë× Ú¥ÐØÒØ ¨ë¥Û ¶Û Ö¥ã Ö/¸Û Ö¥ã ÖÂÛ ¤ÂØÚ¥¬Û ÅÕÛ× ¨Û¼Û ²ØÒã¬Û¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">16</td>
+                                                                    <td>¨ã×ÂÏ ÓÝÆÏ¸â¶ ²Ù ÚÅ¬ÏØÅ ¤ÌÐã ÂØ ¨ë¥Û Ìè×ÉÏ ²ã¨Ï ¤ØÆ»Û Ú¸¦Þ¶Û ÂïÏØÅ ÚÒÓÖÒØÓÖ ²Ù ¤ÅÝÓØÓÖÅ Êâ¬ ¨ÏÂØ Õè, ²Ù ¨ë¥Û 	Ú¸¦Þ¶Û Æñ¼Û ¨Ý¼ØÕÛ ÆØ¥Û ²ØÂÛ Õè,¼Ù ¨ØÅÞâÅÛ/ÚÒÊØ¬Û ¨ØÏÒØ¥Û ²Ù ÂëÕÙ Ð¥Û ¦ÝÕ Ú²ÖâÌãÒØÏ ÕëÒã¬Ø¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">17</td>
+                                                                    <td>Ú¥ÌÚ¼ÕØÅÙ ÓÉâÄÛ Ú¸¦Þ¶Û ÐØ²ÖÌÛ ¨ÏØÏ ÚÂó¼Û Õë¥Û Õè Ú¨Óã ÒÛ ÕØÐ¼ ÚÒó° Ú¸¦Þ¶Û ¼ë× ±ë¶ ÂÛ ¤ØÚ¬¤Ø ÅÕÛ× ÚÂó¼Û ²ØÒã¬Û¢ 	Ú¸¦Þ¶Û ÅØ ÚÅÊØ¦Ý» ÂÛ ÓÞÏ¼ ÚÒó° ¦ÝÓÅÞâ ¤ØÆ»ã Ó¨ÞÐ ¼ë× ¬èÏ-ÕØ²ÖÏ ÓÌÚ´¤Ø ²ØÒã¬Ø ¤¼ã ¦ÝÓ ÚÒÏÝóÄ ¤ÅÝÓÖØÓÅÛ ¨ØÏÒØ¥Û ÒÛ 	¨Û¼Û ²ØÒã¬Û¢ Ú¥Õ ¬óÐ Í¨ÛÅÛ É»Ø¥Û ²ØÒã Ú¨ ¤ØÆ»Ø ¨ã×ÂÏ ÓÝÆÏ¸â¶ ÂØ Æè¨¶ ÚÅÏÄØÏ¼ ÓÖÚ¸¦ÞÐ ¤ÅÝÓØÏ ÆñØÆ¼ ¨Û¼Ø ²ØÒã¢ 	²ã¨Ï ¼ÝÓÛ× ¤ØÆ»Ø ÓÝÆÏ¸â¶ Æè¨¶ ÆñØÆ¼ ÅÕÛ× ¨ÏÂã ¼Ù ¼ÝÕØ¸Ø ¨ãÓ ¤ÅÝÓÖØÓÅÛ ¨ØÏÒØ¥Û Ð¥Û Ó¨ÞÐ ÚÓóÚª¤Ø ÚÒÊØ¬, (Æâ²ØÉ) ÅÞâ 	Êã² ÚÂó¼Ø ²ØÒã¬Ø, Ú²Ó ÂÛ Ú²âÌãÒØÏÛ ¼ÝÕØ¸Û ¤ØÆ»Û ÕëÒã¬Û¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">18</td>
+                                                                    <td>Ú¸Æ¶Û ÓÝÆÏ¸â¶ , ÚÅ¬ÏØÅ ¤¼ã ÂÏ²Ø °ØÏ ¤ÌÐØ ÓÉâÄ¼ Ó¨ÞÐ ÂØ ÕÛ ÐØÚ¥¤Ø ²ØÒã ¢</td>
+                                                                </tr>
+                                                                <!-- <tr> -->
+                                                                    <!-- <td class="algtop">19</td> -->
+                                                                    <!-- <td>ÆñÓÖÅ-Æó¼Ï Éè×¨Ù ÏØÕÛ× Êã²ã ²Ø»ã ÕÅ¢ ÓÉâÄ¼ ¨ã×ÂÏ ¨â¶ÏëÐÏ ÒóÐë× ÆñÓÖÅ-Æó¼ÏÙ Âã Æè¨¶ ÕÏ-Ïë²Ö Éè×¨ ÚÒó°ë× ÆñØÆ¼ ¨Ï¨ã ÆñÛÚª¤Ø 	ÓÖÝÏÞ Õë» ¼ë× ¤óÄØ ®â¶Ø ÆÚÕÐÙ ¤ØÆ ÅÞâ Óï×Æã ²Ø»¬ã¢ ÆñÓÖÅ Æó¼ÏÙ Âã Æè¨¶Ù ÂÛ¤Ù ÓÛÐÙ °è¨ ¨Ï¨ã ÆñØÆ¼ ¨Û¼ã ²Ø»¢ </td> -->
+                                                                <!-- </tr> -->
+                                                                <tr>
+                                                                    <td class="algtop">19</td>
+                                                                    <td>Ú¥Õ ¬óÐ Í¨ÛÅÛ É»Ø¥Û ²ØÒã Ú¨ ÆñÛÚª¤ØÒÙ ÚÒó° Ú¸¦Þ¶Û ¼ã ¼èÅØ¼ ÚÅ¬ÏØÅ ¤ÌÐØ ²Ù ÆñÛÚª¤ØÏÁÛ ÆñÛÚª¤Ø ¨ã×ÂÏ ÚÒó° ¤ØÆ»ã 	ÅØÐ ÌëÉØÚ¥Ð ÇëÅ ¤ØÚÂ ÅØ Ðè ¨ã ²ØÒã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">20</td>
+                                                                    <td>²ã¨Ï Ú¨Óã ÚÅ¬ÏØÅ ¤ÌÐã ÒóÐë× ¼ÝÕØ¸ã ÚÄ¤ØÅ ÚÒó° ÚÐ¤ÙÂØ ²ÙÂØ Õè Ú¨ ¦ÝÓ ÂØ Æ¾ðØÚ¥¤Ø/Å²ÖÂÛ¨Û ÚÏÓÖ¼ãÂØÏ Ú¸¦Þ¶Û ÒØÐã ¨ã×ÂÏ 	ÚÒó° ÆñÛÚª¤Ø Âã ÚÏÕØ Õè ¼Ù ¼ÝÏâ¼ ¨ã×ÂÏ ¨â¶ÏëÐÏ ÅØÐ ÓâÆÏ¨ ¨Ï¨ã ÉÂÐÒÙ ÆñÉâÄ ¨Û¼Ø ²ØÒã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">21</td>
+                                                                    <td>ÕÏ-Ïë²Ö ÆñÛÚª¤Ø ÂÛ ÓÌØÆ¼Û ¦ÝÆÏâ¼ ¦Ýó¼Ï-Æó¼ÏÛ¤Ù Âã ÓÛÐÉâÂ Æè¨¶ Ú¥¨ó¼Ï ¨ã×ÂÏ ¼ã ²ÌðÙ ¨ÏÒØ¦Ý»Ø ¤ØÆ ÂÛ Ú²âÌãÒØÏÛ ÕëÒã¬Û¢ 	Ú¨Óã ÒÛ ÕØÐ¼ ÚÒó° Ú¥Õ Ú¸¦Þ¶Û ÂÏ²Ø °ØÏ ¨ÏÌ°ØÏÛ ÅÞâ ÅØ ÚÂó¼Û ²ØÒã¢ ²ã¨Ï Ú¨Óã ÚÒÓÖãÓÖ ÕÐØ¼Ù ¨Ï¨ã Ú¨Óã ÚÂÅ ¼ÝÓÛ× ÓÛÐÉâÂ 	Æè¨¶ ²ÌðÙ ¨ÏÒØ¦Ý» Ð¥Û ÅÕÛ× ²Ø Ó¨Âã ¼Ù ÆñÛÚª¤Ø ¨ã×ÂÏ ÚÒó° ¼ØÚ¥ÅØ¼ Ú¸Æ¶Û ÓÝÆÏ¸â¶/ÓÕØÚ¥¨ ÓÝÆÏ¸â¶ ²Ù ÓÝÆÏÒØ¥Û²Ï ÅÞâ 	¤ÁØÏ¶Û Ðè¶Ï Âã ¨ã ÊãÚ²¤Ø ²ØÒã¢ </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">22</td>
+                                                                    <td>²ã¨Ï ÆñÛÚª¤Ø ¨ã×ÂÏ ÚÒó° ÚÒóÐª» ÓÌóÏÁØ Ïóª» ÒØÐØ ÆñÛÚª¤ØÏÁÛ ÆñÛÚª¤Ø Âã ÚÏÕØ Õè ¼Ù ¤Ú²Õã ÆñÛÚª¤ØÏÁÛ¤Ù ÂÛ¤Ù ¦Ýó¼Ï-	Æó¼ÏÛ¤Ù Âã Æè¨¶ ÒóªÏã ¼ïÏ ¼ã ÓÛÐÉâÂ ¨Ï¨ã Êã²ã ²Ø»¢   </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">23</td>
+                                                                    <td>ÆñÛÚª¤Ø ÂïÏØÅ Ú¨Óã ÒÛ ÆñÛÚª¤ØÁÛ Âã ÉÞ¶ ¤¼ã ²ÞÏØÉÙ ÅØ ªÝÐðÒØ¥ã ²Ø»¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">24</td>
+                                                                    <td class="kds-pnb"><span class="kds-big">MR</span> ਵਿਦਿਆਰਥੀਆ ਦੀ ਪ੍ਰੀਖਿਆ ਸਬੰਧੀ ਸਕੂਲ ਪੱਧਰ ਤੇ ਲਈ ਜਾਵੇਗੀ ।</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">25</td>
+                                                                    <td class="kds-pnb">ਹਸਤਾਖਰ ਚਾਰਟ ਵੱਖਰੇ ਲਿਫਾਫੇ ਵਿੱਚ ਪਾ ਕੇ ਲਾਸਟ ਪੈਕਟ ਨਾਲ  ਕੂਲੈਕਸ਼ਨ ਸੈਂਟਰ ਤੇ ਜਮਾਂ ਕਰਵਾਏ ਜਾਣ । ਇਹ ਧਿਆਨ ਰੱਖਿਆ ਜਾਵੇ ਕਿ ਹਸਤਾਖਰ 	ਚਾਰਟ ਨੂੰ ਉੱਤਰ ਪੱਤਰੀਆਂ ਦੇ ਬੰਡਲ ਵਿੱਚ ਸੀਲ ਨਾ ਕੀਤਾ ਜਾਵੇ ।</td>
+                                                                </tr>
+                                                                @*<tr>
+                                                                    <td class="algtop">27</td>
+                                                                    <td>Ú¥ó¨ ¸èÓ¨ ¦ÝóÆÏ ÚÓÏÇ Ú¥ó¨ ÆñÛÚª¤ØÏÁÛ ÚÉ∙ØÚ¥¤Ø ²Ø»Ø Õè¢</td>
+                                                                </tr>*@
+                                                                <tr>
+                                                                    <td class="algtop">26</td>
+                                                                    <td class="kds-pnb">ਸਕੂਲ ਲਾਗਇੰਨ ਤੇ ਅਪਲੋਡ ਕੇਂਦਰ ਸੁਪਰਡੰਟ ਨਾਲ ਸਬੰਧਤ ਹਦਾਇਤਾ ਅਤੇ ਸਰਕਾਰ ਵੱਲੋਂ ਸਮੇਂ ਸਮੇਂ ਤੇ ਜਾਰੀ ਕੋਵਿਡ19 ਸਬੰਧੀ ਹਦਾਇਤਾ ਦੀ ਇੰਨ-ਬਿੰਨ 	ਪਾਲਨਾ ਕੀਤੀ ਜਾਵੇ।</td>
+                                                                </tr>                                                                
+                                                                <tr>
+                                                                    <td colspan="6" style="padding:14px 0 5px 0"><span style="font-size:14px">ਪ੍ਰਸ਼ਨ ਪੱਤਰਾਂ ਦੀ ਘਾਟ ਲਈ ਹੇਠ ਲਿਖੇ ਅਨੁਸਾਰ ਸਪੰਰਕ ਕੀਤਾ ਜਾਵੇ :</span></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <table width="100%" class="kdsfont" style="font-size:15px;line-height:13px">
+                                                                <tr>
+                                                                    <td><span class="kds-pnb">ਅੱਠਵੀ ਪ੍ਰੀਖਿਆ </span> :- ÓØÏã Ú²Ððã 0172-5227227, 303, 304</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-weight:bold;">
+                                                                        Åë¶:- ÕëÏ ²Ø»¨ØÏÛ Ð¥Û ÉëÏ¸ Âã ¨â¶ÏëÐ ÏÞÌ Âã ÇëÅ Åâ: 0172-5227140 ¤¼ã Çè¨Ó Åâ: 0172-5227139 ¼ã ÓâÆÏ¨ ¨Û¼Ø ²Ø Ó¨ÂØ Õè¢
+                                                                    </td>
+                                                                </tr>
+                                                                @*<tr>
+                            <td width="5%"></td>
+                            <td width="10%" style="vertical-align:top">ÉØÏðÒÛ× ÓÖã»Û</td>
+                            <td colspan="2" style="vertical-align:top">ÓØÏã Ú²Ððã 0172-5227301,303,305,334 Çè¨Ó Åâ: 0172-5227302</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="vertical-align:top">ÂÓÒÛ× ÓÖñã»Û</td>
+                            <td width="4%" style="vertical-align:top">(¦)</td>
+                            <td style="vertical-align:top">¬ÝÏÂØÓÆÝÏ, Æ​·​ØÅ¨ë¶, ÕÝÚÓÖ¤ØÏÆÝÏ, ²ÐâÄÏ, ¨ÆÞÏÁÐØ, ¤èÓ.ÉÛ.¤èÓ. Å¬Ï, ÇÚ¼Õ¬¾ð ÓØÚÕÉ, ÆÚ¶¤ØÐØ, Óâ¬ÏÞÏ,  ÓÖñÛ ÌÝ¨¼ÓÏ ÓØÚÕÉ, ÉÏÅØÐØ, °â¸Û¬¾ð (0172-5227269,271,272,334) Çè¨Ó Åâ: (0172-5227270)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td style="vertical-align:top">(¤)</td>
+                            <td style="vertical-align:top">¤âÚÌñ¼ÓÏ, ÉÚ​·​â¸Ø, ÇÏÛÂ¨ë¶, ÚÇÏë²ÆÝÏ, ÇØÚ²ÖÐ¨Ø, ÌØÅÓØ, Ìë¬Ø, ÐÝÚÄ¤Ø»Ø, ÏÞÆÅ¬Ï, ¼ÏÅ¼ØÏÅ, ¤èÓ Ö¥ã Ö¤èÓ ÖÅ¬Ï (0172-5227285,287,288,334) Çè¨Ó Åâ: (0172-5227286)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="font-weight:bold;">Åë¶:- ÕëÏ ²Ø»¨ØÏÛ Ð¥Û ÉëÏ¸ Âã ¨â¶ÏëÐ ÏÞÌ Âã ÇëÅ Åâ: 0172-5227140    ¤¼ã Çè¨Ó Åâ: 0172-5227139 ¼ã ÓâÆÏ¨ ¨Û¼Ø ²Ø Ó¨ÂØ Õè¢   </td>
+                        </tr>*@@*ÓÕÛ/-
+ÓÕØÚ¥¨ Ó¨ó¼Ï (¨ØÏ² Óâ°ØÐÅ ÓÖØªØ)
+ÒØÓ¼ã Ó¨ó¼Ï
+*@
+
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align:left;vertical-align:bottom">@if (Session["USER"] != null){@Session["USER"].ToString()}
+                            else { Response.Redirect("/DeoPortal"); } / @pdate</td>
+                                                        <td style="font-size:13px;text-align:right;vertical-align:bottom">
+                                                            <br />
+                                                            <img src="~/Images/MohinderSingh-Sign.jpg" /><br />
+                                                            @*Deputy Secretary*@
+															Assistant Secretary (Middle Conduct)<br />
+                                                            For Secretary.
+                                                        </td>
+                                                    </tr>
+
+                                                }
+                                                @if (dutytype == "Deputy Superintendent")
+                                                {
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <table class="kdsfont" style="width:100%;font-size:16px;line-height:14px">
+                                                                <tr>
+                                                                    <td colspan="2" style="font-size:26px;padding:4px 0">ÂÓÒÛ×/ÉØÏðÒÛ× ÓÖñã»Û ÂÛ¤Ù ÓØÐØÅØ ÆÏÛÚª¤ØÒÙ ÌØÏ° 2020 ÂïÏØÅ ¦ÝÆ-ÓÝÆÏ¸â¶ Ð¥Û ÕÂØÚ¥¼Ù:-</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="5%" class="algtop">1</td>
+                                                                    <td width="95%">²ã¨Ï ¦ÝÆÏë¨¼ ¨ã×ÂÏ ÚÒó° ¼ÝÕØ¸Ø ÆÝó¼Ï/ÆÝó¼ÏÛ/Å²ÖÂÛ¨Û ÚÏÓÖ¼ãÂØÏ ÆÏÛÚª¤Ø Âã ÚÏÕØ Õè/ÏÕÛ Õè ²Ù ¼ÝÕØ¸ã ¤ØÆ»ã Ó¨ÞÐ Âã ¦ÝÌÛÂÒØÏ ¦ÝÓã ÆÏÛÚª¤Ø ¨ã×ÂÏ ¼ã ÆÏÛÚª¤Ø Âã ÏÕã ÕÅ ¼Ù Ú¥Ó ÂÛ ÓÞ°ÅØ ¼ÝÏâ¼ ¨ã×ÂÏ ÓÝÆÏ¸â¶/Ú²ÖÐðØ ÚÓóÚª¤Ø ¤ÇÓÏ ÅÞâ ÚÂó¼Û ²ØÒã¢ ¼óÁÙ ÅÞâ ±ÝÆØ ¨ã ÚÅÍÝ¨¼Û ÆñØÆ¼ ¨ÏÅ ÂÛ ÓÞÏ¼ ÚÒó° ¤ØÆ ÅÞâ ÉëÏ¸ Âã Ú¨Ó ÒÛ ¨âÌ Ð¥Û ¤Íë¬ ∙ÚÕÏØÚ¥¤Ø ²ØÒã¬Ø¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">2</td>
+                                                                    <td>¨ã×ÂÏ ÂÛ Ú¼¤ØÏÛ Ð¥Û ÆÏÛÚª¤Ø ÓÖÝÏÞ Õë» ¼ë Ú¥ó¨ ÚÂÅ ÆÚÕÐÙ ÓÒãÏã 11 Ö00 Ò²ã ¨ã×ÂÏ ÓÝÆÏ¸â¶ ÅÞâ ÕØ²ÖÏÛ ÚÏÆëÏ¶ ÆãÓÖ  ¨Û¼Û ²ØÒã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">3</td>
+                                                                    <td>ÓÏ¨ØÏ ÒÐë× ÆÏÛÚª¤Ø ÓÉâÄÛ Ú¸¦Þ¶Û ÅÞâ ÐØ²ÖÌÛ ¨ÏØÏ ÚÂó¼Ø Ú¬¤Ø Õè, Ú¥Ó Ð¥Û ²ã¨Ï ¤ØÆ ÉëÏ¸ ÒóÐë× ÚÂó¼ã ¨ã×ÂÏ ¼ã Ú¸¦Þ¶Û Ð¥Û ÕØ²ÖÏ ÅÕÛ ÕëÒã¬ã ¼Ù ¤ØÆ ÚÒÏÝóÄ ¤ÅÝÓÖØÓÅÛ ¨ØÏÒØ¥Û Ð¥Û ¨ãÓ ¤¬ÐãÏÛ ¨ØÏÒØ¥Û Ð¥Û Ó¨ÞÐ ÚÓóÚª¤Ø ÚÒÊØ¬, Æâ²ØÉ ÅÞâ ÊãÚ²¤Ø ²ØÒã¬Ø¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">4</td>
+                                                                    <td>ÆÏÛÚª¤Ø ÂïÏØÅ ÌëÉØÚ¥Ð ÇëÅ ÒÏ¼» ÂÛ ÌÅØÕÛ ÕëÒã¬Û¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">5</td>
+                                                                    <td>ÆÏÛÚª¤Ø ÂïÏØÅ Ú¨Óã ÒÛ ÆÏÛÚª¤ØÏÁÛ Âã ÉÞ¶ ¤¼ã ²ÝÏØÉÙ ÅØ ªÝÐðÒØ¥ã ²Ø»¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">6</td>
+                                                                    <td>¦ÝóÆ ÓÝÆÏ¸â¶ ÓÉâÄ¼ Ó¨ÞÐ ÂØ ÕÛ ÕëÒã¬Ø¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2" style="font-weight:bold">
+                                                                        ÓÕÛ/-<br />
+                                                                        ÓÕØÚ¥¨ Ó¨ó¼Ï (¨ØÏ² Óâ°ØÐÅ ÓÖØªØ)<br />
+                                                                        ÏÒØÓ¼ã Ó¨ó¼Ï<br />
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="height:270px"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align:left;vertical-align:bottom">@pdate</td>
+                                                        <td style="font-size:13px;text-align:right;vertical-align:bottom">
+                                                            <br />
+                                                            <img src="~/Images/Ssig.jpg" /><br />
+                                                            Assistant Secretary (Conduct Branch)<br />
+                                                            For Secretary.
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                @if (dutytype == "Invigilator")
+                                                {
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <table class="kdsfont" style="width:100%;font-size:16px;line-height:14px">
+                                                                <tr>
+                                                                    <td colspan="2" style="font-size:26px;padding:4px 0">
+                                                                        ÂÓÒÛ×/ÉØÏðÒÛ× ÓÖñã»Û ÂÛ¤Ù ÓØÐØÅØ ÆÏÛÚª¤ØÒÙ ÌØÏ° 2020 ÂïÏØÅ ÚÅ¬ÏØÅ Ð¥Û ÕÂØÚ¥¼Ù:-
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2">¨ã×ÂÏ ÚÒó° ¼ÝÕØ¸Ø ¤ØÆ»Ø ¨ë¥Û Å²ÖÂÛ¨Û ÚÏÓÖ¼ãÂØÏ ²Ù ¼ÝÕØ¸ã/¼ÝÕØ¸Û/Æ¼Û/Æ¼ÅÛ ÒóÐë× Æ¾ðØÚ¥¤Ø ÕëÚ¥¤Ø ÆñÛÚª¤ØÏÁÛ ÆñÛÚª¤Ø ÅØ Âã ÚÏÕØ ÕëÒã ¤¼ã ÅØ ÕÛ ¼ÝÕØÅÞâ ÉëÏ¸ ÒóÐë× Ú¨Óã ÒÛ ÓãÒØÇÐ ÆØ¦Ý» ÒØÐã ¨âÌ ¼ë× ¤ØÍë¬ ​​·​​ÚÕÏØÚ¥¤Ø Ú¬¤Ø ÕëÒã¢ Ú¥Ó ÓÉâÄÛ ÚÅ¬ÏØÅ ¤ÌÐã ¼ë× ÒÛ ÓÏ¶ÛÚÇ¨ã¶ ÚÐ¤Ø ²ØÒã¢</td>
+                                                                </tr>
+                                                                <tr>  <td class="algtop" width="5%">1</td><td width="95%">¨ã×ÂÏ ÚÒó° ¼ÝÕØ¸Ø ¤ØÆ»Ø ¨ë¥Û Å²ÖÂÛ¨Û ÚÏÓÖ¼ãÂØÏ ²Ù ¼ÝÕØ¸ã ¼ÝÕØ¸Û Æ¼Û Æ¼ÅÛ ÒóÐë× Æ¾ðØÚ¥¤Ø ÕëÚ¥¤Ø ÆÏÛÚª¤ØÏÁÛ ÆÏÛÚª¤Ø ÅØ Âã ÚÏÕØ ÕëÒã ¤¼ã ÅØ ÕÛ ¼ÝÕØÅâÞ ÉëÏ¸ ÒóÐë× Ú¨Óã ÒÛ ÓãÒØÇÐ ÆØ¦Ý» ÒØÐã ¨âÌ ¼ë× ¤Íë¬ ∙ÚÕÏØÚ¥¤Ø Ú¬¤Ø ÕëÒã¢</td></tr>
+                                                                <tr>  <td class="algtop">2</td><td>²ã¨Ï ¨ã×ÂÏ ÚÒó° ¼ÝÕØ¸Ø ÆÝó¼Ï/ÆÝó¼ÏÛ/Å²ÖÂÛ¨Û ÚÏÓÖ¼ãÂØÏ ÆÏÛÚª¤Ø Âã ÚÏÕØ Õè/ÏÕÛ Õè ²Ù ¼ÝÕØ¸ã ¤ØÆ»ã Ó¨ÞÐ Âã ¦ÝÌÛÂÒØÏ ¦ÝÓã ÆÏÛÚª¤Ø ¨ã×ÂÏ ¼ã ÆÏÛÚª¤Ø Âã ÏÕã ÕÅ ¼Ù Ú¥Ó ÂÛ ÓÞ°ÅØ ¼ÝÏâ¼ ¨ã×ÂÏ ÓÝÆÏ¸â¶/Ú²ÖÐðØ ÚÓóÚª¤Ø ¤ÇÓÏ ÅÞâ ÚÂó¼Û ²ØÒã¢ ¼óÁÙ ÅÞâ ±ÝÆØ ¨ã ÚÅÍÝ¨¼Û ÆñØÆ¼ ¨ÏÅ ÂÛ ÓÞÏ¼ ÚÒó° ¤ØÆ ÅÞâ ÉëÏ¸ Âã Ú¨Ó ÒÛ ¨âÌ Ð¥Û ¤Íë¬ ∙ÚÕÏØÚ¥¤Ø ²ØÒã¬Ø¢</td></tr>
+                                                                <tr>  <td class="algtop">3</td><td>¨ã×ÂÏ ÂÛ Ú¼¤ØÏÛ Ð¥Û ÆÏÛÚª¤Ø ÓÖÝÏÞ Õë» ¼ë Ú¥ó¨ ÚÂÅ ÆÚÕÐÙ ÓÒãÏã 11 Ö00 Ò²ã ¨ã×ÂÏ ÓÝÆÏ¸â¶ ÅÞâ ÕØ²ÖÏÛ ÚÏÆëÏ¶ ÆãÓÖ ¨Û¼Û ²ØÒã¢</td></tr>
+                                                                <tr>  <td class="algtop">4</td><td>ÓÏ¨ØÏ ÒÐë× ÆÏÛÚª¤Ø ÓÉâÄÛ Ú¸¦Þ¶Û ÅÞâ ÐØ²ÖÌÛ ¨ÏØÏ ÚÂó¼Ø Ú¬¤Ø Õè, Ú¥Ó Ð¥Û ²ã¨Ï ¤ØÆ ÉëÏ¸ ÒóÐë× ÚÂó¼ã ¨ã×ÂÏ ¼ã Ú¸¦Þ¶Û Ð¥Û ÕØ²ÖÏ ÅÕÛ× ÕëÒã¬ã ¼Ù ¤ØÆ ÚÒÏÝóÄ ¤ÅÝÓÖØÓÅÛ ¨ØÏÒØ¥Û Ð¥Û ¨ãÓ ¤¬ÐãÏÛ ¨ØÏÒØ¥Û Ð¥Û Ó¨ÞÐ ÚÓóÚª¤Ø ÚÒÊØ¬, Æâ²ØÉ ÅÞâ ÊãÚ²¤Ø ²ØÒã¬Ø¢</td></tr>
+                                                                <tr>  <td class="algtop">5</td><td>ÆÏÛÚª¤Ø ÂïÏØÅ ÌëÉØÚ¥Ð ÇëÅ ÒÏ¼» ÂÛ ÌÅØÕÛ ÕëÒã¬Û¢ </td></tr>
+                                                                <tr>
+                                                                    <td colspan="2" style="font-weight:bold">
+                                                                        ÓÕÛ/-<br />
+                                                                        ÓÕØÚ¥¨ Ó¨ó¼Ï (¨ØÏ² Óâ°ØÐÅ ÓÖØªØ)<br />
+                                                                        ÒØÓ¼ã Ó¨ó¼Ï
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align:left;vertical-align:bottom"></td>
+                                                        <td style="font-size:13px;text-align:right;vertical-align:bottom">
+                                                            <br />
+                                                            <img src="~/Images/Ssig.jpg" /><br />
+                                                            Assistant Secretary (Conduct Branch)<br />
+                                                            For Secretary.
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="text-align:center" class="kdsfont">ÚÅ¬ÏØÅ ÂÛ¤Ù Ú¸¦Þ¶Û¤Ù ÓÉâÄÛ ÕÂØÚ¥¼Ù</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <table class="kdsfont" style="width:100%;font-size:16px;line-height:14px">
+                                                                <tr>
+                                                                    <td width="5%" class="algtop">1</td>
+                                                                    <td width="95%">ÆÏÛÚª¤Ø Âã Óâ°ØÐÅ ÓÉâÄÛ ¨ã×ÂÏ ÓÝÆÏ¸â¶ Âã ÓØÏã ¤ØÂãÓÖÙ ÂÛ ÆØÐ»Ø ¨ÏÅ¬ã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">2</td>
+                                                                    <td>ÆñÓÖÅ-Æó¼ÏÙ Âã ÚÐÇØÇã ªëÐð» ÓÌã× ¦ÝÕ Ìï¨ã ¼ã ÕØ²ÖÏ ÕëÒã ¤¼ã Ú¥ÅðÙ ÂÛ¤Ù ÓÛÐÙ ¤ØÚÂ ÓÝÏóÚª¤¼ Õë» ÓÉâÄÛ ¼ÓóÐÛ ¨Ïã¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">3</td>
+                                                                    <td>¦ÝÕ Ú¥Õ Òãª»¬ã Ú¨ ÕÏ ¦ÝÌÛÂÒØÏ Åã ÓÛ¶ Ð¥Û Õè¢ ÆÏÛÚª¤ØÏÁÛ¤Ù ÒóÐë× ¦Ýó¼Ï-Æó¼ÏÛ¤Ù ¼ã ÚÐªã ÏëÐ ÅâÉÏ ¤¼ã ÂÞÓÏã ÒãÏÚÒ¤Ù ÂØ ÚÌÐØÅ ¬ÝÆ¼ ÓÞ°Û ÅØÐ ¨ÏÅ¬ã ¤¼ã ¼ÏÝó¶Û Õë» ÂÛ ÕØÐ¼ ÚÒó° Ú¥Ó ÅÞâ ¨ã×ÂÏ ÓÝÆÏ¸â¶ Âã ÚÄ¤ØÅ ÚÒó° ÚÐ¤Ø ¨ã ∙Û¨ ¨ÏÒØ¥ã¬Ø¢ ÆñÓÖÅ-Æó¼ÏÙ ÂÛ Òâ¸ ¦ÝÓÅã ¨ÏÅÛ Õè¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">4</td>
+                                                                    <td>²ã¨Ï Ú¨Óã ¦ÝÌÛÂÒØÏ Âã ¨É²Öã ÚÒó°ë× ¤»-¦ÝÚ°¼ ¨Ø¬²Ö, ÅëÚ¶Ó Ò¬ãÏØ ÐóÊÂØ Õè ¼Ù Ú¥Ó ÂÛ ÚÏÆëÏ¶ ¨ã×ÂÏ ÓÝÆÏ¸â¶ ÅÞâ ¨Ïã Ú²Õ¾ã ÚÅ¬ÏØÅ ¤ÌÐã ÂÛ ÓÝÆÏÒÛ²ÖÅ Âã ¤ÄÛÅ ¤»-¦ÝÚ°ó¼ ÓØÄÅ ÒÏ¼Å ÓÉâÄÛ ¼ÞÇÖØÅÛ ÂÐ ²Ù ÉëÏ¸ Âã ¦Ýó° ¤ÚÄ¨ØÏÛ ¨ãÓ Ç¾Å¬ã¢ Ú¥Ó ¼ÏðÙ Âã ÚÅ¬ÏØÅ ¤ÌÐã ÅÞâ ÚÉÅÙ Ú¨Óã Ú¥¼ÐØÕ Âã ÉëÏ¸ Âã ÓãÒØÇÐ ÆØ¦Ý» ÒØÐã ¨âÌ ¼ë× ÓÂØ Ð¥Û ¤Íë¬ ∙ÚÕÏØ ÚÂó¼Ø ²ØÒã¬Ø¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">5</td>
+                                                                    <td>¨ã×ÂÏ ÓÝÆÏ¸â¶ ÂÛ ÚÐª¼Û ¤ØÚ¬¤Ø ¼ë× ÚÉÅÙ ¦ÝÕ ÆÏÛÚª¤Ø ¨ã×ÂÏ ¼ë× ¬èÏ- ÕØ²Ï ÅÕÛ× ÏÚÕ Ó¨Âã ¤¼ã ÅØ ÕÛ Ú¨Óã ÕëÏ ¨ã×ÂÏ ¼ã Ú¸¦Þ¶Û Âã Ó¨Âã ÕÅ¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">6</td>
+                                                                    <td>ÆÏÛÚª¤Ø ÂïÏØÅ Ú¨Óã ÒÛ ÆÏÛÚª¤ØÏÁÛ Âã ÉÞ¶ ¤¼ã ²ÝÏØÉÙ ÅØ ªÝÐðÒØ¥ã ²Ø»¢</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="algtop">7</td>
+                                                                    <td>ÓÝ»Å/Òãª» ¼ë× ¤ÓÌÏóÁ ¤¼ã Ìè×¶ÐÛ ÚÏ¶ØÏÚ¶¸ ÆÏÛÚª¤ØÏÁÛ¤Ù ÅâÞ ÒóªÏØ ÆñÓÖÅ Æó¼Ï (DA Code) ÚÂ¼Ø ²ØÒã¢</td>
+                                                                </tr>
+                                                            </table>
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="height:100px;text-align:left;vertical-align:bottom">@pdate</td>
+                                                    </tr>
+                                                }
+
+                                                @if (dutytype == "Flying Squid")
+                                                {
+
+
+                                                }
+                                                @if (dutytype == "Observer")
+                                                {
+
+                                                }
+
+                                            </tbody>
+                                                    }
+                                                }
+                                                }
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+  }
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //alert($("#SelDist"));
+        $("#SelDist").find('[value="ALL"]').remove();
+    });
+</script>  
+
+<script type="text/javascript">
+
+    function dee() {
+
+        if ($("#SelDist").val() == "") {
+
+            $("#reqsession").slideDown("slow");
+            return false;
+        }
+        if ($("#SelDist").val() == "ALL" && ($("#Category").val() == "0" || $("#Category").val() == "")) {
+            //alert("Please Select One Category");
+            $("#reqcatglist").slideDown("slow");
+            return false;
+        }
+        if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+
+            $("#reqsellist").slideDown("slow");
+            return false;
+        }
+
+            //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+            //    $("#reqsellist").slideUp("slow");
+            //    $("#reqsstring").slideDown("slow");
+            //    return false;
+            //}
+        else
+            return true;
+
+    }
+
+    function catchange() {
+        if ($("#Category").val() == "0" || $("#Category").val() == "") {
+            $("#reqcatglist").slideDown("slow");
+            return false;
+        }
+        else {
+            $("#reqcatglist").slideUp("slow");
+        }
+        return true;
+
+    }
+   
+    function deechange() {
+        if ($("#SelDist").val() == "") {
+            $("#reqsession").slideDown("slow");
+            return false;
+        }
+        else {
+            $("#reqsession").slideUp("slow");
+        }
+       //if ($("#SelDist").val() != "ALL" || ($("#SelDist").val() != "0")) {
+       //     $("#reqcatglist").slideUp("slow");
+       //     return false;
+       // }
+        return true;
+
+    }
+    
+
+
+</script>
+    

@@ -1,0 +1,113 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+
+<style type="text/css">
+    input[type="checkbox"]:focus {
+        box-shadow: 0 0 1px 2px #cc0000;
+        border: 2px solid #cc0000;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<h1>All Deo User Details</h1>
+@using (Html.BeginForm("AdminDeoUser", "DeoPortal", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                @*<div class="col-md-2"> <label>Total : @ViewBag.TotalCount1</label></div>*@                                                         
+            </fieldset>
+        </div>
+    </div>
+
+        <div class="row"style="font-size:11px;">
+            <div class="table-responsive">              
+                <div class="col-md-12">                    
+                    <table id="t01" class="table table-bordered">
+                        <tr class="active-tr">
+                            <th>SLNO. </th>                            
+                            <th>USERID</th>
+                            <th>PWD</th>    
+                            <th>NAME</th>    
+                            <th>EMAILID</th>        
+                            <th>MOBILE NO</th>                                  
+                            <th>DISTNM</th>
+                            <th>LOT</th>
+                            <th>ACTION</th>
+                            
+                        </tr>
+                        <tr>
+                            @{                                
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    int SLNO = 0;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        SLNO = SLNO + 1;
+                                        //CCODE, TeacherName, FatherName, Designation, TypeOfDuty, Mobile                                           
+                                        //var SLNO = Model.StoreAllData.Tables[0].Rows[i]["SLNO"].ToString();
+                                        var user = Model.StoreAllData.Tables[0].Rows[i]["user"].ToString();
+                                        var pwd = Model.StoreAllData.Tables[0].Rows[i]["pwd"].ToString();
+                                        var name = Model.StoreAllData.Tables[0].Rows[i]["name"].ToString();
+                                        var email = Model.StoreAllData.Tables[0].Rows[i]["emailid"].ToString();
+                                        var mobile = Model.StoreAllData.Tables[0].Rows[i]["mobile"].ToString();
+                                        var distnm = Model.StoreAllData.Tables[0].Rows[i]["distnm"].ToString();
+                                        var dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                                        var lot = Model.StoreAllData.Tables[0].Rows[i]["lot"].ToString();
+                                        //var upddate = Model.StoreAllData.Tables[0].Rows[i]["upddate"].ToString();
+                                        <tr>
+                                            <td>@SLNO </td>
+                                            <td>@user </td>
+                                            <td>@pwd </td>
+                                            <td>@name</td>
+                                            <td>@email</td>
+                                            <td>@mobile</td>
+                                            <td>@distnm</td>
+                                            <td>@lot</td>
+                                            <td>
+                                                @if (lot != "0" && lot != "")
+                                               {
+                                                    <input type="button" value="Unlock" onclick="location.href='@Url.Action("AdminDeoUser", "DeoPortal", new { id = dist })'">
+                                                }
+                                            
+                                            </td>
+
+
+                                        </tr>
+                                    }
+                                }
+
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8">
+                                            @ViewBag.Message
+                                        </td>
+                                    </tr>
+                                }
+
+                            }
+       
+                        </table>
+                    </div>              
+                </div>
+            </div>
+
+}  
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Unlocked Successfully");                
+                @*window.location.href = '@Url.Action("AdminDeoUser", "DeoPortal")';*@
+            </script>}       
+    }
+}                   

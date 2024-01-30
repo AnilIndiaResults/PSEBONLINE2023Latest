@@ -1,0 +1,299 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+
+<style type="text/css">
+    input[type="checkbox"]:focus {
+        box-shadow: 0 0 1px 2px #cc0000;
+        border: 2px solid #cc0000;
+    }
+    * {
+  box-sizing: border-box;
+}
+
+#t01 tr.header, #t01 tr:hover {
+  background-color: #f1f1f1;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<h1>Admin View Staff Details</h1>
+@using (Html.BeginForm("AdminStaffReplaceReport", "DeoPortal", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2"> <label>Total : @ViewBag.TotalCount1</label></div>                
+                <div class="col-md-2">
+                    @Html.DropDownList("SelDist", new SelectList(ViewBag.Dist, "Value", "Text"), "--Select District---", new { @class = "", onchange = "deechange()" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+                </div>
+                    <div class="col-md-5"><input type="Submit" value="Search" name="cmd" onclick="return dee()" />
+                        &nbsp;&nbsp;  <input type="submit" value="Download Staff Replace Report" id="btnReplaceReport" name="cmd" />
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+        <div class="row"style="font-size:11px;">            
+            <div class="table-responsive">      
+                @*<div style="width:200px;"><span style="text-align:right">Search: <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names."></span></div>*@          
+                <div class="col-md-12">
+                    <table id="t01" class="table table-bordered" >
+                        <tr class="active-tr">
+                            <th>Centre Code</th>
+                            <th>Centre Name</th>
+                            <th>Centre Building Name</th>
+                            <th>District Name</th>
+                            <th>Type of Duty</th>
+                            <th>Old Epunjab ID</th>
+                            <th>Old Stafff Details</th>
+                            <th>Old Staff Mobile</th>
+                            <th>New Epunjab ID</th>
+                            <th>New Staff Details</th>
+                            <th>Old Staff Mobile</th>
+                            <th>Reason</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                                              
+                            @{
+                                if (@ViewBag.message == "1")
+                                {
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        int d = 0;
+                                        int Count = 0;
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            //CCODE, TeacherName, FatherName, Designation, TypeOfDuty, Mobile
+                                            d = d + 1;
+                                            var id = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                            var Oepunjabid = Model.StoreAllData.Tables[0].Rows[i]["Oepunjabid"].ToString();
+                                            var odistnm = Model.StoreAllData.Tables[0].Rows[i]["odistnm"].ToString();
+                                            var occode = Model.StoreAllData.Tables[0].Rows[i]["occode"].ToString();
+                                            var ocent = Model.StoreAllData.Tables[0].Rows[i]["ocent"].ToString();
+                                            var ocentnm = Model.StoreAllData.Tables[0].Rows[i]["ocentnm"].ToString();
+                                            var ostaffid = Model.StoreAllData.Tables[0].Rows[i]["ostaffid"].ToString();
+                                            var oname = Model.StoreAllData.Tables[0].Rows[i]["oname"].ToString();
+                                            var Ofname = Model.StoreAllData.Tables[0].Rows[i]["Ofname"].ToString();
+                                            var OCadreDesi = Model.StoreAllData.Tables[0].Rows[i]["OCadreDesi"].ToString();
+                                            var oschlnm = Model.StoreAllData.Tables[0].Rows[i]["oschlnm"].ToString();
+                                            var omobile = Model.StoreAllData.Tables[0].Rows[i]["omobile"].ToString();
+                                            var Nepunjabid = Model.StoreAllData.Tables[0].Rows[i]["Nepunjabid"].ToString();
+                                            var ndist = Model.StoreAllData.Tables[0].Rows[i]["ndist"].ToString();
+                                            var noccode = Model.StoreAllData.Tables[0].Rows[i]["noccode"].ToString();
+                                            var nocent = Model.StoreAllData.Tables[0].Rows[i]["nocent"].ToString();
+                                            var nocentnm = Model.StoreAllData.Tables[0].Rows[i]["nocentnm"].ToString();
+                                            var nstaffid = Model.StoreAllData.Tables[0].Rows[i]["nstaffid"].ToString();
+                                            var nname = Model.StoreAllData.Tables[0].Rows[i]["nname"].ToString();
+                                            var Nfname = Model.StoreAllData.Tables[0].Rows[i]["Nfname"].ToString();
+                                            var NCadreDesi = Model.StoreAllData.Tables[0].Rows[i]["NCadreDesi"].ToString();
+                                            var nschlnm = Model.StoreAllData.Tables[0].Rows[i]["nschlnm"].ToString();
+                                            var nmobile = Model.StoreAllData.Tables[0].Rows[i]["nmobile"].ToString();
+                                            var ecentre = Model.StoreAllData.Tables[0].Rows[i]["ecentre"].ToString();
+                                            var schoole = Model.StoreAllData.Tables[0].Rows[i]["schoole"].ToString();
+                                            var distnm = Model.StoreAllData.Tables[0].Rows[i]["distnm"].ToString();
+                                            var insdate = Model.StoreAllData.Tables[0].Rows[i]["insdate"].ToString();
+                                            //var centredate = Model.StoreAllData.Tables[0].Rows[i]["centredate"].ToString();
+                                            var reason = Model.StoreAllData.Tables[0].Rows[i]["reason"].ToString();
+                                            var userid = Model.StoreAllData.Tables[0].Rows[i]["userid"].ToString();
+
+                                            var dutyType = Model.StoreAllData.Tables[0].Rows[i]["dutyType"].ToString();
+                                            var NdutyType = Model.StoreAllData.Tables[0].Rows[i]["NdutyType"].ToString();
+                                            Count = Count + 1;
+                        <tr>
+                            <td>@ocent </td>
+                            <td>@ocentnm </td>
+                            <td>@schoole       </td>
+                            <td>@distnm     </td>
+                            <td>@OCadreDesi</td>
+                            <td>@Oepunjabid </td>
+                            <td>@oname @Html.Raw(" / ") @Ofname @Html.Raw(" / ")@OCadreDesi   </td>
+                            <td>@omobile    </td>
+                            <td>@Nepunjabid    </td>
+                            <td>@nname @Html.Raw(" / ") @Nfname @Html.Raw(" / ") @NCadreDesi </td>
+                            <td>@nmobile</td>
+                            <td>@reason</td>
+                            <td>@insdate</td>
+                            <td>
+                                @Html.ActionLink("View Letter", "NewAppointmentLetter", new { id = id })
+                            </td>
+                        </tr>
+                                           
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="7">
+                                                @ViewBag.Message
+                                            </td>
+                                        </tr>
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4">@ViewBag.message </td>
+                                    </tr>
+                                }
+
+                            }                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+   }
+
+<script type="text/javascript">
+    function UpdateCentStaff(staffid, Cent) {
+        var cvalue = $("#cent-" +staffid).val();
+        //alert("cent" + staffid);
+        //alert(cvalue);    
+                    $.ajax({
+                        type: "POST",
+                        url: "../DeoPortal/UpdateCentStaff", // this for calling the web method function in cs code.
+                        data: '{staffid: "' + (staffid) + '",cent: "' + cvalue + '"}',// user name or email value
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.sn=="Yes")
+                            {
+                                alert("Cent Updated Successfully");
+                                window.location.href = "/DeoPortal/ADMINVIEWSTAFF";
+                                $(".modal").hide();
+                            }
+                            else
+                            {
+                                alert("Update Failed.");
+                            }
+                        },
+                        failure: function (response) {
+                            alert(response);
+                        }
+                    });
+
+
+                }
+
+</script>
+
+<script>
+
+                    function dee() {
+
+                        if ($("#SelDist").val() == "") {
+
+                            $("#reqsession").slideDown("slow");
+                            return false;
+                        }
+                        
+                        if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+                            
+                            $("#reqsellist").slideDown("slow");
+                            return false;
+                        }
+
+                            //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+                            //    $("#reqsellist").slideUp("slow");
+                            //    $("#reqsstring").slideDown("slow");
+                            //    return false;
+                            //}
+                        else
+                            return true;
+
+                    }
+                    $(document).ready(function () {
+
+                        $("#SelDist").change(function () {
+                            if ($("#SelDist").val() == "") {
+                                // $("#SearchString").focus(function () { $("#reqsellist").slideUp("slow"); });
+                                $("#reqsession").slideDown("slow");
+                            }
+                            else {
+                                $("#reqsession").slideUp("slow");
+                            }
+
+                        });
+                        $("#Category").change(function () {
+                            var X=$("#Category").val();
+                            if ($("#Category").val() != "" || $("#Category").val() != "0") {
+                                //alert(X);
+                                $('#StaffList').hide();
+                            }
+                            if ($("#Category").val() == "0") {
+                                $('#StaffList').show();
+                            }
+
+                        });
+
+                        $("#StaffList").change(function () {
+                            var X = $("#StaffList").val();
+                            if ($("#StaffList").val() != "" || $("#StaffList").val() != "0") {
+                                //alert(X);
+                                $('#Category').hide();
+                            }
+                            if ($("#StaffList").val() == "0") {
+                                $('#Category').show();
+                            }
+
+                        });
+
+                    });
+
+
+                    var form = $("#searchform").serialize();
+                    $("#btnNext").click(function () {
+                        $.ajax({
+                            url: 'DeoPortal/Next',
+                            data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                            success: function (response) {
+                                $("body").html(response);
+                            }
+                        });
+                    });
+
+                    $("#btnPrevious").click(function () {
+                        $.ajax({
+                            url: 'DeoPortal/Previous',
+                            data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                            success: function (response) {
+                                $("body").html(response);
+                            }
+                        });
+                    });
+
+
+
+</script>
+
+<script>
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("t01");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+  for (j = 0; j < 20; j++){
+      td = tr[i].getElementsByTagName("td")[j];      
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+    }
+  }
+}
+</script>

@@ -1,0 +1,311 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Secrecy Update List Remove";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4L.css" />
+<style type="text/css">
+    .tprint td {
+        padding: 4px 4px;
+        line-height: 14px;
+        font-weight: normal;
+    }
+
+    body {
+        font-size: 11px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .footer {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        z-index: 9999999;
+        display: block;
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 225px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+    }
+
+    .checkbox {display:inline-block}
+    .tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+</style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+@using (Html.BeginForm("SecrecyUpdateListRemove", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12 noprint">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Search By @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text"), "--Select---", new { @class = "", id = "SelList", onchange = "deechange()" })
+                    <span id="reqsellist" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-3">
+                    Enter <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                    <span id="reqsstring" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="Submit" value="Search" name="cmd" onclick="return dee();" />
+                    <input type="submit" name="Reset" value="Reset" formaction="" formmethod="post" />
+                </div>
+                @*<div class="col-md-2">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valFormAmount();" title="Search on given input data" /></div>*@
+            </fieldset>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-right noprint">                        
+            <input type="Submit" value="Remove Updates" name="cmd" />
+            @*<input type="Submit" value="Final submit" name="cmd" onclick="return validate(this);" />*@
+            <input type="button" value="Print" class="btn" onclick="window.print()" />
+            <input value="Back" type="button" onclick="javascript:document.location.href='@Url.Action("RecheckConductPrint", "Admin")'" />
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div style="border:1px solid #fff !important;display:block">
+                <table border="1" width="100%" class="tprint">
+                    <thead>
+                        <tr>
+                            <td style="border-right:0 !important" colspan="3"><img src="~/Images/Printlogo.jpg" alt="PSEB" height="60px" width="60px" /></td>
+                            <td colspan="5" style="text-align:center;border-left:0 !important;border-right:0 !important;line-height:20PX">                                
+                                    @{
+                                        string s = null;
+                                        var lot = @ViewBag.lot;
+                                        var str = lot.Substring(0, 4);
+                                        if (@str == "CB12")
+                                            s = " Rechecking Senior Secondary March 2017";
+                                        else
+                                            s = "Rechecking Matriculation March 2017";
+                                    } 
+                                <span style="font-size:28px;font-weight:bold">Punjab School Education Board</span><br />
+                                <span style="font-size:20px;">@s</span></td>
+                            <td align="right" style="border-left:0 !important" colspan="3">Lot:- @ViewBag.lot<br />Update Date: @DateTime.Now.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                        <tr class="active-tr">
+                            <th width="6%">Sl. No.</th>
+                            <th width="8%">Set</th>
+                            <th width="10%">Dist</th>
+                            <th width="18%">Name / Fname</th>                                                                                    
+                            <th width="10%">Ref.No</th>
+                            <th width="15%">Roll No. / Dist. Name</th>                            
+                            <th width="10%">Secrecy Lot</th>
+                            @*<th width="10%" colspan="2">Action Change</th>*@
+                            <th width="10%" colspan="2">Action Change <br /><span><input type="checkbox" id="select_all" /> Select All</span> </th>
+                        </tr>
+                    </thead>
+                    @{
+                        if (ViewBag.TotalCount >= 1)
+                        {
+                            int d = 0;
+                            int Count = 0;
+
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var id = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                var Sset = Model.StoreAllData.Tables[0].Rows[i]["set"].ToString();
+                                var dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                                var distnm = Model.StoreAllData.Tables[0].Rows[i]["distnm"].ToString();
+                                var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                                var Rollnum = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                                var name = Model.StoreAllData.Tables[0].Rows[i]["name"].ToString() + '/' + Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                                var SecrecyLot = Model.StoreAllData.Tables[0].Rows[i]["SecrecyLot"].ToString();
+                                var ConductLot = Model.StoreAllData.Tables[0].Rows[i]["ConductLot"].ToString();                                
+                                Count = Count + 1;
+                                <tr>
+                                    <td style="height:54PX">@Count</td>
+                                    <td>@Sset</td>
+                                    <td>@dist / @distnm</td>                                    
+                                    <td>@name</td>
+                                    <td>@refno</td>
+                                    <td>@Rollnum</td>
+                                    <td>@SecrecyLot</td>                                                                                                            
+                                    <td colspan="2">Remove <input type="checkbox" id="AllChkIdRmv-@id" value="@id" name="AllChkIdRmv" class="checkbox" /></td>                                    
+                                </tr>
+                                //.... Pagin start
+                                if (d == ViewBag.TotalCountp)
+                                {
+                                    @*<tr>
+                                        <td colspan="12">
+
+                                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                                            &nbsp;
+
+                                            @if (ViewBag.pagesize == 1)
+
+                                            {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "FirmFinalPrint", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "FirmFinalPrint", new { page = ViewBag.pn })
+                                                }
+                                            }
+                                            else
+                                            {
+
+                                                @Html.ActionLink("<<", "FirmFinalPrint", new { page = 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink("< Prev", "FirmFinalPrint", new { page = ViewBag.pagesize - 1 })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "FirmFinalPrint", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "FirmFinalPrint", new { page = ViewBag.pn })
+                                                }
+
+                                            }
+
+
+                                        </td>
+                                    </tr>*@
+                                }
+
+                                //... Paging end
+                            }
+                        }
+
+
+                        else
+                        {
+                            <tr>
+                                <td colspan="11">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+                </div>
+            </div>
+        </div>
+
+                        }
+
+<script type="text/javascript">
+    $(function () {
+        $("#select_all").change(function () {
+            var status = this.checked;
+            var i = 0
+            $('input:checkbox[name=AllChkIdRmv]').each(function () {
+                $("input[name='AllChkIdRmv']")[i].checked = status;
+                i++;
+
+            });
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+    function dee() {
+        
+        if ($("#SelList").val() == "") {
+
+            $("#reqsellist").slideDown("slow");
+            return false;
+        }
+
+        if ($("#SelectItem").val() != "" && $("#SearchString").val() == "" && $("#SelList").val()!=4) {
+            $("#reqsellist").slideUp("slow");
+            $("#reqsstring").slideDown("slow");
+            return false;
+        }
+        else
+            return true;
+
+    }
+   
+</script>
+<script>
+    function deetext() {
+        $("#reqsstring").slideUp("slow");
+    }
+    function deechange() {
+        if ($("#SelList").val() != "") {
+            $("#reqsellist").slideUp("slow");
+        }
+        else {
+            $("#reqsellist").slideDown("slow");
+        }
+    }
+
+
+</script>
+
+

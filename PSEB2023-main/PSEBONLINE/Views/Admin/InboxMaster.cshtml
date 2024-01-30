@@ -1,0 +1,135 @@
+﻿@model PSEBONLINE.Models.InboxModel
+@{
+    ViewBag.Title = "Inbox-Master";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style type="text/css">
+    select[multiple]{height:240px}
+    textarea{resize:none;height:130px}
+    .bvc li {
+        padding-right: 1px;
+    }
+    .bvc .checkboxP {
+        padding-left: 1px;
+    }
+    .newList li {
+        padding: 0 15px !important;
+    }
+   .newList li .checkboxP {
+        margin-right: 2px;
+        }
+</style>
+<h1>Compose Mail</h1>
+<div id="divMain1">
+@using (Html.BeginForm("InboxMaster", "Admin", FormMethod.Post, new { id = "sendForm", enctype = "multipart/form-data" }))
+{
+    <div class="row">  
+    <div class="col-md-3">
+        Select User <span class="rqf"> (Multiple)</span>
+       @Html.DropDownList("SelectedAdmin", (MultiSelectList)ViewBag.MyAdminList, new { multiple = "multiple", id = "ddlUser" })     
+    </div>
+    <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-12">
+                    Subject @Html.TextBoxFor(a => a.Subject, new { id = "txtSubject", @class = "textnone" })
+                </div>
+                <div class="col-md-12">
+                    Body @Html.TextAreaFor(a => a.Body, new { id = "txtBody", @class = "textnone" })
+                </div>
+                <div class="col-md-6">
+                    Upload File <span class="rqf">(Multiple Max 10)</span>  @Html.TextBoxFor(a => a.files, "", new { id = "FileUpload2", @class = "FileUpload", @type = "file", @multiple = "multiple" })
+                </div>
+            </div>
+        </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-center pdntb">
+                <input type="submit" value="Send" id="btnSend" onclick="return valForm();" />
+                @*<input type="submit" value="Send" id="btnsave" />*@
+                <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Reset</a>
+            </div>
+    </div>
+}
+</div>
+<div id="loading1"></div>
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Send Successfully");
+                window.location.href = '/Admin/InboxMaster';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "20")
+        {
+        <script type="text/javascript" language="javascript">
+            alert("Please Select Atleast One User");
+        </script>}
+        else if (ViewData["result"].ToString() == "10")
+        {
+            <script type="text/javascript" language="javascript">
+            alert("Please Select Files less than equal to 10");
+            </script>}
+        else
+        {
+        <script type = "text/javascript" language = "javascript" >
+         alert("Send Failure, Plz Try Again");
+        
+        </script>
+            }
+        }
+}
+<script type="text/javascript">
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+
+    $('.FileUpload').change(function () {
+        alert(1);
+        var files = $(this)[0].files;
+        if (files.length > 10) {
+            alert("Please select only 10 images..!!!");
+            return false;
+        }
+        else if (files.length<= 0 {
+            alert("Please select atleat 1 image..!!!");
+            return false;
+        }
+    });
+
+    
+    function valForm() {
+
+        var ddlUser = document.getElementById("ddlUser");
+        if (ddlUser.value == "0" || ddlUser.value == "") {
+            alert("Select Atleast One User");
+            ddlUser.focus();
+            return false;
+        }
+        var txtSubject = document.getElementById("txtSubject");
+        if (txtSubject.value == "") {
+            alert("Enter Subject");
+            txtSubject.focus();
+            return false;
+        }       
+
+        var txtBody = document.getElementById("txtBody");
+        if (txtBody.value == "") {
+            alert("Enter Body");
+            txtBody.focus();
+            return false;
+        }       
+        return true;
+    }
+</script>

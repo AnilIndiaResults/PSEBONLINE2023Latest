@@ -1,0 +1,379 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Practical Exam Final Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 11px
+    }
+</style>
+<h1 class="noprint">NSQF Practical Marks Final Report, March 2021</h1>
+<div id="loading1"></div>
+<div id="div1" class="noprint">
+    @using (Html.BeginForm("NSQFPracExamFinalReport", "Agency", FormMethod.Post, new { id = "CCE", enctype = "multipart/form-data" }))
+    {
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            <form id="myForm">
+                <div class="row" id="divMain1">
+                    <div class="col-md-12">School Code & Name:  @Model.schoolAllotedToAgency.Schl<span>&</span> @Model.schoolAllotedToAgency.SCHLNME</div>
+                    <div class="clearefix"></div>
+                    <div class="col-md-6">Subject Code & Name: @ViewBag.SubCode<span>&</span> @ViewBag.SubName</div>
+                    <div class="col-md-6" style="text-align:right">Min/Max Marks: @ViewBag.PrMin<span>&</span> @ViewBag.PrMax</div>
+                </div>
+                <div class="clearefix"></div>
+                <!--if (ViewBag.itemLot != null)
+                {
+                    <div class="row">
+                        <div class="col-md-4">
+                            <br />
+
+                            Select Lot: @Html.DropDownList("SelLot", new SelectList(ViewBag.itemLot, "Value", "Text", ViewBag.SelectedLot), "--All---", new { @class = "" })
+
+
+                        </div>
+                        <div class="col-md-8">
+                            <br />&nbsp;<br />
+                            <input type="submit" value="Search" />
+                            @Html.Hidden("cid", (string)ViewBag.cid)-->
+                @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+                <!--</div>
+                    </div>
+                }-->
+
+            </form>
+        </fieldset>
+    }
+</div>
+@{
+    if (ViewBag.TotalCount > 0)
+    {
+        <table style="width:100%;" border="0" class="bgimg">
+            <tr>
+                <td>
+                    <table style="width:100%;" border="0" class="noprint">
+                        <tr>
+                            <td style="text-align:right;padding-bottom:3px">
+                                <input type="button" value="Print" class="btn" onclick="window.print()" />
+                                <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("PracticalExamMarks", "School")'" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <table border="0" style="width:98%;" align="center" class="brack">
+                        <thead>
+                            <tr>
+                                <td width="25%"><img src="~/Images/Printlogo.jpg" alt="PSEB" /></td>
+                                <td width="50%" style="font-size:16px;text-align:center;line-height:25px;">
+                                    <span style="font-size:22px;">Punjab School Education Board</span><br />Award of Practical Marks, Exam March 2023<br />
+                                    <span style="font-size:24px">(Final Report)</span>
+                                </td>
+                                <td width="25%" align="right">
+                                    Print Date: @DateTime.Now.ToString("dd/MM/yyyy")<br />@*FINAL SBMITTED ON :*@
+                                </td>
+                            </tr>
+                            <tr style="background-color:#ccc!important;font-size:14px">
+                                <td align="left">
+                                    Class: @if (ViewBag.Class == "2" || ViewBag.Class == "10")
+                                    {<span>Matric</span>}
+                                    else
+                                    {<span>Senior</span>}
+                                </td>
+                                <td align="center">
+                                    Exam Type: @if (ViewBag.RP == "R")
+                                    {<span>Regular</span>}
+                                </td>
+                                <td align="right">
+                                    Lot: @ViewBag.fplot <span>/</span> @ViewBag.fplot2
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">School Code & Name:  @Model.schoolAllotedToAgency.Schl<span>&</span> @Model.schoolAllotedToAgency.SCHLNME</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Subject Code & Name: @ViewBag.SubCode<span>&</span> @ViewBag.SubName</td>
+                                <td align="right">Min/Max Marks: @ViewBag.PrMin<span>&</span> @ViewBag.PrMax</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    Note : Take this printed copy in school record, do not submit it to PSEB Sub/Head office. Board can demand this copy any time if required.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <div class="lft-seca" style="padding:0px 0">
+                                        <table width="98%" border="1" style="float:left">
+                                            <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                                <td width="10%">&nbsp;Sr</td>
+                                                <td width="20%">&nbsp;StdId/RefNo</td>
+                                                <td width="25%">&nbsp;Roll No</td>
+                                                <td width="25%">&nbsp;Marks</td>
+                                                <td width="20%">&nbsp;Date</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="rgt-seca" style="padding:0px 0">
+                                        <table width="98%" border="1" style="float:right">
+                                            <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                                <td width="10%">&nbsp;Sr</td>
+                                                <td width="20%">&nbsp;StdId/RefNo</td>
+                                                <td width="25%">&nbsp;Roll No</td>
+                                                <td width="25%">&nbsp;Marks</td>
+                                                <td width="20%">&nbsp;Date</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">
+                                    @if (ViewBag.cid != "")
+                                    {
+                                        {
+                                            int columns = 2;
+                                            if (ViewBag.TotalCount > 0)
+                                            {
+                                                int d = 0;
+                                                int Count = 0;
+
+                                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                                {
+                                                    int col = i % columns;
+                                                    d = d + 1;
+                                                    var stdid = Model.StoreAllData.Tables[0].Rows[i]["Stdid"].ToString();
+                                                    var Roll = Model.StoreAllData.Tables[0].Rows[i]["Roll"].ToString();
+                                                    //var Regno = Model.StoreAllData.Tables[0].Rows[i]["Regno"].ToString();
+                                                    //var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                                    //var FName = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                                                    //var MName = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+                                                    //var SUB = Model.StoreAllData.Tables[0].Rows[i]["SUB"].ToString();
+                                                    //var SUBABBR = Model.StoreAllData.Tables[0].Rows[i]["SUBABBR"].ToString();
+                                                    var MARKS = Model.StoreAllData.Tables[0].Rows[i]["MARKS"].ToString();
+                                                    //var prmin = Model.StoreAllData.Tables[0].Rows[i]["prmin"].ToString();
+                                                    //var prmax = Model.StoreAllData.Tables[0].Rows[i]["prmax"].ToString();
+                                                    //var Sub1 = SUBABBR + "-" + SUB;
+                                                    //var Sub2 = prmax + "/" + prmin;
+                                                    //var FullName = Name + "/" + FName + "/" + MName;
+                                                    var PracDate = Model.StoreAllData.Tables[0].Rows[i]["PracDate"].ToString();
+                                                    Count = Count + 1;
+
+                                                    if (col == 0)
+                                                    {
+                                                        // left
+                                                        <div class="lft-seca" style="padding:0px 0">
+                                                            <table width="98%" border="1" style="float:left">
+                                                                @*<thead>
+                                                                        <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                                                            <td width="5%">Sr</td>
+                                                                            <td width="25%">StdId/RefNo</td>
+                                                                            <td width="25%">Roll No</td>
+                                                                            <td width="25%">Marks</td>
+                                                                            <td width="20%">Date</td>
+                                                                        </tr>
+                                                                    </thead>*@
+                                                                <tr style="font-size:9px">
+                                                                    <td width="10%">&nbsp;@Count</td>
+                                                                    <td width="20%">&nbsp;@stdid</td>
+                                                                    <td width="25%">&nbsp;@Roll</td>
+                                                                    <td width="25%">&nbsp;@MARKS</td>
+                                                                    <td width="20%">&nbsp;@PracDate</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    }
+                                                    else  // col == 1
+                                                    {
+                                                        // right
+                                                        <div class="rgt-seca" style="padding:0px 0">
+                                                            <table width="98%" border="1" style="float:right">
+                                                                @* <thead>
+                                                                        <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                                                            <td width="5%">Sr</td>
+                                                                            <td width="25%">StdId/RefNo</td>
+                                                                            <td width="25%">Roll No</td>
+                                                                            <td width="25%">Marks</td>
+                                                                            <td width="20%">Date</td>
+                                                                        </tr>
+                                                                    </thead>*@
+                                                                <tr style="font-size:9px">
+                                                                    <td width="10%">&nbsp;@Count</td>
+                                                                    <td width="20%">&nbsp;@stdid</td>
+                                                                    <td width="25%">&nbsp;@Roll</td>
+                                                                    <td width="25%">&nbsp;@MARKS</td>
+                                                                    <td width="20%">&nbsp;@PracDate</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    }
+
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </td>
+            </tr>
+
+        </table>
+    }
+    else
+    { <p class="rqf" style="text-align:center;font-size:medium">Record Not Found</p>
+        <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("ViewAllSchoolsAllowed", "Agency")'" />
+    }
+}
+
+
+
+
+
+<script>
+    jQuery(document).ready(function () {
+        jQuery('[data-confirm]').click(function (e) {
+            if (!confirm(jQuery(this).attr("data-confirm"))) {
+                e.preventDefault();
+            }
+            else {
+                var ExaminerName = document.getElementById('ExaminerName').value;
+                var HeadExaminerName = document.getElementById('HeadExaminerName').value;
+                var ControllerName = document.getElementById('ControllerName').value;
+                var ExaminerSCHL = document.getElementById('ExaminerSCHL').value;
+                var HeadExaminerSCHL = document.getElementById('HeadExaminerSCHL').value;
+                var ControllerSCHL = document.getElementById('ControllerSCHL').value;
+                var ExaminerTeacher = document.getElementById('ExaminerTeacher').value;
+                var HeadExaminerTeacher = document.getElementById('HeadExaminerTeacher').value;
+                var ControllerTeacher = document.getElementById('ControllerTeacher').value;
+                var ExaminerMobile = document.getElementById('ExaminerMobile').value;
+                var HeadExaminerMobile = document.getElementById('HeadExaminerMobile').value;
+                var ControllerMobile = document.getElementById('ControllerMobile').value;
+                if (ExaminerName == '' || ExaminerName == '0') {
+                    alert("Select ExaminerName");
+                    document.getElementById('ExaminerName').focus();
+                    return false;
+                }
+                if (HeadExaminerName == '' || HeadExaminerName == '0') {
+                    alert("Select HeadExaminerName");
+                    document.getElementById('HeadExaminerName').focus();
+                    return false;
+                }
+                if (ControllerName == '' || ControllerName == '0') {
+                    alert("Select ControllerName");
+                    document.getElementById('ControllerName').focus();
+                    return false;
+                }
+
+                if (ExaminerSCHL == '' || ExaminerSCHL == '0') {
+                    alert("Select ExaminerSCHL");
+                    document.getElementById('ExaminerSCHL').focus();
+                    return false;
+                }
+                if (HeadExaminerSCHL == '' || HeadExaminerSCHL == '0') {
+                    alert("Select HeadExaminerSCHL");
+                    document.getElementById('HeadExaminerSCHL').focus();
+                    return false;
+                }
+                if (ControllerSCHL == '' || ControllerSCHL == '0') {
+                    alert("Select ControllerSCHL");
+                    document.getElementById('ControllerSCHL').focus();
+                    return false;
+                }
+
+                if (ExaminerTeacher == '' || ExaminerTeacher == '0') {
+                    alert("Select ExaminerTeacher");
+                    document.getElementById('ExaminerTeacher').focus();
+                    return false;
+                }
+                if (HeadExaminerTeacher == '' || HeadExaminerTeacher == '0') {
+                    alert("Select HeadExaminerTeacher");
+                    document.getElementById('HeadExaminerTeacher').focus();
+                    return false;
+                }
+                if (ControllerTeacher == '' || ControllerTeacher == '0') {
+                    alert("Select ControllerTeacher");
+                    document.getElementById('ControllerTeacher').focus();
+                    return false;
+                }
+
+                if (ExaminerMobile == '' || ExaminerMobile == '0') {
+                    alert("Select ExaminerMobile");
+                    document.getElementById('ExaminerMobile').focus();
+                    return false;
+                }
+                if (HeadExaminerMobile == '' || HeadExaminerMobile == '0') {
+                    alert("Select HeadExaminerMobile");
+                    document.getElementById('HeadExaminerMobile').focus();
+                    return false;
+                }
+                if (ControllerMobile == '' || ControllerMobile == '0') {
+                    alert("Select ControllerMobile");
+                    document.getElementById('ControllerMobile').focus();
+                    return false;
+                }
+                goFinal();
+            }
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+    function goFinal() {
+      //  alert("Start goFinal");
+        var tblname = '#t01';
+        var TableData;
+        TableData = JSON.stringify(storeTblValues());
+         console.log("JsonString  = " + TableData + "\n");
+        //post
+        if (TableData == "false") {
+            alert("Not Submitted, Please Try Again");
+        }
+        else if (TableData != "false") {
+          /// alert('Now Start:' + TableData);
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/JqNSQFPracExamFinalReport", { "SelClass": '@ViewBag.Class', "RP": '@ViewBag.RP', "CandPracExaminer": TableData },
+                function (data) {
+                    $('#loading1').empty();
+                    if (data.status == "0" || data.status == "-1") {
+                        alert("Final Submit Failure, Please Try Again");
+                    }
+                    else if (data.status == "1") {
+                        alert("Final Submit Successfully");
+                    }
+                    else {
+                        alert("Final Submit Failure : " + data.status);
+                    }
+                });
+        }
+
+        function storeTblValues() {
+           //  alert('3');
+            var TableData = new Array();
+            $('' + tblname + ' tr').each(function (row, tr) {
+                TableData[row] = {
+                    "SUB":'@ViewBag.SubCode',
+                    "CENT": '@ViewBag.CentreCode',
+                    "EXAMINER": $(tr).find('.chkEN').val(),
+                    "SCHOOL": $(tr).find('.chkES').val(),
+                    "TEACHER": $(tr).find('.chkET').val(),
+                    "MOBILE": $(tr).find('.chkEM').val()
+                }
+            });
+            TableData.shift();  // first row will be empty - so remove
+            //alert(TableData);
+            return TableData;
+
+        }
+    }
+</script>

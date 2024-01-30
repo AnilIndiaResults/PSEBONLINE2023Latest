@@ -1,0 +1,240 @@
+﻿@model PSEBONLINE.Models.PunAddModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<h1>Punjabi Additional Special Exam For Matriculation Class</h1>
+@using (Html.BeginForm("PunAddRoll", "PunAdd", FormMethod.Post, new { id = "Search", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-1">
+                    Total <label>@ViewBag.TotalCount</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-2">
+                        Select Batch:  @Html.DropDownList("batchYear", new SelectList(ViewBag.MybatchYear, "Value", "Text"), "-- Select---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        @{
+                            List<SelectListItem> SearchBy = new List<SelectListItem>();
+                            SearchBy.Add(new SelectListItem { Text = "---Select----", Value = "0" });
+                            SearchBy.Add(new SelectListItem { Text = "refno", Value = "refno" });
+                            SearchBy.Add(new SelectListItem { Text = "roll", Value = "roll" });
+                            SearchBy.Add(new SelectListItem { Text = "name", Value = "name" });
+                            SearchBy.Add(new SelectListItem { Text = "Father Name", Value = "fname" });
+                            SearchBy.Add(new SelectListItem { Text = "Mother Name", Value = "mname" });
+                            SearchBy.Add(new SelectListItem { Text = "Mobile No", Value = "mobile" });
+                            SearchBy.Add(new SelectListItem { Text = "Reciept No", Value = "Rno" });
+                        }
+
+                        Search By: @Html.DropDownList("SearchBy", SearchBy, new { id = "SearchBy", ViewBag.MySearchBy })
+                    </div>
+                    <div class="col-md-2">
+                        Search Text : <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-5">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" />
+                        <input type="submit" value="Generate Roll No" name="cmd" onclick="return formValGenRoll();" />
+                        <input type="submit" value="Dwld Data" name="cmd" onclick="return formVal();" />
+                        <input type="submit" value="Dwld Image" name="cmd" onclick="return formVal();" />
+                        <input type="submit" value="Back" formaction="AdminPunAddHome" title="Go for Home Page" />
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>SLNO</th>
+                    <th>BATCH</th>
+                    <th>YEAR</th>
+                    <th>SET</th>
+                    <th>DISTRICT</th>
+                    <th>OLD ROLL</th>
+                    <th>NEW ROLL</th>
+                    <th>REFNO</th>
+                    <th>Name/Fname/Mname</th>
+                    <th>Mobile</th>
+                    <th>Final Status</th>
+                    <th>Fee Status <br />(Reciept/Amt/Date)</th>
+                    <th>Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        var Slno = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+
+                            var BATCH = Model.StoreAllData.Tables[0].Rows[i]["BATCH"].ToString();
+                            var YEAR = Model.StoreAllData.Tables[0].Rows[i]["BATCHYEAR"].ToString();
+                            var SET = Model.StoreAllData.Tables[0].Rows[i]["SET"].ToString();
+                            //var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                            var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();
+                            var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                            var EXAMROLL = Model.StoreAllData.Tables[0].Rows[i]["EXAMROLL"].ToString();
+                            var REFNO = Model.StoreAllData.Tables[0].Rows[i]["REFNO"].ToString();
+                            var NAME = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                            var FNAME = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var MNAME = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                            var MOBILE = Model.StoreAllData.Tables[0].Rows[i]["MOBILE"].ToString();
+                            var FORMSTATUS = Model.StoreAllData.Tables[0].Rows[i]["FORMSTATUS"].ToString();
+                            var Rno = Model.StoreAllData.Tables[0].Rows[i]["Rno"].ToString();
+                            var RAMT = Model.StoreAllData.Tables[0].Rows[i]["RAMT"].ToString();
+                            var Rdate = Model.StoreAllData.Tables[0].Rows[i]["Rdate"].ToString();
+                            var FeeDtl = "";
+                            if (Rno != "")
+                            {
+                                FeeDtl = Rno;
+                            }
+                            if (RAMT != "")
+                            {
+                                FeeDtl += "/" + RAMT;
+                            }
+                            if (Rdate != "")
+                            {
+                                FeeDtl += "/" + Rdate;
+                            }
+                            Slno = Slno + 1;
+                            <tr>
+                                <td>
+                                    @Slno
+                                </td>
+                                <td>
+                                    @BATCH
+                                </td>
+                                <td>
+                                    @YEAR
+                                </td>
+                                <td>
+                                    @SET
+                                </td>
+                                <td>
+                                    @DISTNM
+                                </td>
+                                <td>
+                                    @ROLL
+                                </td>
+                                <td>
+                                    @EXAMROLL
+                                </td>
+                                <td>
+                                    @REFNO
+                                </td>
+                                <td>
+                                    @NAME / @FNAME / @MNAME
+                                </td>
+                                <td>
+                                    @MOBILE
+                                </td>
+                                <td>
+                                    @FORMSTATUS
+                                </td>
+                                <td>
+                                    @FeeDtl
+                                </td>
+                                <td>
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+                                                <li>@Html.ActionLink("VIEW", "AdminConfirmationView", new { id = (REFNO) }, new { Class = "", title = "Student Detail View" })</li>
+                                                <li>@Html.ActionLink("EDIT", "AdminConfirmationEdit", new { id = (REFNO) }, new { Class = "", title = "Student Detail Edit" })</li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+
+                            </tr>
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="13">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<script>
+    //function isNumberKey(evt) {
+    //    var charCode = (evt.which) ? evt.which : event.keyCode
+    //    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+    //        return true;
+    //    }
+    //    else {
+    //        alert("Invalid character...Enter Only Number!!");
+    //        return false;
+    //    }
+    //}
+
+    function formVal() {
+        var result = document.getElementById('batchYear').value;
+        var schlList = document.getElementById('SearchBy').value;
+
+
+        if (schlList == "name" || schlList == "fname" || schlList == "mname" || schlList == "" || schlList == "0") {
+            if (result == '' || result == "") {
+                alert("Select any batch");
+                document.getElementById('batchYear').focus();
+                return false;
+            }
+        }
+
+
+        if (schlList != '0') {
+            var SchlCode = document.getElementById("SearchString");
+            if (SchlCode.value == "" || SchlCode.value == "0") {
+                switch (schlList) {
+                    case "refno": schlList = "Reference No"; break
+                    case "roll": schlList = "Old Roll No"; break
+                    case "name": schlList = "Candidate Name"; break
+                    case "fname": schlList = "Father Name"; break
+                    case "mname": schlList = "Mother Name"; break
+                    case "mobile": schlList = "Mobile No"; break
+                    case "Rno": schlList = "Reciept No"; break
+                }
+                alert("Enter " + schlList);
+                document.getElementById("SearchString").focus();
+                return false;
+            }
+        }
+        else {
+            document.getElementById("SearchString").value = "";
+        }
+    }
+
+
+    function formValGenRoll() {
+        var result = document.getElementById('batchYear').value;        
+
+        if (result == '' || result == "") {
+            alert("Select any batch");
+            document.getElementById('batchYear').focus();
+            return false;
+        }
+  
+    }
+</script>
+
+

@@ -1,0 +1,362 @@
+﻿@model PSEBONLINE.Models.SchoolAllowForCCE
+
+@{
+    ViewBag.Title = "AllowCCE";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+
+@using (Html.BeginForm("AllowCCE", "Admin", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr>
+                        <td>Choose Marks Panel<span class="rqf">*</span></td>
+                        <td colspan="2">
+                            @Html.RadioButtonFor(m => m.Panel, "ReAppearCCE", new { id = "ReAppearCCE" })<content>ReAppear-C.C.E</content>
+                            @Html.RadioButtonFor(m => m.Panel, "INA-OPEN", new { id = "INA-OPEN" })<content>INA-OPEN</content>
+                            @Html.RadioButtonFor(m => m.Panel, "preboard", new { id = "preboard" })<content>Pre-Board</content>
+                            @Html.RadioButtonFor(m => m.Panel, "cce", new { id = "cce" })<content>C.C.E</content>
+                            @Html.RadioButtonFor(m => m.Panel, "elective", new { id = "elective" })<content>Elective Theory</content>
+                            @Html.RadioButtonFor(m => m.Panel, "phychl", new { id = "phychl" })<content>Differently Abled</content><br />
+                            @Html.RadioButtonFor(m => m.Panel, "SchoolBasedExams", new { id = "SchoolBasedExams" })<content>School Based Exams</content>
+                            @Html.RadioButtonFor(m => m.Panel, "SchoolBasedExamsOpen", new { id = "SchoolBasedExamsOpen" })<content>School Based Exams (Open)</content>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Choose Class<span class="rqf">*</span></td>
+                        <td colspan="2">
+                            @Html.RadioButtonFor(m => m.Cls, "5", new { id = "Primary" })<content>Primary</content>
+                            @Html.RadioButtonFor(m => m.Cls, "8", new { id = "Middle" })<content>Middle</content>
+                            @Html.RadioButtonFor(m => m.Cls, "2", new { id = "Matric" })<content>Matric</content>
+                            @Html.RadioButtonFor(m => m.Cls, "4", new { id = "Senior" })<content>Senior</content>
+                            @*@Html.RadioButtonFor(m => m.Cls, "10", new { id = "ElectiveTheory" })<content>Elective Theory</content>*@
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Enter School Code <span class="rqf">*</span></td>
+                        <td width="60%">
+                            @Html.TextBoxFor(m => m.Schl, new { id = "Schl", @maxlength = "7", @required = "required", onkeypress = "return isNumberKey(event)" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Roll No's (Comma Seprated)</td>
+                        <td width="60%">
+                            @Html.TextBoxFor(m => m.AllowTo, new { id = "AllowTo" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Receipt No.</td>
+                        <td width="60%">
+                            @Html.TextBoxFor(m => m.ReceiptNo, new { id = "ReceiptNo", @required = "required" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DepositDate</td>
+                        <td width="60%">
+                            @Html.TextBoxFor(m => m.DepositDate, new
+                       {
+                           id = "DepositDate",
+                           @class = "date",
+                           @maxlength = "10",
+                           onpaste = "return false;",
+                           oncopy = "return false;",
+                           oncut = "return false;",
+                           @readonly = "readonly",
+                           @required = "required"
+                       })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Amount</td>
+                        <td width="60%">
+                            @Html.TextBoxFor(m => m.Amount, new { id = "Amount", @required = "required", onkeypress = "return isNumberKey(event)" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Allowed Upto Date<span class="rqf">*</span></td>
+                        <td colspan="2">
+                            @Html.TextBoxFor(m => m.LastDate, new
+                       {
+                           id = "LastDate",
+                           @class = "date",
+                           @maxlength = "10",
+                           onpaste = "return false;",
+                           oncopy = "return false;",
+                           oncut = "return false;",
+                           @readonly = "readonly",
+                           @required = "required"
+                       })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Enter Remarks</td>
+                        <td width="60%">
+                            @Html.TextBoxFor(m => m.AllowRemarks, new { id = "AllowRemarks", @required = "required" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="3">
+                            @if (ViewBag.Id == 0)
+                            {<input type="submit" value="Save" name="cmd" onclick="return valForm();" /> }
+                            else
+                            { <input type="submit" value="Update" name="cmd" onclick="return valForm();" />}
+                            &nbsp;&nbsp;&nbsp;
+                            <a href="/Admin/AllowCCE" class="btn">Reset</a>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<div class="row" id="divall">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("AllowCCE", "Admin", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-2">
+                    Search By   @Html.DropDownList("SearchList", new SelectList(ViewBag.MySearch, "Value", "Text", ViewBag.SelectedSearch), "--Select---", new { @class = "form-control", @required = "required" })
+                </div>
+                <div class="col-md-2">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" name="SearchString" required value="@Request["SearchString"]" />
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="submit" name="cmd" value="Search" />
+                    <a href="/Admin/AllowCCE" class="btn">Reset</a>
+                </div>
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">Total:  @ViewBag.TotalCount</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>Panel</th>
+                    <th>Class</th>
+                    <th>School Code</th>
+                    <th>Roll Nos</th>
+                    <th>Receipt No.</th>
+                    <th>Deposit Date</th>
+                    <th>Amount</th>
+                    <th>Allowed Date</th>
+                    <th>Allowed Upto</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Action</th>
+
+                </tr>
+                @{
+
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var ID = Model.StoreAllData.Tables[0].Rows[i]["Id"].ToString();
+                            var Schl = Model.StoreAllData.Tables[0].Rows[i]["Schl"].ToString();
+                            var Cls = Model.StoreAllData.Tables[0].Rows[i]["Cls"].ToString();
+                            var LastDate = Model.StoreAllData.Tables[0].Rows[i]["LastDate"].ToString();
+                            var AllowTo = Model.StoreAllData.Tables[0].Rows[i]["AllowTo"].ToString();
+                            var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString().ToLower();
+                            var IsActive = Model.StoreAllData.Tables[0].Rows[i]["IsActive"].ToString().ToLower();
+                            var ReceiptNo = Model.StoreAllData.Tables[0].Rows[i]["ReceiptNo"].ToString();
+                            var DepositDate = Model.StoreAllData.Tables[0].Rows[i]["DepositDate"].ToString();
+                            var Amount = Model.StoreAllData.Tables[0].Rows[i]["Amount"].ToString();
+                            var AllowedDate = Model.StoreAllData.Tables[0].Rows[i]["AllowedDate"].ToString();
+                            var PanelName = Model.StoreAllData.Tables[0].Rows[i]["PanelName"].ToString();
+                            var EmpDetails = Model.StoreAllData.Tables[0].Rows[i]["EmpDetails"].ToString();
+                            var AllowRemarks = Model.StoreAllData.Tables[0].Rows[i]["AllowRemarks"].ToString();
+                            var ClsNM = Model.StoreAllData.Tables[0].Rows[i]["ClsNM"].ToString();
+                            int Count = i + 1;
+                <tr>
+                    <td>@Count</td>
+                    <td>@PanelName</td>
+                    <td>@ClsNM</td>
+                    <td>@Schl</td>
+                    <td>@AllowTo</td>
+                    <td>@ReceiptNo</td>
+                    <td>@DepositDate </td>
+                    <td>@Amount</td>
+                    <td>@AllowedDate</td>
+                    <td>@LastDate</td>
+                    <td>@Status</td>                  
+                    <td>@AllowRemarks <br /> @EmpDetails</td>
+                    <td>
+                        @if (IsActive != "2")
+                        {
+                            <a href='@Url.Action("AllowCCE", "Admin", new { id = ID })' onclick="return confirm('You are sure to modify this?');">
+                                <img src="/Images/Edit_Icon.png" width="25" title="Modify" />
+                            </a>
+                            <a href='@Url.Action("ListingCCE", "Admin", new { id = ID })' onclick="return confirm('You are sure to delete this?');">
+                                <img src="/Images/cancel_icon.png" width="25" title="Delete" />
+                            </a>
+                        }
+                    </td>
+                </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Saved Successfully");
+                window.location.href = '/Admin/AllowCCE';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Updated Successfully");
+                window.location.href = '/Admin/AllowCCE';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Failure..plz try again");
+            </script>
+        }
+    }
+}
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "2020:2021"
+        });
+    });
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+
+
+<script type="text/javascript">
+
+    function valForm() {
+
+        var preboard = document.getElementById("preboard").checked;
+        var cce = document.getElementById("cce").checked;
+        var elective = document.getElementById("elective").checked;
+        var phychl = document.getElementById("phychl").checked;
+        var schoolBasedExams = document.getElementById("SchoolBasedExams").checked;
+        var SchoolBasedExamsOpen = document.getElementById("SchoolBasedExamsOpen").checked;
+        var reAppearCCE = document.getElementById("ReAppearCCE").checked;
+        if (preboard == false && cce == false && elective == false && phychl == false && reAppearCCE == false && schoolBasedExams == false && SchoolBasedExamsOpen == false ) {
+            alert("Please Select Marks Panel");
+            return false;
+        }
+
+
+        var Primary = document.getElementById("Primary").checked;
+        var Middle = document.getElementById("Middle").checked;
+        var Senior = document.getElementById("Senior").checked;
+        var Matric = document.getElementById("Matric").checked;
+        var ElectiveTheory = document.getElementById("ElectiveTheory").checked;
+        if (Primary == false && Middle == false && Senior == false && Matric == false) {
+            alert("Please Select Class");
+            return false;
+        }
+
+        var Schl = document.getElementById("Schl");
+        if (Schl.value == "") {
+            alert("Please Enter School Code");
+            Schl.focus();
+            return false;
+        }
+
+        var ReceiptNo = document.getElementById("ReceiptNo");
+        if (ReceiptNo.value == "") {
+            alert("Please Enter ReceiptNo");
+            ReceiptNo.focus();
+            return false;
+        }
+        var DepositDate = document.getElementById("DepositDate");
+        if (DepositDate.value == "") {
+            alert("Please Enter Deposit Date");
+            DepositDate.focus();
+            return false;
+        }
+        var Amount = document.getElementById("Amount");
+        if (Amount.value == "") {
+            alert("Please Enter Amount");
+            Amount.focus();
+            return false;
+        }
+
+        var LastDate = document.getElementById("LastDate");
+        if (LastDate.value == "" || LastDate.value == "0") {
+            alert("Please Select Allow Upto Date");
+            UploadDate.focus();
+            return false;
+        }
+
+
+
+
+
+        return true;
+    }
+
+</script>
+
+

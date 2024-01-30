@@ -1,0 +1,361 @@
+﻿@model PSEBONLINE.Models.MigrateSchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>List Of School Candidate's</h1>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+@using (Html.BeginForm("RegEntryview", "MigrateSchool", FormMethod.Post, new { id = "Migrate", enctype = "multipart/form-data" }))
+{ <fieldset style="margin-bottom:15px">
+                <legend>List Of School Candidate's (Session <b>
+                                                                @if (Session["Session"] != null)
+                                                                {@Session["Session"].ToString()}
+                                                                else { Response.Redirect("~/Admin"); }
+                    </b>)</legend>
+  <form id="myForm">
+    <div class="row">        
+           
+  
+                <div class="col-md-2">
+                    Total Student<label>@ViewBag.TotalCount</label>
+                </div>
+                <div class="col-md-2">
+                    School Code <label>@ViewBag.schlCode</label>
+                     @*@Html.HiddenFor(a => a.SchlCode, new { id = "SchlCode", @ReadOnly = "ReadOnly" })*@ 
+                    @Html.HiddenFor(a => a.SchlCode)
+                </div>
+                <div class="col-md-2">
+                    School ID <label>@ViewBag.schlID</label>
+                </div>
+                <div class="col-md-6">
+                    School Name <label>@ViewBag.schlName</label>
+                </div>
+</div>
+ <div class="clearefix"></div>
+   <div class="row">  
+           
+                    <div class="col-md-2">
+                        Select Form:  @Html.DropDownList("SelForm", new SelectList(ViewBag.MyForm, "Value", "Text"), "--All---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        Select Lot No:  @Html.DropDownList("SelLot", new SelectList(ViewBag.MyLot, "Value", "Text"), "--All---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        Filter By:  @Html.DropDownList("SelFilter", new SelectList(ViewBag.MyFilter, "Value", "Text"), "Select", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-4">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" />
+                        @*<input type="button" name="Back" value="Back" formaction="CancelForm" formmethod="post" />*@
+                        <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a>
+                    </div>
+               
+        </div>
+ </form>
+            </fieldset>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>ID</th>
+                    <th>S.No.</th>
+                    <th>Form</th>
+                    <th>Reg.No.</th>                    
+                    <th>Stream/Group</th>
+                    <th>Name/Father's Name/Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Gender</th>
+                    @*<th>RegDate</th>*@
+                    <th>Adm Date</th>
+                    <th>Fee</th>
+                    <th>Lot</th>
+                    <th>ACTIONS</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var idno = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                            var Sno = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                            var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                            var Std_Sub = Model.StoreAllData.Tables[0].Rows[i]["StdSub"].ToString();
+                            var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                            var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                            var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                            var FullName = Candi_Name + "/ "+ Father_Name + "/ " + Mother_Name;
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                            //var RegDate = Model.StoreAllData.Tables[0].Rows[i]["REGDATE"].ToString();
+                            var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["REGFEE"].ToString();
+                            var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();                            
+
+                            <tr>
+                                <td>
+                                    @idno
+                                </td>
+                                <td>
+                                    @Sno
+                                </td>
+                                <td>
+                                    @FormName
+                                </td>
+                                <td>
+                                    @RegNo
+                                </td>                                
+                                <td>
+                                    @Std_Sub
+                                </td>
+                                <td>
+                                    @FullName
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @Gender
+                                </td>
+                                @*<td>
+                                    @RegDate
+                                </td>*@
+                                <td>
+                                    @AdmDate
+                                </td>
+                                <td>
+                                    @Fee
+                                </td>
+                                <td>
+                                    @Lot
+                                </td>
+
+                                <td>
+
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+                                                @if (Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString() == "N1")
+                                                {
+                                                    <li>
+                                                        @Html.ActionLink("View", "N1formview", "MigrateSchool", new { id = encrypt.QueryStringModule.Encrypt(idno) },null)
+                                                       
+                                               
+                                                    </li>
+                                                }
+                                                @if (Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString() == "E1")
+                                                {
+                                                    @Html.ActionLink("View", "E1formview", "MigrateSchool", new { id = encrypt.QueryStringModule.Encrypt(idno) }, null)
+
+                                                }
+
+                                                <li>@Html.ActionLink("Migrate", "MigrationForm", new { id = (idno) })</li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    @*<div class="cart">
+                                            Choose Action <span class="caret"></span>
+                                            <div id="sidebar">
+                                                <ul>
+                                                    <li>@Html.ActionLink("RegEntry", "RegEntryview", new { id = encrypt.QueryStringModule.Encrypt(SCHl) }, new { Class = "", title = "Student Registration Entries by School" })</li>
+
+                                                </ul>
+                                            </div>
+                                        </div>*@
+                                </td>
+
+                            </tr>
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+@*<div class="row">
+        <div class="col-md-12 text-center" style="padding:15px 0">
+            <input type="button" value="Add New Records" onclick="javascript:document.location.href='@Url.Action("N1Form", "RegistrationPortal")'" />
+            <input type="button" value="Rough Report" onclick="javascript:document.location.href='@Url.Action("RoughReport", "RegistrationPortal", new { Form = "N1" })'" />
+            <input type="button" value="Student Verification Form" onclick="javascript:document.location.href='@Url.Action("StudentVerificationForm", "RegistrationPortal", new { Form = "N1" })'">
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("N1Form", "RegistrationPortal" )'" />
+        </div>
+    </div>*@
+
+@*<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function formVal() {
+        var result = document.getElementById('SelDist').value;
+        if (result == '') {
+            alert("Select Distric");
+            document.getElementById('SelDist').focus();
+            return false;
+        }
+        var schlList = document.getElementById('SelList').value;
+        if (schlList != '') {
+            var SchlCode = document.getElementById("SearchString");
+            if (SchlCode.value == "" || SchlCode.value == "0") {
+                alert("Enter School Code");
+                document.getElementById("SearchString").focus();
+                return false;
+            }
+        }
+        else {
+            document.getElementById("SearchString").value = "";
+        }
+
+    }
+</script>*@
+
+<script>
+
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelFilter').value;
+
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0'
+                //maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelFilter").change(function () {
+            var value = document.getElementById('SelFilter').value;
+            $('#SearchString').val('');
+            if (value == 6) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '0'
+                    //maxDate: '-10Y',
+
+                });
+
+            }
+            else if (value == 3 || value == 4 || value == 5) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+</script>
+
+
+
+

@@ -1,0 +1,386 @@
+﻿@model PSEBONLINE.Models.EAffiliationModel
+
+@{
+    ViewBag.Title = "Building Fire Map Details";
+    Layout = "~/Views/Shared/_HeaderEAffiliation.cshtml";
+}
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<section class="content-header">
+    <h1>Building/Fire/Map Details</h1>
+</section>
+<div id="loading1"></div>
+
+@using (Html.BeginForm("BuildingFireMapDetails", "EAffiliation", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="box">
+
+        <div class="row">
+            <div class="col-md-12"><h4>Society/Trust details which running the Institution</h4></div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Name<span class="rqf">*</span></div>
+            <div class="col-md-10"> @Html.TextBoxFor(model => model.SocietyName, new { @required = "required", @maxlength = "100" })</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Registration No<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(model => model.SocietyRegNo, new { @required = "required", @maxlength = "25" })</div>
+            <div class="col-md-2">Registration Date<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(model => model.SocietyRegDate, new { required = "required", @maxlength = "10", @class = "datepicker",@readonly= "readonly" })</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">No of Members<span class="rqf">*</span></div>
+            <div class="col-md-10"> @Html.TextBoxFor(model => model.SocietyNOM, new { @required = "required", @maxlength = "4", onkeypress = "return isNumberKey(event);" })</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Name of Chairman<span class="rqf">*</span></div>
+            <div class="col-md-4"> @Html.TextBoxFor(model => model.SocietyChairmanName, new { required = "required", @maxlength = "50" })</div>
+            <div class="col-md-2">Chairman Mobile No<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(model => model.SocietyChairmanMobile, new { @required = "required", @maxlength = "10", onkeypress = "return isNumberKey(event);" })</div>
+            <div class="clearfix"></div>
+            @*<div class="col-md-12"><span class="rqf">Note : Attach copy of  Society registration Certificate, Constitution etc.  with hard copy.</span></div>
+                <div class="clearfix"></div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(a => a.SocietyFile, null, new { id = "SocietyFile", type = "file", @onchange = "CheckSocietyFile(this)" })
+                    @Html.HiddenFor(a => a.SocietyFile)<span class="rqf">(Size limit upto 1MB)</span>
+                </div>
+                <div class="col-md-6">
+                    @if (!string.IsNullOrEmpty(Model.SocietyFile))
+                    {
+                        <a href="@ViewBag.SocietyFile" target="_blank" class="btn">Download File</a>
+                    }
+                </div>*@
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12"><h4>Building Safety Certificate Details</h4></div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">&nbsp<br />Validity Period (Yrs)<span class="rqf">*</span></div>
+            <div class="col-md-5">From<br />@Html.DropDownListFor(a => a.BSFROM, new SelectList(ViewBag.YearList, "Value", "Text", ViewBag.SelectedBSFROM), "---Select ---", new { @required = "required", @class = "" })</div>
+            <div class="col-md-5">Upto<br />@Html.DropDownListFor(a => a.BSTO, new SelectList(ViewBag.YearListTo, "Value", "Text", ViewBag.SelectedBSTO), "---Select ---", new { @required = "required", @class = "" })</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Issuing Authority<span class="rqf">*</span></div>
+            <div class="col-md-10">@Html.DropDownListFor(a => a.BSIA, new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "---Select ---", new { @required = "required", @class = "" })</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Memo/Dispatch No.<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(a => a.BSMEMO, new { @required = "required", @maxlength = "50" })</div>
+            <div class="col-md-2">Issuing Date<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(a => a.BSIDATE, new { @required = "required", @class = "datepicker", @maxlength = "10",@readonly = "readonly"  })</div>
+            <div class="clearfix"></div>
+            @* <div class="col-md-12"><span class="rqf">Note : Attach attested  copy of Building Safety Certificate with hard copy.</span></div>
+                <div class="clearfix"></div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(a => a.BSFILE, null, new { id = "BSFILE", type = "file", @onchange = "CheckBSFILE(this)" })
+                    @Html.HiddenFor(a => a.BSFILE)<span class="rqf">(Size limit upto 1MB)</span>
+                </div>
+                <div class="col-md-6">
+                    @if (!string.IsNullOrEmpty(Model.BSFILE))
+                    {
+                        <a href="@ViewBag.BSFILE" target="_blank" class="btn">Download File</a>
+                    }
+                </div>*@
+        </div>
+
+        <div class="row">
+            <br />
+            <div class="col-md-12"><h4>Fire Safety Certificate Details</h4></div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">&nbsp<br />Validity Period (Yrs)<span class="rqf">*</span></div>
+            <div class="col-md-5">From<br />@Html.DropDownListFor(a => a.FSFROM, new SelectList(ViewBag.YearList, "Value", "Text", ViewBag.SelectedFSFROM), "---Select ---", new { @required = "required", @class = "" })</div>
+            <div class="col-md-5">Upto<br />@Html.DropDownListFor(a => a.FSTO, new SelectList(ViewBag.YearListTo, "Value", "Text", ViewBag.SelectedFSTO), "---Select ---", new { @required = "required", @class = "" })</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Issuing Authority<span class="rqf">*</span></div>
+            <div class="col-md-10">@Html.TextBoxFor(a => a.FSIA, new { @required = "required", @maxlength = "50" })</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Memo/Dispatch No.<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(a => a.FSMEMO, new { @required = "required", @maxlength = "50" })</div>
+            <div class="col-md-2">Issuing Date<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(a => a.FSIDATE, new { @required = "required", @class = "datepicker", @maxlength = "10", @readonly = "readonly" })</div>
+            <div class="clearfix"></div>
+            @* <div class="col-md-12"><span class="rqf">Note : Attach attested  copy of  Fire Safety Certificate  with hard copy</span></div>
+                <div class="clearfix"></div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(a => a.FSFILE, null, new { id = "FSFILE", type = "file", @onchange = "CheckFSFILE(this)" })
+                    @Html.HiddenFor(a => a.FSFILE)<span class="rqf">(Size limit upto 1MB)</span>
+                </div>
+                <div class="col-md-6">
+                    @if (!string.IsNullOrEmpty(Model.FSFILE))
+                    {
+
+                        <a href="@ViewBag.FSFILE" target="_blank" class="btn">Download File</a>
+                    }
+                </div>*@
+        </div>
+
+
+        <div class="row">
+            <br />
+            <div class="col-md-12"><h4>Building Map Details</h4></div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Name of Architect<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(a => a.MAPNAME, new { @required = "required", @maxlength = "50" })</div>
+            <div class="col-md-2">Identity/Reg No<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(a => a.MAPREGNO, new { @required = "required", @maxlength = "50" })</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Issuing Authority<span class="rqf">*</span></div>
+            <div class="col-md-10">@Html.TextBoxFor(a => a.MAPAUTH, new { @required = "required", @maxlength = "50" })</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Memo/Dispatch No.<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(a => a.MAPMEMO, new { @required = "required", @maxlength = "50" })</div>
+            <div class="col-md-2">Issuing Date<span class="rqf">*</span></div>
+            <div class="col-md-4">@Html.TextBoxFor(a => a.MAPIDATE, new { @required = "required", @class = "datepicker", @maxlength = "10", @readonly = "readonly" })</div>
+            <div class="clearfix"></div>
+            @*<div class="col-md-12"><span class="rqf">Note : Attach attested  copy of  building Map  with hard copy</span></div>
+                <div class="clearfix"></div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(a => a.MAPFILE, null, new { id = "MAPFILE", type = "file", @onchange = "CheckMAPFILE(this)" })
+                    @Html.HiddenFor(a => a.MAPFILE)<span class="rqf">(Size limit upto 1MB)</span>
+                </div>
+                <div class="col-md-6">
+                    @if (!string.IsNullOrEmpty(Model.MAPFILE))
+                    {
+
+                        <a href="@ViewBag.MAPFILE" target="_blank" class="btn">Download File</a>
+                    }
+                </div>*@
+        </div>
+
+        @{
+            // if (Model.EAffType.ToUpper() == "NEW")
+            if (Session["IsEAffilicationCLU_Allowed"].ToString() == "Y")
+            {
+                if (Model.EAffClass == "10" || Model.EAffClass == "12")
+                {
+                    <div class="row">
+                        <br />
+                        <div class="col-md-12"><h4>CLU Details</h4></div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Issuing Authority<span class="rqf"></span></div>
+                        <div class="col-md-10">@Html.TextBoxFor(a => a.CLUAUTH, new { @maxlength = "50" })</div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Memo/Dispatch No.<span class="rqf"></span></div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.CLUMEMO, new { @maxlength = "50" })</div>
+                        <div class="col-md-2">Issuing Date<span class="rqf"></span></div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.CLUIDATE, new { @class = "datepicker", @maxlength = "10", @readonly = "readonly" })</div>
+                        <div class="clearfix"></div>
+                        @*<div class="col-md-12"><span class="rqf">Note : Attach attested  copy of  CLU  with hard copy</span></div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-6">
+                                @Html.TextBoxFor(a => a.CLUFILE, null, new { id = "CLUFILE", type = "file", @onchange = "CheckCLUFILE(this)" })
+                                @Html.HiddenFor(a => a.CLUFILE)<span class="rqf">(Size limit upto 1MB)</span>
+                            </div>
+                            <div class="col-md-6">
+                                @if (!string.IsNullOrEmpty(Model.CLUFILE))
+                                {
+
+                                    <a href="@ViewBag.CLUFILE" target="_blank" class="btn">Download File</a>
+                                }
+                            </div>*@
+                        
+                    </div>
+                }
+            }
+        }
+
+
+
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div style="text-align:center" class="tbp">
+                    @Html.HiddenFor(model => model.ID)  @Html.HiddenFor(model => model.APPNO) @Html.HiddenFor(model => model.SCHLEMAIL)
+                    @Html.HiddenFor(model => model.EAffType)
+                    <input type="submit" name="submit" value="SAVE" style="@(Session["eDataSubmissionAllow"].ToString() == "0" ? "display:block" : "display:none")" />
+
+                </div>
+            </div>
+            <div class="col-md-12">
+                <span style="color:red;">As per Amended item no. 3(2) dated 30-03-2022 "The condition of CLU and building plan must be fulfilled within three years while granting new affiliation to the private institutions of the State of Punjab."</span>
+            </div>
+
+        </div>
+    </div>
+}
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                      window.location.href = '@Url.Action("BuildingFireMapDetails", "EAffiliation")';
+                </script>
+}
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                </script>
+            }
+        }
+    }
+}
+
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    //
+
+
+    $(document).ready(function () {
+
+        $(".datepicker").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1969:' + (new Date().getFullYear())
+        });
+
+    });
+
+</script>
+
+<script type="text/javascript">
+    function CheckSocietyFile(input) {
+        if (typeof ($("#SocietyFile")[0].files) != "undefined") {
+            var size = parseFloat($("#SocietyFile")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#SocietyFile').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#SocietyFile').val('');
+                }
+            }
+        }
+
+    }
+
+    function CheckBSFILE(input) {
+        if (typeof ($("#BSFILE")[0].files) != "undefined") {
+            var size = parseFloat($("#BSFILE")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#BSFILE').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#BSFILE').val('');
+                }
+            }
+        }
+
+    }
+
+    function CheckFSFILE(input) {
+        if (typeof ($("#FSFILE")[0].files) != "undefined") {
+            var size = parseFloat($("#FSFILE")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#FSFILE').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#FSFILE').val('');
+                }
+            }
+        }
+
+    }
+
+    function CheckMAPFILE(input) {
+        if (typeof ($("#MAPFILE")[0].files) != "undefined") {
+            var size = parseFloat($("#MAPFILE")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#MAPFILE').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#MAPFILE').val('');
+                }
+            }
+        }
+
+    }
+
+
+    function CheckCLUFILE(input) {
+        if (typeof ($("#CLUFILE")[0].files) != "undefined") {
+            var size = parseFloat($("#CLUFILE")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#CLUFILE').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#CLUFILE').val('');
+                }
+            }
+        }
+
+    }
+</script>

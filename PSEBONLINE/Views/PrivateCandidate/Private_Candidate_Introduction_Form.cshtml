@@ -1,0 +1,780 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<div class="container KDBG">
+    <h1 style="font-size:21px;margin-bottom:0">
+        @*Private Examination Form for Re-Appear of Primary/Middle Class, July 2022 <br />*@
+        @*Private Examination Form for Re-Appear/Additional Subject of Matric & Sr. Sec. Class, September 2022*@
+        @*Private  Examination Form for Re-Appear/Additional Subject of Matric & Sr. Sec. Class, Supplementary Exam 2024*@
+        Private Examination Form for Re-Appear/Additional Subject/Improvement (DIC) of Matric & Sr. Sec. Class, March 2024
+    </h1>
+    <div id="loading1"></div>
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    @{ Session["Session"] = "2023-2024";}
+    @using (Html.BeginForm("Private_Candidate_Introduction_Form", "PrivateCandidate", FormMethod.Post, new { id = "refno", enctype = "multipart/form-data" }))
+    {
+        <form name="myForm">
+            <div class="row text-center"><h3>&nbsp;&nbsp;<u> Candidate Registration Form</u></h3></div>
+            @{
+                if (TempData["RStatus"] != null)
+                {
+                    var Rresult = TempData["RStatus"].ToString();
+                    if (Rresult == "0")
+                    {
+                        <table width="100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    <span class="redcn">Please check, your entered data is not correct.</span>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                }
+                if (ViewData["Status"] != null)
+                {
+                    var result = ViewData["Status"].ToString();
+                    if (result == "0")
+                    {
+                        var roll = @ViewData["roll"].ToString();
+                        <table width="100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    <span class="redcn">Old Roll no. @roll , is incorrect for this class/session, Kindly Enter Correct Roll No</span>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                    else if (result == "2")
+                    {
+                        var roll = @ViewData["roll"].ToString();
+                        var refno = @ViewData["RefNo"].ToString();
+                        <table width="100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    <span class="redcn"> Your Old Roll no. @roll is already registered for this class Please login with Reference No. @refno </span>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                    else if (result == "3")
+                    {
+                        @*<script type="text/javascript" language="javascript">
+
+                                alert("You are not eligible to fill Additional Form without passed.");
+                            </script>*@
+                        <table width="100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    <span class="redcn">You are not eligible to fill Additional Form without passed.</span>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                    else if (result == "5")
+                    {
+                        var refno = @ViewData["RefNo"].ToString();
+                        <table width="100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    <span class="redcn">You are not eligible to fill Form due to your result status is @refno</span>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                    else if (result == "6")
+                    {
+                        var roll = @ViewData["roll"].ToString();
+                        var refno = @ViewData["RefNo"].ToString();
+                        <table width="100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    <span class="redcn">Your Old Roll no. @roll or selected Class/ ExamType is not correct, Please retry with correct data.</span>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                    else
+                    {
+                        ViewData["roll"] = "";
+                        ViewData["Status"] = "";
+                    }
+                }
+            }
+            <div class="clearfix"></div><br>
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-2">Batch Month/Year <span class="rqf">*</span></div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> batch = new List<SelectListItem>();
+                        batch.Add(new SelectListItem { Text = "--Select Batch--", Value = "0" });
+                        //batch.Add(new SelectListItem { Text = "June", Value = "6" });
+                        //batch.Add(new SelectListItem { Text = "July", Value = "7" });
+                        //batch.Add(new SelectListItem { Text = "August", Value = "8" });
+                        //batch.Add(new SelectListItem { Text = "September", Value = "9" });
+                        //  batch.Add(new SelectListItem { Text = "October", Value = "10" });
+                        //batch.Add(new SelectListItem { Text = "November", Value = "11" });
+                        //batch.Add(new SelectListItem { Text = "January", Value = "1" });
+                        batch.Add(new SelectListItem { Text = "March", Value = "3" });
+                    }
+                    @Html.DropDownList("batch", batch, new { id = "batch" })
+                </div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> batchYear = new List<SelectListItem>();
+                        // batchYear.Add(new SelectListItem { Text = "2022", Value = "2022", Selected = true });
+                        //batchYear.Add(new SelectListItem { Text = "2023", Value = "2023", Selected = true });
+                        batchYear.Add(new SelectListItem { Text = "2024", Value = "2024", Selected = true });
+                    }
+                    @Html.DropDownList("batchYear", batchYear, new { id = "batchYear" })
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2">Category <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @Html.DropDownList("category", new SelectList(ViewBag.CategoryList, "PrivateCandidateCategoryABBR", "PrivateCandidateCategoryName"), "--Select Category---", new { id = "category" })
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2">Class <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @{
+                        List<SelectListItem> Class = new List<SelectListItem>();
+                        Class.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        Class.Add(new SelectListItem { Text = "Matriculation", Value = "10" });
+                        Class.Add(new SelectListItem { Text = "Senior Secondary", Value = "12" });
+                        //Class.Add(new SelectListItem { Text = "Primary", Value = "5" });
+                        //Class.Add(new SelectListItem { Text = "Middle", Value = "8" });
+                    }
+                    @Html.DropDownList("Class", Class, new { id = "Class" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2">Exam Type <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @{
+                        List<SelectListItem> Exam_Type = new List<SelectListItem>();
+                        Exam_Type.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        //Exam_Type.Add(new SelectListItem { Text = "Regular", Value = "R" });
+                        //Exam_Type.Add(new SelectListItem { Text = "Open", Value = "O" });
+                        //Exam_Type.Add(new SelectListItem { Text = "Private", Value = "P" });
+                    }
+                    @Html.DropDownList("Exam_Type", Exam_Type, new { id = "Exam_Type" })
+                </div>
+
+                <div id="divBoard" style="display:none;">
+                    <div class="clearfix"></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2">Board <span class="rqf">*</span></div>
+                    <div class="col-md-2">
+                        @{
+                            List<SelectListItem> Board = new List<SelectListItem>();
+                            Board.Add(new SelectListItem { Text = "---Select Board--", Value = "0" });
+                            Board.Add(new SelectListItem { Text = "CBSE BOARD", Value = "CBSE BOARD" });
+                            Board.Add(new SelectListItem { Text = "P.S.E.B BOARD", Value = "P.S.E.B BOARD" });
+                            Board.Add(new SelectListItem { Text = "I.C.S.E BOARD", Value = "ICSE BOARD" });
+                            Board.Add(new SelectListItem { Text = "HARYANA BOARD", Value = "HARYANA BOARD" });
+                            Board.Add(new SelectListItem { Text = "HIMACHAL BOARD", Value = "HIMACHAL BOARD" });
+                            Board.Add(new SelectListItem { Text = "J&K BOARD", Value = "J&K BOARD" });
+                            Board.Add(new SelectListItem { Text = "RAJASTHAN BOARD", Value = "RAJASTHAN BOARD" });
+                            Board.Add(new SelectListItem { Text = "OTHER BOARD", Value = "OTHER BOARD" });
+                        }
+                        @Html.DropDownList("Board", Board, new { id = "Board" })
+                    </div>
+                    <div class="col-md-2">@Html.TextBoxFor(m => m.Other_Board, new { id = "Other_Board", @maxlength = "150", placeholder = "Enter Other Board Name" })</div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2">Session <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-6">@Html.DropDownList("SelMonth", new SelectList(ViewBag.MyMonth, "Value", "Text"), "MONTH", new { @class = "" })</div>
+                        <div class="col-md-6">@Html.DropDownList("SelYear", new SelectList(ViewBag.MyYear, "Value", "Text"), "YEAR", new { @class = "" })</div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2">Old Roll No. <span class="rqf">*</span></div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.OROLL, new { @class = "form-control", id = "OROLL", @maxlength = "20" }) <span id="orollmsg" style="display:none;" class="redc">Special char are not allow</span></div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2">Email ID <span class="rqf">*</span></div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.emailID, new { @class = "form-control", @maxlength = "100", title = "Enter Candidate's Personal/relative's Email ID." })</div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2">Mobile No. <span class="rqf">*</span></div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.mobileNo, new { @class = "form-control", id = "mobileNo", @maxlength = "10", title = "Enter Candidate's Personal/relative's Mobile No.", onkeypress = "return isNumberKey(event);" })</div>
+                <div class="clearfix"></div>
+                <div class="col-md-12" style="font-size:11px;"><span class="rqf">Note: Kindly Enter Only Candidate or Candidate's Relative Personal Email Id And Mobile No For Further Communication With Candidate By Board.</span></div>
+                <div class="clearfix"></div>
+                <div class="col-md-6" style="font-size:11px;"><span class="rqf">* Fields are mandatory.</span></div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                @*<div class="col-md-2"></div>*@
+                <div class="col-md-7 tbp text-center">
+                    <input value="Register" type="submit" onclick="return valForm();" />
+                    <input value="Reset" type="button" onclick="return valReset();" />
+                    <input value="Login/Home" type="button" onclick="return valLogin();" />
+                    @*<input value="Home" type="button" onclick="return valHome();" />*@
+                    <input type="submit" value="Check Form Status" formaction="AdmitCardPrivateSearchStatus" title="Check Application Status that you fill already" />
+                    @*<input value="Reset" type="submit" />*@
+                </div>
+            </div>
+        </form>
+    }
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+  $("#SelYear").empty();
+                $("#SelYear").append('<option value="0">Year</option>');
+
+        $("#batch").change(function () {
+
+		  $("#SelYear").empty();
+                $("#SelYear").append('<option value="0">Year</option>');
+        //if ($("#SelClass").val() == "12") { $("#dvGroup").show();  $("#SelGroup").show(); }
+        //else { $("#dvGroup").hide();  $("#SelGroup").hide();}
+
+            $('#loading1').html("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+
+            var selectedCategory = { SelBatch: $("#batch").val(), SelBatchYear: $("#batchYear").val() };
+
+                            $.ajax({
+                                url: '@Url.Action("GetPrivateCandidateCategoryListByBatch", "PrivateCandidate")',
+                                type: 'Post',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(selectedCategory),
+                                success: function (States) {
+                                    $('#loading1').empty();
+                                    $("#category").empty();
+                                    $("#category").append('<option value="">--Select Category--</option>');
+                                    $.each(States, function (i, Streams) {
+                                        $("#category").append('<option value="'
+                                            + Streams.PrivateCandidateCategoryABBR + '">'
+                                            + Streams.PrivateCandidateCategoryName + '</option>');
+                                    });
+                                    if (Streams.success) {
+                                    }
+                                    else {
+                                        alert('invalid ID' + data.success);
+                                    }
+                                }
+                            });
+                        });
+
+
+
+        $('#Other_Board').hide();
+        ///----------
+        var selectedCATE = { CATE: $("#category").val() };
+        //alert(selectedCATE)
+        if ($("#category").val() == 'R' && ($("#Class").val() == '10' || $("#Class").val() == '12')) {
+            alert($("#Class").val())
+            document.getElementById('OROLL').title = 'Enter Selected Class last Re-Appear/Compartment Roll No.';
+            $("#Exam_Type").empty();
+            $("#Exam_Type").append('<option value="0">--Select--</option>');
+            $("#Exam_Type").append('<option value="R">Regular</option>');
+            $("#Exam_Type").append('<option value="O">Open</option>');
+            $("#Class").empty();
+            $("#Class").append('<option value="0">--Select--</option>');
+            $("#Class").append('<option value="10">Matriculation</option>');
+            $("#Class").append('<option value="12">Senior Secondary</option>');
+        }
+        if ($("#category").val() == 'D') {
+            document.getElementById('OROLL').title = 'Enter Selected Class Passed Roll No.';
+            $("#Exam_Type").empty();
+            $("#Exam_Type").append('<option value="0">--Select--</option>');
+            //$("#Exam_Type").append('<option value="P">Private</option>');
+            $("#Exam_Type").append('<option value="R">Regular</option>');
+            $("#Exam_Type").append('<option value="O">Open</option>');
+        }
+        if ($("#category").val() == 'A') {
+            document.getElementById('OROLL').title = 'Enter Selected Class Passed Roll No.';
+            $("#Exam_Type").empty();
+            //$("#Exam_Type").append('<option value="0">--Select--</option>');
+            $("#Exam_Type").append('<option value="P">Private</option>');
+
+        }
+        if ($("#category").val() == 'SR' || $("#category").val() == 'SD' || $("#category").val() == 'SA') {
+            document.getElementById('OROLL').title = 'Enter Selected Class Passed Roll No.';
+            $("#Exam_Type").empty();
+            //$("#Exam_Type").append('<option value="0">--Select--</option>');
+            $("#Exam_Type").append('<option value="R">Regular</option>');
+            $("#Exam_Type").append('<option value="O">Open</option>');
+        }
+
+        $("#Board").change(function () {
+            var selectedVal = $("#Board").val();
+            if (selectedVal == "OTHER BOARD") {
+                $('#Other_Board').show();
+            }
+            else {
+                $('#Other_Board').hide();
+            }
+        });
+        //----------- On change Exam Type
+        $("#Exam_Type1").change(function () {
+            var selCATE_ET = $("#category").val();
+            var selExam_Type = $("#Exam_Type").val();
+            alert(selCATE_ET); alert(selExam_Type);
+            if (selCATE_ET == 'R' && selExam_Type == 'R') {
+                $("#SelYear").empty();
+                $("#SelYear").append('<option value="0">Year</option>');
+                $("#SelYear").append('<option value="2020">2020</option>');
+            }
+            if (selCATE_ET == 'R' && selExam_Type == 'O') {
+                $("#SelYear").empty();
+                $("#SelYear").append('<option value="0">Year</option>');
+                $("#SelYear").append('<option value="2020">2020</option>');
+                $("#SelYear").append('<option value="2019">2019</option>');
+                $("#SelYear").append('<option value="2018">2018</option>');
+                //$("#SelYear").append('<option value="2017">2017</option>');
+
+            }
+
+            if ((selCATE_ET == 'SR' || selCATE_ET == 'SA')) {
+                $("#SelYear").empty();
+                $("#SelYear").append('<option value="0">Year</option>');
+                if (selExam_Type == 'R') {
+                    $("#SelYear").append('<option value="2019">2019</option>');
+                    $("#SelYear").append('<option value="2018">2018</option>');
+                    $("#SelYear").append('<option value="2017">2017</option>');
+                    $("#SelYear").append('<option value="2016">2016</option>');
+                    $("#SelYear").append('<option value="2015">2015</option>');
+                    $("#SelYear").append('<option value="2014">2014</option>');
+                    $("#SelYear").append('<option value="2013">2013</option>');
+                    $("#SelYear").append('<option value="2012">2012</option>');
+                    $("#SelYear").append('<option value="2011">2011</option>');
+                    $("#SelYear").append('<option value="2010">2010</option>');
+                    $("#SelYear").append('<option value="2009">2009</option>');
+                    $("#SelYear").append('<option value="2008">2008</option>');
+                    $("#SelYear").append('<option value="2007">2007</option>');
+                    $("#SelYear").append('<option value="2006">2006</option>');
+                    $("#SelYear").append('<option value="2005">2005</option>');
+                    $("#SelYear").append('<option value="2004">2004</option>');
+                }
+                else if (selExam_Type == 'O') {
+
+                    $("#SelYear").append('<option value="2017">2017</option>');
+                    $("#SelYear").append('<option value="2016">2016</option>');
+                    $("#SelYear").append('<option value="2015">2015</option>');
+                    $("#SelYear").append('<option value="2014">2014</option>');
+                    $("#SelYear").append('<option value="2013">2013</option>');
+                    $("#SelYear").append('<option value="2012">2012</option>');
+                    $("#SelYear").append('<option value="2011">2011</option>');
+                    $("#SelYear").append('<option value="2010">2010</option>');
+                    $("#SelYear").append('<option value="2009">2009</option>');
+                    $("#SelYear").append('<option value="2008">2008</option>');
+                    $("#SelYear").append('<option value="2007">2007</option>');
+                    $("#SelYear").append('<option value="2006">2006</option>');
+                    $("#SelYear").append('<option value="2005">2005</option>');
+                    $("#SelYear").append('<option value="2004">2004</option>');
+                }
+
+
+            }
+            if ((selCATE_ET == 'SD' )) {
+                $("#SelYear").empty();
+                $("#SelYear").append('<option value="0">Year</option>');
+                    $("#SelYear").append('<option value="2018">2018</option>');
+                    $("#SelYear").append('<option value="2017">2017</option>');
+                    $("#SelYear").append('<option value="2016">2016</option>');
+                    $("#SelYear").append('<option value="2015">2015</option>');
+                    $("#SelYear").append('<option value="2014">2014</option>');
+                    $("#SelYear").append('<option value="2013">2013</option>');
+                    $("#SelYear").append('<option value="2012">2012</option>');
+                    $("#SelYear").append('<option value="2011">2011</option>');
+                    $("#SelYear").append('<option value="2010">2010</option>');
+                    $("#SelYear").append('<option value="2009">2009</option>');
+                    $("#SelYear").append('<option value="2008">2008</option>');
+                    $("#SelYear").append('<option value="2007">2007</option>');
+                    $("#SelYear").append('<option value="2006">2006</option>');
+                    $("#SelYear").append('<option value="2005">2005</option>');
+                    $("#SelYear").append('<option value="2004">2004</option>');
+
+
+
+
+            }
+        })
+    })
+     $("#category").change(function () {
+        var selectedCATE = { CATE: $("#category").val() };
+
+        // alert($("#category").val() );
+        // alert($("#batch").val() );
+       //  alert($("#batchYear").val() );
+        if ($("#category").val() == 'SA' || $("#category").val() == 'A') {
+            $("#Board").empty();
+            $("#Board").append('<option value="0">---Select Board--</option>');;
+            $("#Board").append('<option value="CBSE BOARD">CBSE BOARD</option>');
+            $("#Board").append('<option value="P.S.E.B BOARD">P.S.E.B BOARD</option>');
+            $("#Board").append('<option value="I.C.S.E BOARD">ICSE BOARD</option>');
+            $("#Board").append('<option value="HARYANA BOARD">HARYANA BOARD</option>');
+            $("#Board").append('<option value="HIMACHAL BOARD">HIMACHAL BOARD</option>');
+            $("#Board").append('<option value="J&K BOARD">J&K BOARD</option>');
+            $("#Board").append('<option value="RAJASTHAN BOARD">RAJASTHAN BOARD</option>');
+            $("#Board").append('<option value="OTHER BOARD">OTHER BOARD</option>');
+        }
+        else { $("#Board").empty(); $("#Board").append('<option value="P.S.E.B BOARD">P.S.E.B BOARD</option>'); }
+
+        if ($("#category").val() == 'R') {
+            document.getElementById('OROLL').title = 'Enter Selected Class last Re-Appear/Compartment Roll No.';
+            $("#Class").empty();
+            $("#Class").append('<option value="0">--Select--</option>');
+
+            if ($("#batch").val() == '3' && $("#batchYear").val() == '2024') {
+                $("#Class").append('<option value="10">Matriculation</option>');
+                $("#Class").append('<option value="12">Senior Secondary</option>');
+            }
+           else if ($("#batch").val() == '1' && $("#batchYear").val() == '2022') {
+                $("#Class").append('<option value="10">Matriculation</option>');
+               $("#Class").append('<option value="12">Senior Secondary</option>');
+            }
+            else if ($("#batch").val() == '9' && $("#batchYear").val() == '2023') {
+                   $("#Class").append('<option value="10">Matriculation</option>');
+                   $("#Class").append('<option value="12">Senior Secondary</option>');
+            }
+            else if ($("#batch").val() == '7' && $("#batchYear").val() == '2023') {
+                $("#Class").append('<option value="5">Primary</option>');
+                $("#Class").append('<option value="8">Middle</option>');
+            }
+
+            $('#divBoard').hide();
+        }
+        else if ($("#category").val() == 'D') {
+            document.getElementById('OROLL').title = 'Enter Selected Class Passed Roll No.';
+            $("#Class").empty();
+            if ($("#batch").val() == '9' && $("#batchYear").val() == '2022') {
+                $("#Class").append('<option value="0">--Select--</option>');
+                $("#Class").append('<option value="10">Matriculation</option>');
+                $("#Class").append('<option value="12">Senior Secondary</option>');
+            }
+            else if ($("#batch").val() == '3' && $("#batchYear").val() == '2024') {
+                $("#Class").append('<option value="0">--Select--</option>');
+                $("#Class").append('<option value="10">Matriculation</option>');
+                $("#Class").append('<option value="12">Senior Secondary</option>');
+            }
+
+            $('#divBoard').hide();
+        }
+        else if ($("#category").val() == 'A') {
+            document.getElementById('OROLL').title = 'Enter Selected Class Passed Roll No.';
+            $("#Class").empty();
+            if ($("#batch").val() == '9' && $("#batchYear").val() == '2023') {
+                $("#Class").append('<option value="0">--Select--</option>');
+                $("#Class").append('<option value="10">Matriculation</option>');
+                $("#Class").append('<option value="12">Senior Secondary</option>');
+            }
+            else if ($("#batch").val() == '3' && $("#batchYear").val() == '2024') {
+                $("#Class").append('<option value="0">--Select--</option>');
+                $("#Class").append('<option value="10">Matriculation</option>');
+                $("#Class").append('<option value="12">Senior Secondary</option>');
+            }
+            $('#divBoard').show();
+        }
+        else if ($("#category").val() == 'C') {
+            document.getElementById('OROLL').title = 'Enter Selected Class last Re-Appear/Compartment Roll No.';
+            $("#Class").empty();
+            $("#Class").append('<option value="0">--Select--</option>');
+            $("#Class").append('<option value="12">Senior Secondary</option>');
+
+            $('#divBoard').hide();
+        }
+        else if ($("#category").val() == 'SR' || $("#category").val() == 'SD' || $("#category").val() == 'SA') {
+            document.getElementById('OROLL').title = 'Enter Selected Class Passed Roll No.';
+            $("#Class").empty();
+            if ($("#batch").val() == '1' && $("#batchYear").val() == '2021') {
+                $("#Class").append('<option value="0">--Select--</option>');
+                $("#Class").append('<option value="10">Matriculation</option>');
+                $("#Class").append('<option value="12">Senior Secondary</option>');
+            }
+
+            $('#divBoard').show();
+
+        }
+
+
+         if ($("#batch").val() == '7' && $("#batchYear").val() == '2023') {
+             $("#SelMonth").empty();
+             $("#SelMonth").append('<option value="July">July</option>');
+         }
+         else {
+
+             if ($("#category").val() != 'SR' && $("#category").val() != 'SD' && $("#category").val() != 'SA') {
+                 $.ajax({
+                     url: '@Url.Action("GetMonthID", "PrivateCandidate")',
+                     type: 'Post',
+                     contentType: 'application/json',
+                     dataType: 'json',
+                     data: JSON.stringify(selectedCATE),
+                     success: function (States) {
+
+                         //alert(StatesList);
+                         //document.getElementById("Address").value = StatesList;
+                         // $("#SelYear").empty();
+                         $("#SelMonth").empty();
+                         $("#SelMonth").append('<option value="0">Month</option>');
+                         $.each(States, function (i, Monthlist) {
+                             $("#SelMonth").append('<option value="'
+                                 + Monthlist.Value + '">'
+                                 + Monthlist.Text + '</option>');
+                         });
+                         if (Monthlist.success) {
+
+                             //document.getElementById("MName").value = data.result;
+                             // $("#TextBoxID").val(data.result.MName);
+                         }
+                         else {
+                             alert('invalid ID' + data.success);
+                         }
+                     }
+                 });
+
+
+             }
+         }
+
+    });
+
+    $("#Class").change(function () {
+
+        var selectedCATE = $("#category").val();
+        var selectedClass = $("#Class").val();
+
+
+        if ($("#category").val() == 'R') {
+
+            if ($("#batch").val() == '7' && $("#batchYear").val() == '2023') {
+                $("#Exam_Type").empty();
+                $("#Exam_Type").append('<option value="0">--Select--</option>');
+                $("#Exam_Type").append('<option value="R">Regular</option>');
+            }
+            else {
+                if ($("#Class").val() == '10') {
+                    $("#Exam_Type").empty();
+                    $("#Exam_Type").append('<option value="0">--Select--</option>');
+                    $("#Exam_Type").append('<option value="R">Regular</option>');
+                    $("#Exam_Type").append('<option value="O">Open</option>');
+                }
+                else {
+                    $("#Exam_Type").empty();
+                    $("#Exam_Type").append('<option value="0">--Select--</option>');
+                    $("#Exam_Type").append('<option value="R">Regular</option>');
+                    $("#Exam_Type").append('<option value="O">Open</option>');
+                }
+            }
+        }
+        else if ($("#category").val() == 'D') {
+            document.getElementById('OROLL').title = 'Enter Selected Class Passed Roll No.';
+            $("#Exam_Type").empty();
+            $("#Exam_Type").append('<option value="0">--Select--</option>');
+            $("#Exam_Type").append('<option value="R">Regular</option>');
+            $("#Exam_Type").append('<option value="O">Open</option>');
+            $('#divBoard').hide();
+        }
+        else if ($("#category").val() == 'A') {
+            document.getElementById('OROLL').title = 'Enter Selected Class Passed Roll No.';
+            $("#Exam_Type").empty();
+            $("#Exam_Type").append('<option value="0">--Select--</option>');
+            $("#Exam_Type").append('<option value="P">Private</option>');
+            $('#divBoard').show();
+        }
+        else if ($("#category").val() == 'SR' || $("#category").val() == 'SD' || $("#category").val() == 'SA') {
+            document.getElementById('OROLL').title = 'Enter Selected Class Passed Roll No.';
+            $("#Exam_Type").empty();
+            $("#Exam_Type").append('<option value="0">--Select--</option>');
+            $("#Exam_Type").append('<option value="R">Regular</option>');
+			$("#Exam_Type").append('<option value="O">Open</option>');
+            $("#Exam_Type").append('<option value="P">Private</option>');
+            $('#divBoard').show();
+
+        }
+    });
+
+    //string SelBatch, string SelBatchYear, string SelCat, string SelClass, string SelRP
+    $("#Exam_Type").change(function () {
+        var selectedData = {
+            SelBatch: $("#batch").val(), SelBatchYear: $("#batchYear").val(),
+            SelCat: $("#category").val(), SelClass: $("#Class").val(), SelRP: $("#Exam_Type").val()
+        };
+
+        $("#SelYear").empty();
+
+        if ($("#batch").val() == '7' && $("#batchYear").val() == '2023') {
+            $("#SelYear").append('<option value="2023">2023</option>');
+        }
+        else {
+
+            $.ajax({
+                url: '@Url.Action("BindYearByBatchandCat", "PrivateCandidate")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedData),
+                success: function (States) {
+
+
+                    $("#SelYear").append('<option value="0">Year</option>');
+
+                    $.each(States, function (i, yearlist) {
+
+                        $("#SelYear").append('<option value="'
+                            + yearlist.Value + '">'
+                            + yearlist.Text + '</option>');
+                    });
+                    if (yearlist.success) {
+
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        }
+
+    });
+    //------------------------------------------------
+    function valForm() {
+
+        batchYear
+
+
+        var batch = document.getElementById('batch').value;
+        if (batch == '0' || batch == '') {
+            alert("Select Batch");
+            document.getElementById('batch').focus();
+            return false;
+        }
+
+        var batchYear = document.getElementById('batchYear').value;
+        if (batchYear == '0' || batchYear == '') {
+            alert("Select Batch Year");
+            document.getElementById('batchYear').focus();
+            return false;
+        }
+
+
+        var ddlcategory = document.getElementById('category').value;
+        if (ddlcategory == '0' || ddlcategory == '') {
+            alert("Select category");
+            document.getElementById('category').focus();
+            return false;
+        }
+        var ddlClass = document.getElementById('Class').value;
+        if (ddlClass == '0' || ddlClass == '') {
+            alert("Select Class");
+            document.getElementById('Class').focus();
+            return false;
+        }
+
+        var ddlboard = document.getElementById('Board').value;
+        if (ddlboard == '0' && ddlcategory=='A') {
+            alert("Select Board");
+            document.getElementById('Board').focus();
+            return false;
+        }
+        var ddlExam_Type = document.getElementById('Exam_Type').value;
+        if (ddlExam_Type == '0' || ddlExam_Type == '') {
+            alert("Select Exam Type");
+            document.getElementById('Exam_Type').focus();
+            return false;
+        }
+        var ddlSelMonth = document.getElementById('SelMonth').value;
+        if (ddlSelMonth == '' || ddlSelMonth == '0') {
+            alert("Select Month");
+            document.getElementById('SelMonth').focus();
+            return false;
+        }
+
+
+        var ddlSelYear = document.getElementById('SelYear').value;
+        if (ddlSelYear == ''|| ddlSelYear == '0') {
+            alert("Select Year");
+            document.getElementById('SelYear').focus();
+            return false;
+        }
+
+
+
+
+
+        var txtOROLL = document.getElementById("OROLL");
+        if (txtOROLL.value == "") {
+            alert("Enter Old Roll Number");
+            txtOROLL.focus();
+            return false;
+        }
+
+        if (!ValidateEmail($("#emailID").val())) {
+            alert("Enter valid Email Address!");
+            document.getElementById('emailID').focus();
+            return false;
+        }
+
+        var txtmobileNo = document.getElementById("mobileNo");
+        if (txtmobileNo.value == "") {
+            alert("Enter Mobile Number");
+            txtmobileNo.focus();
+            return false;
+        }
+
+
+    }
+
+    function ValidateEmail(emailID) {
+        var expr = /[A-Z0-9._%+-]@@[A-Z0-9.-]+\.[A-Z]{2,4}/igm;;
+        return expr.test(emailID);
+    }
+
+
+    function isNumberKey(evt) {
+        var ddlcategory = document.getElementById('category').value;
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46) || ddlcategory=='A') {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function valBack() {
+        history.go(-1);
+    }
+
+    function valReset() {
+        document.location.href = '@Url.Action("Private_Candidate_Introduction_Form", "PrivateCandidate")';
+    }
+    function valLogin() {
+        document.location.href = '@Url.Action("Private_Candidate_Examination_Form", "PrivateCandidate")';
+    }
+    function valHome() {
+        document.location.href = '@Url.Action("Private_Candidate_Examination_Form", "PrivateCandidate")';
+    }
+
+    $('#OROLL').bind('keypress', function (e) {
+        if ($('#OROLL').val().length > 0) {
+            if (e.which < 48 ||(e.which > 57 && e.which < 65) ||(e.which > 90 && e.which < 97) ||e.which > 122) {
+                e.preventDefault();
+                $('#orollmsg').show();
+            }
+            else {
+                $('#orollmsg').hide();
+            }
+        }
+    });
+</script>
+
+
+

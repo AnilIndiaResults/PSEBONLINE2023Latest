@@ -1,0 +1,282 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<link rel="stylesheet" href="/Content/print-4P.css" />
+<style type="text/css">
+    .header_outer {
+        display: none;
+    }
+
+    .bs-docs-footer {
+        display: none;
+    }
+
+    body {
+        font-size: 11px;
+    }
+
+    td {
+        padding: 0 7px;
+    }
+</style>
+@* <h1>Centre List Report</h1><p>
+        Welcome: @if (Session["NAME"] != null)
+        {@Session["NAME"].ToString()}
+        else { Response.Redirect("~/DeoPortal/Index"); }
+    </p>*@
+
+@using (Html.BeginForm("ObserversReport", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="container">
+        @*<h1 class="noprint">Observers Report</h1>*@
+        <div class="row">
+            <div class="col-md-12 noprint">
+                <fieldset style="margin-bottom:15px">
+                    <legend>Search</legend>
+                    @*<div class="col-md-2"> <label>Total : @ViewBag.TotalCount1</label></div>*@
+                    @*<div class="col-md-2"></div>*@
+                    <div class="col-md-3">
+                        Select Dist  @Html.DropDownList("SelDist", new SelectList(ViewBag.Dist, "Value", "Text"), "--Select District---", new { @class = "", onchange = "deechange()" })
+                        <span id="reqsession" style="color:red;display:none;">Select One</span>
+                    </div>
+                    
+
+                    <div class="col-md-2">
+                        Select Date
+                        @Html.TextBoxFor(m => m.centreDate, new
+                   {
+                       id = "txtadmisndate",
+                       @readonly = "readonly",
+                       @maxlength = "20",
+                       //onkeypress = "javascript: return false;",
+                       onpaste = "return false;",
+                       oncopy = "return false;",
+                       oncut = "return false;"
+                   })
+                    </div>
+                   
+					<div class="col-md-2" >
+                        Select Class
+                        @{
+                            List<SelectListItem> SelectList = new List<SelectListItem>();
+                            SelectList.Add(new SelectListItem { Text = "--Select Class--", Value = "3" });
+			    SelectList.Add(new SelectListItem { Text = "All Class", Value = "3" });
+                            SelectList.Add(new SelectListItem { Text = "Middle Class", Value = "8" });
+                            SelectList.Add(new SelectListItem { Text = "Matriculation", Value = "2" });
+                            SelectList.Add(new SelectListItem { Text = "Senior Secondary", Value = "4" });
+                        }
+
+                        @Html.DropDownList("Class", SelectList, new { id = "Class" })
+                    </div>
+					 <div class="col-md-1"><br /><input type="Submit" value="Search" name="cmd" onclick="return valForm()" /></div>
+                </fieldset>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Click Here to Print" dowload class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" border="1">
+        @{
+            <tbody>
+
+                @if (ViewBag.TotalCount > 0)
+                {
+                    int d = 0;
+                <thead style="border:0">
+                    <tr>
+                        <td width="15%"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="55px" height="55px" /></td>
+                        <td colspan="3" style="border:0;text-align:center;padding:15px 0 5px 0">
+                            <span style="font-size:32px">Punjab School Education Board</span><br />
+                      <span style="font-size:18px">List of Observers Appointed For Exam, Term-2 @Session["DeoSessionMonthYear"].ToString()</span>
+                        </td>
+                        <td width="15%"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left;border:0" colspan="2">District : @Model.StoreAllData.Tables[0].Rows[0]["distnm"].ToString()</td>
+                        <td style="text-align:center;border:0"><!--Class : @Model.StoreAllData.Tables[0].Rows[0]["ClassNm"].ToString()--></td>
+                        <td style="text-align:right;border:0" colspan="2">Exam Date: @Model.StoreAllData.Tables[0].Rows[0]["examdate"].ToString()</td>
+                    </tr>
+                </thead>
+                <thead>
+                    <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                        <td>Centre Code</td>
+                        <td colspan="4">Centre Name</td>
+                    </tr>
+                    <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                        <th width="15%">Sr. No.</th>
+                        <th width="15%">Epunjab ID</th>
+                        <th colspan="3" width="70%">Name/Father's Name (Cadre, Designation/Subject)</th>
+                    </tr>
+                </thead>
+
+                    for (int k = 0; k < Model.StoreAllData.Tables[0].Rows.Count; k++)
+                    {
+                        //dist distnm  Class examdate    cent CENTE
+                        var Dist = Model.StoreAllData.Tables[0].Rows[k]["Dist"].ToString();
+                        var distnm = Model.StoreAllData.Tables[0].Rows[k]["distnm"].ToString();
+                        var Class = Model.StoreAllData.Tables[0].Rows[k]["Class"].ToString();
+                        var examdate = Model.StoreAllData.Tables[0].Rows[k]["examdate"].ToString();
+                        var cent = Model.StoreAllData.Tables[0].Rows[k]["cent"].ToString();
+                        var CENTE = Model.StoreAllData.Tables[0].Rows[k]["CENTE"].ToString();
+                        <tr style="font-size:14px;">
+                            <td>@cent</td>
+                            <td colspan="4">@CENTE</td>
+                        </tr>
+                        for (int i = 0; i < Model.StoreAllData.Tables[1].Rows.Count; i++)
+                        {
+                            //dist    class examdate    cent epunjabid   observerdetail schldetail
+                            var dist2 = Model.StoreAllData.Tables[1].Rows[i]["dist"].ToString();
+                            var class2 = Model.StoreAllData.Tables[1].Rows[i]["class"].ToString();
+                            var examdate2 = Model.StoreAllData.Tables[1].Rows[i]["examdate"].ToString();
+                            var cent2 = Model.StoreAllData.Tables[1].Rows[i]["cent"].ToString();
+                            var epunjabid2 = Model.StoreAllData.Tables[1].Rows[i]["epunjabid"].ToString();
+                            var observerdetail2 = Model.StoreAllData.Tables[1].Rows[i]["observerdetail"].ToString();
+                            var schldetail2 = Model.StoreAllData.Tables[1].Rows[i]["schldetail"].ToString();
+
+                            if (cent == Model.StoreAllData.Tables[1].Rows[i]["cent"].ToString())
+                            {
+                                d = d + 1;
+                                <tr>
+                                    <td>@d</td>
+                                    <td>@epunjabid2</td>
+                                    <td colspan="3">@observerdetail2 @schldetail2</td>
+                                </tr>
+                            }
+                        }
+                        {
+                            d = 0;
+                        }
+                    }
+
+                }
+
+
+                else
+                {
+                    <tr class="noprint">
+                        <td colspan="9">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                }
+
+
+                </tbody>
+        }
+    </table>
+            }
+
+<script>
+
+                        function dee() {
+
+                            if ($("#SelDist").val() == "") {
+
+                                $("#reqsession").slideDown("slow");
+                                return false;
+                            }
+                            if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+
+                                $("#reqsellist").slideDown("slow");
+                                return false;
+                            }
+
+                                //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+                                //    $("#reqsellist").slideUp("slow");
+                                //    $("#reqsstring").slideDown("slow");
+                                //    return false;
+                                //}
+                            else
+                                return true;
+
+                        }
+                        $(document).ready(function () {
+
+                            $("#SelDist").change(function () {
+                                if ($("#SelDist").val() == "") {
+                                    // $("#SearchString").focus(function () { $("#reqsellist").slideUp("slow"); });
+                                    $("#reqsession").slideDown("slow");
+                                }
+                                else {
+                                    $("#reqsession").slideUp("slow");
+                                }
+
+                            });
+
+                        });
+
+
+                        var form = $("#searchform").serialize();
+                        $("#btnNext").click(function () {
+                            $.ajax({
+                                url: 'DeoPortal/Next',
+                                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                                success: function (response) {
+                                    $("body").html(response);
+                                }
+                            });
+                        });
+
+                        $("#btnPrevious").click(function () {
+                            $.ajax({
+                                url: 'DeoPortal/Previous',
+                                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                                success: function (response) {
+                                    $("body").html(response);
+                                }
+                            });
+                        });
+
+
+
+</script>
+<script type="text/javascript">
+
+            $(document).ready(function () {
+
+                //var dee = '20/11/2021'; @*'@ViewBag.admdate';*@
+                $("#txtadmisndate").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    //maxDate: dee,
+                    yearRange: '2021:' + (new Date().getFullYear())
+                });
+            });
+
+            function valForm() {
+                var SelDist = document.getElementById("SelDist").value;
+                if (SelDist == "" || document.getElementById("SelDist").value == null) {
+                    alert("Select Dist");
+                    document.getElementById("SelDist").focus();
+                    return false;
+                }
+                //var Class = document.getElementById("Class").value;
+                //if (Class == "" || document.getElementById("Class").value == null) {
+                    //alert("Select Class");
+                    //document.getElementById("Class").focus();
+                    //return false;
+                //}
+                var txtadmisndate = document.getElementById("txtadmisndate").value;
+                if (txtadmisndate == "" || document.getElementById("txtadmisndate").value == null) {
+                    alert("Select date");
+                    document.getElementById("txtadmisndate").focus();
+                    return false;
+                }
+
+            }
+
+</script>

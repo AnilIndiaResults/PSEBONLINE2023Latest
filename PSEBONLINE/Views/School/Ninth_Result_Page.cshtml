@@ -1,0 +1,971 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Ninth Result Page";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>Ninth Class Result Panel @ViewBag.ClassName (Session <b>@Session["Session"].ToString()</b>) </h1>
+@*<script src="/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>*@
+@*<script src="~/Scripts/jquery.json-2.4.min.js"></script>*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        window.setInterval(function () {
+            var current = new Date();
+            var expiry = new Date("May 15, 2023 23:59:59")
+            if (current.getTime() > expiry.getTime()) {
+                $("#hideint").hide();
+                $(".hideint").hide();
+            } else if (current.getTime() < expiry.getTime()) {
+                $("#hideint").show();
+                $(".hideint").show();
+            }
+        }, 0);
+    });
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        console.log("ready!");  
+      
+        $(".kdsddl").change(function () {
+            $(window).on("load", function () {
+            if ($(this).val() == "1") {
+                $(".dvPassport").show();
+                $(".dvPassporta").hide();
+            }
+           else if ($(this).val() == "") {
+                $(".dvPassport").hide();
+                $(".dvPassporta").hide();
+            }
+            else if ($(this).val() == "2") {
+                $(".dvPassport").hide();
+                $(".dvPassporta").show();
+            }
+            else if ($(this).val() == "3") {
+                $(".dvPassport").hide();
+                $(".dvPassporta").show();
+            }
+            else if ($(this).val() == "4") {
+                $(".dvPassport").hide();
+                $(".dvPassporta").show();
+            }
+            else if ($(this).val() == "5") {
+                $(".dvPassport").hide();
+                $(".dvPassporta").show();
+            }
+
+            //else {
+
+            //    $(".kdsddl option:selected").text();
+            //    $(".dvPassport").hide();
+            //    $(".dvPassporta").show();
+            //}
+        });
+        });
+    });
+    
+</script>
+
+@using (Html.BeginForm("Ninth_Result_Page", "School", FormMethod.Post, new { id = "CCE", enctype = "multipart/form-data" }))
+{
+    <fieldset style="margin-bottom:15px">
+        <legend>Search</legend>
+        <form id="myForm">
+            <div class="clearefix"></div>
+            <div class="row">
+                <div class="col-md-2">
+                    Select Action @Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), "--Select---", new { @class = "" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+                </div>
+
+                <div class="col-md-2">
+                    Filter By @Html.DropDownList("SelFilter", new SelectList(ViewBag.MyFilter, "Value", "Text", ViewBag.SelectedFilter), "--Select--", new { @class = "" })
+                </div>
+                <div class="col-md-2">
+                    <br>
+
+                    <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                    <span id="reqsellist" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <input type="submit" name="cmd" value="Search" onclick="return dee();" />
+                    @Html.Hidden("cid", (string)ViewBag.cid)
+                    <a href="/School/resultupate" class="btn">Back</a>
+
+
+                    @if (ViewBag.reclock == "0")
+                    {
+                        <a href="/School/Ninth_Result_Page_Report?id=RP" class="btn">Rough Report</a>
+                        <span id="hideint">
+                            <input type="submit" class="btn" name="cmd" value="Click here to Final Submit" onclick="return confirm('Are Sure To Final Submit Your Ninth Result?')" />
+                        </span>
+                    }
+                    @if (ViewBag.reclock == "1")
+                    {
+                        <a href="/School/Ninth_Result_Page_Report?id=FP" class="btn">Final Report</a>
+                        <span class="hideint">
+                            <input type="submit" class="btn" name="cmd" value="Unlock Final Submission" onclick="return confirm('Are Sure To Unlock Final Submission Your Ninth Result?')" />
+                        </span>
+                    }
+                </div>
+            </div>
+
+            <div id="dialog" style="display: none" class="kdsfont">
+                ÌèÏã ÒóÐë× ÓÛ.ÓÛ.¥Û. Âã ¤â¨ ÓÕÛ ¤¼ã ÂÏÝÓ¼ ÊÏã ¬¥ã ÕÅ ¢ Ìè× Ú¥Ó¼ë× É¤ØÂ ¨ë¥Û ÓëÄ ÅÕÛ× ¨ÏÅÛ Õè ¢ Ìè× ÇØÚ¥ÅÐ ÓÉÚÌ¶ ¨ÏÅ Ð¥Û ÓÚÕÌ¼ ÕÙ¢
+            </div>
+        </form>
+    </fieldset>
+
+    <div id="loading1"></div>
+    <div class="clearfix"></div>
+    <div class="row" id="divMain1">
+        <div class="col-md-8">
+            <span style="color:#000;font-size:20px">Grid Total :  @ViewBag.TotalCount1 </span>
+
+            @if (ViewBag.TotalCount > 0)
+            {
+                if (Model.StoreAllData.Tables[1].Rows.Count > 0)
+                {
+                    var v = Model.StoreAllData.Tables[1].Rows[0]["MarksPending"].ToString();
+                    <span style="color:#333;font-size:20px">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span><span style="color:#333;font-size:20px">Marks Pending : @v</span>
+
+                    var w = Model.StoreAllData.Tables[1].Rows[0]["FinalPending"].ToString();
+                    <span style="color:#333;font-size:20px">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span><span style="color:#cc0000;font-size:20px">Final Submission Pending : @w</span>
+                }
+                else
+                {
+                    <span>0</span>
+                }
+            }
+        </div>
+        <div class="col-md-4 text-right">
+            <h3 class="rqf">Last Date : 15/05/2023</h3>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th width="5%">S.No.</th>
+                        <th width="5%">ID</th>
+                        <th width="3%">Section</th>
+                        <th width="10%">ROLL</th>
+                        <th width="5%">Form</th>
+                        <th width="5%">Reg.No.</th>
+                        <th width="26%">Name/Father's Name/Mother's Name</th>
+                        <th width="5%">DOB</th>
+                        <th width="5%">Gender</th>
+                        <th width="5%">Total marks</th>
+                        <th width="5%">Obt Matrks</th>
+                        <th width="5%">Result</th>
+                        @*<th width="7%">Adm Date</th>
+                            <th width="7%">Fee</th>
+                            <th width="4%">Lot</th>*@
+                        <th width="13%">Action</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 20 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                                var ROLL = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                                var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                                var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                                var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                                var Fee = Model.StoreAllData.Tables[0].Rows[i]["REGFEE"].ToString();
+                                var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                                var totmarks = Model.StoreAllData.Tables[0].Rows[i]["totmarks"].ToString();
+                                var obtmarks = Model.StoreAllData.Tables[0].Rows[i]["obtmarks"].ToString();
+                                var Result = Model.StoreAllData.Tables[0].Rows[i]["Result"].ToString();
+                                var FS = Model.StoreAllData.Tables[0].Rows[i]["reclock"].ToString();
+                                var MarksPending = Model.StoreAllData.Tables[1].Rows[0]["MarksPending"].ToString();
+                                var FinalPending = Model.StoreAllData.Tables[1].Rows[0]["FinalPending"].ToString();
+                                //totmarks,obtmarks,Result Final Submission Pending
+
+                                Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        @Count @MarksPending @FinalPending
+                                    </td>
+                                    <td>
+                                        @stdid
+                                    </td>
+                                    <td>
+                                        @sec
+                                    </td>
+                                    <td>
+                                        @ROLL
+                                    </td>
+                                    <td>
+                                        @FormName
+                                    </td>
+                                    <td>
+                                        @RegNo
+                                    </td>
+                                    <td>
+                                        @FullName
+                                    </td>
+                                    <td>
+                                        @DOB
+                                    </td>
+                                    <td>
+                                        @Gender
+                                    </td>
+                                    <td>
+                                        @totmarks
+                                    </td>
+                                    <td>
+                                        @obtmarks
+                                    </td>
+                                    <td>
+                                        @Result
+                                    </td>
+
+
+                                    @*<td>
+                                            @AdmDate
+                                        </td>
+                                        <td>
+                                            @Fee
+                                        </td>
+                                        <td>
+                                            @Lot
+                                        </td>*@
+                                    @*<td>
+                                            <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
+                                        </td>*@
+                                    <td>
+                                        @if (FS == "1" && Result != "RL" && Result != "RE-APPEAR")
+                                        {
+                                            <button type="button" class="">LOCKED</button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
+                                        }
+                                    </td>
+                                </tr>
+
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="11">
+                                            Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                            @if (ViewBag.pagesize == 1)
+                                            {@:<<
+                                                @Html.Raw("&nbsp;");
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp = ViewBag.pagesize + 1;
+                                                    <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@dp">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var dp = ViewBag.pagesize - 1;
+                                                <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=1"><<</a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@dp">< Prev</a>
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp1 = ViewBag.pagesize + 1;
+                                                    <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@dp1">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+                        if (Model != null)
+                        {
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                var schl = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
+                                var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                var rollNo = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                                var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                                var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+
+                                var totmarks = Model.StoreAllData.Tables[0].Rows[i]["totmarks"].ToString();
+                                var obtmarks = Model.StoreAllData.Tables[0].Rows[i]["obtmarks"].ToString();
+                                var Result = Model.StoreAllData.Tables[0].Rows[i]["Result"].ToString();
+
+                                var UPTREMARKS = Model.StoreAllData.Tables[0].Rows[i]["UPTREMARKS"].ToString();
+
+                                
+                                if (stdid == "170640005")
+                                {
+
+                                }
+                                if (Result.ToUpper() == "PASS")
+                                {
+                                    Result = "1";
+                                }
+                                if (Result.ToUpper() == "FAIL")
+                                {
+                                    Result = "2";
+                                }
+                                if (Result.ToUpper() == "RE-APPEAR")
+                                {
+                                    Result = "3";
+                                }
+                                if (Result.ToUpper() == "RL")
+                                {
+                                    Result = "4";
+                                }
+                                if (Result.ToUpper() == "CANCEL")
+                                {
+                                    Result = "5";
+                                }
+                                if (Result.ToUpper() == "ABSENT")
+                                {
+                                    Result = "6";
+                                }
+                                // ViewBag.rslist = "1";
+                                //totmarks,obtmarks,Result
+                                //var IsMarksFilled = Model.StoreAllData.Tables[0].Rows[i]["IsMarksFilled"].ToString();
+                                var Prev = "0";
+                                var Next = "0";
+                                if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count == 1)
+                                {
+                                    Prev = "0";
+                                    Next = "0";
+                                }
+                                else if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count > 1)
+                                {
+                                    Prev = "0";
+                                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+                                }
+                                else if (i > 0 && i < Model.StoreAllData.Tables[0].Rows.Count - 1)
+                                {
+                                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+                                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+                                }
+                                else if (i > 0 && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
+                                {
+                                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+                                    Next = "0";
+                                }
+                                int k = i + 1;
+            <div class="container">
+                <div class="modal fade" id="myModal1-@stdid" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                @*<h4 class="modal-title">Student Details Of Unique Id : @stdid</h4>*@
+                                <h4 class="modal-title">Student Details Of @Html.Raw("&nbsp;&nbsp;") Section : @sec @Html.Raw("") @Html.Raw("&nbsp;&nbsp;")& @Html.Raw("&nbsp;&nbsp;") Roll No : @rollNo & @Html.Raw("&nbsp;&nbsp;") Form : @FormName</h4>
+                            </div>
+                            <div class="modal-body">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="28%">Student ID</td>
+                                        <td>@Html.Raw("")@stdid@Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Reg No.</td>
+                                        <td>@Html.Raw("")@RegNo@Html.Raw("")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Name/F.Name/M.Name</td>
+                                        <td>@Html.Raw("")@FullName@Html.Raw("")</td>
+                                    </tr>
+                                    @if ((Result == "3") || (Result == "4"))
+                                    {
+                                        <tr>
+                                            <td>Result</td>
+                                            <td>@Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target kdsddl", id = "ResultList-" + stdid })</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Mark</td>
+                                            <td>
+                                                @Html.Raw("")
+                                                <input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="650" readonly="readonly" />
+                                                @*<input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="@totmarks" />*@
+                                                <br />
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="dvPassport">Obtain Mark</td>
+                                            <td class="dvPassport">@Html.Raw("")<input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /><br /></td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td class="dvPassporta">Reason/Remarks  </td>
+                                            <td class="dvPassporta"><input type="Text" id="UPTREMARKS-@stdid" name="UPTREMARKS" class="" value="@UPTREMARKS" /></td>
+                                            @*<td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /></td>*@
+                                        </tr>
+
+                                        <tr>
+                                            <td></td>
+                                            <td><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev,@schl)" /></td>
+                                        </tr>
+
+                                    }
+                                    else
+                                    {
+                                        if (ViewBag.reclock == "0")
+                                        {
+                                            <tr>
+                                                <td>Result</td>
+                                                <td>
+                                                    @Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target kdsddl", id = "ResultList-" + stdid })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Mark</td>
+                                                <td>
+                                                    <input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="650" readonly="readonly" />
+                                                    @*<input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="@totmarks" />*@
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="dvPassport">Obtain Mark</td>
+                                                <td class="dvPassport"><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" onfocusout="CalculatePercentFunction(@stdid)" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="dvPassporta">Reason/Remarks </td>
+                                                <td class="dvPassporta"><input type="Text" id="UPTREMARKS-@stdid" name="UPTREMARKS" class="" value="@UPTREMARKS" /></td>
+                                                @*<td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /></td>*@
+                                            </tr>
+
+                                            <tr>
+                                                <td></td>
+                                                <td><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev,@schl)" /></td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td>Result</td>
+                                                <td>
+                                                    @*@Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target", @disabled = "disabled", id = "ResultList-" + stdid })*@
+                                                    @Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target kdsddl", id = "ResultList-" + stdid })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Mark</td>
+                                                <td><input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="650" readonly="readonly" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="dvPassport">Obtain Mark</td>
+                                                <td class="dvPassport"><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" readonly="readonly" /></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="dvPassporta">Reason/Remarks</td>
+                                                <td class="dvPassporta"><input type="Text" id="UPTREMARKS-@stdid" name="UPTREMARKS" class="" value="@UPTREMARKS" /></td>
+                                            </tr>
+                                        }
+                                    }
+                                    <tr>
+                                        <td colspan="2">
+                                            <span class="rqf">
+                                                Instructions:<br />1. Please Enter OBT Marks less than equal to Max Marks and Greater than Zero !!<br />
+                                                2. Result Pass Mark Should Be Greater Or Equals To 33 % of Total marks
+                                            </span><br />
+                                            <div id="loading1-@stdid"></div>
+                                        </td>
+                                    </tr>
+
+
+                                </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <span class="lft">
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                                    </span>
+                                    <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                                    @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+                                </div>
+                            </div>
+
+                    </div>
+                </div>
+
+            </div>
+        }
+    }
+}
+
+@{
+    if (TempData["result"] != null)
+    {
+        if (TempData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                var impcn = @TempData["TotImported"];
+                //alert(impcn);
+                alert("Sorry, unable to Final Submit Data Cause,  "+impcn+" Records are pending");
+                window.location.href = '@Url.Action("Ninth_Result_Page", "School")';
+            </script>
+        }
+        else if (TempData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submitted Data Successfuly");
+                window.location.href = '@Url.Action("Ninth_Result_Page", "School")';
+            </script>
+        }
+
+        else if (TempData["result"].ToString() == "10")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Unlock Final Submission Successfuly");
+                window.location.href = '@Url.Action("Ninth_Result_Page", "School")';
+            </script>
+        }
+
+        else if (TempData["result"].ToString() == "11")
+        {
+            <script type="text/javascript" language="javascript">
+                alert(" Failure to Unlock Final Submission");
+                window.location.href = '@Url.Action("Ninth_Result_Page", "School")';
+            </script>
+        }
+        else if (TempData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data not saved..plz try again");
+            </script>
+        }
+    }
+}
+<script type="text/javascript">
+    function CalculatePercentFunction(k) {
+        var totMark = $("#totMarks-" + k).val();
+        var obtMark = $("#obtainMarks-" + k).val();
+        var Res = $("#ResultList-" + k).val();
+        var comp = obtMark / totMark * 100;
+        if (Res == 1) {
+            if (comp < 33) {
+                alert(comp);
+                $("#obtainMarks-" + k).val("");
+                alert("Obtained Marks Should Be Greater than Equals to 33% ");
+                return false;
+            }
+
+        }
+
+    }
+</script>
+<script type="text/javascript">
+    function dee() {
+
+        if ($("#SelAction").val() == "") {
+            $("#reqsession").slideDown("slow");
+            return false;
+        }
+        if ($("#SelFilter").val() != "" && $("#SearchString").val() == "") {
+            $("#reqsellist").slideDown("slow");
+            return false;
+        }
+        //if ((($("#SelFilter").val() != "0") || ($("#SelFilter").val() != "")) && $("#SearchString").val() == "") {
+        //    $("#reqsellist").slideDown("slow");
+        //    return false;
+        //}
+        //else
+        //    return true;
+
+    }
+    $(document).ready(function () {
+        $("#SelAction").change(function () {
+            if ($("#SelAction").val() == "") {
+                $("#reqsession").slideDown("slow");
+            }
+            else {
+                $("#reqsession").slideUp("slow");
+            }
+
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //var getval = $(".target").val();
+        //alert(getval);
+        if ($(".target").val() == "") {
+            $('.tot').attr("readonly", true);
+            $('.obt').attr('readonly', true);
+        }
+
+        //if ($(".target").val == "1" || $(".target").val != "2" || $(".target").val == "5" || $(".target").val != "6" )
+        //{
+        //    $('.tot').attr("readonly", true);
+        //    $('.obt').attr('readonly', true);
+        //}
+        //else
+        //{
+        //    $('.tot').attr("readonly", true);
+        //    $('.obt').attr('readonly', true);
+
+        //}
+
+        $(".tot").off('keypress');
+
+        $(".tot").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 65) || (charCode == 67) || (charCode == 97) || (charCode == 99)) {
+                return true;
+            }
+            else {
+                alert("Invalid character...Enter Only Number!!");
+                return false;
+            }
+        });
+        $(".obt").off('keypress');
+
+        $(".obt").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 65) || (charCode == 67) || (charCode == 97) || (charCode == 99)) {
+                return true;
+            }
+            else {
+                alert("Invalid character...Enter Only Number!!");
+                return false;
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(".target").change(function () {
+        //alert("Handler for .change() called.");
+        var e = this.value;
+        //alert(e);
+        if (e == "" || e == null || e == "4" || e == "5" || e == "6") {
+            //alert(e);
+            //$('.tot').attr("value", "ee");
+            $('.tot').attr("readonly", true);
+            $('.obt').attr('readonly', true);
+        }
+        if (e == "1" || e == "2" || e == "3")
+        {
+            //$('.tot').attr("readonly", false);
+            $('.tot').attr("readonly", true);
+            $('.obt').attr('readonly', false);
+        }
+
+    });
+
+    function SubMarks(k, nxt, prv,schl) {
+
+        var rl = $("#ResultList-" + k).val();
+        if (rl == "" || rl == null) {
+            alert("Please Select Result");
+            rl.focus();
+            return false;
+        }
+        var totMarks = $("#totMarks-" + k).val();
+        var obtMarks = $("#obtainMarks-" + k).val();
+        var UPTREMARKS = $("#UPTREMARKS-" + k).val();
+        
+        if (parseInt(obtMarks) > parseInt(totMarks))
+        {
+            alert("Obtaied marks should Not be Greater Than Total Marks");
+            obtMarks.focus();
+            return false;
+        }
+        if (rl == "1" || rl == "2" || rl == "3") {
+
+            if(totMarks=="" || totMarks==null)
+            {
+                alert("Please Fill Total marks");
+                totMarks.focus();
+                return false;
+            }
+            if (obtMarks == "" || obtMarks == null) {
+                alert("Please Fill Obtained marks");
+                obtMarks.focus();
+                return false;
+            }
+
+        }
+
+        //alert(rl);
+        //alert(totMarks);
+        //alert(obtMarks);
+
+        var tblname = '#subjects-' + k;
+        var tblnxt = '#subjects-' + nxt;
+       // alert(tblname);
+      //  alert(tblnxt);
+        var TableData;
+        TableData = JSON.stringify(storeTblValues());
+       // console.log("JsonString  = " + TableData + "\n");
+       // alert(TableData);
+        //post
+        if (TableData == "false") {
+            alert("Please Fill Subject OBT-Marks, OBTMarks can be in-between Min and Max Marks");
+           //// $('#subjects-' + k).addClass("input-validation-error");
+           // $('.chkclass').addClass("input-validation-error");
+        }
+        else if (TableData != "false") {
+            // alert('Now Start:' + TableData);
+            $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/UpdateMatricResult", { "ResultList": rl, "totmarks": totMarks, "obtmarks": obtMarks, "stdid": k, "schl": schl, "UPTREMARKS": UPTREMARKS },
+           // $.post("/School/JqCCESenior", { "stdid": k, "CandSubject": TableData },
+                      function (data) {
+                          $('#loading1-' + k).empty();
+                          //alert('data.status  = ' + data.status);
+                          if (data.status == "0" || data.status == "-1") {
+                              // alert(tblnxt);
+                              // $('' + tblname + '').css('display', 'none');
+                              alert("Subject Marks Alloted Failure, Please Try Again");
+                          }
+                          else if (data.status =="-2") {
+                              // alert(tblnxt);
+                              // $('' + tblname + '').css('display', 'none');
+                             // alert("Please Check Subject Marks Again,  OBT Marks less than equal to Max Marks");
+                              alert("Invalid Marks, Please Enter OBT Marks less than equal to Max Marks and Greater than Zero !!");
+                          }
+                          else if (data.status =="-3") {
+                              // alert(tblnxt);
+                              // $('' + tblname + '').css('display', 'none');
+                              alert("Please Fill All Subject OBTMARKS");
+                          }
+                          else {
+                              //window.location.href = '@Url.Action("Ninth_Result_Page", "School")';
+                              alert("Subject Marks Alloted Successfully of Student : " + k);
+                              nxtDiv(nxt, k, prv);
+                          }
+                      });
+        }
+
+        function storeTblValues() {
+           // alert('3');
+            var TableData = new Array();
+            $('' + tblname + ' tr').each(function (row, tr) {
+                TableData[row] = {
+                    //"SUB": $(tr).find('td:eq(0)').text()
+                    "SUB": $(tr).find('.chksub').val()
+                    , "OBTMARKS": $(tr).find('.chkclass').val()
+                     , "MINMARKS": $(tr).find('.chkmin').val()
+                     , "MAXMARKS": $(tr).find('.chkmax').val()
+                }
+            });
+            TableData.shift();  // first row will be empty - so remove
+            //alert(TableData);
+            return TableData;
+
+        }
+    }
+
+    function nxtDiv(nxt, crnt,prv) {
+       // var cid = '#myModal1-' + crnt
+        $('#myModal1-' + crnt).modal('hide');
+        if (nxt == "0" && prv == "0")
+        { }
+        else if (nxt == "0" && prv!="0")
+        {
+           $('#myModal1-' + prv).modal('show');
+        }
+        else if (prv == "0" && nxt != "0") {
+            $('#myModal1-'+nxt).modal('show');
+        }
+        else if (prv != "0" && nxt != "0") {
+            $('#myModal1-' + nxt).modal('show');
+        }
+    }
+
+
+</script>
+<script type="text/javascript">
+
+    function pad(obj, length) {
+        // alert("pad:- " + obj)
+        var text = obj.value;
+        // alert("pad v:- " + text)
+        var str = '' + text;
+        // alert("pad str:- " + str)
+        while (str.length < length) {
+            str = '0' + str;
+        }
+        if (obj.value == 'A' || obj.value == 'C' || obj.value == 'a' || obj.value == 'c') { }
+        else {
+            obj.value = str;
+        }
+    }
+
+    function CheckMarks(obj, k, marks) {
+
+        // var tblname = '#sid-' + k;
+        // alert(tblname1);
+        // var marksN = parseInt(marks,10);
+        // alert(tblname);
+        //var txt_sub1 = parseInt(marks.value);
+        // alert(marks);
+        //alert("N:" + txt_sub1);
+        // var t = obj;
+        //ma^2752803^002
+        //var maxx = 'ma^' + obj.id;
+        //  var _name = obj.value;
+        // alert(maxx);
+        //alert(maxx.value);
+        //  alert(_name);
+        //alert(obj.value);
+        // var tblname =obj.value;
+        if (obj.value == 'A' || obj.value == 'C' || obj.value == 'a' || obj.value == 'c' || obj.value == '') {
+            if (obj.value == 'A' || obj.value == 'a') {
+                obj.value = 'ABS';
+            }
+            else if (obj.value == 'C' || obj.value == 'c') {
+                obj.value = 'CAN';
+            }
+            return true;
+        }
+        else if (obj.value > marks || obj.value <= 0) {
+            obj.value = '';
+            alert("Invalid Marks, Please Enter OBT Marks less than equal to Max Marks and Greater than Zero !!");
+            return false;
+        }
+        else {
+            // alert("call pad");
+            pad(obj, 3);
+            return true;
+        }
+    }
+
+</script>
+
+<script>
+
+
+
+
+    $(document).ready(function () {
+
+
+
+        $(".chkclass").off('keypress');
+
+        $(".chkclass").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 65) || (charCode == 67) || (charCode == 97) || (charCode == 99)) {
+                return true;
+            }
+            else {
+                alert("Invalid character...Enter Only Number!!");
+                return false;
+            }
+        });
+
+
+
+    });
+
+    var form = $("#searchform").serialize();
+    $("#btnNext").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Next',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#btnPrevious").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Previous',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#SelFilter").change(function () {
+        var value = document.getElementById('SelFilter').value;
+        $('#SearchString').val('');
+        $("#SearchString").datepicker("disable");
+        document.getElementById('SearchString').disabled = false;
+        $("#SearchString").off('keypress');
+
+
+    });
+
+</script>
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+    /*input:required {
+         background-color: #FF9494 !important;
+        border:1px solid #999;
+    }*/
+</style>

@@ -1,0 +1,555 @@
+﻿@model PSEBONLINE.Models.DMModel
+@{
+    ViewBag.Title = "ChallanList";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>View Challan List</h1>
+    <div class="row">
+        <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("ChallanList", "DM", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-2">Select Fee Category:@Html.DropDownList("feecat", ViewBag.feecat as SelectList, "--All--", new { @class = "", @required = "required" })</div>
+                <div class="col-md-2">Select District:@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District--", new { @class = "" })</div>
+                <div class="col-md-2">Select Status:@Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), "--All--", new { @class = "" })</div>
+                <div class="col-md-2">Search By:@Html.DropDownList("SelBy", new SelectList(ViewBag.MySearchBy, "Value", "Text", ViewBag.SelectedSearchBy), "--All--", new { @class = "" })</div>
+                <div class="col-md-2">Enter Text: <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2">&nbsp;<br /><input type="submit"name="submit" value="Search" />&nbsp;&nbsp; <input type="submit" name="submit" value="Reset" /> </div>
+            }
+            </fieldset>
+        </div>
+    <div class="clearfix"></div>
+        <div class="col-md-6 noprint">Grid Total:  @ViewBag.TotalCount1</div>
+        <div class="col-md-6 noprint" style="text-align:right">          
+            @if (ViewBag.TotalCount > 0)
+            {
+                <input type="button" value="Download Pending Data" onclick="javascript:document.location.href='@Url.Action("DownloadPendingChallanData", "DM", new { File = "P" })'" />
+            }
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">              
+                        <th>SCHL</th>
+                        <th>Challan ID</th>
+                        <th>Ref.No/App No</th>
+                        <th>Fee Category</th>
+                        <th>School/Candidate Name</th>
+                        <th>District</th>
+                        <th>Fee	Deposit Date</th>
+                        <th>Lot/Print Lot</th>
+                        <th>Mobile No.</th>
+                        <th>Receive Status</th>
+                        <th>Action</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 20 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var ChallanID = Model.StoreAllData.Tables[0].Rows[i]["ChallanID"].ToString();
+                                var AppNo = Model.StoreAllData.Tables[0].Rows[i]["AppNo"].ToString();
+                                var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHLREGID"].ToString();
+                                var schlcandnm = Model.StoreAllData.Tables[0].Rows[i]["SCHLCANDNM"].ToString();
+                                var FeeCat = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                                var DIST = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();
+                                var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                                var VERIFYDATE = Model.StoreAllData.Tables[0].Rows[i]["VERIFYDATE"].ToString();
+                                var Lot = Model.StoreAllData.Tables[0].Rows[i]["Lot"].ToString();
+                                var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                var DMReceiveNo = Model.StoreAllData.Tables[0].Rows[i]["DMReceiveNo"].ToString();
+                                var DMReceiveDate = Model.StoreAllData.Tables[0].Rows[i]["DMReceiveDate"].ToString();
+                                var ReceivedBy = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["ReceivedBy"].ToString());
+                                var ReceivedName = Model.StoreAllData.Tables[0].Rows[i]["ReceivedName"].ToString();
+                                <tr>
+                                    <td>
+                                        @SCHL
+                                    </td>
+                                    <td>
+                                        @ChallanID
+                                    </td>
+                                    <td>
+                                        @AppNo
+                                    </td>
+                                    <td>
+                                        @FeeCat
+                                    </td>
+                                    <td>
+                                        @schlcandnm
+                                    </td>
+                                    <td>
+                                       @DISTNM 
+                                    </td>
+
+                                    <td>
+                                       @VERIFYDATE
+                                    </td>
+                                    <td>
+                                       @Lot
+                                    </td>
+                                    <td>
+                                        @Mobile
+                                    </td>
+                                    <td>
+                                        @if (DMReceiveNo != "")
+                                        {
+                                            <span class="rqf">@DMReceiveNo@Html.Raw("&nbsp;")@Html.Raw(" [")@DMReceiveDate.Substring(0, 10) @Html.Raw("] ")@Html.Raw("<Br />(")@ReceivedName @Html.Raw(")")</span>
+                                        }
+                                        else
+                                        {@Html.Raw("PENDING") }
+                                        
+                                    </td>
+                                    <td>
+                                        <div class="cart">
+                                            Choose Action <span class="caret"></span>
+                                            <div id="sidebar">
+                                                <ul>                                                                                                       
+                                                    <li><a href="" data-toggle="modal" data-target="#myModal1-@ChallanID">View Details</a></li>                                                   
+                                                    <li style="@(DMReceiveNo != "" ? "display:none" : "display:block")"><a href="" data-toggle="modal" data-target="#myModal2-@ChallanID">Receive / Update</a></li>
+                                                    <li style="@(DMReceiveNo != "" && Convert.ToInt32(ReceivedBy)==Convert.ToInt32(ViewBag.AdminId) ? "display:block" : "display:none")">
+                                                    @*@Html.ActionLink("Cancel Receiving", "CancelReceiving", new { id = ChallanID })*@
+                                                   @Html.ActionLink("Cancel Receiving", "CancelReceiving", new { id = ChallanID }, new { @OnClick = "return confirm('Are you sure to Cancel the Challan Receiving?');" })
+                                                    
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="11">
+                                            Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                            @if (ViewBag.pagesize == 1)
+                                            {   @:<<
+                                                @Html.Raw("&nbsp;");
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp = ViewBag.pagesize + 1;
+                                                    <a href="~/DM/ChallanList?page=@dp">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/DM/ChallanList?page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var dp = ViewBag.pagesize - 1;
+                                                <a href="~/DM/ChallanList?page=1"><<</a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/DM/ChallanList?page=@dp">< Prev</a>
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp1 = ViewBag.pagesize + 1;
+                                                    <a href="~/DM/ChallanList?page=@dp1">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/DM/ChallanList?page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="11">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @{
+        if (ViewData["CancelReceiveNo"] != null)
+        {
+            if (ViewData["CancelReceiveNo"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Receiving Cancelled Successfully");
+                </script>
+            }
+            else if (ViewData["CancelReceiveNo"].ToString() == "-1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Receiving Not Found");
+                </script>
+            }
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Receiving Cancelled Failure");
+                </script>
+            }
+        }
+
+    }
+
+
+
+    @if (Model != null)
+    {
+        if (ViewBag.TotalCount > 0)
+        {
+            int k = 0;
+            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+            {
+                var ChallanID = Model.StoreAllData.Tables[0].Rows[i]["ChallanID"].ToString();
+                var AppNo = Model.StoreAllData.Tables[0].Rows[i]["AppNo"].ToString();
+                var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHLregid"].ToString();
+                var schlcandnm = Model.StoreAllData.Tables[0].Rows[i]["schlcandnm"].ToString();
+                var FeeCat = Model.StoreAllData.Tables[0].Rows[i]["FeeCat"].ToString();
+                var DIST = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();
+                var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                var VERIFYDATE = Model.StoreAllData.Tables[0].Rows[i]["VERIFYDATE"].ToString();
+                var Lot = Model.StoreAllData.Tables[0].Rows[i]["Lot"].ToString();
+                var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                var DMReceiveNo = Model.StoreAllData.Tables[0].Rows[i]["DMReceiveNo"].ToString();
+                var DMReceiveDate = Model.StoreAllData.Tables[0].Rows[i]["DMReceiveDate"].ToString();
+
+                var J_REF_NO = Model.StoreAllData.Tables[0].Rows[i]["J_REF_NO"].ToString();
+                var BCODE = Model.StoreAllData.Tables[0].Rows[i]["BCODE"].ToString();
+                var BANK = Model.StoreAllData.Tables[0].Rows[i]["BANK"].ToString();
+                var BRCODE = Model.StoreAllData.Tables[0].Rows[i]["BRCODE"].ToString();
+                var FEE = Model.StoreAllData.Tables[0].Rows[i]["FEE"].ToString();
+                var TOTFEE = Model.StoreAllData.Tables[0].Rows[i]["TOTFEE"].ToString();
+                var BRANCH = Model.StoreAllData.Tables[0].Rows[i]["BRANCH"].ToString();
+                var DEPOSITDT = Model.StoreAllData.Tables[0].Rows[i]["DEPOSITDT"].ToString();
+                var Prev = "0";
+                var Next = "0";
+                if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count == 1)
+                {
+                    Prev = "0";
+                    Next = "0";
+                }
+                else if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count > 1)
+                {
+                    Prev = "0";
+                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["ChallanID"].ToString();
+                }
+                else if (i > 0 && i < Model.StoreAllData.Tables[0].Rows.Count - 1)
+                {
+                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["ChallanID"].ToString();
+                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["ChallanID"].ToString();
+                }
+                else if (i > 0 && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
+                {
+                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["ChallanID"].ToString();
+                    Next = "0";
+                }
+                k = i + 1;
+            <div class="container">
+                <div class="modal fade" id="myModal1-@ChallanID" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3>Challan Details of @ChallanID</h3>
+                            </div>
+                            <div class="modal-body">
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                        <td width="30%">Category</td>
+                                        <td><label>@FeeCat</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lot / Print Lot</td>
+                                        <td><label>@Lot</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Schl Reg. ID</td>
+                                        <td><label>@SCHL</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>App. No /Ref. No.</td>
+                                        <td><label>@AppNo</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Challan ID</td>
+                                        <td><label>@ChallanID</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>School Name</td>
+                                        <td><label>@schlcandnm</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>District</td>
+                                        <td><label>@DISTNM</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mobile No.</td>
+                                        <td><label>@Mobile</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank Name</td>
+                                        <td><label>@BANK</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fee</td>
+                                        <td><label>@FEE</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Challan Generation Date</td>
+                                        <td><label>@DEPOSITDT</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Branch Code/ Name</td>
+                                        <td><label>@BCODE / @BRANCH</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank Ref. No.</td>
+                                        <td><label>@BRCODE</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Receiving No.</td>
+                                        <td><label>@DMReceiveNo</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Receiving Date</td>
+                                        <td><label>@DMReceiveDate</label></td>
+                                    </tr>
+                                </table>
+                                </div>
+                            <div class="modal-footer">
+                                <span class="lft">
+                                    <button type="button" class="" data-toggle="modal" data-target="#myModal1-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                                </span>
+                                <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="myModal2-@ChallanID" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3>Receiving of Challan : @ChallanID</h3>
+                            </div>
+                            <div class="modal-body">
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                        <td width="25%">Category</td>
+                                        <td><label>@FeeCat</label></td>
+                                        </tr>
+                                    <tr>
+                                        <td>Lot</td>
+                                        <td><label>@Lot</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>App. No./Ref. No.</td>
+                                        <td><label>@AppNo</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>School Name</td>
+                                        <td><label>@schlcandnm</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Receiving No.</td>
+                                        <td><input type="text" id="receiveno-@ChallanID" name="receiveno" maxlength="10" onkeypress="return isNumberKey(event)" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Receiving Date</td>
+                                        <td><input type="text" id="receivedate-@ChallanID" name="receivedate" class="receivedate"></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><input type="button" class="btn" value="Submit" id="btnsubmitRegenate" onclick="ReceiveChln(@k,'@ChallanID',@Next,@Prev)" /></td>
+                                    </tr>
+                                    </table>
+                                            @*<textarea id="receiveno-@ChallanID" name="receiveno" maxlength="10" onkeypress="return isNumberKey(event)" ></textarea>*@
+                                           
+                            </div>
+                            <div class="modal-footer">
+                                <span class="lft">
+                                    <button type="button" class="" data-toggle="modal" data-target="#myModal2-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                                </span>
+                                <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal2-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>              
+            </div>
+            }
+        }
+    }
+
+
+
+</div>
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<script type="text/javascript">
+    function nxtDiv2(nxt, crnt,prv) {
+        // var cid = '#myModal1-' + crnt
+        $('#myModal2-' + crnt).modal('hide');
+        if (nxt == "0" && prv == "0")
+        { }
+        else if (nxt == "0" && prv!="0")
+        {
+            $('#myModal2-' + prv).modal('show');
+        }
+        else if (prv == "0" && nxt != "0") {
+            $('#myModal2-'+nxt).modal('show');
+        }
+        else if (prv != "0" && nxt != "0") {
+            $('#myModal2-' + nxt).modal('show');
+        }
+    }
+
+    function ReceiveChln(k, challanid, nxt, prv) {
+        // alert("challanid :" + challanid);     
+        var flag = 0;
+        if ($("#receivedate-" + challanid).val() == "")
+        {
+            $("#receivedate-" + challanid).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#receiveno-" + challanid).val() == "") {
+            $("#receiveno-" + challanid).addClass("input-validation-error");
+            flag = 1;
+        }
+        if(flag==1)
+        {
+            return false;
+        }
+        else
+        {
+            $.ajax({
+                type: "POST",
+                url: "../DM/ReceiveChln", // this for calling the web method function in cs code.
+                data: '{receiveno:"' + $("#receiveno-" + challanid).val() + '",receivedate:"' + $("#receivedate-" + challanid).val() + '",remarks:"remarks",challanid:"' + challanid + '"}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                   // alert(response.sn);
+                    if (response.sn=="Yes")
+                    {
+                        alert("Received Successfully of Challan  " + challanid + "  & Receiving No. is " + response.Rcno);
+                        //window.location.href = "/DM/ChallanList";
+                        window.location.reload(true);
+                       // nxtDiv2(nxt, schl, prv);
+                    }
+                    else  if (response.sn=="DP")
+                    {
+                        alert("Duplicate Receiving Number.. Please Change ");
+                        $("#receiveno-" + challanid).focus();
+                        $("#receiveno-" + challanid).addClass("input-validation-error");
+                    }
+                    else
+                    {
+                        alert("Receive  Failure.. Please Try Again.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            
+        }
+    }
+
+    $(function () {
+        $(".receivedate").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,          
+           yearRange: '2016:' + (new Date().getFullYear()),
+ maxDate: 0  
+           // defaultDate: "+1w",
+            //setDate: new Date()
+
+        });
+    });
+</script>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        var form = $("#searchform").serialize();
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            if (value == 1 || value == 3 || value == 5) {
+                $("#searchform").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        // alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    };
+                });
+            } else {
+                $("#searchform").off('keypress');
+            }
+
+        });
+    });
+</script>
+

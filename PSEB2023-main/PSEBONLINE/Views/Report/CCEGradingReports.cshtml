@@ -1,0 +1,136 @@
+﻿@model PSEBONLINE.Models.ReportModel
+
+@{
+    ViewBag.Title = "CCEGradingReports";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>INA/CCE Summary Reports</h1>
+
+<div class="row">
+    
+    <div class="col-md-2" style="@(ViewBag.IsGRADE12 == 1 ? "display:block" : "display:none")"><input type="button" id="CCEPrimary" value="INA/CCE Primary Report " onclick="return valForm();" /> </div>
+	<div class="col-md-2" style="@(ViewBag.IsGRADE10 == 1 ? "display:block" : "display:none")"><input type="button" id="CCEMiddle" value="INA/CCE Middle Report " onclick="return valForm();" /></div>
+    <div class="col-md-2" style="@(ViewBag.IsCCE10 == 1 ? "display:block" : "display:none")"><input type="button" id="CceMatric" value="INA/CCE Matric Report " onclick="return valForm();" /></div>
+    <div class="col-md-2" style="@(ViewBag.IsCCE12 == 1 ? "display:block" : "display:none")"><input type="button" id="CceSenior" value="INA/CCE Senior Report " onclick="return valForm();" /></div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <div class="clear"></div>
+            <div id="loading"></div>
+            <div id="divMain">
+                <div id="dee">
+@{
+    var pName = "";
+    if (ViewBag.tab == "1")
+    {
+        @Html.Partial("_ccegradingeport")
+        pName = "C.C.E SENIOR SUMMARY REPORT";
+    }
+    else if (ViewBag.tab == "2")
+    {
+        @Html.Partial("_ccegradingeport")
+           pName = "C.C.E PRIMARY SUMMARY REPORT";
+    }
+    else if (ViewBag.tab == "3")
+    {
+        @Html.Partial("_ccegradingeport")
+        pName = "C.C.E MATRIC  SUMMARY REPORT";
+    }
+    else if (ViewBag.tab == "4")
+    {
+        @Html.Partial("_ccegradingeport")
+           pName = "C.C.E MIDDLE SUMMARY REPORT";
+    }
+    }
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            @*<div> 
+                <input type="button" value="@pName" onclick="javascript:document.location.href='@Url.Action("DownloadCCEGradingReport", "Admin", new { File = ViewBag.tab })'" />
+
+          </div>*@
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#CceSenior").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/CCEGradingReport?id=1", function (data) {
+                if (data != '') {
+                    $('div#loading').empty();
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                else {
+                    $('div#loading').empty();
+                    $('#divMain').hide();
+                    $('#divMain').empty();
+                }
+        });
+    });
+        $("#CCEPrimary").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/CCEGradingReport?id=2", function (data) {
+                if (data != '') {
+                    $('div#loading').empty();
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                else {
+                    $('div#loading').empty();
+                    $('#divMain').hide();
+                    $('#divMain').empty();
+                }
+        });
+    });
+        $("#CceMatric").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/CCEGradingReport?id=3", function (data) {
+                if (data != '') {
+                    $('div#loading').empty();
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                else {
+                    $('div#loading').empty();
+                    $('#divMain').hide();
+                    $('#divMain').empty();
+                }
+        });
+        });
+
+        $("#CCEMiddle").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/CCEGradingReport?id=4", function (data) {
+                if (data != '') {
+                    $('div#loading').empty();
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                else {
+                    $('div#loading').empty();
+                    $('#divMain').hide();
+                    $('#divMain').empty();
+                }
+            });
+        });
+});
+</script>
+

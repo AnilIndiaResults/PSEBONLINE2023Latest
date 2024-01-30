@@ -1,0 +1,78 @@
+﻿@model PSEBONLINE.Models.OnDemandCertificates
+@{
+    ViewBag.Title = "RegistryMIS";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>Verify MIS</h1>
+
+@using (Html.BeginForm("RegistryMIS", "OnDemandCertificate", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+{
+       <div class="row" style="padding-bottom:100px">
+            <div class="col-md-4">
+                Upload Only <span class="rqf">Success</span> Transactions File @Html.TextBoxFor(m => m.file, new { id = "MIS_FILE", type = "file", required = "required" })
+
+            </div>
+            <div class="col-md-2">
+                <br />
+                <input type="submit" value="Upload" />
+            </div>
+            <div class="col-md-6 text-right">
+                <br />               
+                <a download="" href="~/PDF/OnDemandRegistrySampleFile.xls" class="btn">Click Here to Download  Sample File</a> 
+                <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Welcome", "OnDemandCertificates")'" />
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <h1>Important Instructions:</h1>
+                <p style="padding-left:15px">
+                    1) All Fields are Manadatory.<br />
+                    2) If any Error occurs in Excel File than <span class="rqf">Error Status</span> File will be downloaded automatically,<br />                    
+                    3) Kindly upload <span class="rqf">Text</span> Formated File Only.
+
+                </p>
+            </div>    
+        </div>
+
+
+
+}
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+                window.location.href = '@Url.Action("Welcome", "OnDemandCertificate")';
+            </script>
+}
+
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+                //alert("File not Uploaded..plz try again");
+            </script>
+        }
+    }
+}
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select correct file format');
+            }
+        });
+    });
+
+</script>

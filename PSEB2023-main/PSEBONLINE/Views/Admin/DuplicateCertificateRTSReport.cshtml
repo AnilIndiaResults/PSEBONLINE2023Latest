@@ -1,0 +1,115 @@
+﻿@model PSEBONLINE.Models.DuplicateCertificate
+@{
+    ViewBag.Title = "Duplicate Certificate RTS Report";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="http://43.224.136.120/Content/Print-4P.css" />
+<script type="text/javascript">
+    $("#btnPrint").live("click", function () {
+        var divContents = $("#dvContainer").html();
+        var printWindow = window.open('', '', 'height=800,width=1000px');
+        printWindow.document.write('<html><head><title>Duplicate Certificate Report</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    });
+    $("#btnPrintStatus").live("click", function () {
+        var divContents = $("#tblStatus").html();
+        var printWindow = window.open('', '', 'height=800,width=1000px');
+        printWindow.document.write('<html><head><title>Duplicate Certificate Report Status</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    });
+</script>
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>Duplicate Certificate: Download Data & RTS Report</h1>
+<div class="row" id="divMain1">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("DuplicateCertificateRTSReport", "Admin", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-2">
+                    Start Date <input type="text"  onkeypress="return false" id="FromDate" name="FromDate" placeholder="DD/MM/YYYY" class="date" value="@Request["FromDate"]" />
+                </div>
+                <div class="col-md-2">
+                    End Date <input type="text"  onkeypress="return false" id="ToDate" name="ToDate" placeholder="DD/MM/YYYY" class="date" value="@Request["ToDate"]" />
+                </div>               
+                <div class="col-md-6">
+                    <br />
+                    <input type="submit" name="submit" value="Download RTS Report"   onclick="return formVal();" />
+                    <input type="submit" name="submit" value="Download Data" onclick="return formVal();"  />
+                    <input type="submit" name="submit" value="Reset" />
+                </div>
+                <div class="clearfix"></div>
+               
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+   
+</div>
+<div class="clearfix"></div>
+<script type="text/javascript">
+            $(function () {
+                $(".date").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: new Date(),
+                    yearRange: "2017:2019",
+
+                });
+            });
+
+
+            function formVal() {
+               // alert('check formVal'); 
+                var FromDate = document.getElementById('FromDate').value;
+                var ToDate = document.getElementById('ToDate').value;               
+                if (FromDate == '') {
+                    alert("Enter Start Date ");
+                    document.getElementById('FromDate').focus();
+                    return false;
+                }
+
+                if (ToDate == '') {
+                    alert("Enter End Date ");
+                    document.getElementById('ToDate').focus();
+                    return false;
+                }
+                var dateFirst = new Date();
+                var dateSecond = new Date();                
+                dateFirst = FromDate.split('/');
+                dateSecond = ToDate.split('/');              
+                var dStart = new Date(dateFirst[2], dateFirst[1], dateFirst[0]); //Year, Month, Date
+                var dEnd = new Date(dateSecond[2], dateSecond[1], dateSecond[0]);       
+
+                if (dEnd < dStart) {
+                    alert("Enter Valid End Date...End Date cannot be less than Start Date");
+                    document.getElementById('ToDate').focus();
+                    return false;
+                }
+
+            }
+</script>

@@ -1,0 +1,177 @@
+﻿@model PSEBONLINE.Models.DuplicateCertificate
+@{
+    ViewBag.Title = "DuplicateCertificateStatus";
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>Duplicate Certificate Status</h1>
+<div class="row">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("DuplicateCertificateStatus", "Home", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-3">
+                    Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+
+                </div>
+                <div class="col-md-3">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                </div>
+                <div class="col-md-2">
+                    &nbsp;
+                    <br />
+                    <input type="submit" value="Search" id="btnsubmit" />
+                    <input type="submit" name="submit" value="Reset" />
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 rqf">Note : Kindly click search button to view Status.</div>
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">    
+   
+<table width="100%" id="tbl1">
+            <tr class="active-tr">
+                <th width="30%">Dairy No.</th>
+                <th width="35%">Candidate Details</th>
+                <th width="35%">Status</th>
+            </tr>
+      @{
+          if (ViewBag.TotalCount > 0)
+          {
+              for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+              {
+                  var Id = Model.StoreAllData.Tables[0].Rows[i]["Id"].ToString();
+                  var DairyNo = Model.StoreAllData.Tables[0].Rows[i]["DairyNo"].ToString();
+                  var DairyDate = Model.StoreAllData.Tables[0].Rows[i]["DairyDate"].ToString();
+                  var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                  var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                  var DispNo = Model.StoreAllData.Tables[0].Rows[i]["DispNo"].ToString();
+                  var DispDate = Model.StoreAllData.Tables[0].Rows[i]["DispDate"].ToString();
+                  var CertNo = Model.StoreAllData.Tables[0].Rows[i]["CertNo"].ToString();
+                  var CertDate = Model.StoreAllData.Tables[0].Rows[i]["CertDate"].ToString();
+                  var Address = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+                  var FNAME = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                  var MNAME = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                  var ReceiptNo = Model.StoreAllData.Tables[0].Rows[i]["ReceiptNo"].ToString();
+                  var ObjectionLetter = Model.StoreAllData.Tables[0].Rows[i]["ObjectionLetter"].ToString();
+                  var IsStatus = Model.StoreAllData.Tables[0].Rows[i]["IsStatus"].ToString();
+                  var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+
+                    <tr id="trs1">
+                        <td>@DairyNo</td>
+                        <td>@Name/@FNAME/@MNAME</td>                        
+                        <td>
+                            @if (IsStatus == "4")
+                            {
+                                <span class="text-primary">
+                                    REGISTRY NUMBER : @DispNo <br />
+                                    REGISTRY DATE : @DispDate                             
+                                </span><br />
+                                <span class="rqf"> <a href="https://www.indiapost.gov.in/VAS/Pages/trackconsignment.aspx" title="Click Here to Track" target="_blank" class="btn" >Click Here to Track</a></span>
+                            }
+                            else if (IsStatus == "3")
+                            {    <span class="text-success">DOWNLOAD OBJECTION LETTER : <a href="@("/" + ObjectionLetter)" class="btn" target="_blank">Click</a></span>
+                            }
+                            else if (IsStatus == "2")
+                            {    <span class="text-success">Certicate Printed and Ready for Dispatch </span>
+                            }
+							   else if (IsStatus == "10")
+                            {    <span>UNDER PROCESS PRINTING</span>
+                            }
+							else if (IsStatus == "11")
+                            {    <span>UNDER PROCESS DEALING SET</span>
+                            }
+                            else if (IsStatus == "1")
+                            {    <span>UNDER PROCESS</span>
+                            }
+                            else if (IsStatus == "0")
+                            {    <span class="rqf">Form Not Forward to Board By District Manager</span>
+                            }
+                        </td>
+                    </tr>
+
+
+              }
+          }
+          else
+          {
+            <tr>
+                <td colspan="3">
+                    <span class="rqf">RESULT NOT FOUND</span>
+                </td>
+            </tr>
+          }
+    }
+    
+</table>
+
+            @*if (ViewBag.TotalCount > 0)
+            {
+                <span>RESULT: </span>
+                <br />
+                if (ViewBag.Status == 1)
+                {
+                    <span class="rqf"> UNDER PROCESS</span>
+                }
+                else if (ViewBag.Status == 2)
+                {
+            <span class="text-primary">
+                DISPATCH NUMBER : @Model.DispNo <br />
+                DISPATCH DATE : @Model.DispDate.ToString().Split(' ')[0] <br />
+                CERTIFICATE NUMBER : @Model.CertNo  <br />
+                CERTIFICATE DATE : @Model.CertDate.ToString().Split(' ')[0] <br />
+            </span>}
+                else if (ViewBag.Status == 3)
+                {
+            <span class="text-success">  DOWNLOAD OBJECTION LETTER : <a href="@("/" + ViewBag.ObjectionLetter)" class="btn" download>Click</a></span> }
+            }
+            else
+            {
+                <span class="rqf">RESULT NOT FOUND</span>
+            }*@
+
+</div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript"> 
+    $("#btnsubmit").click(function () {
+        var SearchString = document.getElementById('SearchString').value;       
+        if (SearchString == '') {
+            alert("Please Enter");
+            document.getElementById('SearchString').focus();
+            return false;
+        }
+        return true;
+    });
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+ $(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: new Date(),
+            yearRange: "2017:2017",
+
+        });       
+    });
+</script>
+
+
+

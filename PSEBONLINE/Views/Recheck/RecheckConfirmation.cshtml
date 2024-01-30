@@ -1,0 +1,527 @@
+﻿@model PSEBONLINE.Models.RecheckModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+    .keyboardInputInitiator {
+        display: inline-block;
+        float: inherit;
+    }
+    .keyboardInput {
+        display: inline-block;
+        float: inherit;
+    }
+    .ntxt {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+        color: #555;
+        font-weight: 400;
+        line-height: inherit;
+        margin-bottom: 6px;
+        padding: 0px 6px;
+        width: 100% !important;
+        text-transform: uppercase;
+        height: 40px;
+    }
+    h1{font-size:23px !important;padding-bottom:10px !important}
+    .keyboardInput {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+        color: #555;
+        font-weight: 400;
+        line-height: inherit;
+        margin-bottom: 6px;
+        padding: 0px 6px;
+        width: 80% !important;
+        text-transform: uppercase;
+        height: 40px;
+    }
+</style>
+<div class="container KDBG">
+    <h1>
+        Rechecking/Re-evaluation of
+        @if (Model.Class == "10" || Model.Class.StartsWith("M"))
+        {<span class="rqf">Matriculation</span>}
+        else
+        { <span class="rqf">Sr. Secondary</span>}  Examination,  September 2023 <input type="button" value="Logout" onclick="javascript:document.location.href='@Url.Action("RecheckExamination", "Recheck")'" style="float:right" />
+    </h1> 
+    @using (Html.BeginForm("RecheckConfirmation", "Recheck", FormMethod.Post, new { id = "refno", enctype = "multipart/form-data" }))
+    {
+        <form name="myForm">
+            <div class="row">
+                @Html.HiddenFor(a => a.SdtID)
+                @Html.HiddenFor(a => a.Class)
+                <div class="col-md-2">Reference Number</div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.refNo, new { @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">Class </div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.ClassNM, new { @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">Roll No. </div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.ROLL, new { @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">Session</div>
+                <div class="col-md-2">@Html.TextBoxFor(a => a.batch, new { @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">@Html.TextBoxFor(a => a.batchYear, new { @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">Candidate Name</div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.Candi_Name, new { @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">Father's Name</div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.Father_Name, new { @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">Mother's Name</div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.Mother_Name, new { @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">Result Declared</div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.Result, new { @ReadOnly = "ReadOnly" })</div>
+                <div class="clearfix"></div>
+                @{
+                    var FormStatus1 = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+                    if (FormStatus1 == "0")
+                    {
+
+                        <div id="divAddress">
+                            <div class="col-md-2">Address Details<span class="redc">*</span></div>
+                            <div class="col-md-10">@Html.TextAreaFor(a => a.address, new { Style = "height:60px; width:100%;margin-bottom:8px;border:1px solid #ccc" })</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-2">Address Details</div>
+                            <div class="col-md-4">@Html.TextAreaFor(a => a.address, new { Style = "height:60px; width:350px;", @ReadOnly = "ReadOnly" })</div>
+
+                    }
+                    
+                        <div class="clearfix"></div>
+                            <div class="col-md-12"><h4>Add Subject</h4></div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">Select Subject <span class="redc">*</span></div>
+                            <div class="col-md-3">
+                                @Html.DropDownList("SubList", new SelectList(ViewBag.MySubList, "Value", "Text"), "Select Subject", new { @class = "" })
+                            </div> 
+                            <div class="col-md-3">
+                                @Html.RadioButtonFor(model => model.Recheckevaluation, "ReEvaluation", new { id = "ReEvaluation", Style = "vertical-align:3px" }) <span style="color:#0a27fe">Re-evaluation</span> <span style="font-size:12px"> 1000/- Per Answer Sheet </span>
+                         </div>                           
+                        <div class="col-md-3" >
+                            @Html.RadioButtonFor(model => model.Recheckevaluation, "Rechecking", new { id = "Rechecking", Style = "vertical-align:3px" }) <span style="color:#e70183">Rechecking</span> <span style="font-size:12px"> 500/- Per Answer Sheet </span>
+                        </div>                         
+                        <div class="clearfix"></div>
+                        <div class="col-md-5"></div>
+                            <div class="col-md-6">@Html.CheckBoxFor(a => a.IsRTI) Fee To Get Copy of Answer Sheet <span id="rtiR1" class="rqf">Rs 500/-</span><span id="rtiR2" class="rqf">Rs 500/-</span></div>
+                            <div class="col-md-1"><input value="Add" type="submit" onclick="return valForm();" /></div>
+                            <div class="clearfix"></div>
+                   
+                   
+                    }
+
+
+
+
+                            <div class="col-md-12" style="padding-top:10px">
+
+                                <table id="" class="table table-bordered">
+                                    <tr class="active-tr">
+                                        <th>Sr No</th>
+                                        <th>Subject</th>
+                                        <th>Obt Marks</th>
+                                        <th>Rechecking </th>
+                                        <th>Re-Evaluation</th>
+                                        <th>Get Answer Sheet Copy</th>
+                                        @*<th>RTI Fee</th>*@
+                                        <th>Total Fee</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    @{
+                                        if (ViewBag.TotalCount2 > 0)
+                                        {
+                                            int d = 0;
+                                            int Count = 0;
+                                            for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                                            {
+                                                d = d + 1;
+                                                var RID = Model.StoreAllData.Tables[2].Rows[i]["ID"].ToString();
+                                                var SubCode = Model.StoreAllData.Tables[2].Rows[i]["SubCode"].ToString();
+                                                var SubNM = Model.StoreAllData.Tables[2].Rows[i]["SubNM"].ToString();
+                                                var ObtMrks = Model.StoreAllData.Tables[2].Rows[i]["ObtMrks"].ToString();
+                                                var IsRecheck = Model.StoreAllData.Tables[2].Rows[i]["IsRecheck"].ToString();
+                                                var IsRev = Model.StoreAllData.Tables[2].Rows[i]["IsReEvaluation"].ToString();
+                                                var Rck_fee = Model.StoreAllData.Tables[2].Rows[i]["Rck_fee"].ToString();
+                                                var IsRTI = Model.StoreAllData.Tables[2].Rows[i]["IsRTI"].ToString();
+                                                if (IsRTI.ToUpper() == "TRUE")
+                                                {
+                                                    IsRTI = "YES";
+                                                }
+                                                else
+                                                {
+                                                    IsRTI = "NO";
+                                                }
+                                                if (IsRecheck.ToUpper() == "TRUE")
+                                                {
+                                                    IsRecheck = "YES";
+                                                }
+                                                else
+                                                {
+                                                    IsRecheck = "NO";
+                                                }
+
+                                                if (IsRev.ToUpper() == "TRUE")
+                                                {
+                                                    IsRev = "YES";
+                                                }
+                                                else
+                                                {
+                                                    IsRev = "NO";
+                                                }
+
+                                                var RTI_fee = Model.StoreAllData.Tables[2].Rows[i]["RTI_fee"].ToString();
+                                                var Tot_fee = Model.StoreAllData.Tables[2].Rows[i]["Tot_fee"].ToString();
+
+                                                var challanid = Model.StoreAllData.Tables[2].Rows[i]["challanid"].ToString();
+                                                var Islock = Model.StoreAllData.Tables[2].Rows[i]["Islock"].ToString();
+                                                var IsChallanCancel = Model.StoreAllData.Tables[2].Rows[i]["IsChallanCancel"].ToString();
+                                                Count = Count + 1;
+                                                if (IsChallanCancel != "2")
+                                                {
+                                                <tr>
+                                                    <td>@Count</td>
+                                                    <td>@SubNM</td>
+                                                    <td>@ObtMrks</td>
+                                                    <td>@IsRecheck</td>
+                                                    <td>@IsRev</td>
+                                                    <td>@IsRTI</td>
+                                                    @*<td>@RTI_fee</td>*@
+                                                    <td>@Tot_fee /-</td>
+                                                    <td>
+                                                        @if (Islock == "0")
+                                                        {
+                                                            @Html.ActionLink("Delete", "RecheckDeleteRecord", new { id = RID }, new { onclick = "return confirm('Are you sure want to Delete ?');" })
+                                                        }
+                                                        else if (Islock == "1" && IsChallanCancel != "2")
+                                                        {
+                                                        <div style="color:forestgreen">
+                                                            <b>Final Submitted</b>
+                                                            @*@if (IsChallanCancel == "1")
+                                                            { 
+                                                            <br /><span>You Can't Unlock this Subject</span>
+                                                            }*@
+
+                                                        </div>
+                                                        }
+
+                                                    </td>
+
+                                                </tr>
+
+
+                                                }
+                                            }
+                                            @*<tr>
+                                                <td colspan="8">
+                                                    @if (ViewBag.TotalCount2 > 0 && ViewBag.Islock2 == "0")
+                                                    {
+                                                        // <input type="button" value="Final Submit & Lock" onclick="return val()" />
+                                                        <input value="Final Submit & Lock" type="button" onclick="javascript:document.location.href='@Url.Action("RecheckFinalSubmit", "Recheck")'" />
+
+                                                    }
+                                                    else if (ViewBag.TotalCount2 > 0 && ViewBag.Islock2 == "1")
+                                                    {
+                                                        <input value="Unlock Final Submission" type="button" onclick="javascript:document.location.href='@Url.Action("UnlockRecheckFinalSubmit", "Recheck")'" style="text-align:left" />
+                                                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                            <input value="Pay Online" type="button" onclick="javascript:document.location.href='@Url.Action("PaymentForm", "Recheck")'"  style="text-align:right" />
+                                                    }
+                                                </td>
+
+                                            </tr>*@
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="9">
+                                                   Subject Not Added
+                                                </td>
+                                            </tr>
+                                            }
+                                        }
+                                </table>
+
+                                <div class="clearfix"></div>
+                                <p style="text-align:center;font-size:16px;color:#f00">You will not be able to unlock final submission once you click on the Pay Online Button. So make sure subjects filled by you are correct.</p>
+                                <p style="text-align:center;font-size:18px;color:#f00">View Final Submission Details</p>
+                                 <table class="table table-bordered" id="">
+                                    <tr class="active-tr">
+                                        <th>Subjects</th>
+                                        <th>Lotno</th>
+                                        <th>Name of Bank</th>
+                                        <th>Challan No.</th>
+                                        <th>Challan Date</th>
+                                        <th>Challan Valid Till Date</th>
+                                        <th>Challan Verified On</th>
+                                        <th>Status</th>
+                                        <th>Total Fee</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    @{
+                                        if (ViewBag.TotalCount4 > 0)
+                                        {
+                                            if (Model.StoreAllData.Tables[4].Rows.Count > 0)
+                                            {
+                                                for (int i = 0; i < Model.StoreAllData.Tables[4].Rows.Count; i++)
+                                                {
+                                                    var Lotno = Model.StoreAllData.Tables[4].Rows[i]["LOT"].ToString();
+                                                    var Bank = Model.StoreAllData.Tables[4].Rows[i]["Bank"].ToString();
+                                                    var ChallanId = Model.StoreAllData.Tables[4].Rows[i]["ChallanId"].ToString();
+                                                    var ChallanDate = Model.StoreAllData.Tables[4].Rows[i]["CHLNDATE"].ToString();
+                                                    var ChallanVDate = Model.StoreAllData.Tables[4].Rows[i]["CHLNVDATE"].ToString();
+                                                    var ChallanVerifiedOn = Model.StoreAllData.Tables[4].Rows[i]["ChallanVerifiedOn"].ToString();
+                                                    var Status = Model.StoreAllData.Tables[4].Rows[i]["Status"].ToString();
+                                                    var SubCodeList = Model.StoreAllData.Tables[4].Rows[i]["SubCodeList"].ToString();
+                                                    var TotalFee = Model.StoreAllData.Tables[4].Rows[i]["TotalFee"].ToString();
+                                                    int Count = i + 1;
+                                                    
+                                                    <tr>
+                                                        <td align="left">@SubCodeList</td>
+                                                        <td align="center">@Lotno</td>
+                                                        <td align="center">@Bank</td>
+                                                        <td align="center">@ChallanId</td>
+                                                        <td align="center">@ChallanDate</td>
+                                                        <td align="center">@ChallanVDate</td>
+                                                        <td align="center">@ChallanVerifiedOn</td>
+                                                        <td align="center">@Status</td>
+                                                        <td align="center">@TotalFee</td>
+                                                        <td align="center" class="nlink">
+                                                            @*<span class="rqf">@Html.ActionLink("Print Challan", "GenerateChallaan", new { Id = @ChallanId })</span><br />*@
+                                                           <span class="text-danger">@Html.ActionLink("Print Application Form", "RecheckFinalPrint", new { Id = @ChallanId })</span><br />
+                                                            @if (Model.StoreAllData.Tables[4].Rows[i]["StatusNumber"].ToString() == "1")
+                                                            {
+                                                                //Downloaded by Bank
+                                                                if (Model.StoreAllData.Tables[4].Rows[i]["ExpireVDate"].ToString() == "0")
+                                                                {
+                                                                     //<input value="Re-Generate Challan" type="button" onclick="javascript:document.location.href='@Url.Action("PaymentForm", "Recheck")'" />
+                                                                    @*<button type="button" class="" data-toggle="modal" data-target="#myModal-@ChallanNo" onclick="return confirm('If you already deposited amount in Bank then please dont regenerate challan. Are you sure to Re-Generate Challan or Cancel?');">Re-Generate Challan</button>*@
+                                                                    // Uncomment below line
+                                                                    @* @Html.ActionLink("Re-Generate Challan", "ReGenerateChallaan", new { ChallanId = @ChallanNo }, new { @class = "btn", @OnClick = "return confirm('If you already deposited amount in Bank then please dont regenerate challan. Are you sure to Re-Generate Challan or Cancel?');" })*@
+                                                                }
+                                                                else
+                                                                {
+                                                                    // @Html.ActionLink("Re-Generate Challan", "ReGenerateChallaan", new { ChallanId = @ChallanNo }, new { @readonly = "readonly" })
+                                                                }
+                                                            }
+                                                            else if (Model.StoreAllData.Tables[4].Rows[i]["StatusNumber"].ToString() == "2")
+                                                            {
+
+                                                                // <span class="text-danger">@Html.ActionLink("Print Application Form", "RecheckFinalPrint", new { Id = @ChallanId })</span><br />
+                                                            }
+
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="8">
+                                                  Record Not Found
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            </div>
+
+                            <div class="clearfix"></div>
+                          
+                        </div>  
+            </form>
+                }
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="kdsfont" style="font-weight:normal !important;font-size:22px;padding-bottom:6px;display:none">Ú¥Ó ¬óÐ ÒóÐ ÚÒÓÖãÓÖ ÚÄ¤ØÅ ÚÂó¼Ø ²ØÒã Ú¨ °ÐØÅ ²ÅÏã¶ Õë» ¦ÝÆÏâ¼ ÅØÐ ÂÛ ÅØÐ ÕÛ ÏÛ-°èÚ¨â¬ / ÏÛ ÒèÐÞ¥ãÓÖÅ ÂØ ÇØÏÌ ÚÆâñ¶ ÚÅ¨Ð ²ØÒã¬Ø, °ÐØÅ ¼ã ÂÏ² ¤ØªÏÛ ÚÌ¼Û (²ã¨Ï Ú¨Óã ÚÒÓÖãÓÖ ÕÐØ¼ ÚÒó° ÚÌ¼Û ÚÒó° ÒØÄØ ÒÛ ÕÝâÂØ Õè ¼Ù °ÐØÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û ¦ÝÕÛ ÏÕã¬Û ²ë °ÐØÅ ¦ÝóÆÏ ÂÏ² Õè, °ÐØÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û ª¼Ì Õë» ¦ÝÆÏâ¼ ÕÛ °ÐØÅ ÏÛ²ÅÏã¶ ¨Û¼Ø ²Ø Ó¨ã¬Ø) ¼ó¨ ÕÏ ÕØÐ¼ ÚÒó° Éè×¨ ÚÒó° ÇÛÓ ²ÌðÙ ¨ÏÒØ¥Û ²ØÒã ¤¼ã ÇØÏÌ ÂØ ÚÆâñ¶ ÓÌã¼ °ÐØÅ ÂÛ ¨ØÆÛ ÓÉâÄ¼ ªã¼ÏÛ ÂÇ¼Ï / ÌÝóª ÂÇ¼Ï ÚÒó° ²ÌðÙ ¨ÏÒØÚ¥¤Ø ²ØÒã¢</div>
+    </div>
+    
+    <div class="clearfix"></div>
+    @{
+        if (Model.Class == "10")
+        {
+            <div class="col-md-6" style="display:none">
+                <b class="rqf">Rechecking Matriculation</b>
+                <div class="kdsfont" title="Mt" style="padding-left:20px;font-weight:normal !important;font-size:22px">
+                    • ÏÛ °èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ÓÝÏÞ¤Ø¼Û ÚÌ¼Û 11-05-2020<br />
+                    • ÏÛ-°èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û 25-05-2020<br />
+                    • Éè×¨ ÚÒó° ÇÛÓ ²ÌðØ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û 30-05-2020<br />
+                    • ¸ÛÆÞ ÚÒó° ÇØÏÌ ²ÌðØ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û 04-06-2020<br />
+                </div>
+
+            </div>
+           <div class="col-md-6" style="display:none">
+                <b class="rqf">Re-Evaluation Matriculation</b>
+                <div title="Mt" style="padding-left:20px;">
+                    • ਰੀਵੈਲੂਏਸ਼ਨ ਦਾ ਫਾਰਮ ਭਰਨ ਦੀ ਸ਼ੁਰੁਆਤੀ ਮਿਤੀ 11.05.2020<br />
+                    • ਰੀਵੈਲੂਏਸ਼ਨ ਦਾ ਫਾਰਮ ਭਰਨ ਦੀ ਆਖਰੀ ਮਿਤੀ 25.05.2020<br />
+                    • ਬੈਂਕ ਵਿੱਚ ਫੀਸ ਜਮ੍ਹਾਂ ਕਰਵਾਉਣ ਦੀ ਆਖਰੀ ਮਿਤੀ 30.05.2020<br />
+                    • ਡਿਪੂ ਵਿੱਚ ਫਾਰਮ ਜਮ੍ਹਾਂ ਕਰਵਾਉਣ ਦੀ ਆਖਰੀ ਮਿਤੀ 04.06.2020 <br />
+                </div>
+            </div>
+        }
+        else
+        {  <div class="col-md-6" style="display:none">
+                    <b>Rechecking Senior Secondary</b>
+                    <div class="kdsfont" title="Sr" style="padding-left:20px;font-weight:normal !important;font-size:22px">
+                        • ÏÛ °èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ÓÝÏÞ¤Ø¼Û ÚÌ¼Û 27-07-2020<br />
+
+                        • ÏÛ-°èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û 10-08-2020<br />
+
+                        • Éè×¨ ÚÒó° ÇÛÓ ²ÌðØ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û 16-08-2020<br />
+
+                        • ¸ÛÆÞ ÚÒó° ÇØÏÌ ²ÌðØ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û 21-08-2020<br />
+                    </div>
+
+                </div>
+                <div class="col-md-6" style="display:none">
+                    <b>Re-Evaluation Senior Secondary</b>
+                    <div title="Sr" style="padding-left:20px;">
+                        • ਰੀਵੈਲੂਏਸ਼ਨ ਦਾ ਫਾਰਮ ਭਰਨ ਦੀ ਸ਼ੁਰੂਆਤੀ ਮਿਤੀ 27.07.2020<br />
+                        • ਰੀਵੈਲੂਏਸ਼ਨ ਦਾ ਫਾਰਮ ਭਰਨ ਦੀ ਆਖਰੀ ਮਿਤੀ 10.08.2020<br />
+                        • ਬੈਂਕ ਵਿੱਚ ਫੀਸ ਜਮ੍ਹਾਂ ਕਰਵਾਉਣ ਦੀ ਆਖਰੀ ਮਿਤੀ 16.08.2020<br />
+                        • ਡਿਪੂ ਵਿੱਚ ਫਾਰਮ ਜਮ੍ਹਾਂ ਕਰਵਾਉਣ ਦੀ ਆਖਰੀ ਮਿਤੀ 21.08.2020
+                        <br />
+                    </div>
+                </div>
+        }
+
+    }
+
+
+                    @*<b>Matriculation</b>
+                        <div class="kdsfont" style="padding-left:20px;font-weight:normal !important;font-size:22px;line-height:28px">
+                            @*• ÏÛ-°èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û 16-08-2017<br />
+                            • Éè×¨ ÚÒó° ÇÛÓ ²ÌðØ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û 21-08-2017<br />
+                            • ¸ÛÆÞ ÚÒó° ÇØÏÌ ²ÌðØ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û 25-08-2017<br />*
+                            • ÏÛ-°èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û 30-12-2017<br />
+                            • Éè×¨ ÚÒó° ÇÛÓ ²ÌðØ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û 03-01-2020<br />
+                            • ¸ÛÆÞ ÚÒó° ÇØÏÌ ²ÌðØ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û 08-01-2020<br />
+                        </div>*@
+              
+                <div class="clearfix"></div>
+                <div class="col-md-12 kdsfont" style="color:#cc0000;display:none"><b>ÚÒÓÖãÓÖ Åë¶ :</b> Ú¥Õ ÇØÏÌ ¸Ø¨ ÏÙÕÛ ÌÝóª-ÂÇ¼Ï ÅØ ÊãÚ²¤Ø ²ØÒã Ú¥Ó ÇØÏÌ ÅÞâ ¨ãÒÐ ªã¼ÏÛ ÂÇ¼Ï ²Ù ÌÝóª-ÂÇ¼Ï ÚÒªã ÂÓ¼Û ÕÛ ²ÌðØ ¨ÏÒØÚ¥¤Ø ²ØÒã ²Û¢</div>
+            </div>
+
+@{
+
+     if (ViewData["Status"] != null)
+    {
+        var result = ViewData["Status"].ToString();
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Record Inserted Successfully.");
+                document.location.href = '@Url.Action("RecheckConfirmation", "Recheck")';
+            </script>
+        }
+        else if (result == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Same Subject can not Insert, Please Delete related record then try to Add.");
+                document.location.href = '@Url.Action("RecheckConfirmation", "Recheck")';
+            </script>
+        }
+        else if (result == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+              alert("You cannot mixed Rechecking or ReEvaluation ");
+                document.location.href = '@Url.Action("RecheckConfirmation", "Recheck")';
+            </script>
+        }
+        else if (result == "DEL")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Record Deleted Successfully.");
+                document.location.href = '@Url.Action("RecheckConfirmation", "Recheck")';
+            </script>
+        }
+        else if (result == "SUBMIT")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Rechecking and RTI Form Submitted Successfully.");
+                document.location.href = '@Url.Action("RecheckConfirmation", "Recheck")';
+            </script>
+        }
+        else if (result == "NOTSUBMIT")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Add Subject (Rechecking and RTI) before Final Submit.");
+                document.location.href = '@Url.Action("RecheckConfirmation", "Recheck")';
+            </script>
+        }
+    }
+
+}
+
+<script type="text/javascript">
+                $('#rtiR1').hide();
+                $('#rtiR2').hide();
+                $(':radio[value=ReEvaluation]').click(function () {                     
+                    $('#rtiR1').hide();
+                    $('#rtiR2').show();
+                });
+                ;
+                $(':radio[value=Rechecking]').click(function () {
+                    
+                    $('#rtiR1').show();
+                    $('#rtiR2').hide();
+                });
+              
+
+    $('#oldrecchk').change(function () {
+        if (this.checked) {
+            $('#oldrecdiv').show();
+        }
+        else {
+            $('#oldrecdiv').hide();
+
+        }
+    })
+
+    function valForm() {
+        var addr = document.getElementById("address").value;
+        //if (isRTI == true && addr == "") {
+        if (addr == "") {
+            alert("Enter Communication Address");
+            document.getElementById("address").focus();
+            return false;
+        }
+
+        var subList = document.getElementById("SubList").value;
+        if (subList == "" || subList =="0") {
+            alert("Select Subject");
+            document.getElementById("SubList").focus();
+            return false;
+        }
+        var ReEvaluation = document.getElementById("ReEvaluation").checked;
+        var Rechecking = document.getElementById("Rechecking").checked;
+        var isRTI = document.getElementById("IsRTI").checked;        
+        if (ReEvaluation == false && Rechecking == false) {
+            alert("Choose any One Radio Button for Rechecking Or Re-Evaluation");
+            document.getElementById("Rechecking").focus();
+            return false;
+        }
+    }
+    function val()
+    {
+        //$.sweetModal.confirm('Titled Confirm', 'Confirm please?', function () {
+        //    $.sweetModal('Thanks for confirming!');
+        //}, function () {
+        //    $.sweetModal('You declined. That\'s okay!');
+        //});
+        if (!window.confirm("Are you Sure to Final Submit. Once Final Submitted you will not able to make any kind of changes in Rechecking. ?")) {
+            return false;
+        }
+        else {
+            document.location.href = '@Url.Action("RecheckFinalSubmit", "Recheck")';
+        }
+    }
+</script>
+
+
+

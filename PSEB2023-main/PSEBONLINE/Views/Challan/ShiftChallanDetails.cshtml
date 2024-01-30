@@ -1,0 +1,200 @@
+﻿@model PSEBONLINE.Models.ShiftChallanDetails
+@{
+    ViewBag.Title = "ShiftChallanDetails";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h2>ShiftChallanDetails</h2>
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+@using (Html.BeginForm("ShiftChallanDetails", "Challan", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+   <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Enter Shift Challan Details</legend>
+                <div class="col-md-3">
+                   Enter Wrong Challan
+                    @Html.TextBoxFor(m=>m.WrongChallan, new { @class = "", id = "WrongChallan", required = "required" })                   
+                </div>
+                <div class="col-md-1">
+                    <br />
+                   To
+                </div>
+                <div class="col-md-3">
+                    Enter Correct Challan
+                    @Html.TextBoxFor(m => m.CorrectChallan, new { @class = "", id = "CorrectChallan", required = "required" })
+                </div>  
+                <div class="col-md-5">
+                    <br />
+                    <input type="Submit" value="Fetch Challan Details" name="cmd" /> 
+<a href="/Challan/ViewShiftChallanDetails" id="ord" target="_blank" class="btn">View Shift Challan Details</a> 
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 rqf">Note : If Data not search..Kindly enter manually challan number and search again.</div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-md-12"></div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+@if (Model != null)
+{
+    if (Model.WrongChallan != null)
+    {
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <td></td>
+                        <td class="kdsfont">Wrong Challan</td>
+                        <td class="kdsfont">Correct Challan</td>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0 && Model != null && Model.challanList.Count > 1)
+                        {
+                            int i = 0;
+                            //for (int i = 0; i < Model.challanList.Count; i++)
+                            //{
+                                    <tr>
+                                        <td>Challan ID</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i].challanid)</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i + 1].challanid)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ref. /App. No</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i].APPNO)</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i + 1].APPNO)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Schl Code/Roll No.</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i].SCHLREGID)</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i + 1].SCHLREGID)</td>
+                                    </tr>
+                                    <tr class="rqf">
+                                        <td>Fee+Latefee=TotFee</td>
+                                        <td>
+                                            @{
+                                                int lf1 = (Convert.ToInt32(Model.challanList[i].latefee) + Convert.ToInt32(Model.challanList[i].LumsumFine));
+                                                int Total1 = (Convert.ToInt32(Model.challanList[i].FEE) + Convert.ToInt32(Model.challanList[i].latefee) + Convert.ToInt32(Model.challanList[i].LumsumFine));
+                                            }
+                                            @Html.DisplayFor(model => model.challanList[i].FEE) +  @lf1 = @Total1
+                                        </td>
+                                        <td>
+                                            @{
+                                                int lf2 = (Convert.ToInt32(Model.challanList[i + 1].latefee) + Convert.ToInt32(Model.challanList[i + 1].LumsumFine));
+                                                int Total2 = (Convert.ToInt32(Model.challanList[i + 1].FEE) + Convert.ToInt32(Model.challanList[i + 1].latefee) + Convert.ToInt32(Model.challanList[i + 1].LumsumFine));
+                                            }
+
+                                            @Html.DisplayFor(model => model.challanList[i + 1].FEE) +  @lf2 = @Total2
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>Branch Code</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i].BRCODE)</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i + 1].BRCODE)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Branch Name</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i].BRANCH)</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i + 1].BRANCH)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank Ref No</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i].J_REF_NO)</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i + 1].J_REF_NO)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Deposit Date</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i].DEPOSITDT)</td>
+                                        <td>@Html.DisplayFor(model => model.challanList[i + 1].DEPOSITDT)</td>
+                                    </tr>
+
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="11">
+                                   Challan Not found
+                                </td>
+                            </tr>
+                        }
+                    }      
+                    
+                    @if (ViewBag.TotalCount > 0 && Model != null && Model.challanList.Count > 1)
+                    {
+                    <tr>
+                        <td colspan="3">
+
+                            Upload Attachment: <span class="rqf">*</span> @Html.TextBoxFor(m => m.file, new { id = "ScanFile", type = "file", @accept = "application/pdf, image/jpeg" }) <span class="rqf">*Size Upto 5MB (PDF or JPG format Only)</span><br />
+                            Remarks<span class="rqf">*</span>@Html.TextAreaFor(m => m.ShiftRemarks, new { id = "ShiftRemarks" }) <br />
+                            <input type="submit" class="btn" value="Shift Challan Details" id="btndee" name="cmd" OnClick="return confirm('You are going to Shift Challan Details. Are You Sure for It?');" />
+
+                        </td>                       
+                    </tr>
+                    }
+                </table>
+                            }
+                        }
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                    window.open("/Challan/ShiftChallanDetailsSlip/" + '@ViewBag.ShiftId', '_blank');
+                </script>}           
+         
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                     alert("Submit Failure, Please Try Again");
+                </script>
+            }
+        }
+    }
+}
+
+<script>
+
+    $(document).ready(function () {
+        //alert("Jay");
+        $("#btndee").click(function () {
+            var flag = 0;
+            var c = $("#ShiftRemarks").val();
+            if (c == "") {
+                $("#ShiftRemarks").addClass("input-validation-error");
+                flag = 1;
+                //return false;
+            }
+            if (c != "") {
+                $("#ShiftRemarks").removeClass("input-validation-error");
+            }       
+            if (flag == 1) {
+                return false;
+            }
+        });
+    });
+</script>

@@ -1,0 +1,343 @@
+﻿@model PSEBONLINE.Models.webSerModel
+@{
+    ViewBag.Title = "Import Staff using Service";
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+
+@using (Html.BeginForm("Indexdeo", "Webservice", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <h1>
+        Import Data From E-punjab - Session @if (Session["Session"] != null || Session["CCODEID"] != null)
+        { }
+        else { Response.Redirect("~/DeoPortal"); }
+    </h1>
+
+   
+        if (TempData["result"] != null)
+        {
+            if (TempData["result"].ToString() == "2")
+            {
+                @*<script type="text/javascript" language="javascript">
+                var impcn = @TempData["TotImported"];                
+                alert(impcn+" Records Imported Successfully");                
+                </script>*@
+                <table>
+                    <tr style="background-color:#000000">
+                        <td style="font-size:17px;">
+                            <span style="background-color:#61f02c">@TempData["TotImported"] Records Imported Successfully.</span>
+                        </td>
+                    </tr>
+                </table>
+                }
+            else if ((TempData["result"].ToString().ToUpper()).Contains("DATA ALREADY"))
+            {
+                @*<script type="text/javascript" language="javascript">
+                var impcn = @TempData["result"];
+                var impcn1 = @ViewData["result"];
+                alert("Data Already imported, Please check & Try After Some Time");                
+                </script>*@
+            <table>
+                <tr style="background-color:#000000">
+                    <td style="font-size:17px;">
+                        <span class="redc">@TempData["result"] .</span>
+                    </td>
+                </tr>
+            </table>
+        }
+    }
+    if (ViewBag.TotalCount == 0)
+    {
+        <table>
+            <tr style="background-color:#000000">
+                <td style="font-size:17px;">
+                    <span class="redc"> Entered details is incorrect or data not found.</span>
+                </td>
+            </tr>
+        </table>
+    }
+
+
+    <div class="row">       
+        <div class="col-md-12">
+            <div class="col-md-1">
+                IMPORT BY:
+            </div>
+            <div class="col-md-2">
+                @{
+                    List<SelectListItem> catgilist = new List<SelectListItem>();
+                    catgilist.Add(new SelectListItem { Text = "--SELECT--", Value = "0" });
+                    catgilist.Add(new SelectListItem { Text = "E-PUNJAB STAFF ID", Value = "1" });
+                    catgilist.Add(new SelectListItem { Text = "AADHAR NO.", Value = "2" });
+                    catgilist.Add(new SelectListItem { Text = "UDISE CODE", Value = "3" });
+
+
+                }
+
+                @Html.DropDownList("importBy", catgilist, new { id = "importBy" })
+                
+            </div>
+            <div class="col-md-3">
+                <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+            </div>
+                <div class="col-md-6">
+
+                    <input type="Submit" value="Search" name="cmd" />
+                    <input type="Submit" value="Import Selected Record" name="cmd" onclick="return valform();" />
+                    <input type="button" value="View All Inserted Records" onclick="javascript:document.location.href='@Url.Action("VIEWSTAFF", "DeoPortal",new { CCODEID = encrypt.QueryStringModule.Encrypt(Session["CCODEID"].ToString()) })'" />
+                    @*<input type="submit" value="Import Records" name="cmd" />*@
+                </div>
+            </div>
+    </div>
+
+<div class="table-responsive">
+    <div class="col-md-12">
+        <table class="table table-bordered" id="t01">
+            <tr class="active-tr">
+                <th>Id</th>
+                <th>ePunjab ID</th>
+                <th>District</th>
+                <th>EduBlockName</th>                
+                <th>UDISE_Code</th>
+                <th>School Name</th>                
+                <th>DESIGNATION</th> 
+                <th>Staff Name</th> 
+                <th>Father Name</th>
+                <th>Staff Duty Type </th>
+                <th>Select All<input type="checkbox" id="select_all" /> </th>
+                @*<th>Update Detail</th>*@
+
+            </tr>
+            @{
+                DateTime dt = DateTime.Now;
+                DateTime str = DateTime.Now; //DateTime.Parse(dt.ToString("MM/dd/yyyy").Replace('-', '/'));
+                DateTime date = str;
+
+                if (ViewBag.TotalCount > 0)
+                {
+                    int d = 0;
+                    int Count = 0;
+                    for (int i = 0; i < Model.StoreAllDataTable.Rows.Count; i++)
+                    {
+
+                        var epunjabid = Model.StoreAllDataTable.Rows[i]["epunjabid"].ToString();
+                        var adharno = Model.StoreAllDataTable.Rows[i]["adharno"].ToString();
+                        var DISTNM = Model.StoreAllDataTable.Rows[i]["DISTNM"].ToString();
+                        var EDUBLOCK = Model.StoreAllDataTable.Rows[i]["EDUBLOCK"].ToString();
+                        var UDISE = Model.StoreAllDataTable.Rows[i]["UDISE"].ToString();
+                        var schlnm = Model.StoreAllDataTable.Rows[i]["schlnm"].ToString();
+                        var name = Model.StoreAllDataTable.Rows[i]["name"].ToString();
+                        var Fname = Model.StoreAllDataTable.Rows[i]["Fname"].ToString();
+                        var Staff_Status = Model.StoreAllDataTable.Rows[i]["Staff_Status"].ToString();
+                        var subject = Model.StoreAllDataTable.Rows[i]["subject"].ToString();
+                        var ImpStatus = "IMPORTED";
+                        Count = i + 1;
+                        <tr>
+                            <td>
+                                @Count
+                            </td>
+                            <td>
+                                @epunjabid
+                            </td>
+                            <td>
+                                @DISTNM
+                            </td>
+                            <td>
+                                @EDUBLOCK
+                            </td>
+                           
+                            <td>                   
+                                @UDISE             
+                                @*<input id="@UDISE" value="@UDISE" name="UDISE" readonly="readonly"/>*@
+                            </td>
+                            <td>
+                                @schlnm
+                            </td>
+                            <td>
+                                @subject
+                            </td>
+                            <td>
+                                @name
+                            </td>
+                            <td>
+                                @Fname
+                            </td>
+                            <td>
+                                @{
+                                    List<SelectListItem> DutyList = new List<SelectListItem>();
+                                    //DutyList.Add(new SelectListItem { Text = "--SELECT Type Of Duty--", Value = "0" });
+                                    DutyList.Add(new SelectListItem { Text = "Superintendent", Value = "1" });
+                                    DutyList.Add(new SelectListItem { Text = "Deputy Superintendent", Value = "2" });
+                                    //DutyList.Add(new SelectListItem { Text = "Invigilator", Value = "3" });
+                                    DutyList.Add(new SelectListItem { Text = "Observer", Value = "4" });
+                                    DutyList.Add(new SelectListItem { Text = "Flying Squid", Value = "5" });
+                                    DutyList.Add(new SelectListItem { Text = "Deputy Controller(Vigilance)", Value = "6" });
+                                }
+
+                                @Html.DropDownList("typeDuty"+ @epunjabid, DutyList, new { id = "typeDuty"+@epunjabid })
+                            </td>
+
+                            <td>
+                                @if (@ImpStatus.ToUpper() == "OK")
+                                {
+                                    <span>@ImpStatus</span>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="@epunjabid" value="@epunjabid" name="ChkStaffID" class="checkbox" />
+                                          
+                                }
+
+                            </td>
+
+                            @*<td>
+                                <input type="checkbox" value="@stdid" name="ChkCNinthClass" class="checkbox" />
+                            </td>*@
+                           
+                            @*<td>                               
+                                @Model.StoreAllData.Tables[0].Rows[i]["updt"].ToString()
+                            </td>*@
+                            @*<td>
+                                <div class="cart">
+                                    Choose Action <span class="caret"></span>
+                                    <div id="sidebar">
+                                        <ul>
+                                            <li>@Html.ActionLink("View", "N2formview", new { id = encrypt.QueryStringModule.Encrypt(stdid) })</li>                                            
+                                            @if (Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString() == "0")
+                                            {
+                                                <li>@Html.ActionLink("Modify", "N2FormModify", new { id = encrypt.QueryStringModule.Encrypt(stdid) })</li>
+                                                <li>@Html.ActionLink("Delete", "N2FormDelete", new { id = stdid }, new { onclick = "return confirm('Are you sure?');" })</li>
+                                            } 
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>*@
+
+                        </tr>
+                        
+
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>
+
+ }
+@{
+    @*if (TempData["result"] != null)
+    {
+        if (TempData["result"].ToString() == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                var impcn = @TempData["TotImported"];
+                //alert(impcn);
+                alert(impcn+" Records Imported Successfully");                
+            </script>}
+        else if ((TempData["result"].ToString().ToUpper()).Contains("DATA ALREADY"))
+        {
+            <script type="text/javascript" language="javascript">
+                var impcn = @TempData["result"];
+                var impcn1 = @ViewData["result"];
+                //alert("Data Already imported, Please check & Try After Some Time");   
+                //alert(1);
+            </script>
+
+        }*@
+
+        @*else if (TempData["result"].ToString() == "5")
+    {
+        <script type="text/javascript" language="javascript">
+            alert("Webservice Of Epunjab  Is Not Responding , Please Try After Some Time");
+        </script>
+
+    }
+
+    if (ViewData["result"].ToString() == "1")
+    {
+        <script type="text/javascript" language="javascript">
+                alert("Data saved Successfully");
+        </script>}
+    else if (ViewData["result"].ToString() == "0")
+    {
+        <script type="text/javascript" language="javascript">
+                alert("Data Already Exist");
+        </script>
+    }
+    else if (ViewData["result"].ToString() == "-1")
+    {
+        <script type="text/javascript" language="javascript">
+                alert("Data not saved..plz try again");
+        </script>
+    }
+    else if (ViewData["result"].ToString() == "-3")
+    {
+        <script type="text/javascript" language="javascript">
+                alert("Duplicate Aadhar number..plz try again");
+        </script>
+    }
+    }*@
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#select_all").change(function () {
+            //"select all" change
+            //alert("abc");
+            var status = this.checked; // "select all" checked status
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                this.checked = status; //change ".checkbox" checked status
+            });
+        });
+
+        //uncheck "select all", if one of the listed checkbox item is unchecked
+        $('.checkbox').change(function () { //".checkbox" change
+
+            //alert($(this).val());
+            if (this.checked == false) { //if this item is unchecked
+                $("#select_all")[0].checked = false; //change "select all" checked status to false
+            }
+        });
+       
+    });
+</script>
+<script>
+    function valform()
+    {
+        //alert($("#typeDuty").val());
+        //alert($("#ChkStaffID").val());
+        if ($("#typeDuty").val() == "0") { //if this item is unchecked
+            alert("select Staff Duty type");
+            return false;
+        }       
+
+        var chks = document.getElementsByName('ChkStaffID');
+        var hasChecked = false;
+        for (var i = 0; i < chks.length; i++) {
+            if (chks[i].checked) {
+                hasChecked = true;               
+                break;             
+            }
+        }
+        if (hasChecked == false) {           
+            alert("Please Select Atleast One CheckBox For Import Staff and related Staff Duty Type");
+            document.getElementById('select_all').focus();
+            return false;
+        }
+        
+    }
+  
+</script>

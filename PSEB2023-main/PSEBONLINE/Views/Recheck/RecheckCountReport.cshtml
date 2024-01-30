@@ -1,0 +1,147 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "Recheck Count Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="http://registration.pseb.ac.in/Content/Print-4L.css" />
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<h1 class="noprint">Count of Rechecking and Re-Evaluation Applications</h1>
+<div class="row">
+    <div class="col-md-12 noprint">
+        <fieldset>
+            <legend>Search</legend>
+            @using (Html.BeginForm("RecheckCountReport", "Report", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("Filevalue", "CENT")
+                <div class="row">
+                    <div class="col-md-2">
+                        Session
+                        @{
+                            List<SelectListItem> batchYear = new List<SelectListItem>();
+                            batchYear.Add(new SelectListItem { Text = "2019", Value = "2019" });
+                        }
+                        @Html.DropDownList("batchYear", batchYear, new { id = "batchYear" })
+                    </div>
+                    <div class="col-md-2">
+                        Batch   <span class="rqf">*</span>
+                        @Html.DropDownList("batch", new SelectList(ViewBag.Mybatch, "Value", "Text", ViewBag.Month), "--Select---", new { @class = "", id = "batch", required = "required" })
+                    </div>
+                    <div class="col-md-2">
+                        Class<span class="rqf">*</span>  @Html.DropDownList("Class", new SelectList(ViewBag.Mycls, "Value", "Text", ViewBag.Selectedcls), "--All---", new { @class = "", id = "Class" })
+                    </div>
+                    @*<div class="col-md-2">
+                        Exam Type  @Html.DropDownList("RP", new SelectList(ViewBag.MyRP, "Value", "Text", ViewBag.SelectedRP), "--All---", new { @class = "", id = "RP" })
+                    </div>*@
+                    <div class="col-md-2">
+                        <br />
+                        <input type="submit" name="submit" value="Search" onclick="return valForm();" />
+                    </div>
+                </div>
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-right noprint">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12" style="@(ViewBag.TotalCount > 0 ? "display:block" : "display:none")">
+        <div style="border:1px solid #fff !important;display:block;margin-bottom:30px">
+            <table border="1" width="100%" class="tprint" id="t03">
+                <thead
+                <tr>
+                <td style="border-right:0 !important" colspan="2"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                <td colspan="3" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                <span style="font-size:28px">Punjab School Education Board</span><br /><span>
+    @{
+        if (ViewBag.Selectedcls == "12")
+        { <span>Senior</span> }
+        else if (ViewBag.Selectedcls == "10")
+        { <span>Matric</span> }
+        else
+        { <span></span> }
+
+    }
+    @*@{
+            if (ViewBag.SelectedRP == "1")
+            { <span>(Regular)</span> }
+            else if (ViewBag.SelectedRP == "2")
+            { <span>(Open)</span> }
+            else if (ViewBag.SelectedRP == "3")
+            { <span>(Private)</span> }
+            else
+            { <span></span> }
+
+        }*@
+    Count of Rechecking and Re-Evaluation Applications @ViewBag.Month-@ViewBag.Year
+</span>
+                </td>
+                <td colspan="2" style="text-align:right;border-left:0 !important;">Print DateTime : @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt") &nbsp;</td>
+                </tr>
+                </thead>
+                <tr class="active-tr" style="background-color:#dddddd !important;color:#1f1f1f;">
+                    <td rowspan="2">&nbsp;Class</td>
+                    <td colspan="3" style="text-align:center">&nbsp;Rechecking</td>                    
+                    <td colspan="3" style="text-align:center">&nbsp;Re-Evaluation</td>                 
+                </tr>
+                <tr class="active-tr" style="background-color:#dddddd !important;color:#1f1f1f;">                  
+                    <td>&nbsp;Registered</td>
+                    <td>&nbsp;Challan Generated</td>
+                    <td>&nbsp;Fee Verified</td>
+                    <td>&nbsp;Registered</td>
+                    <td>&nbsp;Challan Generated</td>
+                    <td>&nbsp;Fee Verified</td>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            Count = Count + 1;
+                            var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            var Month = Model.StoreAllData.Tables[0].Rows[i]["Month"].ToString();
+                            var Year = Model.StoreAllData.Tables[0].Rows[i]["Year"].ToString();
+                            var Total = Model.StoreAllData.Tables[0].Rows[i]["Total"].ToString();
+                            var Rechecking = Model.StoreAllData.Tables[0].Rows[i]["Rechecking"].ToString();
+                            var ChallanGeneratedRecheck = Model.StoreAllData.Tables[0].Rows[i]["ChallanGeneratedRecheck"].ToString();
+                            var FeeVerifiedRecheck = Model.StoreAllData.Tables[0].Rows[i]["FeeVerifiedRecheck"].ToString();
+                            var Revaluation = Model.StoreAllData.Tables[0].Rows[i]["Revaluation"].ToString();
+                            var ChallanGeneratedRevaluation = Model.StoreAllData.Tables[0].Rows[i]["ChallanGeneratedRevaluation"].ToString();
+                            var FeeVerifiedRevaluation = Model.StoreAllData.Tables[0].Rows[i]["FeeVerifiedRevaluation"].ToString();
+
+
+
+                            <tr>
+                                <td>&nbsp;@Class</td>
+                                <td>&nbsp;@Rechecking</td>
+                                <td>&nbsp;@ChallanGeneratedRecheck</td>
+                                <td>&nbsp;@FeeVerifiedRecheck</td>
+                                <td>&nbsp;@Revaluation</td>
+                                <td>&nbsp;@ChallanGeneratedRevaluation</td>
+                                <td>&nbsp;@FeeVerifiedRevaluation</td>
+                            </tr>
+                        }
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    //------------------------------------------------
+    function valForm() {
+        var batch = document.getElementById("batch");
+        if (batch == "0" || batch == "") {
+            alert("Select Session");
+            document.getElementById("batch").focus();
+            return false;
+        } 
+
+    }
+</script>

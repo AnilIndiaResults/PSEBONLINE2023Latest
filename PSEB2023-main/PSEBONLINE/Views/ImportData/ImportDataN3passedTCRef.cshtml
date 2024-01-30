@@ -1,0 +1,281 @@
+﻿@model PSEBONLINE.Models.Import
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+@using (Html.BeginForm("ImportDataN3passedTCRef", "ImportData", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <h1>       
+        Import 9<sup>th</sup> Fail / Absent/ Cancel Students of other Schools of Last 3 Years.
+    </h1>
+
+    <div class="row">
+        <div class="col-md-12">
+           <p class="kdsfont-n">ਇਸ ਲਿੰਕ ਅਧੀਨ ਪਿਛਲੇ ਤਿੰਨ ਸਾਲਾਂ ਦੌਰਾਨ ਬੋਰਡ ਨਾਲ ਸਬੰਧਤ ਕਿਸੇ ਹੋਰ ਸਕੂਲਾਂ ਤੋਂ ਨੌਵੀਂ ਫੇਲ/ਗੈਰ ਹਾਜ਼ਰ/ਰੱਦ ਵਿਦਿਆਰਥੀਆਂ ਨੂੰ ਇੰਮਪੋਰਟ ਕੀਤਾ ਜਾਵੇ।</p>
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    @{                        
+                        List<SelectListItem> SelList = new List<SelectListItem>();
+                        SelList.Add(new SelectListItem { Text = "--- Select ---", Value = "0" });
+                        SelList.Add(new SelectListItem { Text = "TC Refno No.", Value = "1" });
+                        SelList.Add(new SelectListItem { Text = "Registration Number", Value = "2" });
+                        SelList.Add(new SelectListItem { Text = "Student/ Father Name", Value = "3" });
+                        SelList.Add(new SelectListItem { Text = "Aadhar Number", Value = "7" });
+                    }                    
+                    Search By @Html.DropDownList("SelList", SelList, new { id = "SelectItem" })                                        
+                    <span id="reqsellist" style="color:red;display:none;">Select One</span>
+                </div>
+                <div id="divschl" class="col-md-2" style="display:none;">
+                    school code <input type="text" id="SearchStringschl" name="SearchStringschl" maxlength="7" value="@ViewBag.Searchstringschl" onkeypress="return isNumberKey(event);" />
+                    <span id="reqsstringschl" style="color:red;display:none;">Enter school code</span>
+                </div>
+                <div class="col-md-2">
+                    <span id="SelListstring" display:none;">Search text</span> <input type="text" id="SearchString" name="SearchString" maxlength="20" value="@ViewBag.Searchstring" onkeypress="return isNumberKey(event);" />
+                    <span id="reqsstring" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div id="divfnm" class="col-md-2" style="display:none;">
+                    <span id="SelListstringfnm" display:none;">Father Name</span> <input type="text" id="SearchStringfnm" name="SearchStringfnm" maxlength="20" value="@ViewBag.Searchstringfnm" />
+                    <span id="reqsstring" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="Submit" value="Search" name="cmd" onclick="return dee()" />
+                    <span id="tt" display:none;"></span><input type="submit" name="Reset" value="Reset" formaction="CancelTcN3" formmethod="post" />
+                </div>
+                @*<div class="col-md-2">
+                    Search By TC REF Number
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="SearchString" name="SearchString" maxlength="12" value="@ViewBag.Searchstring" onkeypress = "return isNumberKey(event);"  />
+                    <span id="reqsstring" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-2">
+                    <input type="Submit" value="Search" name="cmd" onclick="return dee()" /> 
+                    <input type="submit" name="Reset" value="Reset" formaction="CancelTcN3" formmethod="post" />
+                </div>*@
+
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("N3Master", "RegistrationPortal")'">
+            <input type="button" value="View Imported Data" onclick="javascript:document.location.href='@Url.Action("N3Formgrid", "RegistrationPortal")'">
+            <input type="submit" value="Import Selected Record" /><br />&nbsp;
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+
+                    <tr class="active-tr">
+
+                        <th>School Code</th>
+                        <th>Form</th>
+                        <th>TC REF</th>
+                        <th>Registration No.</th>
+                        <th>Old ID</th>
+                        <th>Old Roll</th>
+                        <th>Name / Father's / Mother's Name</th>                        
+                        <th>DOB</th>
+                        <th>Result</th>
+                        <th><input type="checkbox" id="select_all" /></th>
+                        @*<th><input type="checkbox" id="chkSelectAll" /></th>*@
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+
+                                var scode = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                var form = Model.StoreAllData.Tables[0].Rows[i]["Form"].ToString();
+                                var tc = Model.StoreAllData.Tables[0].Rows[i]["TCrefno"].ToString();
+                                var regNum = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                                var OldID = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                var Oroll = Model.StoreAllData.Tables[0].Rows[i]["Current_ClassRoll"].ToString();
+                                var id = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                                var canName = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                                var Fname = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                                var Mname = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                                var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                var res = Model.StoreAllData.Tables[0].Rows[i]["result"].ToString();
+                                var ImpStatus = Model.StoreAllData.Tables[0].Rows[i]["ImpStatus"].ToString();
+
+                                <tr>
+
+                                    <td>@scode</td>
+                                    <td>@form</td>
+                                    <td>@tc</td>
+                                    <td>@regNum</td>
+                                    <th>@OldID</th>
+                                    <th>@Oroll</th>
+                                    <td>@canName / @Fname / @Mname</td>                                   
+                                    <td>@DOB</td>
+                                    <td>@res</td>
+                                    @*<td><input class="checkbox" type="checkbox" value='@id' name="sport"></td>*@
+                                    <td>
+                                      @if (@ImpStatus.ToUpper() != "OK")
+                                      {
+                                        <span>@ImpStatus</span>
+                                      }
+                                      else
+                                      {
+                                            @Html.HiddenFor(m => m.chkidList[i].id)
+
+                                            @Html.CheckBoxFor(m => m.chkidList[i].Selected, new { Style = "vertical-align:3px", @class = "checkbox" })
+
+                                        }
+
+                                    </td>
+                                    @*<td>
+                                            @Html.HiddenFor(m => m.chkidList[i].id)
+
+                                            @Html.CheckBoxFor(m => m.chkidList[i].Selected, new { Style = "vertical-align:3px", @class = "checkbox" })
+
+
+                                        </td>*@
+                                </tr>
+
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+                <p>Total Records(Filtered): @ViewBag.TotalCount</p>
+            </div>
+        </div>
+    </div>
+                        }
+
+@{
+    if (TempData["result"] != null)
+    {
+        if (TempData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                var impcn = @TempData["TotImported"];
+                //alert(impcn);
+                alert(impcn+" Records Imported Successfully");
+                document.location.href = '@Url.Action("ImportDataN3passedTCRef", "ImportData")';
+            </script>}
+        else if (TempData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Imported");
+            </script>
+        }
+        else if (TempData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data not saved..plz try again");
+            </script>
+        }
+    }
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var sel = $("#SelectItem").val();
+        var selectedText = $("#SelectItem").find("option:selected").text();
+        document.getElementById('SelListstring').innerText = selectedText;
+        $('#divschl').css("display", "none");
+        //alert(sel);
+        if (sel == 3 )
+        {
+            document.getElementById('SelListstring').innerText = "Student Name";
+            $('#divschl').css("display", "block");$('#divfnm').css("display", "block");
+        }
+        if (sel == 0 )
+        {
+            document.getElementById('SelListstring').innerText = "Enter search text";
+            //$('#divschl').css("display", "block");$('#divfnm').css("display", "block");
+        }
+
+    });
+
+    $('#SelectItem').change(function () {
+        var sel = $("#SelectItem").val();
+        var selectedText = $(this).find("option:selected").text();
+        document.getElementById('SelListstring').innerText = selectedText;
+        $('#divschl').css("display", "none");
+        $('#divfnm').css("display", "none");
+        //$('#SearchString')="";
+        $("#SearchStringschl").val('');
+        $("#SearchString").val('');
+        $("#SearchStringfnm").val('');  
+        if (sel == 3 )
+        {
+            document.getElementById('SelListstring').innerText = "Student Name";
+            $('#divschl').css("display", "block");
+            $('#divfnm').css("display", "block");
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+    function dee() {
+        var str = $("#SearchString").val();
+        var res = str.substring(7, 9);
+        var ses = '@Request.RequestContext.HttpContext.Session["SCHL"]';
+        var chlSchl=str.substring(0, 7);
+        //alert(chlSchl);
+        if ($("#SearchString").val() == ""  )
+        {
+            //alert("Please Select year");
+            $("#reqsstring").slideDown("slow");
+            return false;
+        }
+        var sel = $("#SelectItem").val();
+        if (sel == 3 && $("#SearchStringschl").val() == "")
+        {
+            $("#reqsstringschl").slideDown("slow");
+            return false;
+        }
+       return true;
+
+    }
+</script>
+
+<script type="text/javascript">
+
+    function isNumberKey(evt) {
+        var sel = $("#SelectItem").val();
+        if (sel != 2 && sel != 3 )
+        {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+                return true;
+            }
+            else {
+                alert("Invalid character...Enter Only Number!!");
+                return false;
+            }
+        }
+    }
+</script>

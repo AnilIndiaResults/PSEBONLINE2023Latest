@@ -1,0 +1,160 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    ViewBag.Title = "View Complete ExamForm Fees Details";
+    //Layout = "~/Views/Shared/_Header.cshtml";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<div class="col-md-12 text-right noprint">
+    <input type="button" value="Print" class="btn" onclick="window.print()" />
+    <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+</div>
+<div class="clearfix"></div>
+<div class="container">    
+    <div class="row" id="divMain1">
+        <div class="col-md-4">Total Students:  @ViewBag.TotalCount</div>
+        <div class="col-md-8 text-right">
+            @*<a href="~/ExaminationPortal/ExamFormCalFee" class="btn">Back</a>*@
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+
+            <div style="border:1px solid #fff !important;display:block;margin-bottom:30px">
+                <table border="1" width="100%" class="tprint">
+                    <tr>
+                        <td style="border-right:0 !important"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                        <td colspan="6" style="font-size:14px;text-align:center;line-height:20px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                            <span style="font-size:28px">Punjab School Education Board</span><br /><span>View Complete ExamForm Fees Details (Session @Session["Session"].ToString())</span>
+                        </td>
+                        <td colspan="2" style="text-align:right;border-left:0 !important;">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="9">&nbsp;School Code/Name : @Model.StoreAllData.Tables[1].Rows[0]["SCHL"].ToString()/@Model.StoreAllData.Tables[1].Rows[0]["SCHLNME"].ToString()</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">&nbsp;<span class="kdsfont">Ó ̈ÞÐ ÌÝóªÛ ÂØ ÅÙ</span> : @Model.StoreAllData.Tables[1].Rows[0]["PRINCIPAL"].ToString()</td>
+                        <td colspan="3">&nbsp;<span class="kdsfont">Ó ̈ÞÐ ÂØ ÇëÅ Åâ</span> : @Model.StoreAllData.Tables[1].Rows[0]["PHONE"].ToString()</td>
+                        <td colspan="3">&nbsp;<span class="kdsfont">ÌëÉØ¥ÛÐ Åâ</span> : @Model.StoreAllData.Tables[1].Rows[0]["MOBILE"].ToString()</td>
+
+                    </tr>
+                    <tr>
+                        <th width="11%">Student Id</th>
+                        <th width="11%">Form No.</th>
+                        <th width="29%">Candidate/Father's/ Mother's Name</th>
+                        <th width="8%">Caste</th>
+                        <th width="8%">Gender</th>
+                        <th width="8%">Exam Fee</th>
+                        <th width="8%">Add Sub Fee</th>
+                        <th width="8%">Prac Fee</th>
+                        <th width="8%">Total Fee</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int Count = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                var std_id = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                                var FullName = Model.StoreAllData.Tables[0].Rows[i]["FullName"].ToString();
+                                var Registration_num = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                var Caste = Model.StoreAllData.Tables[0].Rows[i]["Caste"].ToString();
+                                var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                                var Fee = Model.StoreAllData.Tables[0].Rows[i]["Fee"].ToString();
+                                var AddSubFee = Model.StoreAllData.Tables[0].Rows[i]["AddSubFee"].ToString();
+                                var PracFee = Model.StoreAllData.Tables[0].Rows[i]["PracFee"].ToString();
+                                //var add_sub_count = Model.StoreAllData.Tables[0].Rows[i]["add_sub_count"].ToString();
+                                //var prac_sub_count = Model.StoreAllData.Tables[0].Rows[i]["prac_sub_count"].ToString();
+                                var LateFee = Model.StoreAllData.Tables[0].Rows[i]["LateFee"].ToString();
+                                var TotFee = Model.StoreAllData.Tables[0].Rows[i]["TotFee"].ToString();
+                                var Formno = Model.StoreAllData.Tables[0].Rows[i]["Formno"].ToString();
+                                Count = Count + 1;
+                                <tr>
+                                    <td>@std_id</td>
+                                    <td>@Formno</td>
+                                    <td>@FullName</td>
+                                    <td>@Caste</td>
+                                    <td>@Gender</td>
+                                    <td>@Fee</td>
+                                    <td>@AddSubFee</td>
+                                    <td>@PracFee</td>
+                                    @*<td>@LateFee</td>*@
+                                    <td>@TotFee</td>
+                                </tr>
+
+                            }
+                        }
+                    }
+                </table>
+                <table border="1" width="100%" class="tprint" style="margin-top:100px">
+                    <tr>
+                        <td colspan="9" style="text-align:center">Challan Details</td>
+                    </tr>
+                    <tr>
+                        <th>Challan ID</th>
+                        <th>Amount</th>
+                        <th>Bank Name</th>
+                        <th>Bank Ref. No.</th>
+                        <th colspan="2">Challan Deposit Date</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int Count = 0;
+                            if (Model.StoreAllData.Tables[2].Rows.Count > 0)
+                            {
+                                var ChallanId = Model.StoreAllData.Tables[2].Rows[0]["ChallanId"].ToString();
+                                var TOTFEE = Model.StoreAllData.Tables[2].Rows[0]["TOTFEE"].ToString();
+                                var CHLNDATE = Model.StoreAllData.Tables[2].Rows[0]["CHLNDATE"].ToString();
+                                var DEPOSITDT = Model.StoreAllData.Tables[2].Rows[0]["DEPOSITDT"].ToString();
+                                var BANK = Model.StoreAllData.Tables[2].Rows[0]["BANK"].ToString();
+                                var J_REF_NO = Model.StoreAllData.Tables[2].Rows[0]["J_REF_NO"].ToString();
+                                Count = Count + 1;
+                                        <tr>
+                                            <td>@ChallanId</td>
+                                            <td>@TOTFEE</td>
+                                            <td>@BANK</td>
+                                            <td>@J_REF_NO</td>
+                                            <td colspan="2">@DEPOSITDT</td>
+                                        </tr>
+
+                            }
+                        }
+                    }
+                   
+                    <tr>
+                        <th>NOC</th>
+                        <th>Add Sub Fee</th>
+                        <th>Prac Fee</th>
+                        <th>Exam Fee</th>
+                        <th>Late Fee</th>
+                        <th>Total Fee</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            var TotalStudent = Model.StoreAllData.Tables[3].Rows[0]["TotalStudent"].ToString();
+                            var addsubfee = Model.StoreAllData.Tables[2].Rows[0]["addsubfee"].ToString();
+                            var latefee = Model.StoreAllData.Tables[2].Rows[0]["latefee"].ToString();
+                            var PracFee = Model.StoreAllData.Tables[2].Rows[0]["PracFee"].ToString();
+                            var REGFEE = Model.StoreAllData.Tables[2].Rows[0]["REGFEE"].ToString();
+                            var Fee = Model.StoreAllData.Tables[2].Rows[0]["Fee"].ToString();
+                            var TOTFEE = Model.StoreAllData.Tables[2].Rows[0]["TOTFEE"].ToString();
+                            <tr>
+                                <td>@TotalStudent</td>
+                                <td>@addsubfee</td>
+                                <td>@PracFee</td>
+                                <td>@REGFEE</td>
+                                <td>@latefee</td>
+                                <td>@TOTFEE</td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

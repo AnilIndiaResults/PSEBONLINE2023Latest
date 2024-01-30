@@ -1,0 +1,625 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    ViewBag.Title = "ExamFormCalFee";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<style type="text/css">
+    .nlink a {
+        padding-right: 10px;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <h1>
+            Exam Form Fee Details For - Session @if (Session["Session"] != null)
+            {@Session["Session"].ToString()}
+        else { Response.Redirect("~/Login"); }
+        </h1>
+        <br /><p style="text-align:center;font-size:18px;color:#f00">If you already deposited the amount in Bank, then don't Re-Generate challan, kindly update "Enter Fee Deposit Details" under choose action.</p>
+
+        @{
+            string schl1 = Session["SCHL"].ToString();
+            if (ViewBag.TotalCount > 0)
+            {
+                if (Model.StoreAllData.Tables[1].Rows.Count > 0 && Model.StoreAllData.Tables[1].Rows[0]["PendingExamForm"].ToString() != "0")
+                {
+                    <a style="text-align:center;font-size:18px;"
+                       href="/MergerdlcSchool.aspx?Schl=@encrypt.QueryStringModule.Encrypt(schl1)" target="_blank" class="btn">Click Here to Generate Examination Form</a>
+                }
+            }
+        }
+    </div>
+</div>
+<div class="row" id="divMain1">
+    <div class="col-md-10">Total Count:  @ViewBag.TotalCount</div>
+    <div class="col-md-2 text-right"><a href="~/RegistrationPortal/ExaminationPortal" class="btn">Back</a></div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th rowspan="2">Actions</th>
+                    <th rowspan="2" style="text-align:center">Download<br />Exam Form</th>
+                    <th colspan="4" style="text-align:center">Challan Details</th>
+                    <th rowspan="2">Class</th>
+                    <th rowspan="2" style="text-align:center">No. Of Total Candidate</th>
+                    @*<th colspan="3" style="text-align:center">Candidate Details</th>*@
+                    <th colspan="2" style="text-align:center">Exam Fee</th>
+                    <th rowspan="2">No of<br />Add Sub</th>
+                    <th colspan="2" style="text-align:center">Additional Subject Fee</th>
+                    <th rowspan="2">No of<br />Pr Sub</th>
+                    @*<th rowspan="2">Pr.<br />Sub Fee</th>*@
+                    <th colspan="2" style="text-align:center">Practical Fee Details</th>
+                    <th rowspan="2">Late Fee</th>
+                    <th rowspan="2">Cert Fee</th>
+                    <th rowspan="2">Total Fee</th>
+                    <th rowspan="2">Reg / Open School</th>
+                    <th rowspan="2">Print Lot</th>
+                </tr>
+                <tr class="active-tr">
+                    <th>Status</th>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Valid / Verify Date</th>
+                    @*<th>Verify Date</th>*@
+                    @*<th>Non-Exempt NOC</th>
+                        <th>Exempt NOC</th>
+                        <th>Total NOC</th>*@
+                    <th>Fee Per Candidate</th>
+                    <th>Total Fee</th>
+                    <th>Fee Per Candidate</th>
+                    <th>Total Fee</th>
+                    <th>Fee Per Candidate</th>
+                    <th>Total Fee</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var Type = Model.StoreAllData.Tables[0].Rows[i]["Type"].ToString();
+                            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var ClassName = Model.StoreAllData.Tables[0].Rows[i]["ClassName"].ToString();
+                            var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            var NOS = Model.StoreAllData.Tables[0].Rows[i]["NOS"].ToString();
+                            var NOCFullFee = Model.StoreAllData.Tables[0].Rows[i]["nocfullFeepayedcandidates"].ToString();
+                            var NOCExemptionFee = Model.StoreAllData.Tables[0].Rows[i]["nocFeeExemptioncandidates"].ToString();
+                            var TotFullFeeCandidate = Model.StoreAllData.Tables[0].Rows[i]["PerfullFeepayedcandidates"].ToString();
+                            var TotExemptionFeeCandidate = Model.StoreAllData.Tables[0].Rows[i]["PerFeeExemptioncandidates"].ToString();
+                            // var FeeExemption = Model.StoreAllData.Tables[0].Rows[i]["FeeExemption"].ToString();
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["Fee"].ToString();
+                            var AddSubFee = Model.StoreAllData.Tables[0].Rows[i]["AddSubFee"].ToString();
+                            var NOAS = Model.StoreAllData.Tables[0].Rows[i]["NOAS"].ToString();
+                            var NOAPS = Model.StoreAllData.Tables[0].Rows[i]["NOAPS"].ToString();
+                            var NOPS = Model.StoreAllData.Tables[0].Rows[i]["NOPS"].ToString();
+                            var PFPC = Model.StoreAllData.Tables[0].Rows[i]["PFPC"].ToString();
+                            var PracFee = Model.StoreAllData.Tables[0].Rows[i]["PracFee"].ToString();
+                            var LateFee = Model.StoreAllData.Tables[0].Rows[i]["LateFee"].ToString();
+                            var TotFee = Model.StoreAllData.Tables[0].Rows[i]["TotFee"].ToString();
+                            var SchoolType = Model.StoreAllData.Tables[0].Rows[i]["SchoolType"].ToString();
+                            var PrintLot = Model.StoreAllData.Tables[0].Rows[i]["PrintLot"].ToString();
+                            var Challanid = Model.StoreAllData.Tables[0].Rows[i]["Challanid"].ToString();
+                            var ChallanStatus = Model.StoreAllData.Tables[0].Rows[i]["ChallanStatus"].ToString();
+                            var ChallanVerify = Model.StoreAllData.Tables[0].Rows[i]["ChallanVerify"].ToString();
+                            var ChallanDate = Model.StoreAllData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                            var ChallanVDate = Model.StoreAllData.Tables[0].Rows[i]["CHLNVDATE"].ToString();
+                            var ChallanVerifiedOn = Model.StoreAllData.Tables[0].Rows[i]["VERIFYDATE"].ToString();
+
+                            var StatusNumber = Model.StoreAllData.Tables[0].Rows[i]["StatusNumber"].ToString();
+                            var FeeDepositStatus = Model.StoreAllData.Tables[0].Rows[i]["FeeDepositStatus"].ToString();
+                            var ExpireVDate = Model.StoreAllData.Tables[0].Rows[i]["ExpireVDate"].ToString();
+                            var IsCancel = Model.StoreAllData.Tables[0].Rows[i]["IsCancel"].ToString();
+                            var Verified = Model.StoreAllData.Tables[0].Rows[i]["verified"].ToString();
+                            var downldflg = Model.StoreAllData.Tables[0].Rows[i]["downldflg"].ToString();
+                            //
+
+                            var ExamCertFee = Model.StoreAllData.Tables[0].Rows[i]["ExamCertFee"].ToString();
+
+
+                            Count = Count + 1;
+                            <tr>
+                                <td align="center" class="nlink">
+                                    <div class="cart">
+                                        Choose&nbsp;Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+                                                <li>@Html.ActionLink("Complete Details", "CompleteExamFormFeeDetails", new { ChallanId = @Challanid }) </li>
+                                                @*<li> <a href="/Home/GenerateChallaan?ChallanId=@Challanid">Print Challan</a></li>*@
+                                                <li>
+                                                    @if (StatusNumber.ToString() == "0")//Challan Generated
+                                                    {
+                                                        if (ExpireVDate.ToString() == "0" && FeeDepositStatus.ToString() == "0")
+                                                        {
+                                                            @*@Html.ActionLink("Print Challan", "GenerateChallaan", new { ChallanId = @Challanid })*@
+                                                            <a href="/Home/GenerateChallaan?ChallanId=@Challanid">Print Challan</a>
+                                                        }
+                                                    }
+                                                    else if (StatusNumber.ToString() == "1" || StatusNumber.ToString() == "0") //Downloaded by Bank : Date
+                                                    {
+                                                        if (ExpireVDate.ToString() == "0" && FeeDepositStatus.ToString() == "0")
+                                                        {
+                                                            <a href="/Home/GenerateChallaan?ChallanId=@Challanid">Print Challan</a>
+                                                            <a href="/Home/FeeDepositDetails?Id=@Challanid">Enter Fee Deposit Details</a>
+                                                            @*@Html.ActionLink("Print Challan", "GenerateChallaan", new { ChallanId = @Challanid })*@
+                                                            @*@Html.ActionLink("Enter Fee Deposit Details", "FeeDepositDetails", new { id = @Challanid })*@
+                                                        }
+                                                        else if (FeeDepositStatus.ToString() == "1")
+                                                        {
+                                                            <span>Challan Verification Pending</span>
+                                                        }
+                                                        else if (ExpireVDate.ToString() == "1" && FeeDepositStatus.ToString() == "0")
+                                                        {
+
+                                                            <a href="/Home/FeeDepositDetails?Id=@Challanid">Enter Fee Deposit Details</a>
+                                                            @*@Html.ActionLink("Enter Fee Deposit Details", "FeeDepositDetails", new { id = @Challanid })*@
+                                                            @*<span>  @Html.ActionLink("Re-Generate Challan", "ExamReGenerateChallaan", new { ChallanId = @Challanid }, new { @class = " btn", @OnClick = "return confirm('If you already deposited amount in Bank then please dont regenerate challan. Are you sure to Re-Generate Challan or Cancel?');" })</span>*@
+
+                                                            <button type="button" class="" data-toggle="modal" data-target="#myModal-@Challanid" onclick="return confirm('If you already deposited amount in Bank then please dont regenerate challan. Are you sure to Re-Generate Challan or Cancel?');">Re-Generate Challan</button>
+
+
+                                                        }
+                                                    }
+
+                                                    @if ((Verified == "0" && IsCancel == "0" && downldflg == "0") || (ExpireVDate.ToString() == "1" && FeeDepositStatus.ToString() == "0" && Verified == "0"))
+                                                    {
+                                                        <a data-toggle="modal" data-target="#myModal2-@Challanid">CANCEL CHALLAN</a>
+
+                                                    }
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="container">
+                                            <div class="modal fade" id="myModal-@Challanid" role="dialog">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4 class="modal-title">Re-Generate Challan</h4>
+                                                            <p style="text-align:center;font-size:18px;color:#f00">If you already deposit amount in Bank then please dont Re-Generate Challan. Are you sure to Re-Generate Challan or Cancel?</p>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <center> <input type="text" id="txtChallanNo-@Challanid" name="txtChallanNo" value="@Challanid" readonly /></center>
+                                                            <input name="SBI-@Challanid" id="SBI-@Challanid" type="radio" value="204"><img src="~/Images/SBIbank.png" width="150" />
+                                                            <input name="PNB-@Challanid" id="PNB-@Challanid" type="radio" value="202"><img src="~/Images/PNBbank.gif" width="150" />  <br />
+                                                            <input type="button" class="btn" value="Click here to Re-Generate Challan" id="btnSend" onclick="Send(@Challanid)" />
+                                                            <div id="loading1-@Challanid"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="modal fade" id="myModal2-@Challanid" role="dialog">
+                                                <div class="modal-dialog">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>Cancel Challan of @Challanid </h3>
+                                                            <h5 class="rqf">Warning : After cancelation of challan, New Fee/Fine will be applicable according current date. If fee already paid against this challan then don't cancel this challan and wait for 2-3 days or contact with PSEB</h5>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Cancel Remarks <textarea id="cancelremarks-@Challanid" name="cancelremarks"></textarea>
+                                                            <input type="button" class="btn" value="Submit" id="btnsubmitCancel" onclick="cancelChallan(@Challanid)" />
+                                                            <div id="loading1"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </td>
+                                <td style="text-align:center">
+                                    @if (Model.StoreAllData.Tables[0].Rows[i]["PrintStatus"].ToString() == "1" && Model.StoreAllData.Tables[0].Rows[i]["ChallanVerify"].ToString() == "1")
+                                    {
+                                        @* <span>Will be Available Soon</span>*@
+                                        @Html.ActionLink("Download", "DownloadExamFinalReport", new { ChallanId = @Challanid, Filename = @Model.StoreAllData.Tables[0].Rows[i]["FilePath"].ToString() }, new { @class = "btnb tip", target = "_blank", rel = "Download Examination Form" })
+
+                                        <div class="cartq">
+                                            @Html.ActionLink("Re-Generate", "ReGenerateFinalPrint", new { ChallanId = @Challanid }, new { @class = "btnb tip", rel = "Are you sure to Re-Generate Examination Form for Session 2023-24 for This Lot If 'OK' then the Examination Form for Session 2023-24 will be Generated within 24 Hours If 'Cancel' then click on download Examination Form to download Examination Form For Session 2023-24", @OnClick = "return confirm('Are you sure to Re-Generate Examination Form for Session 2023-24 for This Lot If OK then the Examination Form for Session 2023-24 will be Generated within 24 Hours If Cancel  then click on download Examination Form to download Examination Form For Session 2023-24');" })
+                                        </div>
+
+                                    }
+                                    else if (Model.StoreAllData.Tables[0].Rows[i]["StatusNumber"].ToString() != "2")
+                                    {
+                                        <a href="#" class="tip" rel="Exam Fee is not verified Yet. After the verification of Exam fee Challan you will be able to download Examination Form For Session 2023-24">
+                                            HELP<img src="~/Images/help_icon.png" alt="Help" />
+                                        </a>
+                                        @*<div class="tooltip">
+                                                <h2>Help</h2>
+                                                <span class="tooltiptext">Exam Fee is not verified Yet.After the verification of Exam fee Challan you will be able to download Examination Form For Session @Session["Session"].ToString()</span>
+                                            </div>*@
+                                    }
+                                    else
+                                    {
+                                        <div class="cart1">
+                                            HELP<img src="~/Images/help_icon.png" />
+                                            <div id="sidebar1">
+                                                <span>Generation of Examination Form In Process..</span>
+                                            </div>
+                                        </div>
+                                        @*<p class="rqf">Generation of Examination Form In Process..</p>*@}
+                                </td>
+                                <td style="font-size:7px">
+
+                                    @if (Type == "OPEN")
+                                    {
+                                        <span>Exam Fee Already Paid</span>
+                                    }
+                                    else if (StatusNumber.ToString() == "0" || StatusNumber.ToString() == "1" || StatusNumber.ToString() == "2")
+                                    {
+                                        @ChallanStatus
+                                    }
+
+                                </td>
+                                <td><a href="/Home/GenerateChallaan?ChallanId=@Challanid">@Challanid</a></td>
+                                <td>@ChallanDate</td>
+                                <td><span style="color:#cc0000">@ChallanVDate</span><br /><span style="color:#129f02">@ChallanVerifiedOn</span></td>
+                                <td>@ClassName</td>
+
+                                @*
+                                    <td>@NOCFullFee</td>
+                                    <td>@NOCExemptionFee</td>*@
+                                <td>@NOS</td>
+
+                                <td>@TotFullFeeCandidate</td>
+                                @*
+                                    <td>@TotExemptionFeeCandidate</td>*@
+                                @*
+                                    <td>@FeeExemption</td>*@
+                                <td>@Fee</td>
+                                <td>@NOAS</td>
+                                <td>@NOAPS</td>
+                                <td>@AddSubFee</td>
+                                <td>@NOPS</td>
+
+                                <td>@PFPC</td>
+                                <td>@PracFee</td>
+
+                                <td>@LateFee</td>
+                                <td>@ExamCertFee</td>
+                                <td>@TotFee</td>
+                                <td>@SchoolType</td>
+                                <td>@PrintLot</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                <span class="rqf">@ViewBag.Message</span>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    .btnb {
+        -moz-user-select: none;
+        background-color: #fb9709;
+        background-image: none;
+        border: 1px solid #f08f06;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        border-radius: 4px;
+        color: #fff !important;
+        cursor: pointer;
+        display: block !important;
+        font-size: 9px;
+        font-weight: bold;
+        margin-bottom: 0;
+        padding: 2px 4px;
+        margin-bottom: 2px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .tip {
+        display: inline;
+        position: relative
+    }
+
+        .tip:hover:after {
+            background: #333;
+            background: rgba(248,148,5,.9);
+            border-radius: 5px;
+            bottom: 26px;
+            color: #000;
+            content: attr(rel);
+            left: 20%;
+            padding: 5px 15px;
+            position: absolute;
+            white-space: pre-wrap;
+            z-index: 98;
+            font-family: Arial;
+            font-size: 12px;
+            text-align: justify;
+            width: 320px
+        }
+
+    .table-responsive td {
+        font-size: 8px;
+        font-family: Arial
+    }
+
+    .table-responsive th {
+        font-size: 8px;
+        font-family: Arial
+    }
+    /*.scroll {
+        overflow: scroll !important;
+    }*/
+    .table1-responsive1 {
+        width: 100%;
+        margin-bottom: 15px;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        /*border: 1px solid #dddddd;*/
+        font-size: 10px;
+    }
+
+        .table1-responsive1 > .table1 {
+            margin-bottom: 0;
+            background-color: #fff;
+        }
+
+    .cartq:hover #sidebarq {
+        background-color: #fb9709;
+        display: block;
+    }
+
+    .cartq:hover #sidebarr {
+        background-color: #cc0000;
+        display: block;
+        color: #fff;
+    }
+
+    .cartq {
+        cursor: pointer;
+        display: inline-block;
+        position: relative;
+        width: 100%;
+    }
+
+        .cartq #sidebarq {
+            position: absolute;
+            display: none;
+            top: 100%;
+            width: 100%;
+            z-index: 1;
+            text-align: justify;
+            padding: 2px;
+        }
+
+    #sidebarr {
+        position: absolute;
+        display: none;
+        top: 100%;
+        width: 100%;
+        z-index: 1;
+        text-align: justify;
+        padding: 2px;
+    }
+
+    .cart1 {
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+        color: #000;
+        border-top: 1px solid #fff;
+        border-left: 1px solid #fff;
+        border-right: 1px solid #fff;
+        width: 100%;
+    }
+
+    #sidebar1 {
+        display: none;
+    }
+
+    .cart1:hover {
+        border-top-color: #fb9709;
+        border-left-color: #fb9709;
+        font-size: 12px;
+        border-right-color: #fb9709;
+    }
+
+        .cart1:hover #sidebar1 {
+            position: absolute;
+            z-index: 1;
+            top: 100%;
+            font-size: 12px;
+            display: block;
+            background-color: #fb9709;
+            width: 200%;
+            cursor: pointer;
+            text-transform: capitalize;
+        }
+
+    #ac-wrapper {
+        background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    #popup {
+        background: #fff none repeat scroll 0 0;
+        border: 5px solid #f1f1f1;
+        border-radius: 25px;
+        box-shadow: 0 0 3px 3px #64686e;
+        min-height: 280px;
+        left: 30%;
+        padding: 10px 20px 0;
+        position: absolute;
+        top: 128px;
+        width: 40%;
+    }
+</style>
+<script type="text/javascript">
+
+    window.setInterval(function () {
+        var current = new Date();
+        var expiry = new Date("December 14, 2016 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideint').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideint').show();
+        }
+    }, 0);
+</script>
+<script type="text/javascript">
+    //$(document).ready(function() {
+    //    $('.container').removeClass('container').addClass('container-fluid');
+    //});
+    function Send(k) {
+        var txtChallanNo = '#txtChallanNo-' + k;
+        // alert("Start  Re-Generate Challan " + txtChallanNo);
+
+        var SBIa = document.getElementById("SBI-" + k).checked;
+        var PNBa = document.getElementById("PNB-" + k).checked;
+        var BCODE = "";
+        if (SBIa == false && PNBa == false) {
+            alert("Please Select Any Bank");
+            return false;
+        }
+        else if (SBIa == true && PNBa == true) {
+            alert("Please Select Only 1 Bank Either SBI or PNB");
+            document.getElementById("SBI-" + k).checked = false;
+            document.getElementById("PNB-" + k).checked = false;
+            return false;
+        }
+        else {
+            if (document.getElementById("SBI-" + k).checked == true) { BCODE = "204"; }
+            else if (document.getElementById("PNB-" + k).checked == true) { BCODE = "202"; }
+            else { BCODE = ""; }
+        }
+
+        if (BCODE == "") {
+            alert('Please Select Bank')
+            return false;
+        }
+        else if ($('#txtChallanNo-' + k).val() == "") {
+            $('#txtChallanNo-' + k).addClass("input-validation-error");
+            return false;
+        }
+        else {
+            // alert('Now Re-Generate Challan of :' + $('#txtChallanNo-' + k).val())
+            // $('#Main1').hide();
+            $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/ExaminationPortal/jqReGenerateChallaanNew",
+                data: '{ChallanId:"' + $('#txtChallanNo-' + k).val() + '", BCODE:"' + BCODE + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response);
+                    $('#loading1-' + k).empty();
+                }
+            });
+            function OnSuccess(response) {
+                debugger;
+                if (response.dee == "1") {
+                    alert("Challan Re-Generated Successfully & Your Challan ID is " + response.chid);
+                    $("#myModal-" + k).hide();
+                    $('#loading1-' + k).empty();
+                    window.open("/Home/GenerateChallaan?ChallanId=" + response.chid, "_blank");
+                }
+                else {
+                    alert("Something Went Wrong, Please Try Again.");
+                    $('#loading1-' + k).empty();
+                }
+            }
+        }
+    }
+
+
+
+    //Cancel
+    function cancelChallan(challanid) {
+        //alert(challanid);
+        // alert($("#cancelremarks-" + k).val());
+        var flag = 0;
+        if ($("#cancelremarks-" + challanid).val() == "") {
+            $("#cancelremarks-" + challanid).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Home/CancelOfflineChallanBySchl", // this for calling the web method function in cs code.
+                data: '{cancelremarks: "' + $("#cancelremarks-" + challanid).val() + '",challanid: "' + challanid + '", "Type": 1}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        // alert("Challan Cancel Successfully");
+                        $('#myModal2-' + challanid).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else {
+                        $('#loading1').empty();
+                        alert("Challan Not Found/Expired.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+
+</script>
+<script type="text/javascript">
+    function PopUp(hideOrshow) {
+        if (hideOrshow == 'hide') document.getElementById('ac-wrapper').style.display = "none";
+        else document.getElementById('ac-wrapper').removeAttribute('style');
+    }
+    window.onload = function () {
+        setTimeout(function () {
+            PopUp('show');
+        }, 0);
+    }
+</script>
+
+<div id="ac-wrapper" style='display: none'>
+    <div id="popup">
+        <p><span style="float:right"><a onclick="PopUp('hide')" href="#"><img alt="Close" src="https://registration2022.pseb.ac.in/close_button.png" title="Close" /></a></span></p><br /><br />
+        <div class="kdsfont" style="text-align:justify;line-height:26px;font-size:22px">
+            °ã¤ÏÌèÅ ²Û Âã ¤ØÂãÓÖØ ¤ÅÝÓØÏ ÆñÛÚª¤Ø ÇØÏÌÙ ÂÛ ÕØÏ¸ ¨ØÆÛ ÌÝóª ÂÇ¼Ï ÅÕÛ× Ìâ¬ÒØ¥Û ²Ø»Û¢  ÆÏ Ú¥Õ ÕØÏ¸ ¨ØÆÛ Ó¨ÞÐ ÌÝóªÛ ¼ÓÂÛ¨ ¨Ï¨ã ¤ØÆ»ã ÚÏ¨ØÏ¸ ÚÒó° ®ó¶ë× ®ó¶ 6 ÌÕÛÅã Ð¥Û, Å¼Û²Ø ®ëÚÓÖ¼ Õë» Âã ÓÌã× ¼ë× ÉØ¤Â,  ¼ó¨ ÓâÊØÐ ¨ã Ïóª»¬ã ¼Ù ²ë ÌÝóª ÂÇ¼Ï ÅâÞ ÂÏÝÓ¼Û/¨ØÅâÞÅ» Æóªë× Ðë¾ Æè» ¼ã Ú¥ÓÅâÞ Ìâ¬ÒØÚ¥¤Ø ²Ø Ó¨ã¢
+        </div>
+    </div>
+</div>
+
+

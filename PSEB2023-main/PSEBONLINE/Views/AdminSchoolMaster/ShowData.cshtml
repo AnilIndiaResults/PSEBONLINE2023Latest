@@ -1,0 +1,108 @@
+﻿@model PSEBONLINE.Models.AdminSchoolMasterModel
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+@{
+    ViewBag.Title = "Show Database value in DataTable";
+}
+
+<div class="container">
+<h1>School Details</h1>
+    <div class="row active-bg">
+        @using (Html.BeginForm("ShowData", "AdminSchoolMaster", FormMethod.Post))
+        {
+
+            <div class="col-md-4">Grid Total:-</div>
+            <div class="col-md-2">@Html.DropDownList("MyDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--Select---", new {  @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("MySch", new SelectList(ViewBag.MySch, "Value", "Text"), "--Select---", new {  @class = "" })</div>
+                
+                <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2"><input type="submit" value="Search" /></div>
+
+        }
+    </div>  <div class="row">
+            <div class="col-lg-12">
+                <table id="t01" class="table table-hover table-bordered">
+                    <tr class="text-danger success">
+                        <th>SCHL</th>
+                        <th>ID NO.</th>
+                        <th>School Name</th>
+                        <th>District</th>
+                        <th>Status</th>
+                        <th>Verify</th>
+                        <th>Approve</th>
+                        <th>Action</th>
+                    </tr>
+
+                    @{
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var schid = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                            var SCHLE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                            var StationE = Model.StoreAllData.Tables[0].Rows[i]["STATIONE"].ToString();
+                            var DISTE = Model.StoreAllData.Tables[0].Rows[i]["DISTE"].ToString();
+                            var status = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                            var vfalg = Model.StoreAllData.Tables[0].Rows[i]["vflag"].ToString();
+                            var Approved = Model.StoreAllData.Tables[0].Rows[i]["Approved"].ToString();
+
+
+                            <tr>
+                                <td>
+                                    @SCHL
+                                </td>
+                                <td>
+                                    @IDNO
+                                </td>
+                                <td>
+                                    @SCHLE,@StationE
+                                </td>
+                                <td>
+                                    @DISTE
+                                </td>
+                                <td>
+                                    @status
+                                </td>
+                                <td>
+                                    @vfalg
+                                </td>
+                                <td>
+                                    @Approved
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            Choose Action
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+
+                                            <li>@Html.ActionLink("Modify", "ModifySchoolData", new { id = schid })</li>
+                                            <li>@Html.ActionLink("Modify Open", "ModifyOpenSchoolData", new { id = schid })</li>
+                                            <li>@Html.ActionLink("View", "School_View_Form", new { id = schid })</li>
+
+                                        </ul>
+                                    </div>
+                                </td>
+                                @*<td>
+                                        @Html.ActionLink("EDIT", "EditStdData", new { id = Model.StoreAllData.Tables[0].Rows[i]["schid"].ToString() })
+                                        @Html.ActionLink("EDIT", "EditStdData", new { id = schid})
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Delete", "DELETESTDDATA", new { id = schid})
+                                    </td>*@
+                            </tr>
+
+
+                        }
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+

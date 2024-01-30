@@ -1,0 +1,121 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "FirmSchoolCorrectionFinalSubmit";   
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modal");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+    $('form').live("submit", function () {
+        ShowProgress();
+    });
+</script>
+
+<h1>Firm Correction Final Submit</h1>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+  <div class="col-md-12">
+        <div class="table-responsive text-center">
+            <a href="/Admin/FirmSchoolCorrectionUpdated" class="btn"  title="Go Back">Back</a>
+            <a href="/Admin/FirmSchoolCorrection" class="btn"  title="Go for Home Page">Home</a>            
+        </div>
+    </div>
+               
+@using (Html.BeginForm("FirmSchoolCorrectionFinalSubmit", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            @if (ViewData["Status"] != null)
+            {
+                if (ViewData["Status"].ToString() == "11")
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="t01">
+                            <tr class="active-tr">
+                                <th width="15%">Total Correction</th>
+                                <th width="15%">Final Submit Lot</th>
+                                <th width="30%">Final Submit  Date</th>
+                                <th width="40%">Download File</th>
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    for (int i = 0; i < Model.StoreAllData.Tables[1].Rows.Count; i++)
+                                    {
+                                        var tcount = Model.StoreAllData.Tables[1].Rows[i]["total"].ToString();
+                                        var FirmCorrectionLot = Model.StoreAllData.Tables[1].Rows[i]["FirmCorrectionLot"].ToString();
+                                        var FirmCorrectionLotDt = Model.StoreAllData.Tables[1].Rows[i]["FirmCorrectionLotDt"].ToString();
+                                        int Count = i + 1;
+                                        <tr>
+                                            <td>
+                                                @tcount
+                                            </td>
+                                            <td>
+                                                @FirmCorrectionLot
+                                            </td>
+                                            <td>
+                                                @FirmCorrectionLotDt
+                                            </td>
+                                            <td><input type="button" value="Download Data of LOT @FirmCorrectionLot" onclick="javascript:document.location.href='@Url.Action("DownloadFirmCorrectionLot", "Admin", new { File = @FirmCorrectionLot })'" /></td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4">
+                                           <p class="rqf">Record Not Found</p>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </div>
+                                    }
+                                }           
+        </div>
+    </div>
+    <div class="clearfix"></div>
+                   }
+
+@{
+    if (ViewData["Status"] != null)
+    {
+        var result = ViewData["Status"].ToString();
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submit successfully.");
+            </script>
+        }
+        else if (result == "5")
+        {
+            <script type="text/javascript" language="javascript">               
+                alert("fee is pending for correction lot.: " + '@ViewBag.commaCorrectionLot' );
+            </script>
+        }
+        else if (result == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submit Failure." + '@ViewData["Message"].ToString() ');
+                window.location.href = '/Admin/FirmSchoolCorrectionUpdated';
+            </script>
+        }
+
+    }
+}
+
+

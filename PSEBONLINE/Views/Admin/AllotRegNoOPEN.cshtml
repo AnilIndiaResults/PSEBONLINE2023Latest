@@ -1,0 +1,128 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "AllotRegNoOPEN";
+    //Layout = "~/Views/Shared/_HeaderCorr.cshtml";  By Rohit
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>Allot Registration Number - Open</h1>
+@using (Html.BeginForm("AllotRegNoOPEN", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+{
+    @Html.Hidden("Filevalue", "REGNO")
+<div class="row" style="padding-bottom:100px">
+    <div class="col-md-3">
+        Upload Open Reg. No. Mis File @Html.TextBoxFor(m => m.file, new { id = "REGNOMIS", type = "file", required = "required" })
+    </div>
+    <div class="col-md-2">
+        <br />
+        <input type="submit" name="submit" value="Generate RegNo" onclick="return valForm();" />
+    </div>
+    <div class="col-md-2">
+        <br />      
+        <input type="submit" name="submit" value="Download RegNo Against Candidate Id " onclick="return valForm();" />
+    </div>
+    <div class="col-md-5 text-right">
+        <br />
+        <a download="" href="~/PDF/AllotRegNoOPENSample.xls" class="btn">Click Here to Download Allot Reg. No. Open Sample File</a>
+    </div>
+</div>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            @if (Convert.ToInt32(ViewBag.PendingOpen)>0)
+            {
+            <p class="rqf">
+                Total Pending : @ViewBag.PendingOpen
+                <input type="button" value="Download Pending Reg. No. Open List" onclick="javascript:document.location.href='@Url.Action("DOWNLOADPENDINGREGOPENFILE", "Admin" , new { File="P" })'" />
+            </p>
+            }
+
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="15%">Total Student</th>
+                    <th width="15%">Reg. No. Lot</th>
+                    <th width="30%">Reg. No. Alloted Date</th>
+                    <th width="40%">Download File</th>
+                </tr>
+                @{
+                if (ViewBag.TotalCount > 0)
+                {
+                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                {
+                var tcount = Model.StoreAllData.Tables[0].Rows[i]["tcount"].ToString();
+                var REGNOLOT = Model.StoreAllData.Tables[0].Rows[i]["REGNOLOT"].ToString();
+                var REGNOALLOTEDON = Model.StoreAllData.Tables[0].Rows[i]["REGNOALLOTEDON"].ToString();
+                int Count = i + 1;
+                <tr>
+                    <td>
+                        @tcount
+                    </td>
+                    <td>
+                        @REGNOLOT
+                    </td>
+                    <td>
+                        @REGNOALLOTEDON
+                    </td>
+                    <td><input type="button" value="Download File of LOT @REGNOLOT" onclick="javascript:document.location.href='@Url.Action("DOWNLOADREGOPENFILE", "Admin" , new { File=@REGNOLOT })'" /></td>
+                </tr>
+                }
+                }
+                else
+                {
+                <tr>
+                    <td colspan="4">
+                        @ViewBag.Message
+                    </td>
+                </tr>
+                }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+<script type="text/javascript" language="javascript">
+    alert('@ViewBag.Message');
+    // window.location.href = 'Url.Action("Welcome", "Bank")';
+</script>}
+        if (ViewData["Result"].ToString() == "10")
+        {
+<script type="text/javascript" language="javascript">
+    alert('Class Not Allowed..Please Contact Administrator');
+    // window.location.href = 'Url.Action("Welcome", "Bank")';
+</script>}
+        else
+        {
+<script type="text/javascript" language="javascript">
+    alert('@ViewBag.Message');
+</script>}
+
+    }
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select only .xls file format');
+            }
+        });
+    });
+
+</script>
+
+
+

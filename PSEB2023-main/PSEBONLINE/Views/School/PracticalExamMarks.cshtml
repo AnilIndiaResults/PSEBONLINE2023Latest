@@ -1,0 +1,228 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "PracticalExamMarks";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>Practical Exam Marks Entry Panel, March 2023</h1>
+@*<link rel="stylesheet" href="/Content/Print-4L.css" />
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">*@
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+<div class="row">
+        <div class="col-md-12">
+           @* <p style="font-size:24px;text-align:center;padding:80px 0 190px 0">
+               Practical Exam Marks Panel is Under Maintenance. Watch out this space for further update.
+            </p>
+			<p style="font-size:16px;text-align:center;">
+Time Schedule for Practical  Marks Entry, 
+Matric : 8:00 Am to 12:00 Noon,
+Senior : 12:01 Noon to 4:00 PM,
+Matric & Senior  Both :  4:01PM to 7.59 AM
+            </p>*@
+         </div>
+    </div>
+
+@using (Html.BeginForm("PracticalExamMarks", "School", FormMethod.Post, new { id = "CCE", enctype = "multipart/form-data" }))
+{
+    <fieldset style="margin-bottom:15px">
+        <legend>Search</legend>
+        <form id="myForm">
+            <div class="clearefix"></div>
+            <div class="row">              
+                <div class="col-md-2">
+                    Select Class:
+                    @Html.DropDownList("SelClass", new SelectList(ViewBag.MyClass, "Value", "Text", ViewBag.SelectedClass), "--All---", new { @class = "", required = "required" })
+
+                </div>
+                <div class="col-md-2">
+                    Select Exam Type:  
+					
+					
+					
+					@Html.DropDownList("SelRP", new SelectList(ViewBag.MyRP, "Value", "Text", ViewBag.SelectedRP), "--All---", new { @class = "", required = "required" })
+                </div>
+                <div class="col-md-2">
+                    Search By:  @Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), "Select", new { @class = "" })
+                </div>
+                <div class="col-md-2">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                </div>
+                <div class="col-md-4">
+                    <br />
+                    <input type="submit" value="Search" />
+                    @Html.Hidden("cid", (string)ViewBag.cid)
+                    @*<a href="/School/PracticalExamMarks" class="btn">Back</a>*@
+                    <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a>
+
+                </div>
+            </div>
+
+            <div id="dialog" style="display: none" class="kdsfont">
+                ÓÛ.ÓÛ.¥Û. Âã ¤â¨ ÓÕÛ ¤¼ã ÂÏÝÓ¼ ÊÏã ¬¥ã ÕÅ, Ú¥ÓÂØ ÏÇ ÚÆâñ¶ °èó¨ ¨Ï ÚÐ¤Ø Ú¬¤Ø Õè ¤¼ã Ú¥Ó ÚÒó° ¨ë¥Û ÕëÏ ÓëÄ ÉØ¨Û ÅÕÛ× Õè¢Ìè× Ú¥Ó ÕÂØÚ¥¼ ¼ë× ²Ø»Þ ÕÙ Ú¨ ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¦ÝÆÏâ¼ ¸Ø¶Ø ÐØ¨ Õë ²ØÒã¬Ø, Ú¥Ó ¦ÝÆÏâ¼ Ú¨Óã ÒÛ ÓÞÏ¼ ÚÒó° ¨ë¥Û ÒÛ ÓëÄ ÅÕÛ× ¨Û¼Û/¨ÏÒØ¥Û ²Ø Ó¨ã¬Û¢ Ìè× ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¨ÏÅ Ð¥Û ÓÚÕÌ¼ ÕÙ¢
+            </div>
+        </form>
+    </fieldset>
+}
+<div id="loading1"></div>
+<div class="clearfix"></div>
+<div class="row" id="divMain1">
+    <div class="col-md-4">Grid Total:  @ViewBag.TotalCount</div>
+
+    <!-- <div class="col-md-8 text-right rqf"><span style="font-size:20px">Last Date : @Convert.ToDateTime(ViewBag.LastDateofSub).ToString("dd/MM/yyyy")</span></div>  -->
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="10%">Class</th>
+                    <th width="10%">Exam Type</th>                  
+                    <th width="10%">Subject Code</th>
+                    <th width="35%">Subject Name</th>
+                    <th width="10%">Total Candidate</th>                   
+                    <th width="10%">Submission Pending</th>
+                    <th width="15%">Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        DateTime todayDate = DateTime.Today;
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var Class = Model.StoreAllData.Tables[0].Rows[i]["Class1"].ToString();
+                            var ExamType = Model.StoreAllData.Tables[0].Rows[i]["RP1"].ToString();
+                            var Centre = Model.StoreAllData.Tables[0].Rows[i]["pcent"].ToString();
+                            var SUB = Model.StoreAllData.Tables[0].Rows[i]["SUB"].ToString();
+                            var SUBNM = Model.StoreAllData.Tables[0].Rows[i]["SUBNM"].ToString();
+                            var NOC = Model.StoreAllData.Tables[0].Rows[i]["cnt"].ToString();
+                            //var ME = Model.StoreAllData.Tables[0].Rows[i]["ME"].ToString();
+                            //var MP = Model.StoreAllData.Tables[0].Rows[i]["MP"].ToString();
+                            //var FS = Model.StoreAllData.Tables[0].Rows[i]["FS"].ToString();
+                            var FSP = Model.StoreAllData.Tables[0].Rows[i]["FSP"].ToString();
+
+
+
+                            var RP = Model.StoreAllData.Tables[0].Rows[i]["RP"].ToString();
+                            var cls = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            DateTime LastDate = Convert.ToDateTime(Model.StoreAllData.Tables[0].Rows[i]["LastDate"].ToString());
+
+                            var parm = cls + "-" + RP + "-" + Centre + "-" + SUB;
+                            Count = Count + 1;
+                            <tr>
+                                <td>
+                                    @Class
+                                </td>
+                                <td>
+                                    @ExamType
+                                </td>                              
+                                <td>
+                                    @SUB
+                                </td>
+                                <td>
+                                    @SUBNM
+                                </td>
+                                <td>
+                                    @NOC
+                                </td>
+                                
+                                <td>
+                                    @FSP
+                                </td>
+
+
+                                <td>
+                                    @if (todayDate <= LastDate)
+                                    {
+                                        <div class="cart">
+                                            Choose&nbsp;Action <span class="caret"></span>
+                                            <div id="sidebar">
+
+                                                <ul>
+                                                    @*?View=*@
+                                                    <li><a href="/School/PracExamViewList/@parm">View List</a></li>
+                                                    @if (FSP.ToString() != "0")
+                                                    {
+                                                        <li><a href="/School/PracExamEnterMarks/@parm">Enter Marks</a></li>
+                                                        <li><a href="/School/PracExamRoughReport/@parm">Rough Report</a></li>
+                                                    
+                                                    }
+													else
+													{
+													
+													    <li><a href="/School/PracExamFinalSubmit/@parm">Click to Final Submit</a></li>
+														<li><a href="/School/PracExamFinalReport/@parm">Final Report</a></li>
+}
+
+                                                    
+                                                </ul>
+                                              
+
+                                            </div>
+                                        </div>
+                                    }
+                                    else {
+                                        <span class="rqf">Last date is over for Enter Marks or Final Submit</span>
+                                        <div class="cart">
+    Choose&nbsp;Action <span class="caret"></span>
+    <div id="sidebar">
+
+        <ul>           
+            <li><a href="/School/PracExamViewList/@parm">View List</a></li>
+ <li style="@(FSP.ToString() == "0" ? "display:none" : "display:block" )"><a href="/School/PracExamRoughReport/@parm">Rough Report</a></li>
+           
+            <li><a href="/School/PracExamFinalReport/@parm">Final Report</a></li>
+        </ul>
+
+
+    </div>
+</div> }
+                                    
+                                    </td>
+                            </tr>
+
+                          
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+			
+			
+
+        </div>
+    </div>
+</div>

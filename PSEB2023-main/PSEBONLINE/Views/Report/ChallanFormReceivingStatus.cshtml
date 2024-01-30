@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "Challan/Form Receiving Status";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="/Content/Print-4L.css" />
+<h1 class="noprint">Challan/Form Receiving Status</h1>
+<div class="row">
+    <div class="col-md-12 noprint">
+        @using (Html.BeginForm("ChallanFormReceivingStatus", "Report", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+        {
+            if (Model != null)
+            {
+                <fieldset style="margin-bottom:15px">
+                    <legend>Search</legend>
+                    <div class="col-md-3">
+                        Fee Type  @Html.DropDownList("feeCode", (List<SelectListItem>)ViewBag.feecodes, new { @class = "", id = "SelectItem" })
+                    </div>
+                    @*<div class="col-md-3">Branch <input type="text" onkeypress="return false" id="Branch" name="Branch"  value="@Request["Branch"]" /></div>*@
+                    <div class="col-md-2"><br /><input type="submit" value="Search" class="btn" onclick="return valform();" /></div>
+                </fieldset>
+            }
+        }
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-right noprint">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+<a href="/report/ChallanFormReceivingStatus" class="btn">Back</a>
+        @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div style="border:1px solid #fff !important;display:block;margin-bottom:30px"> 
+            <table border="1" width="100%" class="tprint">
+                <thead>
+                    <tr>
+                        <td style="border-right:0 !important"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                        <td colspan="6" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                            <span style="font-size:28px">Punjab School Education Board</span><br /><span>Challan/Form Receiving Status (Session @*2017-2018 @Session["Session"].ToString()*@)</span>
+                        </td>
+                        <td style="text-align:right;border-left:0 !important;">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                    </tr>
+                    @if (Session["selected_feecode"] != null && Session["selected_feecode"].ToString().Trim() != string.Empty)
+                    {
+                    <tr>
+                        <td colspan="8">
+                            Fee Code/Category : @Session["selected_feecode"].ToString()
+                        </td>
+                    </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">All Fee/Form Category</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td width="10%" rowspan="2">&nbsp;Srno</td>
+                        <td width="10%" rowspan="2">&nbsp;User</td>
+                        <td width="15%" rowspan="2">&nbsp;District Name</td>
+                        <td width="10%" rowspan="2">&nbsp;District Code</td>
+                        <td colspan="3" style="text-align:center">District Challan/Forms Receiving Status</td>
+                        <td width="15%" rowspan="2">&nbsp;Total Challan/Form Received By User (All Dist)</td>
+                    </tr>
+                    <tr>
+                        <td width="10%">&nbsp;Total Challan</td>
+                        <td width="15%">&nbsp;Received Challan</td>
+                        <td width="15%">&nbsp;Pending Challan</td>
+                    </tr>
+                </thead>
+@{
+    int tot_chln, rcvd_chln, pend_chln, tot_rcvd;
+    tot_chln = rcvd_chln = pend_chln = tot_rcvd = 0;
+    if (ViewBag.TotalCount > 0)
+    {
+        int Count = 0;
+        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+        {
+            Count = Count + 1;
+            var id = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+            var user = Model.StoreAllData.Tables[0].Rows[i]["user"].ToString();
+            var distnm = Model.StoreAllData.Tables[0].Rows[i]["distnm"].ToString();
+            var dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+            var totchln = Model.StoreAllData.Tables[0].Rows[i]["totchln"].ToString();
+            var rcvdchln = Model.StoreAllData.Tables[0].Rows[i]["rcvdchln"].ToString();
+            var pendchln = Model.StoreAllData.Tables[0].Rows[i]["pendchln"].ToString();
+            var totrcvd = Model.StoreAllData.Tables[0].Rows[i]["totrcvd"].ToString();
+            tot_chln += Convert.ToInt32(totchln);
+            rcvd_chln += Convert.ToInt32(rcvdchln);
+            pend_chln += Convert.ToInt32(pendchln);
+            tot_rcvd += Convert.ToInt32(totrcvd);
+                <tr>
+                    <td>&nbsp;@Count</td>
+                    <td>&nbsp;@user</td>
+                    <td>&nbsp;@distnm</td>
+                    <td>&nbsp;@dist</td>                    
+                    <td>&nbsp;@totchln</td>
+                    <td>&nbsp;@rcvdchln</td>
+                    <td>&nbsp;@pendchln</td>
+                    <td>&nbsp;@totrcvd</td>
+                </tr>
+            }
+        }
+    }
+                <tr>
+                    <td colspan="4" style="text-align:right;font-size:16px">Total &nbsp;@*Amount(In Words): &nbsp;@ViewBag.AmountInWords*@</td>
+                    <td>&nbsp;@tot_chln.ToString()</td>
+                    <td>&nbsp;@rcvd_chln.ToString()</td>
+                    <td>&nbsp;@pend_chln.ToString()</td>
+                    <td>&nbsp;@tot_rcvd.ToString()</td>
+                </tr>
+               
+            </table>
+        </div>
+        </div>
+    </div>
+<script>
+    function valform()
+    {
+        var FC = document.getElementById('SelectItem').value;      
+        if (FC == "0" || FC == "" || FC == null) {
+            alert("Select Fee Type");
+            document.getElementById('SelectItem').focus();
+            return false;
+        }
+    }
+
+</script>

@@ -1,0 +1,245 @@
+﻿@model PSEBONLINE.Models.EAffiliationFee
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<section class="content-header">
+    <h1>School Migration Fees</h1>
+</section>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<div id="dialog" style="display: none">
+    <span class="rqf">Click OK button to Generate Challan  otherwise click Cancel button.</span>
+</div>
+<div id="dialogOnline" style="display: none">
+    <span class="rqf">Click OK button to do Online Payment through Credit Card, Debit Card, Net Banking etc of any bank otherwise click Cancel button.</span>
+</div>
+
+
+
+<div id="loading1"></div>
+
+
+@using (Html.BeginForm("StudentMigrationPayFee", "School", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="box">
+        <div class="row" id="divall">
+            <div class="col-md-12">
+                <div class="table-responsive">
+
+                    <div class="box">
+                        <div class="row">
+                            <div class="col-md-12" id="divMain1">
+                                <table class="table table-bordered" id="t01">
+                                    @{
+
+                                        if (ViewBag.TotalCount > 0)
+                                        {
+                                            <tr>
+                                                <td colspan="6">&nbsp;</td>
+                                            </tr>
+
+                                            <tr class="active-tr">
+                                                <th>Student Id</th>
+                                                <th>NewSchlDetails</th>
+                                                <th>OldSchlDetails</th>
+                                                <th>Fee</th>
+                                                <th>Late Fee</th>
+                                                <th>Total Fee</th>
+                                            </tr>
+                                            for (int i = 0; i < Model.PaymentFormData.Tables[0].Rows.Count; i++)
+                                            {
+                                                //
+                                                var MigrationId = Model.PaymentFormData.Tables[0].Rows[i]["MigrationId"].ToString();
+                                                var OldSchlDetails = Model.PaymentFormData.Tables[0].Rows[i]["OldSchlDetails"].ToString();
+                                                var NewSchlDetails = Model.PaymentFormData.Tables[0].Rows[i]["NewSchlDetails"].ToString();
+                                                var StdId = Model.PaymentFormData.Tables[0].Rows[i]["StdId"].ToString();
+                                                var fee = Model.PaymentFormData.Tables[0].Rows[i]["fee"].ToString();
+                                                var latefee = Model.PaymentFormData.Tables[0].Rows[i]["latefee"].ToString();
+                                                var Totfee = Model.PaymentFormData.Tables[0].Rows[i]["Totfee"].ToString();
+
+                                                var startdate = Model.PaymentFormData.Tables[0].Rows[i]["sdate"].ToString();
+                                                var enddate = Model.PaymentFormData.Tables[0].Rows[i]["edate"].ToString();
+                                                var BankEndDate = Model.PaymentFormData.Tables[0].Rows[i]["BankLastDate"].ToString();
+                                                var FEECODE = Model.PaymentFormData.Tables[0].Rows[i]["FEECODE"].ToString();
+                                                var FEECAT = Model.PaymentFormData.Tables[0].Rows[i]["FEECAT"].ToString();
+                                                var AllowBanks = Model.PaymentFormData.Tables[0].Rows[i]["AllowBanks"].ToString();
+
+                                                <tr>
+                                                    <td align="center">@StdId</td>
+                                                    <td align="center">@NewSchlDetails</td>
+                                                    <td align="center">@OldSchlDetails</td>
+                                                    <td align="center">@fee</td>
+                                                    <td align="center">@latefee</td>
+                                                    <td align="center">@Totfee</td>
+                                                </tr>
+                                            }
+
+                                            <tr>
+                                                <td colspan="5" align="right">
+                                                    Total Fees (In words) : ₹ @{
+                                                        if (ViewBag.Total != null)
+                                                        {
+                                                            int totalfee = @ViewBag.Total;
+                                                            PSEBONLINE.AbstractLayer.DBClass b = new PSEBONLINE.AbstractLayer.DBClass();
+                                                            string AmountInWords = b.GetAmountInWords(totalfee);
+                                                            <span>@AmountInWords</span>
+                                                        }
+                                                    }
+
+                                                </td>
+                                                <td align="center">
+                                                    @ViewBag.Total
+                                                </td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="8">
+                                                    Record Not Found
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                    <tr>
+                                        <td colspan="8" style="border:0" align="right">
+                                            <table>
+                                                @{
+
+                                                    if (ViewBag.TotalCount > 0)
+                                                    {
+
+
+                                                        if (Model.PaymentFormData.Tables[0].Rows[0]["AllowBanks"].ToString() == "0")
+                                                        {
+                                                            <tr style="font-size:18px;color:red;">
+                                                                <td>Challan Generation Date has been Expired.</td>
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+
+                                                            <tr style="font-size:18px;color:red;">
+                                                                <td>
+                                                                    Select Payment Gateway .<br>
+                                                                    <span class="rqf" style="font-size:15px">Note : After selection of payment gateway, you can pay fee from any bank (which listed) in any mode like Debit Card, Credit Card, Net banking etc.</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+
+
+                                                                @if (Model.PaymentFormData.Tables[0].Rows[0]["AllowBanks"].ToString().Contains("301"))
+                                                                {
+                                                                    <td><span>@Html.RadioButtonFor(m => m.AllowBanks, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span></td>
+                                                                }
+                                                                @if (Model.PaymentFormData.Tables[0].Rows[0]["AllowBanks"].ToString().Contains("302"))
+                                                                {
+                                                                    <td><span>@Html.RadioButtonFor(m => m.AllowBanks, "302", new { id = "ATOM" }) <img src="~/Images/PNSB.jpg" alt="ATOM" width="150" /></span></td>
+                                                                }
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    @if (ViewBag.Total != null)
+                                                                    {
+                                                                        <input id="btnPayment" type="button" value="Proceed to Pay Online" class="btn" />
+                                                                    }
+
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+
+                                                    }
+
+                                                }
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+
+                            <div style="text-align:center">
+                                <a class="btn btn-success" onclick="history.go(-1); return false;" href="#">Go Back</a>
+                            </div>
+                        </div>
+                    </div>
+                    @*End*@
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@{
+    if (ViewData["SelectBank"] != null)
+    {
+        if (ViewData["SelectBank"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Bank ");
+                window.location.href = '@Url.Action("StudentMigrationPayFee", "School")';
+            </script>
+
+        }
+    }
+}
+
+
+
+<script type="text/javascript">
+
+    $("#btnPayment").click(function () {
+
+        var SBPa = document.getElementById("HDFC").checked;
+        var PNBa = document.getElementById("ATOM").checked;
+
+        if (SBPa == false && PNBa == false) {
+            alert("Please Select Any Bank For Online Payment");
+            return false;
+        }
+        else {
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to do online payment?");
+            $('#dialogOnline').dialog('open');
+            return true;
+        }
+
+    });
+    $(function () {
+        $("#dialogOnline").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to do online payment?",
+            width: 400,
+            height: 220,
+            buttons: {
+                "OK": function () {
+                    // $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $('#myForm').submit();
+
+                },
+                Cancel: function () {
+                    $('#loading1').empty("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+
+</script>

@@ -1,0 +1,147 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<div class="container KDBG">
+    <style type="text/css">
+        #ac-wrapper {
+            background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
+            height: 100%;
+            left: 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1001;
+        }
+
+        #popup {
+            min-height: 240px;
+            left: 0;
+            padding: 0;
+            position: absolute;
+            top: 128px;
+            width: 100%;
+        }
+
+            #popup table {
+                background: #fff none repeat scroll 0 0;
+                border: 5px solid #f1f1f1;
+                border-radius: 0;
+                box-shadow: 0 0 3px 3px #64686e;
+                max-width: 500px;
+                min-width: 320px;
+            }
+
+            #popup .button {
+                padding: 10px;
+                background: #efba09; /* Old browsers */
+                background: -moz-linear-gradient(top, #efba09 0%, #fb9709 50%, #efba09 100%); /* FF3.6-15 */
+                background: -webkit-linear-gradient(top, #efba09 0%,#fb9709 50%,#efba09 100%); /* Chrome10-25,Safari5.1-6 */
+                background: linear-gradient(to bottom, #efba09 0%,#fb9709 50%,#efba09 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efba09', endColorstr='#efba09',GradientType=0 ); /* IE6-9 */
+            }
+    </style>
+    <style type="text/css">
+        .ullist li {
+            padding: 6px 4px;
+            font-size: 16px;
+        }
+
+        .ullist {
+            padding-bottom: 10px;
+        }
+    </style>
+    <h1>Meritorious Examination Centre</h1>
+
+    @{
+        if (Session["LoginSession"] != null)
+        {
+            PSEBONLINE.Models.LoginSession LoginSession = (PSEBONLINE.Models.LoginSession)Session["LoginSession"];
+
+            <div class="row">
+                <div class="col-md-12">
+                    @*<ul class="ullist">
+                        @if (LoginSession.IsMeritoriousSchool == 1)
+                        {
+                            <li><samp>&#10093;</samp> <span style="color:#ff0000">18.03.2021</span> - <a href="/DeoPortal/CapacityLetter">Capacity Letter of Examination Centre, March 2023 <img src="/images/new.gif" alt="new" /></a></li>
+                        }
+                    </ul>*@
+
+ 
+
+
+                    @*<h1>Instructions</h1>*@
+                    <ul class="ullist" style="padding-bottom:120px">
+<li><samp>❭</samp> <span style="color:#ff0000">26/05/2022</span> - <a href="/School/ConfidentialListMeritorious">Meritorious Confidential List <img src="/images/new.gif" alt="new"></a></li>
+@{
+
+                            if (ViewBag.TotalCircular > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 15 * (ViewBag.pagesize - 1);
+                                }
+                                DateTime sDate = DateTime.Today;
+
+                                if (ViewBag.CircularCount > 0)
+                                {
+                                    for (int i = 0; i < Model.dsCircular.Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var ID = Model.dsCircular.Rows[i]["ID"].ToString();
+                                        var CircularNo = Model.dsCircular.Rows[i]["CircularNo"].ToString();
+                                        var Title = Model.dsCircular.Rows[i]["Title"].ToString();
+                                        var UploadDate = Model.dsCircular.Rows[i]["UploadDateDD"].ToString().Split(' ')[0];
+                                        var ExpiryDate = Model.dsCircular.Rows[i]["ExpiryDateDD"].ToString().Split(' ')[0];
+                                        var Category = Model.dsCircular.Rows[i]["IsMarque"].ToString() == "1" ? "Marque" : "Circulars";
+                                        var Status = Model.dsCircular.Rows[i]["IsActive"].ToString().ToLower() == "true" ? "Active" : "De-Active";
+                                        var NewFlag = Model.dsCircular.Rows[i]["NewFlag"].ToString();
+                                        var Attachment = Model.dsCircular.Rows[i]["Attachment"].ToString();
+                                        var UrlLink = Model.dsCircular.Rows[i]["UrlLink"].ToString();
+                                        Count = Count + 1;
+                                        DateTime eDate = DateTime.ParseExact(ExpiryDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+                                        if (Model.dsCircular.Rows[i]["IsMarque"].ToString() != "1" && (sDate <= eDate))
+                                        {
+                                            <li>
+                                                @if (!string.IsNullOrEmpty(UrlLink))
+                                                {
+                                                    <a href='@UrlLink' target="_blank" title="click here to open link">
+                                                        <samp>&#10093;</samp> <span style="color:#ff0000">@UploadDate</span>
+                                                        @Title
+                                                        @if (NewFlag == "1")
+                                                        {<img src="/images/new.gif" alt="new" />}
+                                                    </a>
+                                                }
+                                                else if (!string.IsNullOrEmpty(Attachment))
+                                                {
+                                                    <a href="https://registration2022.pseb.ac.in/@Attachment" target="_blank">
+                                                        <samp>&#10093;</samp> <span style="color:#ff0000">@UploadDate</span>
+                                                        @Title
+                                                        @if (NewFlag == "1")
+                                                        {<img src="/images/new.gif" alt="new" />}
+                                                    </a>
+                                                }
+                                            </li>
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+    }
+
+
+
+
+</div>

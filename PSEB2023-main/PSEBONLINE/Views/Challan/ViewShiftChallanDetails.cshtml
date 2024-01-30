@@ -1,0 +1,257 @@
+﻿@model PSEBONLINE.Models.ShiftChallanDetails
+@{
+    ViewBag.Title = "ViewShiftChallanDetails";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>View Shift Challan Details</h1>
+<div class="row" id="divMain1">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("ViewShiftChallanDetails", "Challan", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-2">Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                <div class="col-md-2">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <input type="submit" value="Search" />
+                    <input type="submit" name="submit" value="Reset" />
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 rqf">Note : Kindly click search button to show records.</div>
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-4 noprint">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="col-md-8 noprint" style="text-align:right"></div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>Id</th>
+                    <th>Wrong Challan</th>
+                    <th>Correct Challan</th>
+                    <th>File</th>                    
+                    <th>Remarks</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                    </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var sid = Model.StoreAllData.Tables[0].Rows[i]["sid"].ToString();
+                            var WrongChallan = Model.StoreAllData.Tables[0].Rows[i]["WrongChallan"].ToString();
+                            var CorrectChallan = Model.StoreAllData.Tables[0].Rows[i]["CorrectChallan"].ToString();
+                            var ShiftFile = Model.StoreAllData.Tables[0].Rows[i]["ShiftFile"].ToString();
+                            var ShiftRemarks = Model.StoreAllData.Tables[0].Rows[i]["ShiftRemarks"].ToString();
+                            var ShiftDate = Model.StoreAllData.Tables[0].Rows[i]["ShiftDate"].ToString();
+                            var CreatedDate = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString().Split(' ')[0];
+                            <tr>
+                                <td>@d</td>
+                                <td>@sid</td>                              
+                                <td>@WrongChallan</td>
+                                <td>@CorrectChallan</td>                               
+                                <td>@if (ShiftFile == "")
+                                { <span>No File</span>}
+                                else
+                                {<a href="@("/Upload/ShiftChallanDetails/"+ShiftFile)" id="ShiftFile" target="_blank">Download File</a>}</td>
+                                <td>@ShiftRemarks</td>
+                                <td>@ShiftDate</td>
+                              <td><a href="@("/Challan/ShiftChallanDetailsSlip/"+ sid )" id="ord" target="_blank">View Slip</a></td>
+                            </tr>
+
+                                                                                                if (d == ViewBag.TotalCount)
+                                                                                                {
+                                                                                                    <tr>
+                                                                                                        <td colspan="11">
+                                                                                                            Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                                                                                            @if (ViewBag.pagesize == 1)
+                                                                                                            {   @:<<
+                                                                                                                @Html.Raw("&nbsp;");
+                                                                                                                @:< Prev
+                                                                                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                                                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                                                                                {
+                                                                                                                    var dp = ViewBag.pagesize + 1;
+                                                                                                                    <a href="~/Challan/ViewShiftChallanDetails?page=@dp">Next ></a>
+                                                                                                                    @Html.Raw("&nbsp;");
+                                                                                                                    <a href="~/Challan/ViewShiftChallanDetails?page=@ViewBag.pn">>></a>
+                                                                                                                }
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                var dp = ViewBag.pagesize - 1;
+                                                                                                                <a href="~/Challan/ViewShiftChallanDetails?page=1"><<</a>
+                                                                                                                @Html.Raw("&nbsp;");
+                                                                                                                <a href="~/Challan/ViewShiftChallanDetails?page=@dp">< Prev</a>
+                                                                                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                                                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                                                                                {
+                                                                                                                    var dp1 = ViewBag.pagesize + 1;
+                                                                                                                    <a href="~/Challan/ViewShiftChallanDetails?page=@dp1">Next ></a>
+                                                                                                                    @Html.Raw("&nbsp;");
+                                                                                                                    <a href="~/Challan/ViewShiftChallanDetails?page=@ViewBag.pn">>></a>
+                                                                                                                }
+                                                                                                            }
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <tr>
+                                                                                                        <td colspan="11">
+                                                                                                            @ViewBag.Message
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div id="loading1"></div>
+
+<script>
+    $(document).ready(function () {
+
+        var value = document.getElementById('SelectItem').value;
+        if (value == 3) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: new Date(),
+                yearRange: "2017:2020"
+            });
+
+        }
+        else if (value == 1 || value == 2) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var charCode = (evt.which) ? evt.which : event.keyCode
+                if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                    return true;
+                }
+                else {
+                    alert("Invalid character...Enter Only Number!!");
+                    return false;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            if (value == 3) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: new Date(),
+                    yearRange: "2017:2020"
+                });
+
+            }
+            else if (value == 1 || value == 2) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    }
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+
+

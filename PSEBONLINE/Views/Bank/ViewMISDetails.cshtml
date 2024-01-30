@@ -1,0 +1,200 @@
+﻿@model PSEBONLINE.Models.BankModels
+@{
+    ViewBag.Title = "ViewMISDetails";
+    Layout = "~/Views/Shared/_BankLayout.cshtml";
+}
+
+
+
+
+<h1>View MIS Details</h1>
+@using (Html.BeginForm("ViewMISDetails", "Bank", FormMethod.Post))
+{
+
+    <div class="row">
+        <div class="col-md-3">Select Lot: @Html.DropDownList("LOT", new SelectList(ViewBag.LotList, "Value", "Text", new { }))</div>
+        <div class="col-md-3">
+            Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+        </div>
+        <div class="col-md-3">
+            &nbsp;<br />
+            <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+        </div>
+        <div class="col-md-3"><br /><input type="submit" value="Search" onclick="return valForm();"  /> <input type="button" value="Back" onclick="    javascript:document.location.href='@Url.Action("Welcome", "Bank", new { File = "Back" })    '" /></div>
+        </div>
+}
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="t01">
+                            <tr class="active-tr">
+                                <th>S.No</th>
+                                <th>ChallanId</th>
+                                <th>TOTFEE</th>
+                                <th>BRCODE</th>
+                                <th>BRANCH</th>
+                                <th>J_REF_NO</th>
+                                <th>DEPOSITDT</th>
+                                <th>VERIFIED</th>
+                                <th>VERIFYDATE</th>
+                                <th>BCODE</th>
+                                <th>UPLOADLOT</th>
+                                <th>UPLOADDT</th>
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    for (int i = 0; i < Model.BankMasterData.Tables[0].Rows.Count; i++)
+                                    {
+                                        var ChallanId = Model.BankMasterData.Tables[0].Rows[i]["ChallanId"].ToString();
+                                        var TOTFEE = Model.BankMasterData.Tables[0].Rows[i]["TOTFEE"].ToString();
+                                        var BRCODE = Model.BankMasterData.Tables[0].Rows[i]["BRCODE"].ToString(); //challanVdateNew
+                                        var BRANCH = Model.BankMasterData.Tables[0].Rows[i]["BRANCH"].ToString();
+                                        var J_REF_NO = Model.BankMasterData.Tables[0].Rows[i]["J_REF_NO"].ToString();
+                                        var DEPOSITDT = Model.BankMasterData.Tables[0].Rows[i]["DEPOSITDT"].ToString();
+                                        var VERIFIED = Model.BankMasterData.Tables[0].Rows[i]["VERIFIED"].ToString();
+                                        var VERIFYDATE = Model.BankMasterData.Tables[0].Rows[i]["VERIFYDATE"].ToString();
+                                        var BCODE = Model.BankMasterData.Tables[0].Rows[i]["BCODE"].ToString();
+                                        var UPLOADLOT = Model.BankMasterData.Tables[0].Rows[i]["UPLOADLOT"].ToString();
+                                        var UPLOADDT = Model.BankMasterData.Tables[0].Rows[i]["UPLOADDT"].ToString();
+                                        int Count = i + 1;
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@ChallanId</td>
+                                            <td>@TOTFEE</td>
+                                            <td>@BRCODE</td>
+                                            <td>@BRANCH</td>
+                                            <td>@J_REF_NO</td>
+                                            <td>@DEPOSITDT</td>
+                                            <td>@VERIFIED</td>
+                                            <td>@VERIFYDATE</td>
+                                            <td>@BCODE</td>
+                                            <td>@UPLOADLOT</td>
+                                            <td>@UPLOADDT</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8">
+                                            @ViewBag.Message
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+@*<script type="text/javascript">
+    function valForm() {       
+        var LOT = document.getElementById("LOT");
+        if (LOT.value == "0") {
+            alert("Please select LOT");
+            cat.focus();
+            return false;
+        }
+        return true;
+    }
+</script>*@
+
+<script type='text/javascript'>
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+
+        if (value == 4) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,               
+                yearRange: "2016:2016"
+
+            });
+
+        }
+        else if (value == 1 || value == 2 || value == 3) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var charCode = (evt.which) ? evt.which : event.keyCode
+                if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+                    return true;
+                }
+                else {
+                    alert("Invalid character...Enter Only Number!!");
+                    return false;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+
+
+     $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            if (value == 4) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: "2016:2016"
+
+                });
+
+            }
+            else if (value ==1 || value == 2 || value == 3) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    }
+
+                });
+
+
+
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+</script>

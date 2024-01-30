@@ -1,0 +1,107 @@
+﻿
+@model PSEBONLINE.Models.LoginModel
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+
+<form class="form-signin" name="Login_Form" method="post" action="">
+    <br />
+    @Html.TextBoxFor(m => m.username, new { placeholder = "Username", @class = "form-control", required = "required", maxlength = "7", style = "text-transform: none;" })
+    @*<input type="text" autofocus="" required="" placeholder="Username" name="Username" class="form-control">*@
+    @*@Html.TextBoxFor(m => m.Password, new { @class = "form-control" })*@
+    @*@Html.Password("Password", new { id = "password", placeholder = "password", Textmode = "Password",@class = "form-control", required = "required" })*@
+    @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password", required = "required", style = "text-transform: none;" })
+    @*<input type="password" required="" placeholder="Password" name="Password" class="form-control">*@
+    <!-- <select name="Session"  class="form-control"> -->
+    <!-- <option value="2023-2024">2023-2024</option> -->
+    <!-- </select> -->
+    @Html.DropDownList("Session", new SelectList(ViewBag.SessionList, "Value", "Text", "2023-2024"), "---Select Session---", new { @class = "form-control", required = "required", style = "text-transform: none;padding-left:0" })
+    <div class="checkbox" id="remember">
+        <span>
+            <input type="checkbox" value="remember-me"> Remember me
+        </span>
+    </div><br />
+    @*<input type="submit" value="Login">*@
+
+    @*<input type="submit" value="Login" id="Submit" formmethod="post" onclick="location.href='@Url.Action("Index", "Login")'" />*@
+    <p style="text-align:center"><input type="submit" value="Login" />&nbsp;&nbsp;&nbsp;<a href="/Login/ForgotPassword" style="color:#cc0000">Forgot Password?</a></p>
+</form>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Alert",
+            width: 500,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+    });
+</script>
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "2")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">The board has cancelled your school's Affiliation/Login ID , So you cannot log in. For more information, contact the Affiliation Branch at Punjab School Education Board, Mohali</span>
+            </div>
+        }
+        else if (ViewData["result"].ToString() == "5")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">The board has blocked your school's Affiliation/Login ID , So you cannot log in. For unlock login id, contact the Affiliation Branch at Punjab School Education Board, Mohali</span>
+            </div>
+        }
+        else if (ViewData["result"].ToString() == "10")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">You cannot log in under this portal as this portal is for schools that have 10th or 12th class.</span>
+            </div>
+
+        }
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">The user name or password you have filled is incorrect. If you have forgotten the password, you can get the password by clicking on the Forget Password link below.</span>
+            </div>
+        }
+        else if (ViewData["result"].ToString() == "20")
+        {
+            <div id="dPending" style="font-size:22px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Affiliation Continuation is Pending For Session 2023-2024. In order to complete it Kindly Login in Your Previous Session i.e 2021-2022 and Fill Annual Progress Report From School Profile Menu.</span>
+            </div>
+
+        }
+        else if (ViewData["result"].ToString().Contains("Error"))
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">@ViewData["result"]</span>
+            </div>
+        }
+    }
+}
+
+
+<div class="row" style="display:none">
+
+    <div class="col-md-12">
+        <p style="font-size:24px;padding:10% 0 20% 36%;line-height:32px">
+            Website Under Maintenance.<br />
+
+            We will be back soon.<br /><br />
+
+
+            Thanks,<br />
+            PSEB
+        </p>
+
+    </div>
+</div>

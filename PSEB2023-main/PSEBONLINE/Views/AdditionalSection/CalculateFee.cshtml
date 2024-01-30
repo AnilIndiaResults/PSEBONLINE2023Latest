@@ -1,0 +1,672 @@
+﻿@model PSEBONLINE.Models.AdditionalSectionPaymentDetailsModel
+
+@{
+    ViewBag.Title = "Calculate Fee";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+@{
+
+    if (TempData["StatusCF"] != null)
+    {
+        var result = TempData["StatusCF"].ToString();
+        <script type="text/javascript" language="javascript">
+            alert(result);
+        </script>
+
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Inserted Successfully.");
+            </script>
+        }
+        else if (result == "NF")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Found.");
+            </script>
+        }
+        else if (result == "NACP")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data can not Insert, Kindly verify already generated challan for same class. ");
+            </script>
+        }
+        else if (result == "D")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Same Class/Exam can not Insert, Please Delete related record then try to Add.");
+                window.location.href = '@Url.Action("CalculateFee", "AdditionalSection")';
+            </script>
+        }
+        else if (result == "DC")
+        {
+            <script type="text/javascript" language="javascript">
+               alert("You cannot apply affiliation for multiple classes, first unlock final submission after adding other class again final submit and pay fee online.");
+
+                window.location.href = '@Url.Action("CalculateFee", "AdditionalSection")';
+            </script>
+        }
+        else if (result == "AF")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("You have already added some Class");
+                 window.location.href = '@Url.Action("CalculateFee", "AdditionalSection")';
+            </script>
+        }
+        else if (result == "NA")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("You cannot apply addition section for multiple classes, first unlock final submission after adding other class again final submit and pay fee online.");
+                window.location.href = '@Url.Action("CalculateFee", "AdditionalSection")';
+            </script>
+        }
+        else if (result == "C2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("You cannot apply additional section for multiple classes, first unlock final submission after adding other class again final submit and pay fee online.");
+
+                window.location.href = '@Url.Action("CalculateFee", "AdditionalSection")';
+            </script>
+        }
+        else if (result == "FP")
+        {
+            <script type="text/javascript" language="javascript">
+                /*alert("First unlock final submission after adding other class again final submit and pay fee online.");*/
+                alert("Class/Group which you are trying to add, is already added. After Verification of Fee, you can add it again . If added entry is wrong & its fee not paid then you can delete it after unlock final submission (if final submitted).");
+                window.location.href = '@Url.Action("CalculateFee", "AdditionalSection")';
+            </script>
+        }
+        else if (result == "DEL")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Record Deleted Successfully.");
+                window.location.href = '@Url.Action("CalculateFee", "AdditionalSection")';
+            </script>
+        }
+        else if (result == "SUBMIT")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Accreditation Submitted Successfully.");
+                  window.location.href = '@Url.Action("CalculateFee", "AdditionalSection")';
+            </script>
+        }
+        else if (result == "NOTSUBMIT")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Add Record  before Final Submit.");
+
+            </script>
+        }
+        else if (result == "11")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Fill Mandatory Fields.");
+            </script>
+        }
+        else if (result == "21")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Number of New Section must be greater than Zero");
+            </script>
+        }
+    }
+
+}
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+
+    .popup {
+        padding-top: 5%;
+        padding-bottom: 12%;
+        text-align: center;
+    }
+
+        .popup table {
+            background: #fff none repeat scroll 0 0;
+            border-radius: 5px;
+            max-width: 600px;
+            min-width: 480px;
+            border: 3px solid #f1f1f1;
+            padding: 15px;
+            box-shadow: 0 0 3px 3px #64686e;
+        }
+</style>
+
+<div class="row">
+    <div class="col-md-12">@Html.Partial("_AdditionalSectionHeading")</div>
+    <div class="clearfix"></div>
+    <div class="col-md-3">
+        @*@Html.Partial("_AdditionalSectionMenu")*@
+        <div class="panel-group" id="accordion">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AdditionalSection/SchoolProfile/@ViewBag.SCHL">School Profile</a>
+                    </h4>
+                </div>
+            </div>
+            @*<div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="/AdditionalSection/ResultStatics/@ViewBag.SCHL">Result Statics </a>
+
+                        </h4>
+                    </div>
+                </div>*@
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AdditionalSection/StudentFeeDetails/@ViewBag.SCHL">Student Count Last 3 Year</a>
+                    </h4>
+                </div>
+            </div>
+
+            @*<div class="panel panel-default" style="display:none">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="/AdditionalSection/BalanceSheet/@ViewBag.SCHL">Balance Sheet</a>
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" style="display:none">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+
+                            <a href="/AdditionalSection/SafetyDetails/@ViewBag.SCHL">Building/Fire Safety Details</a>
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" style="display:none">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="/AdditionalSection/BooksPurchaseDetails/@ViewBag.SCHL">Books Purchase Details</a>
+                        </h4>
+                    </div>
+                </div>*@
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AdditionalSection/UploadAdditionalSectionDocuments/@ViewBag.SCHL" title="Upload Documents">Upload Documents</a>
+                    </h4>
+                </div>
+            </div>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AdditionalSection/Activities/@ViewBag.SCHL">Other information</a>
+                    </h4>
+                </div>
+            </div>
+
+
+
+            @if (ViewBag.IsChallan == 0)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="/AdditionalSection/PrintForm/@ViewBag.SCHL">View Application</a>
+                        </h4>
+                    </div>
+                </div>
+            }
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AdditionalSection/CalculateFee/@ViewBag.SCHL">Calculate Fee and Select Sections</a>
+                    </h4>
+                </div>
+            </div>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AdditionalSection/FinalPrintForm/@ViewBag.SCHL">Final Print</a>
+                    </h4>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-9">
+        <section class="content-header">
+            <h1>Calculate Fee</h1>
+            @*<div style="font-size:16px;text-align:center;padding:8px;">ਪੰਜਵੀਂ ਅਤੇ ਅੱਠਵੀਂ ਦੀ ਐਫੀਲੀਏਸ਼ਨ ਲੈਣ ਸਬੰਧੀ ਹਦਾਇਤਾਂ ਕੁਝ ਸਮੇਂ ਬਾਅਦ ਜਾਰੀ ਕੀਤੀਆਂ ਜਾਣਗੀਆਂ।</div>*@
+            <span class="kdsfont" style="display:none">
+                Ú²Õ¾ã Ó¨ÞÐÙ Åã ÓèÓÖÅ 2023-24 Ð¥Û ¨ãÒÐ Æâ²ÒÛ× ²ÌØ¼ ÂÛ ¤ØÏ²ÖÛ ÌØÅ¼Ø Ðè»Û Õè, ¦ÝÕ Ó¨ÞÐ ¨ãÒÐ Æâ²ÒÛ× ²ÌØ¼ ÂØ °ÐØÅ É»Ø ¨ã ÇÛÓ ÊÏÅ¢
+                Ú²Õ¾ã Ó¨ÞÐÙ Åã ÓèÓÖÅ 2023-24 Ð¥Û Æâ²ÒÛ× ¤¼ã ¤ó∙ÒÛ× ²ÌØ¼ ÂëÒÙ ÂÛ ¤ØÏ²ÖÛ ÌØÅ¼Ø Ðè»Û Õè, ¦ÝÕ Ó¨ÞÐ ¨ãÒÐ ¤ó∙ÒÛ× ²ÌØ¼ ÂØ °ÐØÅ É»Ø ¨ã ÇÛÓ ÊÏÅ, ¦ÝÕÅÙ ÅâÞ ÒóªÏã ¼ïÏ ¼ã Æâ²ÒÛ× ²ÌØ¼ ÂØ °ÐØÅ É»Ø¦Ý» ÂÛ Ðë¾ ÅÕÛ× Õè¢
+            </span>
+        </section>
+        <div id="loading1"></div>
+
+        @if (TempData["notValidForChallan"] != null)
+        {
+
+            <div class="popup">
+                <center>
+                    <table cellspacing="0" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h1 style="color:#cc0000">Missing Field and Details</h1>
+                                    <p style="font-size:16px;line-height:24px">
+                                        You cannot generate challan because you have not filled mandatory details correctly.<br /><br />
+                                        <span class="rqf">Missing Details :</span> @Html.Raw(TempData["notValidForChallan"].ToString()) <br />
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+            </div>
+        }
+        else
+        {
+
+            using (Html.BeginForm("CalculateFee", "AdditionalSection", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+
+
+
+                <div class="box">
+
+                    <div class="clearfix"></div>
+                    @if (ViewBag.IsFinal.ToString() == "0" || ViewBag.IsFinal.ToString() == "1")
+                    {
+                        <h4>Select Class/Group/Section for Additional Section</h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="rqf" style="font-size:16px;line-height:24px">
+                                    Old Sections : Number of sections that are already running with the school.<br />
+                                    New Sections : Number of sections that the school wants to apply more.<br />
+                                </span>
+                            </div>
+                        </div>
+
+                        <br />
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        Select Class<span class="rqf">*</span>
+                                        @Html.DropDownList("SelClass", new SelectList(ViewBag.ClassList, "ClassValue", "ClassText"), "--Select Class---", new { id = "SelClass" })
+                                        @*@Html.DropDownList("SelClass", new SelectList(ViewBag.ClassList, "Value", "Text"), "--Select Class---", new { id = "SelClass" })*@
+                                    </div>
+                                    @*(In Case of Senior Secondary)*@
+                                    <div class="col-md-2" id="dvGroup">
+                                        Select Group<span class="rqf">*</span>
+                                        @Html.DropDownList("SelGroup", (List<SelectListItem>)ViewBag.GroupList, "--Select Group--", new { id = "SelGroup" })
+                                    </div>
+                                    <div class="col-md-2" id="dvOldSection">
+                                        Old Section<span class="rqf">*</span>
+                                        @Html.DropDownList("SelOldSection", (List<SelectListItem>)ViewBag.CountListOLD, "--Select Old Section--", new { id = "SelOldSection" })
+                                    </div>
+                                    <div class="col-md-2" id="dvNewSection">
+                                        New Section<span class="rqf">*</span>
+                                        @Html.DropDownList("SelNewSection", (List<SelectListItem>)ViewBag.CountListNEW, "--Select New Section--", new { id = "SelNewSection" })
+                                    </div>
+                                    <div class="col-md-2">
+                                        &nbsp;<br />
+                                        <input value="Add Class/Group" type="submit" name="cmd" onclick="return valForm();" />
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <table id="" class="table table-bordered">
+                            <tr class="active-tr">
+                                <th>Sr No</th>
+                                <th>Ref No</th>
+                                <th>Class</th>
+                                <th>Group</th>
+                                <th>Old Section</th>
+                                <th>New Section</th>
+                                <th>Fee Status</th>
+                                <th>Action</th>
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var ID = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                                        var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                        var Group = Model.StoreAllData.Tables[0].Rows[i]["exam"].ToString();
+                                        var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                                        var Fee = Model.StoreAllData.Tables[0].Rows[i]["Fee"].ToString();
+                                        var latefee = Model.StoreAllData.Tables[0].Rows[i]["latefee"].ToString();
+                                        var FeeStatus = Model.StoreAllData.Tables[0].Rows[i]["FeeStatus"].ToString();
+                                        var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                                        var Challanverify = Model.StoreAllData.Tables[0].Rows[i]["Challanverify"].ToString();
+                                        var IsFinal = Model.StoreAllData.Tables[0].Rows[i]["IsFinal"].ToString();
+                                        //
+                                        var OldSection = Model.StoreAllData.Tables[0].Rows[i]["OldSection"].ToString();
+                                        var NewSection = Model.StoreAllData.Tables[0].Rows[i]["NewSection"].ToString();
+                                        Count = Count + 1;
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@refno</td>
+                                            <td>@Class</td>
+                                            <td>@Group</td>
+                                            <td>@OldSection</td>
+                                            <td>@NewSection</td>
+                                            <td>
+                                                @FeeStatus
+                                            </td>
+                                            <td>
+                                                @if (IsFinal == "0")
+                                                {
+                                                    @Html.ActionLink("Delete", "AdditionalSectionActions", new { id = ID, act = "D" }, new { onclick = "return confirm('Are you sure want to Delete ?');" })
+                                                }
+                                                else if (IsFinal == "1")
+                                                { <span class="rqf">@refno</span>}
+                                            </td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td colspan="8" align="right">
+                                            @if (ViewBag.IsFinal.ToString() == "0" || ViewBag.IsFinal.ToString() == "1")
+                                            {
+                                                if (ViewBag.TotalCount > 0 && ViewBag.IsFinal == 0)
+                                                {
+
+                                                    @Html.ActionLink("Final Submit", "AdditionalSectionActions", new { id = ViewBag.SCHL, act = "FS" }, new { @class = "btn", onclick = "return confirm('Are you sure to Final Submit ?');" })
+                                                }
+                                                else if (ViewBag.TotalCount > 0 && ViewBag.IsFinal == 1)
+                                                {
+                                                    @Html.ActionLink("Unlock Final Submission", "AdditionalSectionActions", new { id = ViewBag.SCHL, act = "UF" }, new { @class = "btn", onclick = "return confirm('Are you sure to Final Submit ?');" })
+                                                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> @Html.ActionLink("Pay Fee Online", "PaymentFormAdditionalSection", new { id = ViewBag.SCHL }, new { @class = "btn", onclick = "return confirm('Are you sure to Pay Fee Online ?');" })
+                                                }
+                                            }
+
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9">
+                                            Record Not Added
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+
+                    }
+                    <div class="clearfix"></div>
+                    <p style="text-align:center;font-size:18px;color:#f00">Fee Details :-</p>
+                    <table class="table table-bordered" id="">
+
+                        <tr class="active-tr">
+                            <th>RefNo</th>
+                            <th>Class [Group]</th>
+                            <th>Transaction Id</th>
+                            <th>Transaction Date</th>
+                            <th>Fee+LateFee=Tot Fee</th>
+                            <th>Fee	Status</th>
+                            <th>Action</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount2 > 0)
+                            {
+                                if (Model.StoreAllData.Tables[2].Rows.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                                    {
+                                        var RefNo = Model.StoreAllData.Tables[2].Rows[i]["RefNo"].ToString();
+                                        var GroupList = Model.StoreAllData.Tables[2].Rows[i]["GroupList"].ToString();
+                                        var Bank = Model.StoreAllData.Tables[2].Rows[i]["Bank"].ToString();
+                                        var ChallanId = Model.StoreAllData.Tables[2].Rows[i]["ChallanId"].ToString();
+                                        var ChallanDate = Model.StoreAllData.Tables[2].Rows[i]["CHLNDATE"].ToString();
+                                        var ChallanVDate = Model.StoreAllData.Tables[2].Rows[i]["CHLNVDATE"].ToString();
+                                        var ChallanVerifiedOn = Model.StoreAllData.Tables[2].Rows[i]["ChallanVerifiedOn"].ToString();
+                                        var Status = Model.StoreAllData.Tables[2].Rows[i]["Status"].ToString();
+                                        var FEE = Model.StoreAllData.Tables[2].Rows[i]["FEE"].ToString();
+                                        var LateFee = Model.StoreAllData.Tables[2].Rows[i]["LateFee"].ToString();
+                                        var TotalFee = Model.StoreAllData.Tables[2].Rows[i]["TotalFee"].ToString();
+                                        var ExpireVDate = Model.StoreAllData.Tables[2].Rows[i]["ExpireVDate"].ToString();
+                                        var FeeDepositStatus = Model.StoreAllData.Tables[2].Rows[i]["FeeDepositStatus"].ToString();
+                                        int Count = i + 1;
+
+                                        <tr>
+                                            <td align="left">@RefNo</td>
+                                            <td align="center">@GroupList</td>
+                                            <td align="center">@ChallanId </td>
+                                            <td align="center">@ChallanVDate</td>
+                                            <td align="center">
+                                                @FEE @Html.Raw("+") @LateFee@Html.Raw("=") @TotalFee
+                                            </td>
+                                            <td align="center">@Status</td>
+                                            <td align="center" class="nlink">
+
+                                                @if (Model.StoreAllData.Tables[2].Rows[i]["StatusNumber"].ToString() == "2")
+                                                {
+
+                                                    <span class="text-danger">@Html.ActionLink("Print Report", "PrintForm", new { id = @ViewBag.SCHL })</span><br />
+                                                }
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8">
+                                        Record Not Found
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+
+                </div>
+            }
+
+        }
+
+
+
+    </div>
+</div>
+
+
+
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>*@
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+@*<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>*@
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () { $("#dvGroup").hide(); $("#SelGroup").hide(); });
+
+
+
+    $("#SelClass").change(function () {
+        if ($("#SelClass").val() == "12") { $("#dvGroup").show();  $("#SelGroup").show(); }
+        else { $("#dvGroup").hide();  $("#SelGroup").hide();}
+
+
+        var selectedCategory = { SelClass: $("#SelClass").val() };
+
+                            $.ajax({
+                                url: '@Url.Action("GetGroupByClass", "AdditionalSection")',
+                                type: 'Post',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(selectedCategory),
+                                success: function (States) {
+                                    $("#SelGroup").empty();
+                                    $("#SelGroup").append('<option value="">--Select Group--</option>');
+                                    $.each(States, function (i, Streams) {
+                                        $("#SelGroup").append('<option value="'
+                                           + Streams.Value + '">'
+                                           + Streams.Text + '</option>');
+                                    });
+                                    if (Streams.success) {
+                                    }
+                                    else {
+                                        alert('invalid ID' + data.success);
+                                    }
+                                }
+                            });
+                        });
+
+
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }</script>
+
+<script type="text/javascript">
+    function valForm() {
+
+        var SelClass = document.getElementById("SelClass");
+        if (SelClass.value == "" || SelClass.value == "0") {
+            alert("Select Class.");
+            SelClass.focus();
+            return false;
+        }
+        var SelGroup = document.getElementById("SelGroup");
+        if (SelClass.value == "12") {
+
+            if (SelGroup.value == "" || SelGroup.value == "0") {
+                alert("Select Group.");
+                SelGroup.focus();
+                return false;
+            }
+        }
+
+
+        var SelOldSection = document.getElementById("SelOldSection");
+
+        if (SelOldSection.value == "") {
+            alert("Select Old Section.");
+            SelOldSection.focus();
+            return false;
+        }
+
+        var SelNewSection = document.getElementById("SelNewSection");
+
+        if (SelNewSection.value == "" || SelNewSection.value == "0" || SelNewSection.value == "00") {
+            alert("Select New Section.");
+            SelNewSection.focus();
+            return false;
+        }
+
+
+
+    }
+</script>
+
+<script type="text/javascript">
+
+    function Send(k) {
+        // alert(' Re-Generate Challan  start');
+        var txtChallanNo = '#txtChallanNo-' + k;
+
+        var SBIa = document.getElementById("SBI-" + k).checked;
+        var PNBa = document.getElementById("PNB-" + k).checked;
+        var HODa = document.getElementById("HOD-" + k).checked;
+        var BCODE = "";
+        if (SBIa == false && PNBa == false && HODa == false) {
+            alert("Please Select Any Bank");
+            return false;
+        }
+        else if (SBIa == true && PNBa == true && HODa == true) {
+            alert("Please Select Only 1 Bank");
+            document.getElementById("SBI-" + k).checked = false;
+            document.getElementById("PNB-" + k).checked = false;
+            return false;
+        }
+        else {
+            if (document.getElementById("SBI-" + k).checked == true) { BCODE = "204"; }
+            else if (document.getElementById("PNB-" + k).checked == true) { BCODE = "202"; }
+            else if (document.getElementById("HOD-" + k).checked == true) { BCODE = "203"; }
+            else { BCODE = ""; }
+        }
+
+        if (BCODE == "") {
+            alert('Please Select Bank')
+            return false;
+        }
+        else if ($('#txtChallanNo-' + k).val() == "") {
+            $('#txtChallanNo-' + k).addClass("input-validation-error");
+            return false;
+        }
+        else {
+            //  alert('Now Re-Generate Challan of :' + $('#txtChallanNo-' + k).val())
+            // $('#Main1').hide();
+            $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Home/jqReGenerateChallaanNew",
+                data: '{ChallanId:"' + $('#txtChallanNo-' + k).val() + '", BCODE:"' + BCODE + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response);
+                    $('#loading1-' + k).empty();
+                }
+            });
+            function OnSuccess(response) {
+                if (response.dee == "1") {
+                    alert("Challan Re-Generated Successfully & Your Challan ID is " + response.chid);
+                    $("#myModal-" + k).hide();
+                    $('#loading1-' + k).empty();
+                    window.open("/Home/GenerateChallaan?ChallanId=" + response.chid, "_blank");
+                }
+                else {
+                    alert("Failure, Please Try Again.");
+                    $('#loading1-' + k).empty();
+                }
+            }
+        }
+    }
+
+</script>
+

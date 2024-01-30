@@ -1,0 +1,244 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "ChallanDetail";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<h2>Challan Detail</h2>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+@using (Html.BeginForm("ChallanDetail", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <p>Total:: @ViewBag.TotalCount</p>
+                <div class="col-md-3">
+                    @*Total Count :: @ViewBag.TotalCount*@
+                    @Html.DropDownList("bankddlist", new SelectList(ViewBag.MyBankList, "Value", "Text", ViewBag.SelectedItemBank), "-- All --", new { id = "bankddlist" })
+                </div>
+                <div class="col-md-3">
+                    @Html.DropDownList("Schlddlist", new SelectList(ViewBag.MySchlList, "Value", "Text", ViewBag.SelectedItemSchl), "-- All --", new { id = "Schlddlist" })
+                </div>
+                <div class="col-md-3">
+                    @Html.DropDownList("ChallanddList", new SelectList(ViewBag.MyChallanList, "Value", "Text", ViewBag.SelectedItemChln), "--All--", new { id = "ChallanddList" })
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="SearchByString" name="SearchByString" value="@Request["SearchByString"]" />
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <input type="submit" value="Search" />
+                </div>
+            </fieldset>
+        </div>
+    </div>
+}
+
+@*//    Search Record  Table//*@
+@{ 
+if (ViewBag.schlid != 1)
+{
+<div class="row" id="Srecord">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>Sl.No</th>
+                    <th>BANK</th>
+                    <th>Challan ID</th>
+                    <th>Challan Date</th>
+                    <th>FEECAT</th>
+                    <th>SCHLREGID</th>
+                    <th>FEE</th>
+                    <th>DOWNLOAD</th>
+                    <th>DOWNLOAD DATE</th>
+                    <th>VERIFY</th>
+                    <th>ACTIONS</th>
+
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var bankName = Model.StoreAllData.Tables[0].Rows[i]["BANKNAME"].ToString();
+                            var chlnId = Model.StoreAllData.Tables[0].Rows[i]["CHALLANID"].ToString();
+                            var chlanDate = Model.StoreAllData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                            var feeCat = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                            var schlRegId = Model.StoreAllData.Tables[0].Rows[i]["SCHLREGID"].ToString();
+                            var fee = Model.StoreAllData.Tables[0].Rows[i]["FEE"].ToString();
+                            var downloadFlot = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDFLOT"].ToString();
+                            var downloadDate = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDDATE"].ToString();
+                            var verified = Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString();
+                            int Count = i + 1;
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @bankName
+                                </td>
+                                <td>
+                                    @chlnId
+                                </td>
+                                <td>
+                                    @chlanDate
+                                </td>
+                                <td>
+                                    @feeCat
+                                </td>
+                                <td>
+                                    @schlRegId
+                                </td>
+                                <td>
+                                    @fee
+                                </td>
+                                <td>
+                                    @downloadFlot
+                                </td>
+                                <td>
+                                    @downloadDate
+                                </td>
+                                <td>
+                                    @verified
+
+                                </td>
+                                <td>
+                                    @*<a href="@Url.Action("ChallanDetail","Admin", new { id = @chlnId })" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</a>*@
+
+                                    <a href="@Url.Action("ViewChallanDetail","Admin", new { id = @chlnId })" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">View Challan</a>
+                                    @Html.ActionLink("View Detail", "ViewChallanDetail", new {id = chlnId })
+
+
+                                    @Html.ActionLink("Print Challan", "home", new { id = chlnId })
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="11">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+                    }
+}
+
+
+
+@*//   PopUp Table   //*@
+
+<div class="modal fade" id="myModal" role="dialog" >
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title text-center" >CHALLAN DETAILS</h4>
+            </div>        
+            <div class="modal-body">
+            <iframe src="/Admin/ViewChallanDetail/2012017500001" height="400"></iframe>
+                @*<table>                    
+                    <tr>
+                        <td>CHALLAN ID</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.ChallanID)</label>                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>SCHL/REFNO/APPNO/ROLL</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.SchlReffAppRll)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>SCHL/CANDIDATE NAME</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.Candi_Name)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CHALLAN DATE</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.Challan_Date)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CHALLAN VALID DATE</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.Challan_V_Date)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>FEE TYPE</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.FeeType)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>BANK</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.BankName)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>FEE</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.Fee)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>JOURNAL NO.</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.Journal_No)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>BRANCH</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.Branch)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CHALLAN DEPOSIT DATE</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.Challan_Depst_Date)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CHALLAN VERIFY STATUS</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.Challan_Dwld_Stats)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CHALLAN VERIFY STATUS</td>
+                        <td>
+                            <label>@Html.DisplayFor(a => a.Challan_Verify_Stats)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="button" value="Close" onclick="javascript:document.location.href='@Url.Action("ChallanDetail", "Admin")'" />
+                        </td>
+                    </tr>
+                </table>*@
+</div></div></div></div>
+
+
+
+
+

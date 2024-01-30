@@ -1,0 +1,380 @@
+﻿@model PSEBONLINE.Models.Import
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+@using (Html.BeginForm("Import9thReappear", "ImportData", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <input type="text" id="chkImportid" name="chkImportid" value="@ViewBag.impid" style="display:none;" />
+    <h1>
+        Import 9th Re-appear students of Self School (Session 2016-17).
+    </h1>
+    <div class="row">
+        <div class="col-md-12">
+            @*<p class="kdsfont">¤ØÆ»ã Ó¨ÞÐ Âã ÂÓÒÛ× ÚÒó°ë× ÆØÓ ²Ù ÏÛ-¤ÆÛ¤Ï ÆñÛÚª¤ØÏÁÛ ÅÞâ Import ¨ÏÅ Ð¥Û Ú¥Ó ÚÐâ¨ ¼ã ¨ÚÐó¨ ¨Û¼Ø ²ØÒã¢ Ú¥Ó ÚÐâ¨ ÏØÕÛ× ÏëÐ ÅâÉÏ ²Ù ÏÚ²Ó¶ÏãÓÖÅ ÅâÉÏ ÊÏ¨ã ÚÆ±Ðã 3 ÓØÐ Âã ÚÒÚÂ¤ØÏÁÛ Import ¨Û¼ã ²Ø Ó¨Âã ÕÅ¢ Ú¼âÅ ÓØÐ ¼ë× ÆÚÕÐÙ Âã ÂÓÒÛ× ÆØÓ ÚÒÚÂ¤ØÏÁÛ¤Ù Ð¥Û 5 ÅâÉÏ ÚÐâ¨ ¼ã ¨ÚÐó¨ ¨Ï¨ã ÅÒÛ× ¤è×¶ÏÛ ¨Û¼Û ²ØÒã¢</p>*@
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-2">
+            Select School To Import Data
+        </div><div class="col-md-3">
+            @Html.DropDownList("schoolcode", new SelectList(ViewBag.MySchCode, "Value", "Text"), "---Select Import TO--", new { @class = "ddlschoolcode" })
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total Students <label>@ViewBag.TotalCount1</label>
+                </div>
+                <div class="col-md-2">
+                    Search By Year:  @Html.DropDownList("Session1", new SelectList(ViewBag.MySession, "Value", "Text", ViewBag.SelectedSession), "--Select---", new { @class = "", id = "Session" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-3">
+                    Search By @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--ALL---", new { @class = "", id = "SelectItem", onchange = "deechange()" })
+                    <span id="reqsellist" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-3">
+                    &nbsp;<br>
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                    <span id="reqsstring" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-2">
+                    <br>
+                    <input type="Submit" value="Search" name="cmd" onclick="return dee()" /> 
+					 <a href="/ImportData/Import9thReappear" class="btn"> Reset</a>
+                    @*<input type="submit" name="Reset" value="Reset" formaction="CancelForm9thPass" formmethod="post" />*@
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("M1Master", "RegistrationPortal")'">
+            <input type="button" value="View Imported Data" onclick="javascript:document.location.href='@Url.Action("M1Formgrid", "RegistrationPortal")'">
+            <input type="submit" value="Import Selected Record" /><br />&nbsp;
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>Sr No.</th>
+                        <th>School Code</th>
+                        <th>Registration No.</th>
+                        <th>Old ID</th>
+                        <th>Old Roll</th>
+                        <th>Name/Father's Name/Mother's Name</th>
+                        <th>DOB</th>
+                        <th>Session</th>
+                        <th>Result</th>
+                        <th>Select for Import<input type="checkbox" id="selectall" /> </th>
+                        @*<th><input type="checkbox" id="chkSelectAll" /></th>*@
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 30 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var scode = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                ////var roll = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                var regNum = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                                var OldID = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                var Oroll = Model.StoreAllData.Tables[0].Rows[i]["Current_ClassRoll"].ToString();
+                                var id = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                                var CFMName = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString() + "/" + Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString() + "/" + Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                                var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                var res = Model.StoreAllData.Tables[0].Rows[i]["result"].ToString();
+                                var YearSession = Model.StoreAllData.Tables[0].Rows[i]["SESSION"].ToString();
+                                var ImpStatus = Model.StoreAllData.Tables[0].Rows[i]["ImpStatus"].ToString();
+                                Count = Count + 1;
+                                <tr>
+                                    <td>@Count</td>
+                                    <td>@scode</td>
+                                    <td>@regNum</td>
+                                    <th>@OldID</th>
+                                    <th>@Oroll</th>
+                                    <td>@CFMName</td>
+                                    <td>@DOB</td>
+                                    <td>@YearSession</td>
+                                    <td>@res</td>
+                                    <td>
+                                        @if (@ImpStatus.ToUpper() != "OK")
+                                        {
+                                            <span>@ImpStatus</span>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" class="checkbox" id="cb-@id" value="@id" name="ChkCTenthClass" />
+                                            @*<input id="chkidHF" name="@Model.chkidList[i].Name" type="hidden" value="@Model.chkidList[i].id" />
+                                                @Html.CheckBoxFor(m => m.chkidList[i].Selected, new { Style = "vertical-align:3px", @class = "checkbox" })*@
+                                        }
+
+                                    </td>                                   
+                                </tr>
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="8">
+
+                                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                                            &nbsp;
+
+                                            @if (ViewBag.pagesize == 1)
+
+                                            {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "Import9thReappear", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "Import9thReappear", new { page = ViewBag.pn })
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (TempData["Import9thPasssearchReappear"] != null)
+                                                {
+                                                    string str1 = TempData.Peek("Import9thPasssearchReappear").ToString();
+                                                    string str2 = TempData.Peek("Import9thPassSelListReappear").ToString();
+                                                    string str3 = TempData.Peek("Import9thPassSearchStringReappear").ToString();
+                                                    string str4 = TempData.Peek("Import9thPassSessionReappear").ToString();
+                                                    TempData["Import9thPasssearchReappear"] = str1;
+                                                    TempData["Import9thPassSelListReappear"] = str2;
+                                                    TempData["Import9thPassSearchStringReappear"] = str3;
+                                                    TempData["Import9thPassSessionReappear"] = str4;
+                                                }
+                                                @Html.ActionLink("<<", "Import9thReappear", new { page = 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink("< Prev", "Import9thReappear", new { page = ViewBag.pagesize - 1 })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "Import9thReappear", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "Import9thReappear", new { page = ViewBag.pn })
+                                                }
+
+                                            }
+
+
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" style="color:#cc0000">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+                <p>Total Records(Filtered): @ViewBag.TotalCount1</p>
+            </div>
+        </div>
+    </div>
+                        }
+
+@{
+    if (TempData["result"] != null)
+    {
+        if (TempData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                var impcn = @TempData["TotImported"];
+                alert(impcn+" Records Imported Successfully");
+                @*window.location.href = '@Url.Action("Import9thPass", "ImportData")';*@
+            </script>}
+        else if (TempData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Imported");
+            </script>
+        }
+        else if (TempData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data not saved..plz try again");
+            </script>
+        }
+    }
+}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+        $(document).ready(function ()
+        {
+            $('.checkbox').change(function () { //".checkbox" change
+                    if (this.checked == false) { //if this item is unchecked
+                    $("#selectall")[0].checked = false; //change "select all" checked status to false
+                }
+            });
+
+            $("#selectall").change(function () {
+                var status = this.checked; // "select all" checked status
+                //alert(status);
+                var arr = [];
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                   // alert(id);
+                    this.checked = status; //change ".checkbox" checked status
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var j = 0;
+                    var k = 0;
+                    //cb-stdid
+                    for (var i = 3; i < arr.length; i++) {
+                        if (arr[i] == '-')
+                        {
+                            k++;
+                            continue;
+                        }
+                        if (k == 0)
+                        {
+                            arrid += arr[i];
+                        }
+                        j++;
+                    }
+                    //alert(dtype);
+                    for (var k = 3 + j + 5; k < arr.length; k++) {
+                        arrcast += arr[k];
+                    }
+
+                });
+            });
+            // End select all
+
+
+        });
+
+
+
+
+</script>
+
+
+<script>
+
+    function deetext() {
+        $("#reqsstring").slideUp("slow");
+    }
+    function deechange() {
+        //if ($("#Session").val() != "") {
+        //    $("#reqsession").slideUp("slow");
+        //}
+        if ($("#SelectItem").val() != "") {
+            $("#reqsellist").slideUp("slow");
+        }
+        else {
+            $("#reqsellist").slideDown("slow");
+        }
+    }
+
+    function dee() {
+        //alert("Hello");
+        if ($("#Session").val() == ""  )
+        {
+            //alert("Please Select year");
+            $("#reqsession").slideDown("slow");
+            return false;
+        }
+        if ($("#Session").val() == "" && $("#SelectItem").val() == "" && $("#SearchString").val() == "") {
+            $("#reqsellist").slideUp("slow");
+            $("#reqsstring").slideUp("slow");
+        }
+        if ($("#Session").val() == "" && $("#SelectItem").val() != "" && $("#SearchString").val() == "") {
+
+            $("#reqsstring").slideDown("slow");
+            return false;
+        }
+        //else if ($("#Session").val() != "" && $("#SelectItem").val() == "" && $("#SearchString").val() == "") {
+        //    $("#reqsellist").slideDown("slow");
+        //    $("#reqsstring").slideDown("slow");
+        //    return false;
+        //}
+        else if ($("#Session").val() != "" && $("#SelectItem").val() != "" && $("#SearchString").val() == "") {
+            $("#reqsellist").slideUp("slow");
+            $("#reqsstring").slideDown("slow");
+            return false;
+        }
+        else
+            return true;
+
+    }
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+        $("#Session").change(function () {
+            if($("#Session").val() == "")
+            {
+                $("#reqsession").slideDown("slow");
+            }
+            else{
+                $("#reqsession").slideUp("slow");
+            }
+
+        });
+
+    });
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+
+</script>
+

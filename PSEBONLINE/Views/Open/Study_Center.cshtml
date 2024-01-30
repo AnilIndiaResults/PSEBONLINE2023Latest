@@ -1,0 +1,319 @@
+﻿
+@{
+    ViewBag.Title = "Study_Center";
+    Layout = "~/Views/Shared/_HeaderOPEN.cshtml";
+}
+<style type="text/css">
+    #ac-wrapper {
+        background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .f24 {
+        font-size: 20px;
+        padding-bottom: 10px;
+    }
+
+    #popwrapper {
+        background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    #popup {
+        background: #fff none repeat scroll 0 0;
+        border: 5px solid #f1f1f1;
+        border-radius: 25px;
+        box-shadow: 0 0 3px 3px #64686e;
+        padding: 30px 10px;
+        display: block;
+        margin-top: 150px;
+        font-size: 20px;
+        line-height: 32px;
+        width: 700px;
+    }
+
+    .danger {
+        color: rgba(0, 0, 0, 0.5);
+    }
+
+    .danger-r {
+        color: red;
+    }
+
+    .red {
+        color: red;
+    }
+
+    .green {
+        color: green;
+    }
+</style>
+<script type="text/javascript">
+    //function PopUp(hideOrshow) {
+    //    if (hideOrshow == 'hide') document.getElementById('ac-wrapper').style.display = "none";
+    //    else document.getElementById('ac-wrapper').removeAttribute('style');
+    //}
+    //window.onload = function () {
+    //    setTimeout(function () {
+    //        PopUp('show');
+    //    }, 0);
+    //}
+    $(document).ready(function () {
+        if (localStorage.getItem('popState') != 'shown') {
+            $("#popwrapper").delay(0).fadeIn();
+            localStorage.setItem('popState', 'shown')
+        }
+        $('#pclose').click(function (e) // You are clicking the close button
+        {
+            $('#popwrapper').fadeOut(); // Now the pop up is hiden.
+        });
+    });
+
+</script>
+<section class="content-header">
+    <h1>Study Centre</h1>
+    <ol class="breadcrumb">
+        <li><a href="/open/Applicationstatus/@Session["app_no"].ToString()"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">Study Centre</li>
+    </ol>
+</section>
+@if (ViewBag.App_Email != null || ViewBag.SubAccess != null)
+{
+    if (ViewBag.App_Email != null)
+    {
+        if (ViewBag.App_Email != string.Empty)
+        {
+            <script>
+            alert("Your Study Centre have been updated");
+            window.location.href = '@Url.Action("ApplicationForm", "Open", new { Id = Session["app_no"].ToString() })';
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Study Centre Save Failure, Plz Try Again ");
+            </script>
+        }
+    }
+    else
+    {
+        if (ViewBag.SubAccess != null && ViewBag.SubAccess == "challan")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please generate Challan First");
+                  window.location.href = '@Url.Action("Applicationstatus", "Open", new { id = @ViewBag.val })';
+            </script>
+        }
+    }
+
+}
+else
+{
+    using (Html.BeginForm())
+    {
+
+        <fieldset>
+            <legend>
+                Select Study Centre
+            </legend>
+            <div class="col-md-2">Select First Center <span class="rqf">*</span></div>
+            <div class="col-md-3">@Html.DropDownList("StudyCenter_1", (List<SelectListItem>)ViewBag.studyCenters)</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">Select Second Center</div>
+            <div class="col-md-3">@Html.DropDownList("StudyCenter_2", (List<SelectListItem>)ViewBag.studyCenters)</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2"> Select Third Center</div>
+            <div class="col-md-3">@Html.DropDownList("StudyCenter_3", (List<SelectListItem>)ViewBag.studyCenters)</div>
+            <div class="clearfix"></div>
+            <div class="col-md-2"></div>
+            <div class="col-md-3">
+                @if (Convert.ToInt32(ViewBag.School_1) > 0)
+                {
+                    <a class="btn" href="@Url.Action("ApplicationForm", "Open", new { Id = Session["app_no"].ToString() })">Next</a>
+
+                }
+                else
+                {
+                    <input type="submit" value="Save and Next" />
+                }
+            </div>
+
+        </fieldset>
+
+        if (!string.IsNullOrEmpty(ViewBag.School_1) && ViewBag.School_1 != "0")
+        {
+            string cls = ViewBag.CLASS == "10" ? "Matriculation" : "Senior Secondary";
+
+            <div id="popwrapper">
+                <center>
+                    <div id="popup">
+                        <p><span style="float:right"><a href="#" id="pclose"><img alt="Close" src="/Images/close_button.png" title="Close" /></a></span></p>
+                        Dear Candidate <span class="text-primary"> @Session["app_no"].ToString()</span>,<br />
+                        Study Centre : <span class="text-primary">(@ViewBag.School_1),  @ViewBag.SCHOOLE</span> is alloted to you for <span class="text-primary">@cls</span> Class.<br />
+                        Visit study centre with registration slip, Photographs,Eligibility Documents, Address & Age Proof and Fee Challan Copy.<br />
+                        Collect free books from Study centre.<br /> Ebooks are also availble at <a class="blinker" href="https://www.pseb.ac.in/ebooks" target="_blank">pseb.ac.in/ebooks</a>
+
+                    </div>
+                </center>
+            </div>
+            @*<p style="font-size:18px">
+                Dear Candidate <span class="text-primary"> @Session["app_no"].ToString()</span>,<br />
+                Study Centre : <span class="text-primary">(@ViewBag.School_1),  @ViewBag.SCHOOLE</span> is alloted to you for <span class="text-primary">@cls</span> Class.<br />
+                Visit study centre with registration slip, Photographs,Eligibility Documents, Address & Age Proof and Fee Challan Copy.<br />
+                Collect free books from Study centre. Ebooks are also availble at <a class="blinker" href="https://www.pseb.ac.in/ebooks" target="_blank">pseb.ac.in/ebooks</a>
+            </p>*@
+        }
+    }
+
+    if (ViewBag.School_1 != null)
+    {
+        int school = Convert.ToInt32(ViewBag.School_1);
+        int school2 = Convert.ToInt32(ViewBag.School_2);
+        int school3 = Convert.ToInt32(ViewBag.School_3);
+
+        <script>
+
+            function assign()
+            {
+                var school,school2,school3;
+                school='00'+@school;
+                school2='00'+@school2;
+                school3='00'+@school3;
+                if(school.length>=7)
+                {
+                    document.getElementById("StudyCenter_1").value = school.substr(school.length-7);
+                }
+                if(school2.length>=7)
+                {
+                    document.getElementById("StudyCenter_2").value = school2.substr(school2.length-7);
+                    $("#StudyCenter_2").attr("disabled", false);
+                }
+                if(school3.length>=7)
+                {
+                    document.getElementById("StudyCenter_3").value = school3.substr(school3.length-7);
+                    $("#StudyCenter_3").attr("disabled", false);
+                }
+            }
+        </script>
+
+    }
+    else
+    {
+        <script>
+            function assign() {
+                alert("Please select your study Centre carefully...!!!");
+            }
+        </script>
+    }
+
+    <script>
+        $(document).ready(function () {
+
+
+
+            $("#StudyCenter_2").attr("disabled", true);
+
+            $("#StudyCenter_3").attr("disabled", true);
+
+
+            $("#StudyCenter_1").change(function () {
+                var selectedCenter = { center1: $("#StudyCenter_1").val() };
+                if ($("#StudyCenter_1").val() != "")
+                {
+                    $.ajax({
+                        url: '@Url.Action("GetStudyCenterList2", "Open")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedCenter),
+                        success: function (States) {
+                            $("#StudyCenter_2").attr("disabled", false);
+
+                            $("#StudyCenter_2").empty();
+
+                            $.each(States, function (i, Streams) {
+                                $("#StudyCenter_2").append('<option value="'
+                                   + Streams.Value + '">'
+                                   + Streams.Text + '</option>');
+                            });
+                            if (Streams.success) {
+                            }
+                            else {
+                                alert('invalid ID' + data.success);
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    $("#StudyCenter_2").attr("disabled", true);
+                    $("#StudyCenter_3").attr("disabled", true);
+                    $("#StudyCenter_2").empty();
+                    $("#StudyCenter_3").empty();
+                }
+
+            });
+
+
+            $("#StudyCenter_2").change(function () {
+                var selectedCategory = { center2: $("#StudyCenter_2").val(), center1: $("#StudyCenter_1").val() };
+                if ($("#StudyCenter_2").val() != "")
+                {
+                    $.ajax({
+                        url: '@Url.Action("GetStudyCenterList3", "Open")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedCategory),
+                        success: function (States) {
+                            $("#StudyCenter_3").attr("disabled", false);
+                            $("#StudyCenter_3").empty();
+
+                            $.each(States, function (i, Streams) {
+                                $("#StudyCenter_3").append('<option value="'
+                                   + Streams.Value + '">'
+                                   + Streams.Text + '</option>');
+                            });
+                            if (Streams.success) {
+                            }
+                            else {
+                                alert('invalid ID' + data.success);
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    $("#StudyCenter_3").attr("disabled", true);
+                    $("#StudyCenter_3").empty();
+                }
+
+            });
+            assign();
+           // alert(ViewBag.School_1);
+            if ('@ViewBag.School_1' > 0){
+               // alert(1);
+                $("#StudyCenter_1").attr("disabled", true);
+                $("#StudyCenter_2").attr("disabled", true);
+                $("#StudyCenter_3").attr("disabled", true);
+            }
+            else
+            {
+                $("#StudyCenter_1").attr("disabled", false);
+                $("#StudyCenter_2").attr("disabled", false);
+                $("#StudyCenter_3").attr("disabled", false);
+            }
+
+        });
+    </script>
+}

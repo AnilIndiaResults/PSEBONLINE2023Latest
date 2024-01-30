@@ -1,0 +1,715 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "FirmSchoolCorrectionUpdated";
+    //Layout = "~/Views/Shared/_HeaderCorr.cshtml";  By Rohit
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 225px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+    }
+
+    .checkbox {
+        display: inline-block
+    }
+</style>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modal");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+    $('form').live("submit", function () {
+        ShowProgress();
+    });
+</script>
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/start/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#CorrectionLot").autocomplete({
+
+            source: function (request, response) {              
+                $.ajax({
+                    url: "/Admin/GetCorrectionLot",                    
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {                                                   
+                        response($.map(data, function (item) {
+                            return { label: item.CorrectionLot, value: item.CorrectionLot };
+                        }))
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+    })
+</script>
+
+
+@{
+    if (ViewData["FeeUpdate"] != null)
+    {
+        var result = ViewData["FeeUpdate"].ToString();
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Fee Detail Inserted Successfully");
+                //window.location.href = '/Admin/FirmSchoolCorrectionFinalSubmit/FinalSubmit';
+            </script>
+        }
+        else if (result == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Fee Detail Updated Successfully");
+            </script>
+        }
+        else if (result == "10")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Try Again");
+            </script>
+        }
+        else if (result == "20")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submit successfully.");
+                window.location.href = '/Admin/FirmSchoolCorrectionFinalSubmit/ViewAll';
+            </script>
+        }
+        else if (result == "5")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("fee is pending for correction lot.: " + '@ViewBag.commaCorrectionLot' );
+            </script>
+        }
+        else if (result == "21")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submit Failure." + '@ViewData["Message"].ToString() ');
+            </script>
+        }
+		else if (result == "-10")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Fee has not Submitted, Record are pending for correction lot.: " + '@ViewBag.ForFinalCorrectionLot' );
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submit Failure., Please Try Again");
+            </script>
+        }
+    }
+}
+
+<h1>Firm All Correction Updated Records</h1>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+@using (Html.BeginForm("FirmSchoolCorrectionUpdated", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+
+            <div class="col-md-2">
+                Total &nbsp;
+                <label>@ViewBag.TotalCount</label>
+            </div>
+            <div class="col-md-2" style="display:none">
+                Select Correction Type &nbsp;
+                @Html.DropDownList("CorrectionType", new SelectList(ViewBag.CorrectionType, "Value", "Text", ViewBag.SelectedItemcode), "--Select Correction Type---")
+            </div>
+            <div class="col-md-3">
+                Enter Correction Lot &nbsp;
+                @Html.TextBoxFor(m => m.CorrectionLot, new { id = "CorrectionLot", @maxlength = "20", @placeholder = "Enter Correction Lot" })
+            </div>
+            <div class="col-md-2">
+                Select Fee Type &nbsp;
+                @Html.DropDownList("FeeType", new SelectList(ViewBag.FeeType, "Value", "Text", ViewBag.SelectedFeeType), new { @class = "", id = "FeeType", @onchange = "GetSelectStatus(this)" })
+            </div>
+            <div class="col-md-2">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm();" title="Search Record" /></div>
+
+            <div class="clearfix"></div>
+            @if (ViewBag.FeeStatus != null)
+            {
+                if (ViewBag.FeeStatus.ToString() == "0")
+                {
+                    if (ViewBag.SelectedFeeType.ToString() == "1")
+                    {
+                        <div class="col-md-12" id="divfee">
+                            <legend>Enter Fee Details</legend>
+                            <div class="col-md-2">Receipt No. @Html.TextBoxFor(m => m.CorrectionRecieptNo, new { id = "CorrectionRecieptNo", @maxlength = "15", placeholder = "Receipt No." })</div>
+                            @*<div class="clearfix"></div>*@
+                            <div class="col-md-2">
+                                Reciept Date
+                                @Html.TextBoxFor(a => a.CorrectionRecieptDate, new
+                           {
+                               id = "CorrectionRecieptDate",
+                               @maxlength = "10",
+                               placeholder = "Receipt Date",
+                               onpaste = "return false;",
+                               oncopy = "return false;",
+                               oncut = "return false;"
+                           })
+                            </div>
+                            <div class="col-md-2">No. Of Approved @Html.TextBoxFor(m => m.CorrectionNoCapproved, new { id = "CorrectionNoCapproved", @maxlength = "3", placeholder = "No. Of Approved", onkeypress = "return validateNumber(event)" })</div>
+                            <div class="col-md-2">Fee Amount @Html.TextBoxFor(m => m.CorrectionAmount, new { id = "CorrectionAmount", @maxlength = "8", placeholder = "Amount", onkeypress = "return validateNumber(event)" })</div>
+                            <div class="col-md-2">
+                                &nbsp;<br />
+                                <input type="submit" value="Submit Fee Only" name="cmd" onclick="return valFormAmount();" title="Submit Fee Details For Given Lot" />
+                            </div>
+                            <div class="col-md-2">
+                                &nbsp;<br />
+                                <input type="submit" value="Submit Fee & Final Submit" name="cmd" onclick="return valFormAmount();" title="Submit Fee Details & Final Submit For Given Lot" />
+                            </div>
+                            @*<div class="col-md-2">&nbsp;<br /><input type="submit" value="Submit Fee" name="cmd"  class="btn"  title="Submit Fee Details For Given Lot" data-confirm="are u sure to submit the fee?" /></div>*@
+                        </div>
+                    }
+                    if (ViewBag.SelectedFeeType.ToString() == "2")
+                    {
+                        <div class="col-md-12" id="divfee1">
+                            <legend>Enter Remarks</legend>
+                            <div class="col-md-2">Remarks @Html.TextBoxFor(m => m.CorrectionRecieptNo, new { id = "CorrectionRecieptNo", @maxlength = "200", placeholder = "Enter Remarks" })</div>
+                            <div class="col-md-2">
+                                &nbsp;<br />
+                                <input type="submit" value="Submit Fee Only" name="cmd" onclick="return valFormAmount();" title="Submit Fee Details For Given Lot" />
+                            </div>
+                            <div class="col-md-2">
+                                &nbsp;<br />
+                                <input type="submit" value="Submit Fee & Final Submit" name="cmd" onclick="return valFormAmount();" title="Submit Fee Details & Final Submit For Given Lot" />
+                            </div>
+                            <div class="col-md-2" style="display:none">
+                                Reciept Date
+                                @Html.TextBoxFor(a => a.CorrectionRecieptDate, new
+                           {
+                               id = "CorrectionRecieptDate",
+                               @maxlength = "10",
+                               placeholder = "Receipt Date",
+                               onpaste = "return false;",
+                               oncopy = "return false;",
+                               oncut = "return false;",
+                               @Value = "0"
+                           })
+                            </div>
+                            <div class="col-md-2" style="display:none">No. Of Approved @Html.TextBoxFor(m => m.CorrectionNoCapproved, new { @Value = "-1", id = "CorrectionNoCapproved", @maxlength = "3", placeholder = "No. Of Approved", onkeypress = "return validateNumber(event)" })</div>
+                            <div class="col-md-2" style="display:none">Fee Amount @Html.TextBoxFor(m => m.CorrectionAmount, new { @Value = "-1", id = "CorrectionAmount", @maxlength = "8", placeholder = "Amount", onkeypress = "return validateNumber(event)" })</div>
+
+                            @*<div class="col-md-2">&nbsp;<br /><input type="submit" value="Submit Fee" name="cmd"  class="btn"  title="Submit Fee Details For Given Lot" data-confirm="are u sure to submit the fee?" /></div>*@
+                        </div>
+                    }
+                }
+                else if (ViewBag.FeeStatus.ToString() == "1" && ViewBag.FirmCorrectionLot == "")
+                {
+                    @*<div class="col-md-12"><p class="rqf">Fee Not Required,Please do your final submission</p></div>*@
+                    <div class="col-md-12">
+                        <p class="rqf">Fee Already Submitted,Please do your final submission</p>
+
+                    </div>
+                }
+                else if (ViewBag.FeeStatus.ToString() == "1" && ViewBag.FirmCorrectionLot != "")
+                {
+                    @*<div class="col-md-12"><p class="rqf">Fee Not Required,Please do your final submission</p></div>*@
+                    <div class="col-md-12"><p class="rqf">Already Final Submitted</p></div>
+                }
+            }
+        </fieldset>
+
+    </div>
+}
+<div id="loading1"></div>
+<div class="col-lg-12">
+    <div class="col-lg-3 text-left"><a href="/Admin/FirmSchoolCorrection" class="btn" title="Go Back">Back</a></div>
+    <div class="col-lg-6 text-center">
+        @if (ViewBag.TotalCount > 0)
+        {
+            <input type="submit" value="Final Submit" name="cmd" class="btn" title="Go for Final Submit" data-confirm="are u sure to Final Submit of these corrections?" />
+        }
+        @*<input type="submit" value="Final Submit" name="cmd" class="btn" title="Go for Final Submit" data-confirm="are u sure to Final Submit of these corrections?" />*@
+        &nbsp;&nbsp;&nbsp;&nbsp; <a href="/Admin/FirmSchoolCorrectionFinalSubmit/ViewAll" class="btn" title="Go for View All Final Submit">View All Final Submit</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;<a href="/Admin/FirmSchoolCorrectionFinalSubmit/PendingFee" class="btn" title="Download All Pending Fee Lot">Download All Pending Fee Lot</a>
+
+    </div>
+    <div class="col-lg-3 text-right"><input type="submit" value="Remove" id="btnsave" name="cmd" /></div>
+
+</div>
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="5%">Sl.No.</th>
+                    <th width="10%">Correction</th>
+                    <th width="10%">School Code</th>
+                    <th width="10%">Class</th>
+                    <th width="8%">Student ID</th>
+                    <th width="11%">Correction Type</th>
+                    <th width="11%">Correction Lot</th>
+                    <th width="11%">Correction Date</th>
+                    <th width="12%">Old Value</th>
+                    <th width="12%">New Value</th>
+                    <th width="5%">Fee Status</th>
+                    <th width="5%">Status</th>
+                    <th width="10%"><input type="checkbox" id="selectallY" />Remove All</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 30 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var CorPanel = Model.StoreAllData.Tables[0].Rows[i]["CorPanel"].ToString();
+                            var CorrectioId = Model.StoreAllData.Tables[0].Rows[i]["CorrectionId"].ToString();
+                            var Schl = Model.StoreAllData.Tables[0].Rows[i]["Schl"].ToString();
+                            var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            var Std_id = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                            var CorrectionType = Model.StoreAllData.Tables[0].Rows[i]["CorrectionType"].ToString();
+                            var CorrectionFinalSubmitDt = Model.StoreAllData.Tables[0].Rows[i]["CorrectionFinalSubmitDt"].ToString();
+                            var CorrectionLot = Model.StoreAllData.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                            var OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                            var NewValue = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                            if (CorrectionType == "Sign" || CorrectionType == "Photo")
+                            {
+                                if (Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString().Contains("OPEN2018"))
+                                {
+                                    OldValue = "https://registration2018.pseb.ac.in/upload/" + Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                }
+                                else { OldValue = "https://registration2018.pseb.ac.in/upload/upload2018/" + Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString(); }
+
+                                NewValue = "https://registration2018.pseb.ac.in" + Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                            }
+                            else
+                            {
+                                OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                NewValue = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                            }
+
+                            var Remarks = Model.StoreAllData.Tables[0].Rows[i]["Remarks"].ToString();
+                            var FirmUser = Model.StoreAllData.Tables[0].Rows[i]["FirmUser"].ToString();
+                            var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                            var FeeStatus = Model.StoreAllData.Tables[0].Rows[i]["FeeStatus"].ToString();
+                            var FeeDetails = Model.StoreAllData.Tables[0].Rows[i]["FeeDetails"].ToString();
+                            var FirmCorrectionLot = Model.StoreAllData.Tables[0].Rows[i]["FirmCorrectionLot"].ToString();
+                            var StatusUpdatedBy = Model.StoreAllData.Tables[0].Rows[i]["StatusUpdatedBy"].ToString();
+
+                            Count = Count + 1;
+
+                            @*<tr class="@(CorrectionType == "PARTICULAR" ? "success" : "info")">*@
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @CorPanel
+                                </td>
+                                <td>
+                                    @Schl
+                                </td>
+                                <td>
+                                    @Class
+                                </td>
+                                <td>
+                                    @Std_id
+                                </td>
+                                <td>
+                                    @CorrectionType
+                                </td>
+                                <td>
+                                    @CorrectionLot
+                                </td>
+                                <td>
+                                    @CorrectionFinalSubmitDt
+                                </td>
+                                @if (@CorrectionType == "Sign" || @CorrectionType == "Photo")
+                                {
+                                    <td>
+                                        <img src="@OldValue" class="" style="max-width:30%" alt="Photo" id="OldValuePS" />
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="kdsfont">
+                                        @OldValue
+                                    </td>
+                                }
+                                @if (@CorrectionType == "Sign" || @CorrectionType == "Photo")
+                                {
+                                    <td>
+                                        <img src="@NewValue" class="" style="max-width:30%" alt="Photo" id="NewValuePS" />
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="kdsfont">
+                                        @NewValue
+                                    </td>
+                                }
+
+                                <td>
+                                       @if (FeeStatus == "1")
+                                       {
+                                           <span>@FeeDetails</span>
+                                       }
+                                    </td>
+                                <td>
+                                    @if (@Status == "")
+                                    {
+                                        <img src="../../Images/Pending.png" alt="Status is Pending For Verification" title="Status is Pending For Verification" />
+                                    }
+                                    else if (@Status == "Y")
+                                    {
+                                        <img src="../../Images/Apply.png" alt="Correction Verified." title="Correction Verified." />
+                                        <br />@StatusUpdatedBy
+                                                    }
+                                    else if (@Status == "N")
+                                    {
+                                        <img src="../../Images/Delete.png" alt="Correction Rejected." title="Rejected Reason : @Remarks" />
+                                        <br />@StatusUpdatedBy
+                                @*<p class="rqf">@Remarks</p>*@
+                                            }
+
+                                </td>
+                                <td>
+                                    @{
+                                        if (FirmCorrectionLot == "")
+                                        {
+                                            <input type="checkbox" id="cb-@CorrectioId" class="checkboxY" name="AllChkId" value="@CorrectioId" /> @Html.Raw("Remove")
+                                        }
+                                        else
+                                        {
+                                            <div style="color:forestgreen"><b>Final Submitted</b></div>
+                                        }
+
+                                    }
+                                </td>
+
+                            </tr>
+                            //.... Pagin start
+                            if (d == ViewBag.TotalCountP)
+                            {
+                                <tr>
+                                    <td colspan="12">
+
+                                        Page @ViewBag.pagesize of @ViewBag.pn
+
+                                        &nbsp;
+
+                                        @if (ViewBag.pagesize == 1)
+
+                                        {
+                                            @:<<
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "FirmSchoolCorrectionUpdated", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "FirmSchoolCorrectionUpdated", new { page = ViewBag.pn })
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                            @Html.ActionLink("<<", "FirmSchoolCorrectionUpdated", new { page = 1 })
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @Html.ActionLink("< Prev", "FirmSchoolCorrectionUpdated", new { page = ViewBag.pagesize - 1 })
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "FirmSchoolCorrectionUpdated", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "FirmSchoolCorrectionUpdated", new { page = ViewBag.pn })
+                                            }
+
+                                        }
+
+
+                                    </td>
+                                </tr>
+                            }
+
+                            //... Paging end
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="11">
+                                <p class="rqf">Record Not Found</p>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+@*<div class="col-md-12">
+        <div class="table-responsive text-center">
+
+            <a href="/Admin/FirmSchoolCorrection" class="btn"  title="Go for Home Page">Home</a>
+
+        </div>
+    </div>*@
+<div class="loading" align="center">
+    Working... Please wait.<br />
+    <br />
+    <img src="../../images/loadingAnim.gif" />
+
+
+
+
+
+    <script>
+        jQuery(document).ready(function () {
+            jQuery('[data-confirm]').click(function (e) {
+                if (!confirm(jQuery(this).attr("data-confirm"))) {
+                    e.preventDefault();
+                }
+                else {
+                    //valFormAmount();
+                    window.location.href = '/Admin/FirmSchoolCorrectionFinalSubmit/FinalSubmit';
+                }
+            });
+        });
+
+    </script>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            // alert("ready");
+            $('.checkboxY').change(function () { //".checkbox" change
+                if (this.checked == false) { //if this item is unchecked
+                    $("#selectallY")[0].checked = false; //change "select all" checked status to false
+
+                }
+            });
+
+
+            $("#selectallY").change(function () {
+                var status = this.checked; // "select all" checked status
+                var j = 0
+                $('.checkboxY').each(function () {
+                    $("input[name='AllChkId']")[j].checked = status;
+                    j++;
+
+                });
+            });
+
+            //Start Save Data
+            $("#btnsave").click(function () {
+                var isvalid = true;
+                if (isvalid == true) {
+                    var chkdee = "";
+                    var storeid = "";
+                    var pageid = "";
+                    var storeid1 = "";
+                    var storechkid = "";
+                    var storescid = "";
+                    $('.checkboxY').each(function () {
+                        var id = this.id;
+                        var val = this.value;
+                        var arr = [];
+                        arr = id;
+                        var arrid = "";
+                        var arrcast = "";
+                        var j = 0;
+                        if (this.checked) {
+                            storeid += val + ",";
+                        }
+                    });
+
+                    if (storeid == "") {
+                        alert("Please Select Atleast 1 Record .");
+                    }
+
+                    else {
+                        $('#divMain1').hide();
+                        $('#loading1').html("<p><img src='https://registration2018.pseb.ac.in/images/loadingk.gif'></p>");
+                        $.post("/Admin/CorrLotAcceptReject", { "correctionType": "", "correctionLot": "", "acceptid": "", "rejectid": "", "removeid": storeid.slice(0, -1), "remarksid": "" },
+                            function (data) {
+                                $('#loading1').empty();
+                                // alert('data.status  = ' + data.status);
+                                if (data.status == "1") {
+                                    alert("Removed Successfully");
+                                    window.location.href = '/Admin/FirmSchoolCorrectionUpdated';
+                                }
+                                else {
+                                    alert("Failure, Please Try Again.");
+                                }
+                            });
+                    }
+                }// if true close
+            });
+
+            //End  Save Data
+
+        });
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            //$('#FeeType').val(1);
+
+
+            $("#CorrectionRecieptDate").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0',
+                //maxDate: '10/08/2016',
+                yearRange: '2020:' + (new Date().getFullYear())
+
+            });
+
+        });
+
+        function GetSelectStatus(selNum1) {
+            //  alert(1);
+            var selectedText = selNum1.options[selNum1.selectedIndex].innerHTML;
+            var value = selNum1.value;
+            //  alert('value: ' + value);
+            if (value == 1) {
+                //$('#divfee').show();
+                //$('#divfee1').hide();
+            }
+            else {
+                //$('#divfee1').show();
+                //$('#divfee').hide();
+            }
+        }
+
+
+        function valFormAmount() {
+            var CorrectionRecieptNo = document.getElementById("CorrectionRecieptNo");
+            if (CorrectionRecieptNo.value == "" || CorrectionRecieptNo.value == "0") {
+                alert("Enter Correction Reciept No");
+                CorrectionRecieptNo.focus();
+                return false;
+            }
+            if (document.getElementById("CorrectionRecieptDate").value == '' || document.getElementById("CorrectionRecieptDate").value == null) {
+                alert('Enter Reciept Date.');
+                document.getElementById("CorrectionRecieptDate").focus();
+                return false;
+            }
+
+            var CorrectionNoCapproved = document.getElementById("CorrectionNoCapproved");
+            if (CorrectionNoCapproved.value == "" || CorrectionNoCapproved.value == "0") {
+                alert("Enter Correction No approved");
+                CorrectionNoCapproved.focus();
+                return false;
+            }
+            var CorrectionAmount = document.getElementById("CorrectionAmount");
+            if (CorrectionAmount.value == "" || CorrectionAmount.value == "0") {
+                alert("Enter Correction Amount");
+                CorrectionAmount.focus();
+                return false;
+            }
+
+        }
+        function valForm() {
+            //var SchlList = document.getElementById("CorrectionType");
+            //if (SchlList.value == "" || SchlList.value == "0") {
+            //    alert("Select Correction Type");
+            //    SchlList.focus();
+            //    return false;
+            //}
+            var Schlcode = document.getElementById("CorrectionLot");
+            if (Schlcode.value == "" || Schlcode.value == "0") {
+                alert("Enter Correction Lot");
+                Schlcode.focus();
+                return false;
+            }
+        }
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+                return true;
+            }
+            else {
+                alert("Invalid character...Enter Only Number!!");
+                return false;
+            }
+        }
+
+        function validateNumber(event) {
+            var key = window.event ? event.keyCode : event.which;
+            // var c = $("#mobile").val();
+            if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 37 || event.keyCode === 39) {
+                return true;
+            }
+            if (key < 48 || key > 57) {
+                return false;
+            }
+            //if (c.length > 9) {
+            //    return false;
+            //}
+            else return true;
+        }
+    </script>
+

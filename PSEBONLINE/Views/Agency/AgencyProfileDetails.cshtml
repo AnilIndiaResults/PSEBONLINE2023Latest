@@ -1,0 +1,168 @@
+﻿@model PSEBONLINE.Models.TblNsqfMaster
+@{
+    Layout = "~/Views/Shared/_AgencyLayout.cshtml";
+    //Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<h1>Agency Profile</h1>
+@using (Html.BeginForm("AgencyProfileDetails", "Agency", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-6"><h2 class="rqf">User Name: @Model.AgCode</h2></div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Agency Name <span class="redc">*</span> @Html.TextBoxFor(m => m.AgencyNM, new { @maxlength = "50" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Email ID <span class="redc">*</span> @Html.TextBoxFor(m => m.AgencyEmail, new { @maxlength = "50" })</div>
+        <div class="col-md-4">Mobile No.<span class="redc">*</span> @Html.TextBoxFor(m => m.AgencyMob, new { @maxlength = "10", onkeypress = "return isNumberKey(event);" })</div>
+
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 1 <span class="redc">*</span> @Html.TextBoxFor(m => m.PNAME1, new { id = "PNAME1", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 1 <span class="redc">*</span>@Html.DropDownListFor(m => m.PDESI1, new SelectList(ViewBag.PDList, "Value", "Text"), "--Select Designation One---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No. 1 <span class="redc">*</span> @Html.TextBoxFor(m => m.PMOBILE1, new { id = "PMOBILE1", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 2 @Html.TextBoxFor(m => m.PNAME2, new { id = "PNAME2", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 2 @Html.DropDownListFor(m => m.PDESI2, new SelectList(ViewBag.PDList, "Value", "Text"), "--Select Designation Two---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No. 2 @Html.TextBoxFor(m => m.PMOBILE2, new { id = "PMOBILE2", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 3 @Html.TextBoxFor(m => m.PNAME3, new { id = "PNAME3", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 3 @Html.DropDownListFor(m => m.PDESI3, new SelectList(ViewBag.PDList, "Value", "Text"), "--Select Designation Three---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No.3 @Html.TextBoxFor(m => m.PMOBILE3, new { id = "PMOBILE3", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 4 @Html.TextBoxFor(m => m.PNAME4, new { id = "PNAME4", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 4 @Html.DropDownListFor(m => m.PDESI4, new SelectList(ViewBag.PDList, "Value", "Text"), "--Select Designation Four---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No. 4 @Html.TextBoxFor(m => m.PMOBILE4, new { id = "PMOBILE4", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 5 @Html.TextBoxFor(m => m.PNAME5, new { id = "PNAME5", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 5 @Html.DropDownListFor(m => m.PDESI5, new SelectList(ViewBag.PDList, "Value", "Text"), "--Select Designation Five---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No. 5 @Html.TextBoxFor(m => m.PMOBILE5, new { id = "PMOBILE5", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-center tbp">
+            @Html.HiddenFor(m => m.AgencyId)
+            @Html.HiddenFor(m => m.AgCode)
+            @Html.HiddenFor(m => m.PWD)
+            @Html.HiddenFor(m => m.Sector)
+            <input type="submit" value="Update & Next" onclick="return valForm();" />
+            <input type="button" value="Back" onclick="history.go(-1);" />
+        </div>
+    </div>
+}
+@{
+    if (TempData["resultProfile"] != null)
+    {
+        if (TempData["resultProfile"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Updated Successfully");
+                window.location.href = '@Url.Action("Welcome", "Agency")';
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Data not saved..plz try again");
+            </script>
+        }
+    }
+}
+<script type="text/javascript">
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+<script type="text/javascript">
+    function valForm()
+    {
+        var AgencyNM = document.getElementById("AgencyNM");
+        var Emailid = document.getElementById("AgencyEmail");
+        var mob = document.getElementById("AgencyMob");
+
+        var PNAME1 = document.getElementById("PNAME1");
+        var PDESI1 = document.getElementById("PDESI1");
+        var PMOBILE1 = document.getElementById("PMOBILE1");
+
+        if (AgencyNM.value == "") {
+            alert("Enter Agency Name ");
+            AgencyNM.focus();
+            return false;
+        }
+
+        var landLine = "^[0-9]\d{2,4}-\d{6,8}$";
+
+        if (Emailid.value == "") {
+            alert("Enter your EmailID ");
+            Emailid.focus();
+            return false;
+        }
+        if (!ValidateEmail($("#mailid").val())) {
+            alert("Enter valid Email Address!");
+            Emailid.focus();
+            return false;
+        }
+        if (mob.value == "") {
+            alert("Enter Mobile Number");
+            mob.focus();
+            return false;
+        }
+        if (mob.value != "") {
+            if (mob.value.length != 10) {
+
+                alert("Please Enter 10 digits Mobile Number");
+                mob.focus();
+                return false;
+            }
+            else {
+                var Number = document.getElementById('Mobile').value;
+                var IndNum = /^[0]?[789]\d{9}$/;
+
+                if (!IndNum.test(Number)) {
+                    alert("invalid Number");
+                    mob.focus();
+                    return false;
+                }
+
+            }
+        }
+
+        if (PNAME1.value == "") {
+            alert("Please Enter Other Person Name 1");
+            PNAME1.focus();
+            return false;
+        }
+        if (PDESI1.value == "") {
+            alert("Please Enter Designation 1 ");
+            PDESI1.focus();
+            return false;
+        }
+        if (PMOBILE1.value == "") {
+            alert("Please Enter Mobile no. 1 ");
+            PMOBILE1.focus();
+            return false;
+        }
+        return true;
+    }
+
+    //function ValidateEmail(emailID) {
+    //    var expr = /[A-Z0-9._%+-]@@[A-Z0-9.-]+\.[A-Z]{2,4}/igm;;
+    //    return expr.test(emailID);
+    //}
+
+</script>

@@ -1,0 +1,309 @@
+﻿@model PSEBONLINE.Models.CircularModels
+
+@{
+    ViewBag.Title = "Circular";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<style type="text/css">
+    input[type="text"]{text-transform: none !important;}
+</style>
+
+@using (Html.BeginForm("Circular", "Admin", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <h2>Circulars & Marquee of School login <a href="/Admin/ViewCircular" class="btn">View Circular</a>  </h2>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr>
+                        <td>Choose Category<span class="rqf">*</span></td>
+                        <td colspan="2">
+                            @Html.RadioButtonFor(m => m.Category, "Marquee", new { id = "Marquee" })<content>Marquee</content>
+                            @Html.RadioButtonFor(m => m.Category, "Circulars", new { id = "Circulars" })<content>Circulars</content>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Title <span class="rqf">*</span></td>
+                        <td width="60%">
+                            @Html.TextBoxFor(m => m.Title, new { id = "Title", @maxlength = "250" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Attachment</td>
+                        <td width="60%">
+                            @Html.TextBoxFor(m => m.file, new { id = "file", type = "file" })
+                            @Html.HiddenFor(m => m.Attachment)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align:center">OR</td>
+                    </tr>
+                    <tr>
+                        <td>Link</td>
+                        <td width="60%">
+                            @Html.TextBoxFor(m => m.UrlLink, new { id = "UrlLink" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Upload Date<span class="rqf">*</span></td>
+                        <td colspan="2">
+                            @Html.TextBoxFor(m => m.UploadDate, new
+                       {
+                           id = "UploadDate",
+                           @class = "date",
+                           @maxlength = "10",
+                           onpaste = "return false;",
+                           oncopy = "return false;",
+                           oncut = "return false;",
+                           @readonly = "readonly",
+						   @autocomplete="off"
+                       })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Expiry Date<span class="rqf">*</span></td>
+                        <td colspan="2">
+                            @Html.TextBoxFor(m => m.ExpiryDate, new
+                       {
+                           id = "ExpiryDate",
+                           @class = "date",
+                           @maxlength = "10",
+                           onpaste = "return false;",
+                           oncopy = "return false;",
+                           oncut = "return false;",
+                           // onkeypress = "javascript: return false;",
+                           @readonly = "readonly",
+						   @autocomplete="off"
+                       })
+                        </td>
+                    </tr>
+
+
+
+                    <tr>
+                        <td>Active/InActive<span class="rqf">*</span></td>
+                        <td colspan="2">
+                            @Html.RadioButtonFor(m => m.IsActive, "1", new { id = "Active", @checked = "checked" })<content>Active</content>
+                            @Html.RadioButtonFor(m => m.IsActive, "0", new { id = "InActive" })<content>De-Active</content>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> <h4>Access Right on</h4></td>
+                        <td colspan="2">
+
+                            @{
+                                if (Model != null && Model.CircularTypeMasterList.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.CircularTypeMasterList.Count; i++)
+                                    {
+                                        @Html.HiddenFor(m => Model.CircularTypeMasterList[i].Id);
+                                        @Html.HiddenFor(m => Model.CircularTypeMasterList[i].CircularType);
+                                        @Html.CheckBoxFor(m => Model.CircularTypeMasterList[i].IsSelected); @Model.CircularTypeMasterList[i].CircularType<span>&nbsp;&nbsp;&nbsp;</span>
+
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Enter Remarks<span class="rqf">*</span></td>
+                        <td colspan="2">
+                            @Html.TextBoxFor(m => m.CircularRemarks, new{@maxlength = "200",})
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td></td>
+                        <td colspan="3">
+                            <input type="submit" value="Submit" name="cmd" onclick="return valForm();" /> &nbsp;&nbsp;&nbsp;<a href="/Admin/Circular" class="btn">Reset</a>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Circular Saved Successfully");
+                window.location.href = '/Admin/ViewCircular';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Circular Updated Successfully");
+                window.location.href = '/Admin/ViewCircular';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Circular not saved..plz try again");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Circular Already Exist");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "20")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Select Only 1 Either File or Url Link");
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Circular not saved..plz try again");
+            </script>
+        }
+    }
+}
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(".date").datepicker({
+            dateFormat: "mm/dd/yy",
+            changeMonth: true,
+            changeYear: true,
+           yearRange: '2021:' + (new Date().getFullYear())
+        });
+    });
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(pdf|jpg|jpeg|png)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select only pdf,jpg,jpeg,png file format');
+            }
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+
+    function valFile() {
+        var file = document.getElementById("file");
+        if (file.value == "") {
+            alert("Please Select file");
+            file.focus();
+            return false;
+        }
+    }
+
+
+    function valForm() {
+       // alert("ViewBag.Id  : " + '@ViewBag.Id');
+        var Circulars = document.getElementById("Circulars").checked;
+        var Marque = document.getElementById("Marquee").checked;
+        if (Circulars == false && Marque == false) {
+            alert("Please Select Category");
+            return false;
+        }
+
+        var Title = document.getElementById("Title");
+        if (Title.value == "") {
+            alert("Please Enter Title");
+            Title.focus();
+            return false;
+        }     
+
+        var file1 = document.getElementById("file");
+       // alert("file1  : " + file1.value);
+        var UrlLink = document.getElementById("UrlLink");
+      //  alert("UrlLink  : " + UrlLink.value);
+
+        if (file1.value == "" && UrlLink.value == "" && Circulars == true && '@ViewBag.Id' == 0) {
+            alert("Select Atleast 1 Either File or Url Link");
+            UrlLink.focus();
+            return false;
+        }
+        if (file1.value != "" && UrlLink.value != "" && Circulars == true && '@ViewBag.Id' == 0) {
+            alert("Select Only 1 Either File or Url Link");
+            UrlLink.focus();
+            return false;
+        }
+
+        var UploadDate = document.getElementById("UploadDate");
+        if (UploadDate.value == "" || UploadDate.value == "0") {
+            alert("Please Select Upload Date");
+            UploadDate.focus();
+            return false;
+        }
+
+        var ExpiryDate = document.getElementById("ExpiryDate");
+        if (ExpiryDate.value == "" || ExpiryDate.value == "0") {
+            alert("Please Select ExpiryDate");
+            ExpiryDate.focus();
+            return false;
+        }
+
+       
+        var CircularRemarks = document.getElementById("CircularRemarks");
+        if (CircularRemarks.value == "") {
+            alert("Enter Circular Remarks");
+            CircularRemarks.focus();
+            return false;
+        }
+
+
+
+      
+
+        var Active = document.getElementById("Active").checked;
+        var InActive = document.getElementById("InActive").checked;
+        if (Active == false && InActive == false) {
+            alert("Please Select Active/De-Active");
+            return false;
+        }
+
+        return true;
+    }
+
+</script>

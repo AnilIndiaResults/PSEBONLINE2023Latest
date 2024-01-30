@@ -1,0 +1,238 @@
+﻿
+
+@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "Theory Marks Status Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+
+<style type="text/css">
+    body, td {
+        font-size: 13px
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
+<h1>Theory Marks Status Report</h1>
+<div id="loading"></div>
+@{
+    
+       
+        <div class="col-md-12 noprint">
+            @using (Html.BeginForm("TheoryMarksStatusReport", "Report", FormMethod.Post, new { id = "myform", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("Filevalue", "CENT")
+                <div class="row">
+                    <div class="col-md-4">
+                        Select Report @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem1", required = "required", @onchange = "OnChangeReportType(this)" })
+                    </div>
+                    <div class="col-md-3">
+                        Select Class @Html.DropDownList("SelClass", new SelectList(ViewBag.Mycls, "Value", "Text", ViewBag.Selectedcls), "--Select---", new { @class = "", id = "SelClass", required = "required" })
+                    </div>
+                    <div class="col-md-5">
+                        <br />
+                        <input type="submit" name="submit" value="Submit" id="btnSubmit" />
+                        <input type="submit" name="submit" value="Export To Excel" />
+                        <input type="button" value="Back" class="btn" onclick="history.go(-1)" />
+                    </div>
+                </div>
+            }
+        </div>
+
+        <table style="width:100%;" border="0" class="bgimg">
+            <tr>
+                <td>
+                    <table style="width:100%;" border="0" class="noprint">
+                        <tr>
+                            <td style="text-align:right;padding-bottom:3px">
+                                @if (ViewBag.TotalCount > 0)
+                                {
+                                    <span>Total :</span> @ViewBag.TotalCount
+                                    <input type="button" value="Print" class="btn" onclick="window.print()" />
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <table style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px" border="1" class="brack">
+                        <thead>
+                            @if (ViewBag.SelectedItem == "0" || ViewBag.SelectedItem == "1")
+                            {
+                                <tr>
+                                    <td width="15%"><div class="kds-plogo"><img src="/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                                    <td width="75%" style="font-size:16px;text-align:center;line-height:25px;" colspan="6">
+                                        @if (ViewBag.SelectedItem == "0" || ViewBag.SelectedItem == "1")
+                                        {<span style="font-size:22px;">Punjab School Education Board</span><br /><span>
+                                                Subject Wise Marks Entry Status of  @if (ViewBag.Selectedcls == "8")
+                                                {<span>Middle</span>}
+                                                else
+                                                {<span>Primary</span>} Class, March 2023
+                                            </span>}
+                                    </td>
+                                    <td width="10%" align="right">
+                                        Print Date: @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")<br />
+                                    </td>
+                                </tr>
+                            }
+                            else if (ViewBag.SelectedItem == "2")
+                            {
+                                <tr>
+                                    <td width="15%"><div class="kds-plogo"><img src="/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                                    <td width="70%" style="font-size:16px;text-align:center;line-height:25px;" colspan="6">
+                                        <span style="font-size:22px;">Punjab School Education Board</span><br /><span>
+                                            Overall Marks Entry Status of @if (ViewBag.Selectedcls == "8")
+                                            {<span>Middle</span>}
+                                            else
+                                            {<span>Primary</span>} Class, March 2022
+                                        </span>
+                                    </td>
+                                    <td width="15%" align="right">
+                                        Print Date: @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")<br />@*FINAL SBMITTED ON :*@
+                                    </td>
+                                </tr>
+                            }
+
+
+
+
+                            @if (ViewBag.SelectedItem == "0" || ViewBag.SelectedItem == "1")
+                            {
+                                <tr style="background-color:#ccc!important;font-size:14px">
+                                    <td width="10%">Subject Code</td>
+                                    <td width="20%">Subject Name</td>
+                                    <td width="10%">Total</td>
+                                    <td width="10%">Marks Entered</td>
+                                    <td width="10%">Pending Marks Entry</td>
+                                    <td width="10%">Final Submitted</td>
+                                    <td width="10%">Marks Entry %</td>
+                                    <td width="10%">Final Submission %</td>
+
+                                </tr>
+                            }
+                            else if (ViewBag.SelectedItem == "2")
+                            {
+                                <tr style="background-color:#ccc!important;font-size:14px">
+                                    <td width="15%">Total Answer Sheets</td>
+                                    <td width="15%">Marks Entered</td>
+                                    <td width="20%" colspan="2">Pending Marks Entry</td>
+                                    <td width="15%">Final Submitted</td>
+                                    <td width="15%">Marks Entry %</td>
+                                    <td width="20%" colspan="2">Final Submission %</td>
+                                </tr>
+                            }
+                        </thead>
+                        <tbody>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    int d = 0;
+
+                                    if (ViewBag.SelectedItem == "0" || ViewBag.SelectedItem == "1")
+                                    {
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            d = d + 1;
+                                            var SUB = Model.StoreAllData.Tables[0].Rows[i]["SUB"].ToString();
+                                            var SUBNM = Model.StoreAllData.Tables[0].Rows[i]["SUBNM"].ToString();
+                                            var NOC = Model.StoreAllData.Tables[0].Rows[i]["NOC"].ToString();
+                                            var NOCM = Model.StoreAllData.Tables[0].Rows[i]["NOCM"].ToString();
+                                            var NOCP = Model.StoreAllData.Tables[0].Rows[i]["NOCP"].ToString();
+                                            var NOCF = Model.StoreAllData.Tables[0].Rows[i]["NOCF"].ToString();
+                                            var NOCM_Percentage = Model.StoreAllData.Tables[0].Rows[i]["NOCM_Percentage"].ToString();
+                                            var NOCP_Percentage = Model.StoreAllData.Tables[0].Rows[i]["NOCP_Percentage"].ToString();
+                                            var NOCF_Percentage = Model.StoreAllData.Tables[0].Rows[i]["NOCF_Percentage"].ToString();
+                                            <tr>
+
+                                                <td>@SUB</td>
+                                                <td>@SUBNM</td>
+                                                <td>@NOC</td>
+                                                <td>@NOCM</td>
+                                                <td>@NOCP</td>
+                                                <td>@NOCF</td>
+                                                <td>@NOCM_Percentage</td>
+                                                <td>@NOCF_Percentage</td>
+
+                                            </tr>
+                                        }
+                                    }
+                                    else if (ViewBag.SelectedItem == "2")
+                                    {
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            d = d + 1;
+
+                                            var NOC = Model.StoreAllData.Tables[0].Rows[i]["NOC"].ToString();
+                                            var NOCM = Model.StoreAllData.Tables[0].Rows[i]["NOCM"].ToString();
+                                            var NOCP = Model.StoreAllData.Tables[0].Rows[i]["NOCP"].ToString();
+                                            var NOCF = Model.StoreAllData.Tables[0].Rows[i]["NOCF"].ToString();
+                                            var NOCM_Percentage = Model.StoreAllData.Tables[0].Rows[i]["NOCM_Percentage"].ToString();
+                                            var NOCP_Percentage = Model.StoreAllData.Tables[0].Rows[i]["NOCP_Percentage"].ToString();
+                                            var NOCF_Percentage = Model.StoreAllData.Tables[0].Rows[i]["NOCF_Percentage"].ToString();
+                                            <tr>
+
+                                                <td>@NOC</td>
+                                                <td>@NOCM</td>
+                                                <td colspan="2">@NOCP</td>
+                                                <td>@NOCF</td>
+                                                <td>@NOCM_Percentage</td>
+                                                <td colspan="2">@NOCF_Percentage</td>
+
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    <tr><td colspan="5">Record Not Found</td></tr>
+                                }
+
+                            }
+
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+   
+}
+
+
+
+<script type="text/javascript">
+
+    $("#btnSubmit").click(function (e) {
+        $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+    });
+
+    $(document).ready(function () {
+        var value = document.getElementById("SelectItem1").value;
+        if (value == 1 || value == 3 || value == 4 || value == 0 || value == "") {
+            $('#divdist').hide();
+        }
+        else {
+            $('#divdist').show();
+        }
+
+    });
+
+    function OnChangeReportType(selNum1) {
+        var selectedText = selNum1.options[selNum1.selectedIndex].innerHTML;
+        var value = selNum1.value;
+        $('#SelClass').val("");
+        $('#SelDist').val("");
+
+        if (value == 1 || value == 3 || value == 4 || value == 0 || value == "") {
+            $('#divdist').hide();
+        }
+        else {
+            $('#divdist').show();
+        }
+    }
+
+
+</script>

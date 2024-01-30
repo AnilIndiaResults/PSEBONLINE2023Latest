@@ -1,0 +1,200 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "View Practical Exam Rough Report";
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 11px
+    }
+</style>
+@{
+    if (ViewBag.TotalCount > 0)
+    {
+<table style="width:100%;" border="0" class="bgimg">
+    <tr>
+        <td>
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        <input type="button" value="Print" class="btn" onclick="window.print()" />
+                        <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("PracticalExamMarks", "School")'" />
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td align="center">
+            <table border="0" style="width:98%;" align="center" class="brack">
+                <thead>
+                    <tr>
+                        <td width="25%"><img src="~/Images/Printlogo.jpg" alt="PSEB" /></td>
+                        <td width="50%" style="font-size:16px;text-align:center;line-height:24px;">
+                            <span style="font-size:22px;">Punjab School Education Board</span><br />Award of Practical Marks, Exam March 2023 (Rough Report)
+                        </td>
+                        <td width="25%" align="right">
+                            Print Date: @DateTime.Now.ToString("dd/MM/yyyy")<br />@*FINAL SBMITTED ON :*@
+                        </td>
+                    </tr>
+                    <tr style="background-color:#ccc!important;font-size:14px">
+                        <td align="left">
+                            Class:-  @if (ViewBag.Class == "2")
+                            { <span>Matric</span>}
+                            else
+                            {<span>Senior</span> }
+                        </td>
+                        <td align="center" colspan="2">
+                            Exam Type:-  @if (ViewBag.RP == "R")
+                            { <span>Regular</span>}
+                            else if (ViewBag.RP == "O")
+                            { <span>Open</span>}
+                            else if (ViewBag.RP == "P")
+                            {<span>Private</span> }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Centre Code & Name:  @ViewBag.CentreCode<span>&</span> @ViewBag.CentreName</td>                        
+                    </tr>
+                    <tr>
+                        <td colspan="2">Subject Code & Name: @ViewBag.SubCode<span>&</span> @ViewBag.SubName</td>
+                        <td align="right">Min/Max Marks: @ViewBag.PrMin<span>&</span> @ViewBag.PrMax</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            Note : This is rough print for checking / proof reading purpose only.
+                        </td>
+                    </tr>    
+                    <tr>
+                        <td colspan="3">
+                           <div class="lft-seca">
+                                                    <table width="98%" border="1" style="float:left">
+                                                            <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                                                <td width="10%">&nbsp;Sr</td>
+                                                                <td width="20%">&nbsp;StdId/RefNo</td>
+                                                                <td width="25%">&nbsp;Roll No</td>
+                                                                <td width="25%">&nbsp;Marks</td>
+                                                                <td width="20%">&nbsp;Date</td>
+                                                            </tr></table>
+                                 </div>
+                             <div class="rgt-seca">
+                                                    <table width="98%" border="1" style="float:right">
+                                                            <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                                                <td width="10%">&nbsp;Sr</td>
+                                                                <td width="20%">&nbsp;StdId/RefNo</td>
+                                                                <td width="25%">&nbsp;Roll No</td>
+                                                                <td width="25%">&nbsp;Marks</td>
+                                                                <td width="20%">&nbsp;Date</td>
+                                                            </tr>
+                                                            </table>
+                                 </div>
+                        </td>
+                    </tr> 
+                </thead>
+                <tbody>                                 
+                    <tr>
+                        <td colspan="3">
+                            @if (ViewBag.cid != "")
+                            {
+                                {
+                                    int columns = 2;
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        int d = 0;
+                                        int Count = 0;
+
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            int col = i % columns;
+                                            d = d + 1;
+                                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["Stdid"].ToString();
+                                            var Roll = Model.StoreAllData.Tables[0].Rows[i]["Roll"].ToString();
+                                            //var Regno = Model.StoreAllData.Tables[0].Rows[i]["Regno"].ToString();
+                                            //var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                            //var FName = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                                            //var MName = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+                                            //var SUB = Model.StoreAllData.Tables[0].Rows[i]["SUB"].ToString();
+                                            //var SUBABBR = Model.StoreAllData.Tables[0].Rows[i]["SUBABBR"].ToString();
+                                            var MARKS = Model.StoreAllData.Tables[0].Rows[i]["MARKS"].ToString();
+                                            //var prmin = Model.StoreAllData.Tables[0].Rows[i]["prmin"].ToString();
+                                            //var prmax = Model.StoreAllData.Tables[0].Rows[i]["prmax"].ToString();
+                                            //var Sub1 = SUBABBR + "-" + SUB;
+                                            //var Sub2 = prmax + "/" + prmin;
+                                            //var FullName = Name + "/" + FName + "/" + MName;
+                                            var PracDate = Model.StoreAllData.Tables[0].Rows[i]["PracDate"].ToString();
+                                            Count = Count + 1;
+
+                                            if (col == 0)
+                                            {
+                                                // left
+                                                <div class="lft-seca">
+                                                    <table width="98%" border="1" style="float:left">
+                                                        @*<thead>
+                                                            <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                                                <td width="5%">Sr</td>
+                                                                <td width="25%">StdId/RefNo</td>
+                                                                <td width="25%">Roll No</td>
+                                                                <td width="25%">Marks</td>
+                                                                <td width="20%">Date</td>
+                                                            </tr>
+                                                        </thead>*@
+                                                        <tr style="font-size:9px">
+                                                            <td width="10%">&nbsp;@Count</td>
+                                                            <td width="20%">&nbsp;@stdid</td>
+                                                            <td width="25%">&nbsp;@Roll</td>
+                                                            <td width="25%">&nbsp;@MARKS</td>
+                                                            <td width="20%">&nbsp;@PracDate</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            }
+                                            else  // col == 1
+                                            {
+                                                // right
+                                                <div class="rgt-seca">
+                                                    <table width="98%" border="1" style="float:right">
+                                                        @*<thead>
+                                                            <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                                                <td width="5%">Sr</td>
+                                                                <td width="25%">StdId/RefNo</td>
+                                                                <td width="25%">Roll No</td>
+                                                                <td width="25%">Marks</td>
+                                                                <td width="20%">Date</td>
+                                                            </tr>
+                                                        </thead>*@
+                                                        <tr style="font-size:9px">
+                                                            <td width="10%">&nbsp;@Count</td>
+                                                            <td width="20%">&nbsp;@stdid</td>
+                                                            <td width="25%">&nbsp;@Roll</td>
+                                                            <td width="25%">&nbsp;@MARKS</td>
+                                                            <td width="20%">&nbsp;@PracDate</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            }
+
+
+                                        }
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+
+
+
+                </tbody>
+            </table>
+
+        </td>
+    </tr>
+
+
+</table>
+                                        }
+                                        else
+                                        { <p class="rqf" style="font-size:14px;text-align:center;">After entering the marks, you can view the rough report</p> }
+}

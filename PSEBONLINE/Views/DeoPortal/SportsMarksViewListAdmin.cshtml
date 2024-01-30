@@ -1,0 +1,376 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    ViewBag.Title = "DD Sports Marks View List";
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+<h1>Admin Sports Marks Entry View List </h1>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+@using (Html.BeginForm("SportsMarksViewListAdmin", "DeoPortal", FormMethod.Post, new { id = "CCE", enctype = "multipart/form-data" }))
+{
+    <fieldset style="margin-bottom:15px">
+        <legend>Search</legend>
+        <form id="myForm">
+            <div class="clearefix"></div>
+            <div class="row">               
+                @*<div class="col-md-2">
+                    Roll No @Html.TextBoxFor(m => m.RollNo, new { id = "RollNo", onkeypress = "return isNumberKey(event);", @maxlength = "15", required = "required" })
+                    <span id="reqSchlCode" style="color:red;display:none;">Enter Roll No</span>
+                </div>*@
+                @*<div class="col-md-2">
+                    Select Action @Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), "--Select---", new { @class = "" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+                </div>*@                                             
+                <div class="col-md-5">
+                    <br />
+                    @*<input type="submit" value="Search" onclick="return dee();" />*@
+                    @*@Html.Hidden("RollNo", (string)ViewBag.RollNo)*@
+                    <a href="/DeoPortal/DeoHome" class="btn">Back</a>                    
+                    @*<input type="submit" value="Final Submit" name="cmd" cmd="Final Submit"  onclick = "return confirm('Are you sure want to Final Submit This Record?');" />*@
+                    @*<input type="submit" value="Download Inserted Data" name="cmd" cmd="Download Inserted Data" />*@
+                </div>
+            </div>
+        </form>
+    </fieldset>
+
+    <div id="loading1"></div>
+    <div class="clearfix"></div>
+    <div class="row" id="divMain1">        
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th width="5%">S.No.</th>                                               
+                        <th width="5%">ROLL</th>                       
+                        <th width="15%">Name/Father's Name</th>   
+                        @*<th width="25%">SCHL NAME</th>                       
+                        <th width="8%">PRINCIPAL</th>                       
+                        <th width="5%">MOBILE</th>*@                                                                  
+                        @*<th width="5%">Result</th>*@
+                        <th width="5%">CERTIFICATE No</th>
+
+                        <th width="5%">Age Group</th>
+                        <th width="5%">Positions</th>
+                        <th width="5%">Category</th>
+                        
+                        <th width="15%">Action</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var ROLL = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                                var FullName = Candi_Name + "/ " + Father_Name;
+                                //var SCHLNME = Model.StoreAllData.Tables[0].Rows[i]["SCHLNME"].ToString();
+                                //var PRINCIPAL = Model.StoreAllData.Tables[0].Rows[i]["PRINCIPAL"].ToString();
+                                //var MOBILE = Model.StoreAllData.Tables[0].Rows[i]["MOBILE"].ToString();
+                                var Result = Model.StoreAllData.Tables[0].Rows[i]["Resultdtl"].ToString();
+                                var FS = Model.StoreAllData.Tables[0].Rows[i]["reclock"].ToString();
+                                var crtno = Model.StoreAllData.Tables[0].Rows[i]["crtno"].ToString();
+                                var AgeGroup = Model.StoreAllData.Tables[0].Rows[i]["AgeGroup"].ToString();
+                                var Positions = Model.StoreAllData.Tables[0].Rows[i]["Positions"].ToString();
+                                var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+                                //totmarks,obtmarks,Result
+
+                                Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        @Count
+                                    </td>                                  
+                                    <td>
+                                        @ROLL
+                                    </td>                                    
+                                    <td>
+                                        @FullName
+                                    </td>
+                                    @*<td>
+                                        @SCHLNME
+                                    </td>
+                                    <td>
+                                        @PRINCIPAL
+                                    </td>
+                                    <td>
+                                        @MOBILE
+                                    </td>*@
+                                    <td>
+                                        @crtno
+                                    </td>
+                                    <td>
+                                        @AgeGroup
+                                    </td>
+                                    <td>
+                                        @Positions
+                                    </td>
+                                    <td>
+                                        @CCODE
+                                    </td>
+                                    @*<td>
+                                        @Result
+                                    </td>*@
+                                    <td>                                        
+                                        @if (FS == "1")
+                                        {
+                                            <button type="button" class="">Return to Check</button>
+                                            <button type="button" class="" data-toggle="modal" data-target="#myModal1-@ROLL">View Data</button>
+                                        }
+                                        else if (FS == "2")
+                                        {
+                                            @*<button type="button" class="">Submitted</button>*@
+                                            <button type="button" class="" data-toggle="modal" data-target="#myModal1-@ROLL">View Data</button>
+                                        }
+                                        @*else
+                                        {
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@ROLL">View and Enter Sport Details</button>
+                                        }*@
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+                        if (Model != null)
+                        {
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                var rollNo = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                                var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+
+                                var ccode = Model.StoreAllData.Tables[0].Rows[i]["ccode"].ToString();
+                                var CrtNo = Model.StoreAllData.Tables[0].Rows[i]["CrtNo"].ToString();
+                                var AgeGroup = Model.StoreAllData.Tables[0].Rows[i]["AgeGroup"].ToString();
+                                var Session = Model.StoreAllData.Tables[0].Rows[i]["Session"].ToString();
+                                var Sess = Session;
+                                var Positions = Model.StoreAllData.Tables[0].Rows[i]["Positions"].ToString();
+
+                                var SportName = Model.StoreAllData.Tables[0].Rows[i]["SportName"].ToString();
+                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                                var FullName = Candi_Name + "/ " + Father_Name;
+                                var Result = Model.StoreAllData.Tables[0].Rows[i]["Result"].ToString();
+                                <div class="container">
+                                    <div class="modal fade" id="myModal1-@rollNo" role="dialog">
+                                        <div class="modal-dialog">
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Student Details Of @Html.Raw("&nbsp;&nbsp;") Roll No : @rollNo @Html.Raw("&nbsp;&nbsp;")</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <table width="100%">
+                                                        <tr>
+                                                            <td width="28%">Student Roll No.</td>
+                                                            <td>@Html.Raw("")@rollNo@Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Name/F.Name</td>
+                                                            <td>@Html.Raw("")@FullName@Html.Raw("")</td>
+                                                        </tr>
+                                                        @*<tr>
+                                                                <td>Enter Ref.No.</td>
+                                                                <td><input type="Text" id="refno-@rollNo" name="refno" maxlength="15" class="obt" value="@refno" />
+                                                                </td>
+                                                            </tr>*@
+                                                        <tr>
+                                                            <td>Category<span class="redc">*</span></td>
+                                                            <td>
+                                                                @{
+                                                                    List<SelectListItem> CGItem = new List<SelectListItem>();
+                                                                    CGItem.Add(new SelectListItem { Text = "---Select---", Value = "" });
+                                                                    CGItem.Add(new SelectListItem { Text = "A", Value = "A" });
+                                                                    CGItem.Add(new SelectListItem { Text = "B", Value = "B" });
+                                                                    CGItem.Add(new SelectListItem { Text = "C", Value = "C" });
+
+                                                                }
+                                                                @Html.DropDownList("ccode", new SelectList(CGItem, "Value", "Text", selectedValue: ccode), new { id = "ccode-" + rollNo })
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td>Age Group<span class="redc">*</span></td>
+                                                            <td>
+                                                                @{
+                                                                    List<SelectListItem> AGItem = new List<SelectListItem>();
+                                                                    AGItem.Add(new SelectListItem { Text = "---Select---", Value = "" });
+                                                                    AGItem.Add(new SelectListItem { Text = "Under 17 B", Value = "Under 17 B" });
+                                                                    AGItem.Add(new SelectListItem { Text = "Under 17 G", Value = "Under 17 G" });
+                                                                    AGItem.Add(new SelectListItem { Text = "Under 19 B", Value = "Under 19 B" });
+                                                                    AGItem.Add(new SelectListItem { Text = "Under 19 G", Value = "Under 19 G" });
+                                                                }
+                                                                @Html.DropDownList("AgeGroup", new SelectList(AGItem, "Value", "Text", selectedValue: AgeGroup), new { id = "AgeGroup-" + rollNo })
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Session<span class="redc">*</span></td>
+                                                            <td>
+                                                                @{
+                                                                    List<SelectListItem> SessionItem = new List<SelectListItem>();
+                                                                    //SessionItem.Add(new SelectListItem { Text = "---Select---", Value = "" });
+                                                                    //SessionItem.Add(new SelectListItem { Text = "2017-2018", Value = "2017-2018" });
+                                                                    //SessionItem.Add(new SelectListItem { Text = "2018-2019", Value = "2018-2019" });
+                                                                    SessionItem.Add(new SelectListItem { Text = "2019-2020", Value = "2019-2020" });
+                                                                }
+                                                                @Html.DropDownList("Session", new SelectList(SessionItem, "Value", "Text", selectedValue: Session), new { id = "Session-" + rollNo })
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Positions<span class="redc">*</span></td>
+                                                            <td>
+                                                                @{
+                                                                    List<SelectListItem> PosItem = new List<SelectListItem>();
+                                                                    PosItem.Add(new SelectListItem { Text = "---Select---", Value = "" });
+                                                                    PosItem.Add(new SelectListItem { Text = "1st", Value = "1st" });
+                                                                    PosItem.Add(new SelectListItem { Text = "2nd", Value = "2nd" });
+                                                                    PosItem.Add(new SelectListItem { Text = "3rd", Value = "3rd" });
+                                                                }
+                                                                @Html.DropDownList("Positions", new SelectList(PosItem, "Value", "Text", selectedValue: Positions), new { id = "Positions-" + rollNo })
+                                                            </td>
+                                                        </tr>
+
+
+                                                        <tr>
+                                                            <td>Select Sport<span class="redc">*</span></td>
+                                                            <td>@Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: SportName), "---Select---", new { @class = "target", id = "ResultList-" + rollNo })</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Certificate.No.<span class="redc"></span> </td>
+                                                            <td>
+                                                                <input type="Text" id="CrtNo-@rollNo" name="CrtNo" readonly="readonly" maxlength="16" class="obt" value="@CrtNo" />
+                                                            </td>
+                                                        </tr>
+                                                        @*<tr>
+                                                            <td></td>
+                                                            <td><input type="button" class="btn" value="Save" id="btnSave" onclick="SubMarks(@rollNo)" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <span class="rqf">
+                                                                    Instructions:<br />
+                                                                    1. All Fields are mandatory.<br />
+                                                                    2. Certificate No. should be equal 16 characters.<br />
+                                                                </span><br />
+                                                                <div id="loading1-@rollNo"></div>
+                                                            </td>
+                                                        </tr>*@
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                                                            }
+                                                                        }
+                                                                    }
+@{
+    if (TempData["result"] != null)
+    {
+        if (TempData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submitted Data Successfuly");
+                window.location.href = '@Url.Action("SportsMarksEntry", "DeoPortal")';
+            </script>
+        }
+        else if (TempData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data not saved..plz try again");
+            </script>
+            }
+        }
+    }
+
+<script type="text/javascript">
+    function SubMarks(k) {        
+
+        var refno = "";// $("#refno-" + k).val();
+        var selSport = $("#ResultList-" + k).val();
+        var CrtNo = $("#CrtNo-" + k).val();
+        var ccode = $("#ccode-" + k).val();
+        var AgeGroup = $("#AgeGroup-" + k).val();
+        var Session = $("#Session-" + k).val();
+        var Positions = $("#Positions-" + k).val();
+        //alert(CrtNo.length);
+        //alert(selSport);
+        //if (refno == '') { alert("Enter ref no."); refno.focus(); return false; } else
+        //if (CrtNo == '' || CrtNo.length<15) { alert("Enter Correct Certificate No."); CrtNo.focus(); return false; }
+        if (ccode == '') { alert("Select Category"); ccode.focus(); return false; }
+             else if (AgeGroup == '') { alert("Select Age Group ."); AgeGroup.focus(); return false; }
+             else if (Session == '') { alert("Select Session."); Session.focus(); return false; }
+             else if (Positions == '') { alert("Select Positions."); Positions.focus(); return false; }
+             else if (selSport == '') { alert("Select any Sport ."); selSport.focus(); return false; }
+        else {            
+            $('#loading1-' + k).html("<p><img src='http://registration.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/DeoPortal/UpdateMatricResult", { "refno": refno, "selSport": selSport, "roll": k, "ccode": ccode, "ag": AgeGroup, "ses": Session, "pos": Positions, },
+                      function (data) {
+                          $('#loading1-' + k).empty();
+                         // alert(data.sn); alert(data.chid);                         
+                          if (data.sn == "Yes" || data.chid > 1) {
+                              alert("Sport Data Saved Successfully of Student: " + k);
+                              //$('#myModal1-' + k)
+                          }
+                          else{
+                              alert("Save Failure, Please Try Again");
+                          }
+                          @*else {
+                              //window.location.href = '@Url.Action("SportsMarksEntry", "DeoPortal")';
+                              alert("Sport Details Inserted Successfully of Student : " + k);                            
+                          }*@
+                      });
+        }
+    }
+</script>
+<script type="text/javascript">
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function dee() {       
+        if ($("#RollNo").val() == "") {
+            $("#reqSchlCode").slideDown("slow");
+            return false;
+        }
+    }
+</script>
+
+

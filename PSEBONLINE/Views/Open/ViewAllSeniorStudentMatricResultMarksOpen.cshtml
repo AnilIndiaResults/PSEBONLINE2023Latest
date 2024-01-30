@@ -1,0 +1,326 @@
+﻿@model PSEBONLINE.Models.SeniorStudentMatricResultMarksViewsModelList
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style>
+    input:read-only {
+        background-color: #dddddd;
+        border: 1px solid #ccc;
+        cursor: not-allowed;
+        pointer-events: all !important;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<script type="text/javascript">
+    window.setInterval(function () {
+        var current = new Date();
+        var expiry = new Date("July 16, 2021 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideint').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideint').show();
+        }
+    }, 0);
+</script>
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<!-- #endregion -->
+<h1>Matriculation Marks of Open Senior Secondary Entry</h1>
+@if (Model.RegistrationSearchModel != null)
+{
+    <div class="row">
+        <div class="col-md-12" style="text-align:left;">
+            <h5 class="rqf">
+                NOTE:
+                ਇਸ ਪੋਰਟਲ ਅਧੀਨ ਸਿਰਫ ਉਹ ਪ੍ਰੀਖਿਆਰਥੀ ਦਿਖਣਗੇ, ਜਿੰਨ੍ਹਾਂ ਦੀ ਬਾਰਵੀਂ ਦੀ ਪ੍ਰੀਖਿਆ ਫੀਸ ਭਰੀ ਹੋਈ ਹੈ, ਰੋਲ ਨੰਬਰ ਅਲਾਟ ਹੋ ਚੁੱਕਾ ਹੈ, INA ਵਿੱਚ ਕੈਸਲ ਨਾ ਹੋਵੇ  ਅਤੇ ਬਾਹਰਲੇ ਬੋਰਡ ਦਾ ਪ੍ਰੀਖਿਆਰਥੀ ਹੋਣ ਦੀ ਸੂਰਤ ਵਿੱਚ ਰਜਿਸ਼ਟ੍ਰੇਸ਼ਨ ਨੰਬਰ ਵਿੱਚ ਕੋਈ Error ਨਹੀਂ  ਹੈ। ਰੋਲ ਨੰਬਰ ਅਤੇ INA ਲਈ ਪ੍ਰੀਖਿਆ ਸ਼ਾਖਾ ਅਤੇ ਰਜਿਸ਼ਟ੍ਰੇਸ਼ਨ ਨੰਬਰ ਦੀ Error ਹਟਵਾਉਣ ਲਈ ਰਜਿਸ਼ਟ੍ਰੇਸ਼ਨ ਸ਼ਾਖਾ ਨਾਲ ਸੰਪਰਕ ਕੀਤਾ ਜਾਵੇ।
+            </h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="text-align:right;"><h3>Last Date : 16-July-2021</h3></div>
+        <div class="clearfix"></div>
+        <div class="col-md-12"><a href="/PDF/Instruction_SeniorStudentMatricResultMarksOpen.pdf" style="color:#cc0000;font-size:20px;" target="_blank"><samp>&#10093;</samp> Instructions Regarding Filling of Matriculation Marks of Open Senior Secondary Entry.</a></div>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="clearfix"></div>
+    if (Model.RegistrationSearchModel.Count() > 0)
+    {
+        <div class="row" id="divMain1">
+            <div class="col-md-4"><br /><a href="SeniorStudentMatricResultMarksOpenReport" class="btn" target="_blank">View Report</a></div>
+            <div class="col-md-12 text-right">
+                @if (Model.RegistrationSearchModel.Where(s => s.IsFinalLock == true).Count() == 0 && Model.RegistrationSearchModel.Where(s => s.IsFinalLock == false && string.IsNullOrEmpty(s.ChangeStatus)).Count() > 0)
+                {
+                    <h3 class="rqf"> Final Submission Status : Pending</h3>
+                }
+                else if (Model.RegistrationSearchModel.Where(s => s.IsFinalLock == false && !string.IsNullOrEmpty(s.ChangeStatus)).Count() == Model.RegistrationSearchModel.Count())
+                {
+                    <div class="rqf"><span class="hideint">@Html.ActionLink("Click here to Final Submission", "ActionSeniorStudentMatricResultMarksOpen", new { id = Session["schl"].ToString(), act = "SCHLFNL" }, new { @class = "btn", @OnClick = "return confirm('You are sure to Final Submit the data,after that you cant be able to change it?');" })</span> </div>
+
+                }
+                else if (Model.RegistrationSearchModel.Where(s => s.IsFinalLock == false).Count() > 0)
+                {
+                    if (Model.RegistrationSearchModel.Where(s => string.IsNullOrEmpty(s.ChangeStatus)).Count() == 0 && Model.RegistrationSearchModel.Where(s => s.IsFinalLock == true).Count() > 0)
+                    {
+                        <div class="rqf"><span class="hideint">@Html.ActionLink("Click here to Final Submission", "ActionSeniorStudentMatricResultMarksOpen", new { id = Session["schl"].ToString(), act = "SCHLFNLPEND" }, new { @class = "btn", @OnClick = "return confirm('You are sure to Final Submit the data,after that you cant be able to change it?');" })</span> </div>
+                    }
+                }
+                else if (Model.RegistrationSearchModel.Where(s => s.IsFinalLock == true && !string.IsNullOrEmpty(s.ChangeStatus)).Count() == Model.RegistrationSearchModel.Count())
+                {
+                    <h3 class="rqf"> Final Submission Status : Submitted</h3>
+                }
+            </div>
+        </div>
+    }
+    <div class="clearfix"></div>
+    <div class="row" id="divMain1">
+
+        <div class="col-md-3"><br /><span style="font-size:20px;color:black;">Total : @Model.RegistrationSearchModel.Count()</span></div>
+        <div class="col-md-3"><br /><span style="font-size:20px;color:orangered;">Pending : @Model.RegistrationSearchModel.Where(s => string.IsNullOrEmpty(s.ChangeStatus)).Count()</span></div>
+        <div class="col-md-3"><br /><span style="font-size:20px;color:orangered;">In-Process : @Model.RegistrationSearchModel.Where(s => s.IsFinalLock == false && !string.IsNullOrEmpty(s.ChangeStatus)).Count()</span></div>
+        <div class="col-md-3"><br /><span style="font-size:20px;color:green;">Final : @Model.RegistrationSearchModel.Where(s => s.IsFinalLock == true && !string.IsNullOrEmpty(s.ChangeStatus)).Count()</span></div>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="table-responsive">
+        <table id="example" class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr class="active-tr">
+                    <th>Roll</th>
+                    <th>Unique Id</th>
+                    <th>Form</th>
+                    @*<th>Admission Date</th>*@
+                    <th>Candidate Name</th>
+                    <th>Father's Name</th>
+                    <th>Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Insert Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.RegistrationSearchModel)
+                {
+                    <tr>
+                        <td>@obj.Roll</td>
+                        <td>
+                            @obj.Std_id
+                                                <div class="container">
+                                                    <div class="modal fade" id="myModal2-@obj.Std_id" role="dialog">
+                                                        <div class="modal-dialog">
+                                                            <!-- Modal content-->
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                                    <h3>Cancel Student MAaks of @obj.Std_id </h3>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    Cancel Remarks <textarea id="cancelremarks-@obj.Std_id" name="cancelremarks"></textarea>
+                                                                    <input type="button" class="btn" value="Submit" id="btnsubmitCancel" onclick="cancelMe(@obj.Std_id)" />
+                                                                    <div id="loading1"></div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                        <td>@obj.form_Name</td>                      
+                        <td>@obj.Candi_Name </td>
+                        <td>@obj.Father_Name </td>
+                        <td>@obj.Mother_Name </td>
+                        <td>@obj.DOB</td>
+                        <td>@obj.CreatedDate</td>
+                        <td>
+                            @{
+                                if (obj.IsFinalLock == true && !string.IsNullOrEmpty(obj.ChangeStatus))
+                                {
+                                    <span class="text-success"> @obj.ChangeStatusNM </span><br />
+                                    if (obj.ChangeStatus == "C")
+                                    {
+                                        <span>Cancel On <br />@obj.CancelOn.Value.ToString("dd/MM/yyyy hh:mm tt")</span>
+                                    }
+                                }
+                                else if (string.IsNullOrEmpty(obj.ChangeStatus))
+                                {
+                                    <span class="text-danger"> @obj.ChangeStatusNM</span>
+                                }
+                                else
+                                {
+                                    <span class="text-warning"> @obj.ChangeStatusNM</span>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @{
+
+                                if (obj.IsFinalLock == true && !string.IsNullOrEmpty(obj.ChangeStatus))
+                                {
+                                    <span class="rqf">Final Locked On <br />@obj.FinalSubmitOn.Value.ToString("dd/MM/yyyy hh:mm tt")</span>
+                                }
+
+                                else
+                                {
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul class="hideint">
+                                                <li><a class="btn" href="SeniorStudentMatricResultMarksOpen/@obj.Std_id.ToString()">View Marks</a></li>
+                                                <li><a class="btn rqf" data-toggle="modal" data-target="#myModal2-@obj.Std_id">CANCEL </a></li>
+
+                                            </ul>
+                                        </div>
+                                    </div>       
+                                }
+
+                            }
+
+
+                        </td>
+                    </tr>
+                                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 25,
+            "order": [[0, 'asc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By UniqueID, Student Name, Form , Status or Any." },
+        })
+    });
+</script>
+
+@{
+    if (TempData["resultIns"] != null)
+    {
+        if (TempData["resultIns"].ToString() == "FNL")
+        {
+            <div id="dShowResult" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Final Submission Successfully</span>
+            </div>
+        }
+        else if (TempData["resultIns"].ToString() == "PEN")
+        {
+            <div id="dShowResult" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Please Update All Pending Students</span>
+            </div>
+        }
+        else if (TempData["resultIns"].ToString().ToLower().Contains("error"))
+        {
+            <div id="dShowResult" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">@TempData["resultIns"]</span>
+            </div>
+        }
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#dShowResult").dialog({
+            modal: true,
+            title: "Alert",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                    window.location.href = "/Open/ViewAllSeniorStudentMatricResultMarksOpen";
+                },
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    //Cancel
+    function cancelMe(k) {
+
+        // alert($("#cancelremarks-" + k).val());
+        var flag = 0;
+        if ($("#cancelremarks-" + k).val() == "") {
+            $("#cancelremarks-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+
+            // alert($("#c
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Open/ActionSeniorStudentMatricResultMarksOpen", // this for calling the web method function in cs code.
+                data: '{id: "' + k + '",act: "CANCEL",remarks: "' + $("#cancelremarks-" + k).val() + '"}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.result == "1") {
+                        alert("Cancel Successfully");
+                        $('#myModal2-' + k).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else {
+                        $('#loading1').empty();
+                        alert("Failure");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+
+
+</script>

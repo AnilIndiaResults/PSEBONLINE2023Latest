@@ -1,0 +1,223 @@
+﻿@{
+    ViewBag.Title = "RegSchoolReport";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<style type="text/css">
+    .table-responsive td {
+        font-size: 10px;
+    }
+
+    body {
+        font-size: 12px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .footer {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        z-index: 9999999;
+        display: block;
+    }
+    .tpd td {padding:2px !important;line-height:20px
+    }
+    .kdsfont {
+        line-height:20px
+    }
+</style>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in//Content/cardprintr.css" />
+
+
+@using (Html.BeginForm("RegSchoolReportSummary", "Report", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    <div class="row noprint">
+        <div class="col-md-12">
+            <h1>Regular School Report Summary</h1>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>               
+                <div class="col-md-2">@Html.DropDownList("SchoolType", new SelectList(ViewBag.MySchoolType, "Value", "Text", ViewBag.SelectedSchoolType), "--All School Type---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("ClassType", new SelectList(ViewBag.MyClassType, "Value", "Text", ViewBag.SelectedClassType), "--All Class ---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2">
+                    <input type="submit" value="Search" /> <a href="/Report/RegSchoolReport" class="btn">Reset</a>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+}
+<div style="color:#cc0000;width:100%;text-align:right;" class="noprint">
+    * If Punjabi font is not visible properly <a href="/PNB_FONT.ZIP" target="_blank" style="font-size:14px;"><b style="color:#cc0000"> CLICK HERE </b></a> for Download Punjabi PNB Font
+
+</div>
+<div style="width:100%;text-align:right;" class="noprint"><input type="button" value="Print" class="btn noprint" onclick="window.print()" />&nbsp;<a href="javascript:history.back()" class="btn noprint" style="color:#fff">Back</a> </div>
+
+@if (ViewBag.TotalCount >0 )
+{
+    System.Data.DataSet ds = (System.Data.DataSet)ViewBag.data;
+    try
+    {
+        int sr = 0;
+<span>&nbsp;</span>
+                <div class="table-responsive">
+                    <table id="t01" class="table table-bordered">
+                       
+                            
+                          @* <tr>
+                                <td colspan="14" style="border-top:0 !important;height:25px !important">
+                                   @* @if (ViewBag.SelectedDist != null)
+                                    {
+                                        string dist = ViewBag.SelectedDist;
+                                        List<SelectListItem> dists = (List<SelectListItem>)ViewBag.Districts;
+                                        string distnm = dists.Find(f => f.Value == dist.Trim()).Text;
+                                        <span>District: (@dist) @distnm</span>
+
+                                    }
+                                </td>
+                            </tr>*@
+                            <thead>
+                                <tr>
+                                <td colspan="3" style="border-right:0 !important">&nbsp;Session: @Session["Session"].ToString()</td>
+                                <td colspan="10" style="text-align:center;border-left:0 !important;border-right:0 !important"><span style="font-size:24px">Punjab School Education Board</span><br />List of School (Regular School Study Centers)</td>
+                                <td colspan="3" style="border-left:0 !important;text-align:right">Print Date: @DateTime.Today.ToString("dd/MM/yyyy") &nbsp;</td>
+                            </tr>
+                            <tr class="active-tr">
+                                <th rowspan="2" width="3%">
+                                    SR
+                                </th>
+                                <th rowspan="2" width="7%" style="text-align:center">
+                                    School
+                                    @*Study<br /><span style="font-size:7px">Center Code</span>*@
+                                </th>
+                                <th rowspan="2" width="7%" style="text-align:center">
+                                        ID No.
+                                   @* SCHL<br /><span style="font-size:7px">Tehsil Code</span>*@
+                                </th>
+                                <th rowspan="2" width="45%">
+                                    School Name
+                                </th>
+                                <th rowspan="2" width="7%">Desc.</th>
+								<th rowspan="2">Primary</th>
+								<th rowspan="2">Middle</th>
+                                <th rowspan="2">Matric</th>
+                                <th colspan="4">
+                                    Sr.Sec Stream
+                                </th>
+                                <th rowspan="2" width="6%">
+                                    Area
+                                </th>
+                                <th rowspan="2" width="5%">
+                                    Category
+                                </th>
+                                <th rowspan="2" width="10%">
+                                    Tehsil
+                                </th>
+                                <th rowspan="2" width="7%">Contact</th>
+                            </tr>
+                            <tr class="active-tr">                                
+                                <th style="padding-top:0;padding-bottom:0">HUM</th>
+                                <th style="padding-top:0;padding-bottom:0">SCI</th>
+                                <th style="padding-top:0;padding-bottom:0">COMM</th>
+                                <th style="padding-top:0;padding-bottom:0">VOC</th>
+                            </tr>
+                        </thead>
+                        @foreach (System.Data.DataRow dr in ds.Tables[0].Rows)
+                    {
+                        sr++;
+<tr class="tpd">
+                                <td rowspan="4">
+                                    @sr
+                                </td>
+                                <td rowspan="4">
+                                    @dr["schl"].ToString()
+                                    @*@dr["ocode"].ToString()*@
+                                </td>
+                                <td rowspan="4">
+                                   @dr["idno"].ToString()
+                                </td>
+                                <td rowspan="4" style="height:100Px !important">
+                                    @dr["schle"].ToString()<br /><span class="kdsfont">@dr["schlp"].ToString()</span>
+                                </td>
+                                <td>Status</td>
+								<td><i class="@(dr["fifth"].ToString().ToLower()=="y"?"glyphicon glyphicon-ok":"")"></i></td>
+								<td><i class="@(dr["middle"].ToString().ToLower()=="y"?"glyphicon glyphicon-ok":"")"></i></td>  
+                                <td>
+                                    <i class="@(dr["matric"].ToString().ToLower()=="y"?"glyphicon glyphicon-ok":"")"></i>
+                                </td>
+								                             
+                                <td>
+                                    <i class="@(dr["hum"].ToString().ToLower()=="y"?"glyphicon glyphicon-ok":"")"></i>
+                                </td>
+                                <td>
+                                    <i class="@(dr["sci"].ToString().ToLower()=="y"?"glyphicon glyphicon-ok":"")"></i>
+                                </td>
+                                <td>
+                                    <i class="@(dr["comm"].ToString().ToLower()=="y"?"glyphicon glyphicon-ok":"")"></i>
+                                </td>
+                                <td>
+                                    <i class="@(dr["voc"].ToString().ToLower()=="y"?"glyphicon glyphicon-ok":"")"></i>
+                                </td>
+                                <td rowspan="4">
+                                    @dr["area"].ToString()
+                                </td>
+                                <td rowspan="2" style="padding:2px !important;line-height:19px">
+                                    @dr["category"].ToString()
+                                </td>
+                                <td width="8%" rowspan="2" style="padding:2px !important;line-height:19px">
+                                    @dr["tehsil"].ToString()<br />@dr["tcode"].ToString()
+                                </td>
+                                <td width="8%" rowspan="2" style="padding:2px !important;line-height:19px">@dr["mobile"].ToString()<br />@dr["Phone"].ToString()</td>
+                            </tr>
+                            <tr class="tpd">
+                            <td>Sub Type</td>
+							<td>@dr["FIF_UTYPE"].ToString()</td>
+							<td>@dr["MID_UTYPE"].ToString()</td>
+                            <td>@dr["HID_UTYPE"].ToString()</td>
+                            <td>@dr["H_UTYPE"].ToString()</td>
+                            <td>@dr["S_UTYPE"].ToString()</td>
+                            <td>@dr["C_UTYPE"].ToString()</td>
+                            <td>@dr["V_UTYPE"].ToString()</td>
+                            </tr>
+                           <tr class="tpd">
+                            <td>Session</td>
+							<td>@dr["FIF_YR"].ToString()</td>
+							<td>@dr["MID_YR"].ToString()</td>
+                            <td>@dr["HID_YR"].ToString()</td>
+                            <td>@dr["HYR"].ToString()</td>
+                            <td>@dr["SYR"].ToString()</td>
+                            <td>@dr["CYR"].ToString()</td>
+                            <td>@dr["VYR"].ToString()</td>
+                            <td width="8%" rowspan="2" colspan="3" style="padding:2px !important;line-height:19px">Email : @dr["EMAILID"].ToString()</td>
+                            </tr>
+                            <tr class="tpd">
+                            <td>Section</td>
+							<td>@dr["FIF_S"].ToString()</td>
+							<td>@dr["MID_S"].ToString()</td>
+                            <td>@dr["HID_S"].ToString()</td>
+                            <td>@dr["H_S"].ToString()</td>
+                            <td>@dr["S_S"].ToString()</td>
+                            <td>@dr["C_S"].ToString()</td>
+                            <td>@dr["V_S"].ToString()</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+    }
+    catch (Exception e)
+    {
+        <div class="text-center">
+            <span class="rqf">No Data Found</span>
+        </div>
+    }
+}
+else
+{
+
+}
+
+

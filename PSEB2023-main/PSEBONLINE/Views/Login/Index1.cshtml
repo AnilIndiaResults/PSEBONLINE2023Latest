@@ -1,0 +1,82 @@
+﻿
+@model PSEBONLINE.Models.LoginModel2
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<form class="form-signin" name="Login_Form" method="post" action="">
+
+    <div id="slp">     
+        <h3 class="form-signin-heading text-center">School Login Panel</h3>
+        <br />
+        @Html.TextBoxFor(m => m.username, new { placeholder = "Username", @class = "form-control", required = "required" })
+        @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password" })
+        @Html.DropDownList("Session", new SelectList(ViewBag.SessionList, "Value", "Text"), "---Select Session---", new { @class = "form-control", required = "required", style = "text-transform: none;padding-left:0" })
+        <input type="button" value="Next" id="sclogin" />
+    </div>
+    <div id="alp" style="display:none;">
+        <h3 class="form-signin-heading text-center">Admin Login Panel</h3>
+        <br />
+        @Html.TextBoxFor(m => m.admusername, new { placeholder = "Username", @class = "form-control", required = "required" })
+        @Html.PasswordFor(model => model.admPassword, new { @class = "form-control", placeholder = "Password" })
+       <input type="submit" value="Login" />
+    </div>
+</form>
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Login Cancelled");
+            </script>}
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Incorrect Login Details..plz try again");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Server Error..plz try again");
+            </script>
+        }
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#sclogin").click(function () {
+            var flag=0;
+            if ($("#username").val() == "")
+            {
+                $("#username").addClass("input-validation-error");
+                flag = 1;
+            }
+            if ($("#username").val() != "") {
+                $("#username").addClass("input-validation-error");
+            }
+            if ($("#Password").val() == "") {
+                $("#Password").addClass("input-validation-error");
+                flag = 1;
+            }
+            if ($("#Password").val() != "") {
+                $("#Password").addClass("input-validation-error");
+            }
+            if(flag==0)
+            {
+                $("#slp").fadeOut("slow");
+                $("#alp").fadeIn("slow");
+            }
+        });
+    });
+</script>

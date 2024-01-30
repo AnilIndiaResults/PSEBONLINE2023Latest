@@ -1,0 +1,584 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "SchoolCorrectionUpdated";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<style type="text/css">
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 225px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+    }
+
+    .checkbox {
+        display: inline-block
+    }
+</style>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+
+<script type="text/javascript">
+    window.setInterval(function () {
+        var current = new Date();
+        var expiry = new Date("Nov 30, 2021 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideint').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideint').show();
+        }
+    }, 0);
+</script>
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modal");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+    $('form').live("submit", function () {
+        ShowProgress();
+    });
+</script>
+
+<h1>All Correction Updated Records</h1>
+
+
+
+<div class="row">
+    @using (Html.BeginForm("SchoolCorrectionUpdated", "School", FormMethod.Post, new { id = "searchform" }))
+    {
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+
+                <div class="col-md-2">
+                    Total &nbsp;
+                    <label>@ViewBag.TotalCount</label>
+                </div>
+                <div class="col-md-2" style="display:none">
+                    Select Correction Type &nbsp;
+                    @Html.DropDownList("CorrectionType", new SelectList(ViewBag.CorrectionType, "Value", "Text", ViewBag.SelectedItemcode), "--Select Correction Type---")
+                </div>
+                <div class="col-md-3">
+                    Enter Correction Lot &nbsp;
+                    @Html.TextBoxFor(m => m.CorrectionLot, new { id = "CorrectionLot", @maxlength = "20", @placeholder = "Enter Correction Lot" })
+                </div>
+                <div class="col-md-2" style="display:none">
+                    Select Fee Type &nbsp;
+                    @Html.DropDownList("FeeType", new SelectList(ViewBag.FeeType, "Value", "Text", ViewBag.SelectedFeeType), "--Select Fee Type---", new { @class = "", id = "FeeType", @onchange = "GetSelectStatus(this)" })
+                </div>
+                <div class="col-md-2">
+                    &nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm();" title="Search Record" />
+                    &nbsp;&nbsp;&nbsp;   <a href="/School/SchoolCorrection" class="btn" title="Go Back">Back</a>
+                </div>
+
+                <div class="clearfix"></div>
+
+            </fieldset>
+
+        </div>
+    }
+</div>
+        <div id="loading1"></div>     
+      
+
+            @if (ViewBag.TotalCount > 0)
+            {
+                DateTime todayDate = DateTime.Today;
+                DateTime dtLastDate1 = Convert.ToDateTime(Model.StoreAllData.Tables[0].Rows[0]["CorrectionFeeDate"].ToString()).Date;
+                DateTime CorrectionFinalSubmitDt21 = Convert.ToDateTime(Model.StoreAllData.Tables[0].Rows[0]["CorrectionFinalSubmitDt"].ToString()).Date;
+                DateTime VerifyLastDateBySchl = Convert.ToDateTime(Model.StoreAllData.Tables[0].Rows[0]["VerifyLastDateBySchl"].ToString()).Date;
+
+                if (VerifyLastDateBySchl >= todayDate)
+                {
+                    <div class="col-lg-6 text-right">
+                        <input type="submit" value="Final Submit" name="cmd" class="btn" title="Go for Final Submit" data-confirm="are u sure to Final Submit of these corrections?" />
+                    </div>
+                    <div class="col-lg-6 text-right">
+                        <input type="submit" value="Remove" id="btnsave" name="cmd" />
+                    </div>
+                }
+                else
+                {
+<div class="col-lg-12 text-left">
+    <h3 class="rqf">
+        Corrections final submitted are not allowed to verify at school level. Kindly submit Final Print of Correction Performa along with required document at District Sub Office(For 9th and 11th Class) and Head Office(For 5th,8th,10th and 12th Class) to verify corrections.
+    </h3>
+</div>
+                }
+
+                @*   <a href="/School/SchoolCorrectionFinalSubmit/ViewAll" class="btn" title="Go for View All Final Submit">View All Final Submit</a>*@
+            }
+
+      
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="t01">
+                        <tr class="active-tr">
+                            <th width="5%">Sl.No.</th>
+                            <th width="10%">Correction</th>
+                            <th width="10%">School Code</th>
+                            <th width="10%">Class</th>
+                            <th width="8%">Student ID</th>
+                            <th width="11%">Correction ID</th>
+                            <th width="11%">Correction Type</th>
+                            <th width="11%">Correction Lot</th>
+                            <th width="11%">Correction Date</th>
+                            <th width="12%">Old Value</th>
+                            <th width="12%">New Value</th>
+                            <th width="5%">Status</th>
+                            <th width="10%"><input type="checkbox" class="hideint" id="selectallY" />Remove All</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 30 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var CorPanel = Model.StoreAllData.Tables[0].Rows[i]["CorPanel"].ToString();
+                                    var CorrectioId = Model.StoreAllData.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                    var Schl = Model.StoreAllData.Tables[0].Rows[i]["Schl"].ToString();
+                                    var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                    var Std_id = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                    var CorrectionType = Model.StoreAllData.Tables[0].Rows[i]["CorrectionType"].ToString();
+                                    var CorrectionFinalSubmitDt = Model.StoreAllData.Tables[0].Rows[i]["CorrectionFinalSubmitDt"].ToString();
+                                    var CorrectionLot = Model.StoreAllData.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                                    var OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                    var NewValue = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                    if (CorrectionType == "Sign" || CorrectionType == "Photo")
+                                    {
+                                        if (Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString().Contains("OPEN"))
+                                        {
+                                            OldValue = "https://registration2022.pseb.ac.in/upload/" + Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                        }
+                                        else { OldValue = "https://registration2022.pseb.ac.in/upload/upload2020/" + Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString(); }
+
+                                        NewValue = "https://registration2022.pseb.ac.in" + Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                    }
+                                    else
+                                    {
+                                        OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                        NewValue = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                    }
+
+                                    var Remarks = Model.StoreAllData.Tables[0].Rows[i]["Remarks"].ToString();
+                                    var FirmUser = Model.StoreAllData.Tables[0].Rows[i]["FirmUser"].ToString();
+                                    var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                    var FirmCorrectionLot = Model.StoreAllData.Tables[0].Rows[i]["FirmCorrectionLot"].ToString();
+
+                                    DateTime dtLastDate = Convert.ToDateTime(Model.StoreAllData.Tables[0].Rows[i]["CorrectionFeeDate"].ToString()).Date;
+                                    DateTime CorrectionFinalSubmitDt2 = Convert.ToDateTime(Model.StoreAllData.Tables[0].Rows[i]["CorrectionFinalSubmitDt"].ToString()).Date;
+                                    DateTime VerifyLastDateBySchl = Convert.ToDateTime(Model.StoreAllData.Tables[0].Rows[i]["VerifyLastDateBySchl"].ToString()).Date;
+
+
+                                    Count = Count + 1;
+                                                                     
+                                    <tr>
+                                        <td>
+                                            @Count
+                                        </td>
+                                        <td>
+                                            @CorPanel
+                                        </td>
+                                        <td>
+                                            @Schl
+                                        </td>
+                                        <td>
+                                            @Class
+                                        </td>
+                                        <td>
+                                            @Std_id
+                                        </td>
+                                        <td>
+                                            @CorrectioId
+                                        </td>
+                                        <td>
+                                            @CorrectionType
+                                        </td>
+                                        <td>
+                                            @CorrectionLot
+                                        </td>
+                                        <td>
+                                            @CorrectionFinalSubmitDt
+                                        </td>
+                                        @if (@CorrectionType == "Sign" || @CorrectionType == "Photo")
+                                        {
+                                            <td>
+                                                <img src="@OldValue" class="" style="max-width:30%" alt="Photo" id="OldValuePS" />
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="kdsfont">
+                                                @OldValue
+                                            </td>
+                                        }
+                                        @if (@CorrectionType == "Sign" || @CorrectionType == "Photo")
+                                        {
+                                            <td>
+                                                <img src="@NewValue" class="" style="max-width:30%" alt="Photo" id="NewValuePS" />
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="kdsfont">
+                                                @NewValue
+                                            </td>
+                                        }
+
+                                        @*<td>
+                                                @NewValue
+                                            </td>*@
+                                        <td>
+                                            @if (@Status == "")
+                                            {
+                                                <img src="../../Images/Pending.png" alt="Status is Pending For Verification" title="Status is Pending For Verification" />
+                                            }
+                                            else if (@Status == "Y")
+                                            {
+                                                <img src="../../Images/Apply.png" alt="Correction Verified." title="Correction Verified." />
+                                            }
+                                            else if (@Status == "N")
+                                            {
+                                                <img src="../../Images/Delete.png" alt="Correction Rejected." title="Rejected Reason : @Remarks" />
+                                                @*<p class="rqf">@Remarks</p>*@
+                                            }
+
+                                        </td>
+                                        <td>
+                                            @{
+                                                if (FirmCorrectionLot == "")
+                                                {
+                                                    if (CorrectionFinalSubmitDt2 <= dtLastDate)
+                                                    {
+                                                        <span class="hideintOLD">
+                                                            <input type="checkbox" id="cb-@CorrectioId" class="checkboxY" name="AllChkId" value="@CorrectioId" /> @Html.Raw("Remove")
+                                                        </span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div style="color:forestgreen"><b>Final Submitted</b></div>
+                                                }
+                                            }
+                                        </td>
+
+                                    </tr>
+                                    //.... Pagin start
+                                    @*if (d == ViewBag.TotalCountP)
+                                    {
+                                        <tr>
+                                            <td colspan="12">
+
+                                                Page @ViewBag.pagesize of @ViewBag.pn
+
+                                                &nbsp;
+
+                                                @if (ViewBag.pagesize == 1)
+
+                                                {
+                                                    @:<<
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @:< Prev
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        @Html.ActionLink("Next >", "SchoolCorrectionUpdated", new { page = ViewBag.pagesize + 1 })
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @Html.ActionLink(">>", "SchoolCorrectionUpdated", new { page = ViewBag.pn })
+                                                    }
+                                                }
+                                                else
+                                                {
+
+                                                    @Html.ActionLink("<<", "SchoolCorrectionUpdated", new { page = 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink("< Prev", "SchoolCorrectionUpdated", new { page = ViewBag.pagesize - 1 })
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        @Html.ActionLink("Next >", "SchoolCorrectionUpdated", new { page = ViewBag.pagesize + 1 })
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @Html.ActionLink(">>", "SchoolCorrectionUpdated", new { page = ViewBag.pn })
+                                                    }
+
+                                                }
+
+
+                                            </td>
+                                        </tr>
+                                    }*@
+
+                                    //... Paging end
+
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                        <p class="rqf">Record Not Found</p>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+
+ 
+        <div class="clearfix"></div>
+        @*<div class="col-md-12">
+                <div class="table-responsive text-center">
+                  @if (ViewBag.TotalCount > 0)
+            {
+                    <input type="submit" value="Final Submit" name="cmd" class="btn" title="Go for Final Submit" data-confirm="are u sure to Final Submit of these corrections?" />
+            }
+                    <a href="/School/SchoolCorrection" class="btn" title="Go Back">Back</a>
+                    <a href="/School/SchoolCorrection" class="btn" title="Go for Home Page">Home</a>
+                    <a href="/School/SchoolCorrectionFinalSubmit/ViewAll" class="btn" title="Go for View All Final Submit">View All Final Submit</a>
+
+                </div>
+            </div>*@
+        <div class="loading" align="center">
+            Working... Please wait.<br />
+            <br />
+            <img src="../../images/loadingAnim.gif" />
+
+            <script>
+                jQuery(document).ready(function () {
+                    jQuery('[data-confirm]').click(function (e) {
+                        if (!confirm(jQuery(this).attr("data-confirm"))) {
+                            e.preventDefault();
+                        }
+                        else {
+                            //valFormAmount();
+                            window.location.href = '/School/SchoolCorrectionFinalSubmit/FinalSubmit';
+                        }
+                    });
+                });
+
+            </script>
+
+
+            <script type="text/javascript">
+
+                $(document).ready(function () {
+                    // alert("ready");
+                    $('.checkboxY').change(function () { //".checkbox" change
+                        if (this.checked == false) { //if this item is unchecked
+                            $("#selectallY")[0].checked = false; //change "select all" checked status to false
+
+                        }
+                    });
+
+
+                    $("#selectallY").change(function () {
+                        var status = this.checked; // "select all" checked status
+                        var j = 0
+                        $('.checkboxY').each(function () {
+                            $("input[name='AllChkId']")[j].checked = status;
+                            j++;
+
+                        });
+                    });
+
+                    //Start Save Data
+                    $("#btnsave").click(function () {
+                        var isvalid = true;
+                        if (isvalid == true) {
+                            var chkdee = "";
+                            var storeid = "";
+                            var pageid = "";
+                            var storeid1 = "";
+                            var storechkid = "";
+                            var storescid = "";
+                            $('.checkboxY').each(function () {
+                                var id = this.id;
+                                var val = this.value;
+                                var arr = [];
+                                arr = id;
+                                var arrid = "";
+                                var arrcast = "";
+                                var j = 0;
+                                if (this.checked) {
+                                    storeid += val + ",";
+                                }
+                            });
+
+                            if (storeid == "") {
+                                alert("Please Select Atleast 1 Record .");
+                            }
+
+                            else {
+                                $('#divMain1').hide();
+                                $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                                $.post("/School/CorrLotAcceptReject", { "correctionType": "", "correctionLot": "", "acceptid": "", "rejectid": "", "removeid": storeid.slice(0, -1), "remarksid": "" },
+                                    function (data) {
+                                        $('#loading1').empty();
+                                        // alert('data.status  = ' + data.status);
+                                        if (data.status == "1") {
+                                            alert("Removed Successfully");
+                                            window.location.href = '/School/SchoolCorrectionUpdated';
+                                        }
+                                        else {
+                                            alert("Failure, Please Try Again.");
+                                        }
+                                    });
+                            }
+                        }// if true close
+                    });
+
+                    //End  Save Data
+
+                });
+
+            </script>
+
+            <script>
+                $(document).ready(function () {
+                    $("divfee").hide();
+
+
+                    $("#CorrectionRecieptDate").datepicker({
+                        dateFormat: "dd/mm/yy",
+                        changeMonth: true,
+                        changeYear: true,
+                        maxDate: '0',
+                        //maxDate: '10/08/2016',
+                        yearRange: "2017:2018"
+
+                    });
+
+                });
+
+                function GetSelectStatus(selNum1) {
+                    //  alert(1);
+                    var selectedText = selNum1.options[selNum1.selectedIndex].innerHTML;
+                    var value = selNum1.value;
+                    //  alert('value: ' + value);
+                    if (value == 1) {
+                        $('#divfee').show();
+                    }
+                    else {
+                        $('#divfee').hide();
+                    }
+                }
+
+
+                //function valFormAmount() {
+                //    var CorrectionRecieptNo = document.getElementById("CorrectionRecieptNo");
+                //    if (CorrectionRecieptNo.value == "" || CorrectionRecieptNo.value == "0") {
+                //        alert("Enter Correction Reciept No");
+                //        CorrectionRecieptNo.focus();
+                //        return false;
+                //    }
+                //    if (document.getElementById("CorrectionRecieptDate").value == '' || document.getElementById("CorrectionRecieptDate").value == null) {
+                //        alert('Enter Reciept Date.');
+                //        document.getElementById("CorrectionRecieptDate").focus();
+                //        return false;
+                //    }
+
+                //    var CorrectionNoCapproved = document.getElementById("CorrectionNoCapproved");
+                //    if (CorrectionNoCapproved.value == "" || CorrectionNoCapproved.value == "0") {
+                //        alert("Enter Correction No approved");
+                //        CorrectionNoCapproved.focus();
+                //        return false;
+                //    }
+                //    var CorrectionAmount = document.getElementById("CorrectionAmount");
+                //    if (CorrectionAmount.value == "" || CorrectionAmount.value == "0") {
+                //        alert("Enter Correction Amount");
+                //        CorrectionAmount.focus();
+                //        return false;
+                //    }
+
+                //}
+                function valForm() {
+                    var Schlcode = document.getElementById("CorrectionLot");
+                    if (Schlcode.value == "" || Schlcode.value == "0") {
+                        alert("Enter Correction Lot");
+                        Schlcode.focus();
+                        return false;
+                    }
+                }
+                function isNumberKey(evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+                        return true;
+                    }
+                    else {
+                        alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    }
+                }
+
+                function validateNumber(event) {
+                    var key = window.event ? event.keyCode : event.which;
+                    // var c = $("#mobile").val();
+                    if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 37 || event.keyCode === 39) {
+                        return true;
+                    }
+                    if (key < 48 || key > 57) {
+                        return false;
+                    }
+                    //if (c.length > 9) {
+                    //    return false;
+                    //}
+                    else return true;
+                }
+            </script>
+
+
+

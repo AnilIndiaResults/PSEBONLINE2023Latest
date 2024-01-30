@@ -1,0 +1,1129 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    //Layout = "~/Views/Shared/_Headerui.cshtml";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>
+    Particular Correction Performa - Session @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+else { Response.Redirect("~/Login"); }
+</h1>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+@using (Html.BeginForm("AdminSchoolCorrection", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12 text-center">
+            @*<p class="kdsfont">
+                    Import ¨Û¼ã ²Ù ÅÒÛ× ¤è×¶ÏÛ ÒØÐã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û Âãª» Ð¥Û Ú¥Ó ÚÐâ¨ ¼ã ¨ÚÐó¨ ¨Û¼Ø ²ØÒã¢ Ú¥Ó ¤ÄÛÅ ÆñÛÚª¤ØÏÁÛ Âã ÒãÏÒã Modify ²Ù Delete ¨Û¼ã ²Ø Ó¨Âã ÕÅ¢ Ú¥Ó ¼ë× Ú¥ÐØÒØ Rough Report or Student Verification Form ÂãªÛ ¤¼ã ÚÆâñ¶ ¨Û¼Û ²Ø Ó¨ÂÛ Õè¢
+                </p>*@
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Class:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select Class---", new { @class = "" })
+                </div>
+                <form id="myForm">
+                    <div class="col-md-3">
+                        School Code :
+                        &nbsp;<br />
+                        <input type="text" id="SCHL" name="SCHL" maxlength="7" value="@ViewBag.SCHLstring" onkeypress="return isNumberKey(event);" />
+                    </div>
+                    <div class="col-md-3">
+                        Student Unique Id:
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" name="SearchString" maxlength="10" value="@ViewBag.Searchstring" onkeypress="return isNumberKey(event);" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" />
+                        <input type="submit" name="Reset" value="Reset" formaction="AdminSchoolCorrection" />
+
+                    </div>
+                </form>
+            </fieldset>
+            <div class="clearfix"></div>
+            <div class="clearfix"></div>
+            <h4>Student Details</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="">
+                            <tr class="active-tr">
+                                <th>Id</th>
+                                <th>Form</th>
+                                <th>SCHL</th>
+                                <th>Unique Id</th>
+                                <th>Reg Num</th>
+                                <th>Old Roll No.</th>
+                                <th>Class</th>
+                                <th>Session</th>
+                                <th>Candidate Name</th>
+                                <th>Father's Name</th>
+                                <th>Mother's Name</th>
+                                <th>DOB</th>
+
+                                @*<th>Update Detail</th>*@
+
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    if (ViewBag.pagesize == 1)
+                                    {
+                                        Count = 0;
+                                    }
+                                    else
+                                    {
+                                        Count = 30 * (ViewBag.pagesize - 1);
+                                    }
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var stdid = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                                        var regnum = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                        var category = Model.StoreAllData.Tables[0].Rows[i]["category"].ToString();
+                                        var session = Model.StoreAllData.Tables[0].Rows[i]["Year"].ToString() + "-" + Model.StoreAllData.Tables[0].Rows[i]["Month"].ToString();
+                                        var oroll = Model.StoreAllData.Tables[0].Rows[i]["Board_Roll_Num"].ToString();
+                                        var canName = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                        var Fname = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                        var Mname = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                        var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                        var Form_Name = Model.StoreAllData.Tables[0].Rows[i]["Form_Name"].ToString();
+                                        var SCHL = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
+
+
+                                        Count = Count + 1;
+                                        <tr>
+                                            <td>
+                                                @Count
+                                            </td>
+                                            <td>
+                                                @Form_Name
+                                            </td>
+                                            <td>
+                                                @SCHL
+                                            </td>
+                                            <td>
+                                                @stdid
+                                            </td>
+                                            <td>
+                                                @regnum
+                                            </td>
+
+                                            <td>
+                                                @oroll
+                                            </td>
+                                            <td>
+                                                @category
+                                            </td>
+                                            <td>
+                                                @session
+                                            </td>
+
+                                            <td class="kdsfont">
+                                                @canName
+                                            </td>
+                                            <td class="kdsfont">
+                                                @Fname
+                                            </td>
+                                            <td class="kdsfont">
+                                                @Mname
+                                            </td>
+                                            <td>
+                                                @DOB
+                                            </td>
+
+                                            @*<td>
+                                                    <div class="cart">
+                                                        Choose Action <span class="caret"></span>
+                                                        <div id="sidebar">
+                                                            <ul>
+                                                                <li>@Html.ActionLink("View", "M1formview", new { id = encrypt.QueryStringModule.Encrypt(stdid) })</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </td>*@
+
+                                        </tr>
+
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="12">
+                                            @ViewBag.Message
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            @if (ViewBag.TotalCount > 0)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <fieldset style="margin-bottom:15px">
+                            <div class="col-md-3">
+                                Select Correction Field:
+                                @Html.DropDownList("SelListField", new SelectList(ViewBag.MySchField, "Value", "Text"), "Select Field", new { @class = "" })
+                            </div>
+                            <div class="col-md-3">
+                                Old Value: @Html.TextBoxFor(a => a.oldVal, new { id = "oldVal", @ReadOnly = "ReadOnly", @class = "kdsfont" })
+                            </div>
+
+
+                            <div id="cortxt" class="col-md-3">
+                                New Value: @Html.TextBoxFor(a => a.newVal, new { id = "newValT", maxlength = "50", @class = "kdsfont" })
+                            </div>
+                            <div id="corDOB" class="col-md-3">
+                                New Value: @Html.TextBoxFor(a => a.newValDOB, new { id = "newValDOB", @class = "kdsfont" })
+                            </div>
+                            <div id="corpnj" disable="disable" class="col-md-3">
+                                New Value: @*@Html.TextBoxFor(a => a.newVal, new { id = "newVal", @class = "kdsfont" })*@
+                                @Html.TextBoxFor(a => a.newValP, new
+                           {
+                               id = "newValP",
+                               @class = "keyboardInput",
+                               onKeyPress = "javascript:convertThis(event)",
+                               onpaste = "return false;",
+                               oncopy = "return false;",
+                               oncut = "return false;",
+                               onclick = "toggleKBMode21(event)",
+                               lang = "pa"
+                           })
+                            </div>
+                            <div id="corgender" class="col-md-3">
+                                New Value:   @{
+                                    List<SelectListItem> newValGender = new List<SelectListItem>();
+
+                                    newValGender.Add(new SelectListItem { Text = "Male", Value = "Male" });
+                                    newValGender.Add(new SelectListItem { Text = "Female", Value = "Female" });
+                                    newValGender.Add(new SelectListItem { Text = "Transgender", Value = "Transgender" });
+
+                                }
+
+                                @Html.DropDownList("newValGender", newValGender, new { id = "ddlnewValGender" })
+                            </div>
+                            <div id="corCategory" class="col-md-3">
+                                New Value:                                                           @{
+                                    List<SelectListItem> newValcorCategory = new List<SelectListItem>();
+                                    if (Model.StoreAllData.Tables[0].Rows[0]["Form_Name"].ToString() == "N1")
+                                    {
+                                        newValcorCategory.Add(new SelectListItem { Text = "8TH PASSED", Value = "8TH PASSED" });
+                                    }
+                                    else if (Model.StoreAllData.Tables[0].Rows[0]["Form_Name"].ToString() == "N2" || Model.StoreAllData.Tables[0].Rows[0]["Form_Name"].ToString() == "N3")
+                                    {
+                                        newValcorCategory.Add(new SelectListItem { Text = "8TH PASSED", Value = "8TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "9TH FAILED", Value = "9TH FAILED" });
+                                    }
+                                    else if (Model.StoreAllData.Tables[0].Rows[0]["Form_Name"].ToString() == "M1")
+                                    {
+                                        newValcorCategory.Add(new SelectListItem { Text = "9TH PASSED", Value = "9TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH FAILED", Value = "10TH FAILED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH REAPPEAR", Value = "10TH REAPPEAR" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH ABSENT", Value = "10TH ABSENT" });
+                                    }
+                                    else if (Model.StoreAllData.Tables[0].Rows[0]["Form_Name"].ToString() == "M2")
+                                    {
+                                        newValcorCategory.Add(new SelectListItem { Text = "9TH PASSED", Value = "9TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH FAILED", Value = "10TH FAILED" });
+                                    }
+                                    else if (Model.StoreAllData.Tables[0].Rows[0]["Form_Name"].ToString() == "E2")
+                                    {
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH PASSED", Value = "10TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH REAPPEAR", Value = "10TH REAPPEAR" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "11TH FAILED", Value = "11TH FAILED" });
+                                    }
+                                    else if (Model.StoreAllData.Tables[0].Rows[0]["Form_Name"].ToString() == "E1")
+                                    {
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH PASSED", Value = "10TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH REAPPEAR", Value = "10TH REAPPEAR" });
+
+                                        newValcorCategory.Add(new SelectListItem { Text = "11TH PASSED", Value = "11TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "11TH FAILED", Value = "11TH FAILED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "11th COMPARTMENT", Value = "11th COMPARTMENT" });
+
+                                        newValcorCategory.Add(new SelectListItem { Text = "12th REAPPEAR", Value = "12th REAPPEAR" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12TH FAILED", Value = "12TH FAILED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12TH ABSENT", Value = "12TH ABSENT" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12th COMPARTMENT", Value = "12th COMPARTMENT" });
+                                    }
+                                    else if (Model.StoreAllData.Tables[0].Rows[0]["Form_Name"].ToString() == "T2")
+                                    {
+                                        newValcorCategory.Add(new SelectListItem { Text = "11TH PASSED", Value = "11TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12TH FAILED", Value = "12TH FAILED" });
+                                    }
+                                    else if (Model.StoreAllData.Tables[0].Rows[0]["Form_Name"].ToString() == "T1")
+                                    {
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH PASSED", Value = "10TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH REAPPEAR", Value = "10TH REAPPEAR" });
+
+                                        newValcorCategory.Add(new SelectListItem { Text = "11TH PASSED", Value = "11TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "11TH FAILED", Value = "11TH FAILED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "11th COMPARTMENT", Value = "11th COMPARTMENT" });
+
+                                        newValcorCategory.Add(new SelectListItem { Text = "12th REAPPEAR", Value = "12th REAPPEAR" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12TH FAILED", Value = "12TH FAILED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12TH ABSENT", Value = "12TH ABSENT" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12th COMPARTMENT", Value = "12th COMPARTMENT" });
+                                    }
+                                    else
+                                    {
+                                        newValcorCategory.Add(new SelectListItem { Text = "8TH PASSED", Value = "8TH PASSED" });
+
+                                        newValcorCategory.Add(new SelectListItem { Text = "9TH PASSED", Value = "9TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "9TH FAILED", Value = "9TH FAILED" });
+
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH PASSED", Value = "10TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH REAPPEAR", Value = "10TH REAPPEAR" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "10TH FAILED", Value = "10TH FAILED" });
+
+                                        newValcorCategory.Add(new SelectListItem { Text = "11TH PASSED", Value = "11TH PASSED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "11TH FAILED", Value = "11TH FAILED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "11th COMPARTMENT", Value = "11th COMPARTMENT" });
+
+                                        newValcorCategory.Add(new SelectListItem { Text = "12th REAPPEAR", Value = "12th REAPPEAR" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12TH FAILED", Value = "12TH FAILED" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12TH ABSENT", Value = "12TH ABSENT" });
+                                        newValcorCategory.Add(new SelectListItem { Text = "12th COMPARTMENT", Value = "12th COMPARTMENT" });
+
+                                        newValcorCategory.Add(new SelectListItem { Text = "DIRECT 15 YEAR AGE", Value = "DIRECT 15 YEAR AGE" });
+
+
+                                    }
+                                }
+
+                                @Html.DropDownList("newValcorCategory", newValcorCategory, new { id = "ddlnewValcorCategory" })
+                            </div>
+                            <div id="corCaste" class="col-md-3">
+                                New Value:   @{
+                                    List<SelectListItem> newValCaste = new List<SelectListItem>();
+
+                                    newValCaste.Add(new SelectListItem { Text = "General", Value = "General" });
+                                    newValCaste.Add(new SelectListItem { Text = "BC", Value = "BC" });
+                                    newValCaste.Add(new SelectListItem { Text = "OBC", Value = "OBC" });
+                                    newValCaste.Add(new SelectListItem { Text = "SC", Value = "SC" });
+                                    newValCaste.Add(new SelectListItem { Text = "ST", Value = "ST" });
+                                    newValCaste.Add(new SelectListItem { Text = "Others", Value = "Others" });
+                                }
+
+                                @Html.DropDownList("newValCaste", newValCaste, new { id = "ddlnewValCaste" })
+                            </div>
+                            <div id="corCSM" class="col-md-3">
+                                New Value:   @{
+                                    List<SelectListItem> newValcorCSM = new List<SelectListItem>();
+
+                                    newValcorCSM.Add(new SelectListItem { Text = "HINDI", Value = "HINDI" });
+                                    newValcorCSM.Add(new SelectListItem { Text = "ENGLISH", Value = "ENGLISH" });
+                                    newValcorCSM.Add(new SelectListItem { Text = "PUNJABI", Value = "PUNJABI" });
+
+                                }
+
+                                @Html.DropDownList("newValcorCSM", newValcorCSM, new { id = "ddlnewValcorCSM" })
+                            </div>
+                            <div id="corDifferently_Abled" class="col-md-3">
+                                New Value:
+                                @*@{
+            List<SelectListItem> Differently_Abled = new List<SelectListItem>();
+            Differently_Abled.Add(new SelectListItem { Text = "N.A.", Value = "N.A." });
+            Differently_Abled.Add(new SelectListItem { Text = "Blind/Visually Impaired", Value = "Blind/VisuallyImpaired" });
+            Differently_Abled.Add(new SelectListItem { Text = "Deaf and Dumb/Hearing", Value = "Deaf and Dumb/Hearing" });
+            Differently_Abled.Add(new SelectListItem { Text = "Mentally Retired", Value = "Mentally Retired" });
+            Differently_Abled.Add(new SelectListItem { Text = "Physically Handicapped", Value = "Physically Handicapped" });
+            Differently_Abled.Add(new SelectListItem { Text = "Others", Value = "Others" });
+        }*@
+
+                                @Html.DropDownList("Differently_Abled", new SelectList(ViewBag.DA, "Value", "Text"), new { id = "ddlDifferently_Abled" })
+
+                                @*@Html.DropDownList("Differently_Abled", Differently_Abled, new { id = "ddlDifferently_Abled" })*@
+                            </div>
+                            <div id="corwantwriter" class="col-md-3">
+                                New Value:  @{
+                                    List<SelectListItem> wantwriter = new List<SelectListItem>();
+                                    wantwriter.Add(new SelectListItem { Text = "Yes", Value = "Yes" });
+                                    wantwriter.Add(new SelectListItem { Text = "No", Value = "No" });
+                                }
+                                @Html.DropDownList("wantwriter", wantwriter, new { id = "ddlwantwriter" })
+                            </div>
+                            <div id="corRelist" class="col-md-3">
+                                New Value:  @{
+                                    List<SelectListItem> Relist = new List<SelectListItem>();
+                                    Relist.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                    Relist.Add(new SelectListItem { Text = "Hindu", Value = "Hindu" });
+                                    Relist.Add(new SelectListItem { Text = "Muslim", Value = "Muslim" });
+                                    Relist.Add(new SelectListItem { Text = "Sikh", Value = "Sikh" });
+                                    Relist.Add(new SelectListItem { Text = "Christian", Value = "Christian" });
+                                    Relist.Add(new SelectListItem { Text = "Others", Value = "Others" });
+                                }
+                                @Html.DropDownList("Relist", Relist, new { id = "ddlRelist" })
+                            </div>
+                            <div id="corGroup" class="col-md-3">
+                                New Value:
+                                @Html.DropDownList("Grouplist", new SelectList(ViewBag.MyGrouplist, "Value", "Text"))
+                            </div>
+
+                            <div id="corMonthlist" class="col-md-3">
+                                New Value:  @{
+                                    List<SelectListItem> Monthlist = new List<SelectListItem>();
+                                    Monthlist.Add(new SelectListItem { Text = "---Select Month---", Value = "0" });
+                                    Monthlist.Add(new SelectListItem { Text = "Jan", Value = "Jan" });
+                                    Monthlist.Add(new SelectListItem { Text = "Feb", Value = "Feb" });
+                                    Monthlist.Add(new SelectListItem { Text = "Mar", Value = "Mar" });
+                                    Monthlist.Add(new SelectListItem { Text = "Apr", Value = "Apr" });
+                                    Monthlist.Add(new SelectListItem { Text = "May", Value = "May" });
+                                    Monthlist.Add(new SelectListItem { Text = "Jun", Value = "Jun" });
+                                    Monthlist.Add(new SelectListItem { Text = "Jul", Value = "Jul" });
+                                    Monthlist.Add(new SelectListItem { Text = "Aug", Value = "Aug" });
+                                    Monthlist.Add(new SelectListItem { Text = "Sep", Value = "Sep" });
+                                    Monthlist.Add(new SelectListItem { Text = "Oct", Value = "Oct" });
+                                    Monthlist.Add(new SelectListItem { Text = "Nov", Value = "Nov" });
+                                    Monthlist.Add(new SelectListItem { Text = "Dec", Value = "Dec" });
+                                }
+                                @Html.DropDownList("Monthlist", Monthlist, new { id = "ddlMonthlist" })
+                            </div>
+                            <div id="corYearlist" class="col-md-3">
+                                New Value:
+                                @Html.DropDownList("Yearlist", new SelectList(ViewBag.SessionYearListPrev, "Value", "Text"), "--Select Year--", new { id = "Yearlist", })
+                            </div>
+                            <div id="corSection" class="col-md-3">
+                                New Value:                                                          @{
+                                    List<SelectListItem> Section = new List<SelectListItem>();
+                                    Section.Add(new SelectListItem { Text = "---Select Section---", Value = "0" });
+                                    Section.Add(new SelectListItem { Text = "A", Value = "A" });
+                                    Section.Add(new SelectListItem { Text = "B", Value = "B" });
+                                    Section.Add(new SelectListItem { Text = "C", Value = "C" });
+                                    Section.Add(new SelectListItem { Text = "D", Value = "D" });
+                                    Section.Add(new SelectListItem { Text = "E", Value = "E" });
+                                    Section.Add(new SelectListItem { Text = "F", Value = "F" });
+                                    Section.Add(new SelectListItem { Text = "G", Value = "G" });
+                                    Section.Add(new SelectListItem { Text = "H", Value = "H" });
+                                    Section.Add(new SelectListItem { Text = "I", Value = "I" });
+                                    Section.Add(new SelectListItem { Text = "J", Value = "J" });
+                                    Section.Add(new SelectListItem { Text = "K", Value = "K" });
+                                    Section.Add(new SelectListItem { Text = "L", Value = "L" });
+                                    Section.Add(new SelectListItem { Text = "M", Value = "M" });
+                                    Section.Add(new SelectListItem { Text = "N", Value = "N" });
+                                    Section.Add(new SelectListItem { Text = "O", Value = "O" });
+                                    Section.Add(new SelectListItem { Text = "P", Value = "P" });
+                                    Section.Add(new SelectListItem { Text = "Q", Value = "Q" });
+                                    Section.Add(new SelectListItem { Text = "R", Value = "R" });
+                                    Section.Add(new SelectListItem { Text = "S", Value = "S" });
+                                    Section.Add(new SelectListItem { Text = "T", Value = "T" });
+                                    Section.Add(new SelectListItem { Text = "U", Value = "U" });
+                                    Section.Add(new SelectListItem { Text = "V", Value = "V" });
+                                    Section.Add(new SelectListItem { Text = "W", Value = "W" });
+                                    Section.Add(new SelectListItem { Text = "X", Value = "X" });
+                                    Section.Add(new SelectListItem { Text = "Y", Value = "Y" });
+                                    Section.Add(new SelectListItem { Text = "Z", Value = "Z" });
+                                }
+                                @Html.DropDownList("Section", Section, new { id = "Section" })
+                            </div>
+
+
+
+                            <div id="corAdmission_Date" class="col-md-3">
+                                New Value: @Html.TextBoxFor(a => a.Admission_Date, new { id = "Admission_Date" })
+                            </div>
+                            <div id="corBelongs_BPL" class="col-md-3">
+                                New Value:  @{
+                                    List<SelectListItem> Belongs_BPL = new List<SelectListItem>();
+                                    Belongs_BPL.Add(new SelectListItem { Text = "Yes", Value = "Yes" });
+                                    Belongs_BPL.Add(new SelectListItem { Text = "No", Value = "No" });
+                                }
+                                @Html.DropDownList("Belongs_BPL", Belongs_BPL, new { id = "Belongs_BPL" })
+                            </div>
+                            <div id="corBoard" class="col-md-3">
+                                New Value:                              @{
+                                    List<SelectListItem> Board = new List<SelectListItem>();
+                                    Board.Add(new SelectListItem { Text = "CBSE BOARD", Value = "CBSE BOARD" });
+                                    Board.Add(new SelectListItem { Text = "P.S.E.B BOARD", Value = "P.S.E.B BOARD" });
+                                    Board.Add(new SelectListItem { Text = "ICSE BOARD", Value = "ICSE BOARD" });
+                                    Board.Add(new SelectListItem { Text = "HARYANA BOARD", Value = "HARYANA BOARD" });
+                                    Board.Add(new SelectListItem { Text = "HIMACHAL BOARD", Value = "HIMACHAL BOARD" });
+                                    Board.Add(new SelectListItem { Text = "J & amp; K BOARD", Value = "J & amp; K BOARD" });
+                                    Board.Add(new SelectListItem { Text = "RAJASTHAN BOAR", Value = "RAJASTHAN BOAR" });
+                                    Board.Add(new SelectListItem { Text = "OTHER BOARD", Value = "OTHER BOARD" });
+                                }
+                                @Html.DropDownList("Board", Board, new { id = "Board" })
+                            </div>
+                            <div id="corSelAllTehsil" class="col-md-3">
+                                New Value:
+                                @Html.DropDownList("SelAllTehsil", new SelectList(ViewBag.MyAllTehsil, "Value", "Text"), "Select Tehsil", new { @class = "" })
+                            </div>
+                            <div id="corSelAllDistrict" class="col-md-3">
+                                New Value:
+                                @Html.DropDownList("SelAllDistrict", new SelectList(ViewBag.MyAllDistrict, "Value", "Text"), "Select District", new { @class = "" })
+                            </div>
+                            <div id="corMatricBoard" class="col-md-3">
+                                New Value:
+                                @Html.DropDownList("MatricBoard", new SelectList(ViewBag.MyMatricBoard, "Value", "Text"), new { @class = "" })
+                            </div>
+                            <div id="corMatricResult" class="col-md-3">
+                                New Value:
+                                @Html.DropDownList("MatricResult", new SelectList(ViewBag.MyMatricResult, "Value", "Text"), new { @class = "" })
+                            </div>
+
+                            @*<div class="col-md-2">
+                                Remark : @Html.TextBoxFor(a => a.Remark, new { id = "Remark", @class = "kdsfont" })
+                                </div>*@
+                            <div class="col-md-2">
+                                <br />
+                                @*<input type="submit" value="Add Record" formmethod="post" formaction="SchoolCorrectionAdd" onclick="return formValadd();" />*@
+                                <input type="submit" value="Add Record" name="cmd" onclick="return formValadd();" />
+                            </div>
+
+                        </fieldset>
+                    </div>
+                </div>
+            }
+
+            <div class="clearfix"></div>
+            <div class="clearfix"></div>
+            <h4>Correction Details</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="">
+                            <tr class="active-tr">
+                                <th>Sl.No</th>
+                                <th>Correction Id</th>
+                                <th>Class</th>
+                                <th>School</th>
+                                <th>Student Id</th>
+                                <th>Correction Field</th>
+                                <th>Old Value</th>
+                                <th>New Value</th>
+                                <th>Lot</th>
+                                <th>Action</th>
+
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCountadded > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    for (int i = 0; i < Model.Correctiondata.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var CorrectionId = Model.Correctiondata.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                        var Class = Model.Correctiondata.Tables[0].Rows[i]["Class"].ToString();
+                                        var stdid = Model.Correctiondata.Tables[0].Rows[i]["std_id"].ToString();
+                                        var CorrectionType = Model.Correctiondata.Tables[0].Rows[i]["CorrectionFieldDisplayName"].ToString();
+                                        var OldValue = Model.Correctiondata.Tables[0].Rows[i]["OldValue"].ToString();
+                                        var NewValue = Model.Correctiondata.Tables[0].Rows[i]["NewValue"].ToString();
+                                        var Lot = Model.Correctiondata.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                                        var SCHL = Model.Correctiondata.Tables[0].Rows[i]["schl"].ToString();
+
+                                        Count = Count + 1;
+                                        <tr>
+                                            <td>
+                                                @Count
+                                            </td>
+                                            <td>
+                                                @CorrectionId
+                                            </td>
+                                            <td>
+                                                @Class
+                                            </td>
+                                            <td>
+                                                @SCHL
+                                            </td>
+                                            <td>
+                                                @stdid
+                                            </td>
+                                            <td>
+                                                @CorrectionType
+                                            </td>
+                                            <td class="kdsfont">
+                                                @OldValue
+                                            </td>
+                                            <td class="kdsfont">
+                                                @NewValue
+                                            </td>
+                                            <td>
+                                                @Lot
+                                            </td>
+                                            <td>
+                                                <div class="cart">
+                                                    @{
+                                                        if (@Lot == "0")
+                                                        {
+                                                            @Html.ActionLink("Delete", "AiddedCorrectionRecordDelete", new { id = CorrectionId }, new { onclick = "return confirm('Are you sure Delete This Record?');" })
+                                                        }
+                                                        else
+                                                        {
+                                                            <div style="color:forestgreen"><b>Final Submitted</b></div>
+                                                        }
+
+                                                    }
+
+                                                    @*@Html.ActionLink("Delete", "AiddedRecordDelete", new { id = CorrectionId }, new { onclick = "return confirm('Are you sure Delete This Record?');" })*@
+                                                    @*@Html.ActionLink(" ", "AiddedRecordDelete",    new { id = CorrectionId, @style = "background-image:url('~/Images/Delete_Img.png')" }, new { onclick = "return confirm('Are you sure Delete This Record?');" })*@
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8">
+                                            @ViewBag.Message2
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+            <fieldset style="margin-bottom:15px">
+                <div class="col-md-12 text-center">
+
+                    @*@{
+                            if (ViewBag.TotalCountadded > 0)
+                            {
+                                <input type="button" id="finalsubmit" value="Final Submit Correction" onclick="return val()" />
+                                <input type="submit" id="RoughReport" value="Rough Print" formaction="SchoolCorrectionPerformaRoughReport" />
+                            }
+                        }
+                        <input type="submit" value="View Previous Correction Status" formaction="SchoolCorrectionAllRecord" />
+                        <input type="submit" value="Print Correction Performa" formaction="SchoolCorrectionFinalPrintList" />
+                        <input type="submit" value="Exit" formaction="ExitCorrection" />*@
+
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    if (ViewBag.TotalCountSearch > 0)
+    {
+        ViewData["category"] = Model.StoreAllData.Tables[0].Rows[0]["category"].ToString();
+
+        ViewData["Candi_Name"] = Model.StoreAllData.Tables[0].Rows[0]["Candi_Name"].ToString();
+        ViewData["Candi_Name_P"] = Model.StoreAllData.Tables[0].Rows[0]["Candi_Name_P"].ToString();
+        ViewData["Father_Name"] = Model.StoreAllData.Tables[0].Rows[0]["Father_Name"].ToString();
+        ViewData["Father_Name_P"] = Model.StoreAllData.Tables[0].Rows[0]["Father_Name_P"].ToString();
+        ViewData["Mother_Name"] = Model.StoreAllData.Tables[0].Rows[0]["Mother_Name"].ToString();
+        ViewData["Mother_Name_P"] = Model.StoreAllData.Tables[0].Rows[0]["Mother_Name_P"].ToString();
+        ViewData["Gender"] = Model.StoreAllData.Tables[0].Rows[0]["Gender"].ToString();
+        ViewData["Caste"] = Model.StoreAllData.Tables[0].Rows[0]["Caste"].ToString();
+        ViewData["DOB"] = Model.StoreAllData.Tables[0].Rows[0]["DOB"].ToString();
+        ViewData["Registration_num"] = Model.StoreAllData.Tables[0].Rows[0]["Registration_num"].ToString();
+        ViewData["CandStudyMedium"] = Model.StoreAllData.Tables[0].Rows[0]["CandStudyMedium"].ToString();
+        ViewData["E_punjab_Std_id"] = Model.StoreAllData.Tables[0].Rows[0]["E_punjab_Std_id"].ToString();
+        ViewData["Aadhar_num"] = Model.StoreAllData.Tables[0].Rows[0]["Aadhar_num"].ToString();
+        ViewData["mobile"] = Model.StoreAllData.Tables[0].Rows[0]["mobile"].ToString();
+
+
+        if (ViewBag.N3M1threclock != "1" || ViewBag.E1T1threclock != "1")
+        { ViewData["aashirwardnumber"] = Model.StoreAllData.Tables[0].Rows[0]["aashirwardnumber"].ToString(); }
+        else { ViewData["aashirwardnumber"] = ""; }
+
+        ViewData["Differently_Abled"] = Model.StoreAllData.Tables[0].Rows[0]["Differently_Abled"].ToString();
+        ViewData["DisabilityPercent"] = Model.StoreAllData.Tables[0].Rows[0]["DisabilityPercent"].ToString();
+        ViewData["wantwriter"] = Model.StoreAllData.Tables[0].Rows[0]["wantwriter"].ToString();
+        ViewData["Religion"] = Model.StoreAllData.Tables[0].Rows[0]["Religion"].ToString();
+        ViewData["Address"] = Model.StoreAllData.Tables[0].Rows[0]["Address"].ToString();
+        ViewData["LandMark"] = Model.StoreAllData.Tables[0].Rows[0]["LandMark"].ToString();
+        ViewData["Block"] = Model.StoreAllData.Tables[0].Rows[0]["Block"].ToString();
+        ViewData["PinCode"] = Model.StoreAllData.Tables[0].Rows[0]["PinCode"].ToString();
+        ViewData["MatricBoard"] = Model.StoreAllData.Tables[0].Rows[0]["MatricBoard"].ToString();
+        ViewData["MatricResult"] = Model.StoreAllData.Tables[0].Rows[0]["MatricResult"].ToString();
+        ViewData["MetricMonth"] = Model.StoreAllData.Tables[0].Rows[0]["MetricMonth"].ToString();
+        ViewData["MetricYear"] = Model.StoreAllData.Tables[0].Rows[0]["MetricYear"].ToString();
+        ViewData["MetricRollNum"] = Model.StoreAllData.Tables[0].Rows[0]["MetricRollNum"].ToString();
+        ViewData["CandStudyMedium"] = Model.StoreAllData.Tables[0].Rows[0]["CandStudyMedium"].ToString();
+        ViewData["Group_Name"] = Model.StoreAllData.Tables[0].Rows[0]["Group_Name"].ToString();
+        ViewData["Admission_Num"] = Model.StoreAllData.Tables[0].Rows[0]["Admission_Num"].ToString();
+        ViewData["Admission_Date"] = Model.StoreAllData.Tables[0].Rows[0]["Admission_Date"].ToString();
+        ViewData["Belongs_BPL"] = Model.StoreAllData.Tables[0].Rows[0]["Belongs_BPL"].ToString();
+        ViewData["Board"] = Model.StoreAllData.Tables[0].Rows[0]["Board"].ToString();
+        ViewData["Board_Roll_Num"] = Model.StoreAllData.Tables[0].Rows[0]["OROLL"].ToString();
+        ViewData["Prev_School_Name"] = Model.StoreAllData.Tables[0].Rows[0]["Prev_School_Name"].ToString();
+        ViewData["Monthlist"] = Model.StoreAllData.Tables[0].Rows[0]["Month"].ToString();
+        ViewData["Yearlist"] = Model.StoreAllData.Tables[0].Rows[0]["Year"].ToString();
+        ViewData["AWRegisterNo"] = Model.StoreAllData.Tables[0].Rows[0]["AWRegisterNo"].ToString();
+        ViewData["Class_Roll_Num_Section"] = Model.StoreAllData.Tables[0].Rows[0]["Class_Roll_Num_Section"].ToString();
+        ViewData["Section"] = Model.StoreAllData.Tables[0].Rows[0]["Section"].ToString();
+        ViewData["tehsil"] = Model.StoreAllData.Tables[0].Rows[0]["tehsil"].ToString();
+        ViewData["district"] = Model.StoreAllData.Tables[0].Rows[0]["district"].ToString();
+    }
+
+
+}
+
+@{
+    if (ViewData["Status"] != null)
+    {
+        var result = ViewData["Status"].ToString();
+        var msg = TempData["msg"].ToString();
+        if (result == "-4")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("You Cannot change Old Value and New Value as Same");
+            </script>
+        }
+        else if (result == "-3")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("You Cannot change candidate's more than two particulars (in Punjabi)");
+            </script>
+        }
+        else if (result == "-2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("You Cannot change candidate's more than two particulars (in English)");
+            </script>
+        }
+        else if (result == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("This correction is already applied, You can apply same after previous correction is Rejected or Verified.");
+            </script>
+        }
+        else if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Correction data Added successfully.");
+            </script>
+        }
+    }
+
+}
+
+<script type="text/javascript">
+function val() {
+    if (!window.confirm("Are you Sure to Final Submit. Once Final Submitted and Lot generated you will not able to make any kind of changes in this correction Lot?")) {
+            return false;
+        }
+        else {
+            //document.location.href = '@Url.Action("FinalSubmitCorrection", "RegistrationPortal")';
+            }
+            }
+
+</script>
+<script type="text/javascript">
+
+    $("#SelListField").change(function () {
+        var Cfld = $("#SelListField").val();
+        //alert(Cfld);
+        if (Cfld == "Candi_Name_P" || Cfld == "Father_Name_P" || Cfld == "Mother_Name_P") {
+
+            $.ajax({
+                url: '@Url.Action("GetPunabiName", "RegistrationPortal")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({ s: $("#SearchString").val(),f: $("#SelListField").val() }),
+                success: function (States) {
+                    //$("#cortxt").empty();
+
+                    $.each(States, function (i, SList) {
+
+                        document.getElementById("oldVal").value = SList.Text;
+
+                    });
+                    if (SList.success) {
+
+                        //document.getElementById("MName").value = data.result;
+                        // $("#TextBoxID").val(data.result.MName);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+
+        }
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $("#oldValtxt").show(); $("#cortxt").show(); $("#corCategory").hide(); $("#corpnj").hide(); $("#corgender").hide(); $("#corCaste").hide();
+        $("#corDOB").hide(); $("#corCSM").hide(); $("#corDifferently_Abled").hide(); $("#corDifferently_Abled").hide();
+        $("#corwantwriter").hide(); $("#corRelist").hide(); $("#corMonth").hide(); $("#corYear").hide(); $("#corGroup").hide();
+        $("#corAdmission_Date").hide(); $("#corBelongs_BPL").hide(); $("#corBoard").hide(); $("#corMonthlist").hide(); $("#corYearlist").hide();
+        $("#corSelAllDistrict").hide(); $("#corSelAllTehsil").hide(); $("#corSection").hide(); $("#corMatricBoard").hide(); $("#corMatricResult").hide();
+
+        $("#SelListField").change(function () {
+            var Cfld = $("#SelListField").val();
+            $("#newVal").val('');
+            if (Cfld == 'MatricBoard' || Cfld == 'MatricResult' || Cfld == 'Mobile' || Cfld == 'Section' || Cfld == 'District' || Cfld == 'Tehsil' || Cfld == 'Block' || Cfld == 'LandMark' || Cfld == 'Class_Roll_Num_Section' || Cfld == 'AWRegisterNo'
+                || Cfld == 'Month' || Cfld == 'Year' || Cfld == 'Prev_School_Name' || Cfld == 'Board_Roll_Num' || Cfld == 'Board' || Cfld == 'Belongs_BPL' || Cfld == 'DisabilityPercent'
+                || Cfld == 'category' || Cfld == 'Candi_Name' || Cfld == 'Father_Name' || Cfld == 'Mother_Name' || Cfld == 'Candi_Name_P' || Cfld == 'Father_Name_P' || Cfld == 'Mother_Name_P'
+                || Cfld == 'Gender'|| Cfld == 'Caste' || Cfld == 'DOB' || Cfld == 'Registration_num' || Cfld == 'CandStudyMedium' || Cfld == 'Differently_Abled' || Cfld == 'wantwriter'
+                || Cfld == 'Aadhar_num' || Cfld == 'aashirwardnumber' || Cfld == 'E_punjab_Std_id' || Cfld == 'Religion' || Cfld == 'Address' || Cfld == 'MetricRollNum'
+                || Cfld == 'MetricMonth' || Cfld == 'MetricYear' || Cfld == 'LandMark' || Cfld == 'Block' || Cfld == 'PinCode' || Cfld == 'EXAM' || Cfld == 'Admission_Date'
+                || Cfld == 'Admission_Num') {
+                $("#corMatricBoard").hide(); $("#corMatricResult").hide(); $("#corSection").hide(); $("#corSelAllDistrict").hide(); $("#corSelAllTehsil").hide(); $("#corMonthlist").hide(); $("#corYearlist").hide();
+                $("#corBoard").hide(); $("#corBelongs_BPL").hide(); $("#corCategory").hide(); $("#oldValtxt").hide(); $("#cortxt").hide(); $("#corpnj").hide(); $("#corgender").hide();
+                $("#corCaste").hide();$("#corDOB").hide(); $("#corCSM").hide(); $("#corDifferently_Abled").hide(); $("#corwantwriter").hide();
+                $("#corRelist").hide(); $("#corMonth").hide(); $("#corYear").hide(); $("#corGroup").hide(); $("#corAdmission_Date").hide();
+
+                $("#newValT").val('');
+                $("#oldVal").val('');
+            }
+            if (Cfld == 'category') {
+                $("#oldValtxt").show();
+                $("#corCategory").show();
+                $("#oldVal").val('@ViewData["category"]');
+            }
+            else if (Cfld == 'Block') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Block"]');
+            }
+            else if (Cfld == 'LandMark') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["LandMark"]');
+            }
+            else if (Cfld == 'Class_Roll_Num_Section') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Class_Roll_Num_Section"]');
+            }
+            @*else if (Cfld == 'Section') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Section"]');
+            }*@
+            else if (Cfld == 'AWRegisterNo') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["AWRegisterNo"]');
+            }
+            else if (Cfld == 'Board_Roll_Num') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Board_Roll_Num"]');
+            }
+            else if (Cfld == 'Prev_School_Name') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Prev_School_Name"]');
+            }
+            else if (Cfld == 'Mobile') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["mobile"]');
+            }
+            else if (Cfld == 'DisabilityPercent') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["DisabilityPercent"]');
+            }
+            else if (Cfld == 'Belongs_BPL') {
+                $("#oldValtxt").show();
+                $("#corBelongs_BPL").show();
+                $("#oldVal").val('@ViewData["Belongs_BPL"]');
+            }
+            else if (Cfld == 'Board') {
+                $("#oldValtxt").show();
+                $("#corBoard").show();
+                $("#oldVal").val('@ViewData["Board"]');
+            }
+            else if (Cfld == 'MatricBoard') {
+                $("#oldValtxt").show();
+                $("#corMatricBoard").show();
+                $("#oldVal").val('@ViewData["MatricBoard"]');
+            }
+            else if (Cfld == 'MatricResult') {
+                $("#oldValtxt").show();
+                $("#corMatricResult").show();
+                $("#oldVal").val('@ViewData["MatricResult"]');
+            }
+            else if (Cfld == 'Month') {
+                $("#oldValtxt").show();
+                $("#corMonthlist").show();
+                $("#oldVal").val('@ViewData["Monthlist"]');
+            }
+            else if (Cfld == 'MetricMonth') {
+                $("#oldValtxt").show();
+                $("#corMonthlist").show();
+                $("#oldVal").val('@ViewData["MetricMonth"]');
+            }
+            else if (Cfld == 'Year') {
+                $("#oldValtxt").show();
+                $("#corYearlist").show();
+                $("#oldVal").val('@ViewData["Yearlist"]');
+            }
+            else if (Cfld == 'MetricYear') {
+                $("#oldValtxt").show();
+                $("#corYearlist").show();
+                $("#oldVal").val('@ViewData["MetricYear"]');
+            }
+            else if (Cfld == 'Tehsil') {
+                $("#oldValtxt").show();
+                $("#corSelAllTehsil").show();
+                $("#oldVal").val('@ViewData["Tehsil"]');
+            }
+            else if (Cfld == 'District') {
+                $("#oldValtxt").show();
+                $("#corSelAllDistrict").show();
+                $("#oldVal").val('@ViewData["District"]');
+            }
+            else if (Cfld == 'Section') {
+                $("#oldValtxt").show();
+                $("#corSection").show();
+                $("#oldVal").val('@ViewData["Section"]');
+            }
+            else if (Cfld == 'Candi_Name') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Candi_Name"]');
+            }
+            else if (Cfld == 'Father_Name') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Father_Name"]');
+            }
+            else if (Cfld == 'LandMark') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["LandMark"]');
+            }
+            else if (Cfld == 'Block') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Block"]');
+            }
+            else if (Cfld == 'PinCode') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["PinCode"]');
+            }
+            else if (Cfld == 'MetricRollNum') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["MetricRollNum"]');
+            }
+            @*else if (Cfld == 'MetricMonth') {
+                $("#oldValtxt").show();
+                $("#corMonth").show();
+                $("#oldVal").val('@ViewData["MetricMonth"]');
+            }
+            else if (Cfld == 'MetricYear') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["MetricYear"]');
+            }*@
+            else if (Cfld == 'E_punjab_Std_id') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["E_punjab_Std_id"]');
+            }
+            else if (Cfld == 'Aadhar_num') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Aadhar_num"]');
+            }
+            else if (Cfld == 'aashirwardnumber') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["aashirwardnumber"]');
+            }
+            else if (Cfld == 'Differently_Abled') {
+                $("#oldValtxt").show();
+                $("#corDifferently_Abled").show();
+                $("#oldVal").val('@ViewData["Differently_Abled"]');
+            }
+            else if (Cfld == 'wantwriter') {
+                $("#oldValtxt").show();
+                $("#corwantwriter").show();
+                $("#oldVal").val('@ViewData["wantwriter"]');
+            }
+            else if (Cfld == 'Religion') {
+                $("#oldValtxt").show();
+                $("#corRelist").show();
+                $("#oldVal").val('@ViewData["Religion"]');
+            }
+            else if (Cfld == 'Address') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Address"]');
+            }
+
+            else if (Cfld == 'Mother_Name') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Mother_Name"]');
+            }
+            else if (Cfld == 'Candi_Name_P') {
+                $("#oldValtxt").show();
+                $("#corpnj").show();
+                @*$("#oldVal").val('@ViewData["Candi_Name_P"]');*@
+            }
+            else if (Cfld == 'Father_Name_P') {
+                $("#oldValtxt").show();
+                $("#corpnj").show();
+                @*$("#oldVal").val('@ViewData["Father_Name_P"]');*@
+            }
+            else if (Cfld == 'Mother_Name_P') {
+                $("#oldValtxt").show();
+                $("#corpnj").show();
+                @*$("#oldVal").val('@ViewData["Mother_Name_P"]');*@
+            }
+            else if (Cfld == 'Gender') {
+                $("#oldValtxt").show();
+                $("#corgender").show();
+                $("#oldVal").val('@ViewData["Gender"]');
+            }
+            else if (Cfld == 'Caste') {
+                $("#oldValtxt").show();
+                $("#corCaste").show();
+                $("#oldVal").val('@ViewData["Caste"]');
+
+            }
+            else if (Cfld == 'DOB') {
+                $("#oldValtxt").show();
+                $("#corDOB").show();
+                $("#oldVal").val('@ViewData["DOB"]');
+                $("#newValDOB").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10yr',
+                    //maxDate: '10/08/2016',
+                    yearRange: "1980:2017"
+
+                });
+            }
+            else if (Cfld == 'Admission_Date') {
+                $("#oldValtxt").show();
+                $("#corAdmission_Date").show();
+                $("#oldVal").val('@ViewData["Admission_Date"]');
+                $("#Admission_Date").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-1',
+                    //maxDate: '10/08/2016',
+                    yearRange: "1980:2025"
+
+                });
+            }
+            else if (Cfld == 'Admission_Num') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Admission_Num"]');
+            }
+            //$("#corAdmission_Date").hide();
+            else if (Cfld == 'Registration_num') {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#oldVal").val('@ViewData["Registration_num"]');
+            }
+            else if (Cfld == 'CandStudyMedium') {
+                $("#oldValtxt").show();
+                $("#corCSM").show();
+                $("#oldVal").val('@ViewData["CandStudyMedium"]');
+            }
+            else if (Cfld == 'EXAM') {
+                $("#oldValtxt").show();
+                $("#corGroup").show();
+                $("#oldVal").val('@ViewData["Group_Name"]');
+            }
+
+
+            else {
+                $("#oldValtxt").show();
+                $("#cortxt").show();
+                $("#corpnj").hide();
+                $("#corgender").hide();
+                $("#corCaste").hide();
+                $("#oldVal").val('');
+                $("#corDOB").hide();
+                $("#corCSM").hide();
+                $("#corGroup").hide();
+                $("#corRelist").hide();
+                $("#corwantwriter").hide();
+                $("#corAdmission_Date").hide();
+                $("#corDifferently_Abled").hide();
+                $("#corCategory").hide();
+                $("#corBelongs_BPL").hide();
+                $("#corBoard").hide();
+                $("#corMonthlist").hide();
+                $("#corYearlist").hide();
+                $("#corSelAllTehsil").hide();
+                $("#corSelAllDistrict").hide();
+                $("#corSection").hide();
+                $("#corMatricBoard").hide();
+                $("#corMatricResult").hide();
+            }
+
+        });
+    });
+
+
+
+    function formVal() {
+
+        if (document.getElementById("SelList").value == "" || document.getElementById("SelList").value == "0" || document.getElementById("SelList").value == "--Select Class---") {
+            alert("Select Class");
+            document.getElementById("SelList").focus();
+            return false;
+        }
+        else if (document.getElementById("SCHL").value == "" || document.getElementById("SCHL").value == "0") {
+            alert("Enter SCHL Code");
+            document.getElementById("SCHL").focus();
+            return false;
+        }
+        else if (document.getElementById("SearchString").value == "" || document.getElementById("SearchString").value == "0") {
+            alert("Enter Unique Id");
+            document.getElementById("SearchString").focus();
+            return false;
+        }
+
+
+
+    }
+    function formValadd() {
+        if (document.getElementById("SelListField").value == "" || document.getElementById("SelListField").value == "0" || document.getElementById("SelListField").value == "Select Field") {
+            alert("Select Correction Field");
+            document.getElementById("SelListField").focus();
+            return false;
+        }
+        else if (document.getElementById("newValT").value == "" && document.getElementById("newValP").value == "" && document.getElementById("newValDOB").value == "" && document.getElementById("newValGender").value == "") {
+            alert("Enter New Value");
+            document.getElementById("newVal").focus();
+            return false;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+
+
+</script>

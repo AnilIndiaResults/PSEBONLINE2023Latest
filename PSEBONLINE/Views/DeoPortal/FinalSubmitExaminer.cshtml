@@ -1,0 +1,72 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+<h1>Current Status For Examiner Final Submission</h1>
+<p style="display:none;">
+    Welcome: @if (Session["NAME"] != null)
+    {@Session["NAME"].ToString()}
+    else { Response.Redirect("~/DeoPortal/Index"); }
+</p>
+@using (Html.BeginForm("FinalSubmitExaminer", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+   
+        if (ViewBag.TotalCount > 0)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <b>Final submission is pending of following examiners :</b><br />
+
+                    Class: 10 (@ViewBag.cnt10)<br />
+
+                    Class: 12 (@ViewBag.cnt12)<br />
+
+                    Class 10 Subject Wise Summary: @ViewBag.Class10WiseSub<br />
+
+                    Class 12 Subject Wise Summary: @ViewBag.Class12WiseSub<br />
+
+                    Total Records: @ViewBag.TotalRecords<br />&nbsp;<br />&nbsp;
+
+                    To do final submission, click on below button..<br />&nbsp;<br />&nbsp;
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 text-center">
+
+                    @Html.ActionLink("Final Submit", "ExaminerFinalSubmit", new { Dist = @Session["Dist"].ToString() }, new { onclick = "return confirm('After Final Submission, all record will be locked & you cannot modify record but you can do new entries. Are you sure to do final submit?');", @class = "btn" })
+
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-12">
+                <b>There is no record pending for final submission.</b><br />
+               
+            </div>
+        }
+   
+  }
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submitted Successfully");
+                window.location.href = '@Url.Action("FinalSubmitExaminer", "DeoPortal")';
+            </script>}
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Data Try Agian");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("plz try again");
+            </script>
+        }
+    }
+}

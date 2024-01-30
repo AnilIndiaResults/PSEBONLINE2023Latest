@@ -1,0 +1,247 @@
+﻿@model PSEBONLINE.Models.RecheckPaymentformViewModel
+@{
+    ViewBag.Title = "PaymentForm";
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+@*<h1>Payment Form, July-2017</h1>*@
+<style type="text/css">
+    .ui-dialog-buttonset button {
+        margin: 5px
+    }
+
+    .ui-dialog {
+        background-color: #fff;
+        text-align: center;
+        border: 4px solid #ccc;
+        padding: 5px;
+        border-radius: 6px
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+<h1>
+    Payment Form, Rechecking/Re-evaluation  @if (Model.Class == "10" || Model.Class.StartsWith("M"))
+        {<span class="rqf">Matriculation</span>}
+        else
+        { <span class="rqf">Sr. Secondary</span>} Examination March 2023
+</h1>
+
+
+<div id="dialogOnline" style="display: none;">
+    <h4>Are you sure to do online payment?</h4>
+    <span class="rqf">Click OK button to do Online Payment otherwise click Cancel button.</span>
+    @*If you are not able to pay fee online please wait you will get a SMS to pay fee it may take one working day.*@
+</div>
+<div id="loading1"></div>
+
+
+@{
+
+    if (Model != null && Model.PaymentFormData != null && Model.PaymentFormData.Tables.Count > 0)
+    {
+        using (Html.BeginForm("PaymentForm", "Recheck", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+        {
+            <div class="row" id="divall">
+                <div class="col-md-12" id="divMain1">
+                    <div class="table-responsive">
+                        <table>
+                            @{
+
+                                if (Model.PaymentFormData.Tables[1].Rows[0]["AllowBanks"].ToString() == "0")
+                                {
+                                    <tr style="font-size:20px;color:red;">
+                                        <td>Challan Generation date is expire for this Batch.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input value="back" type="button" onclick="javascript:document.location.href='@Url.Action("RecheckConfirmation", "Recheck")'" />
+                                        </td>
+                                    </tr>
+                                }
+                                else if (Model.TotalFinalFees <= 0)
+                                {
+                                    <tr style="font-size:18px;color:red;">
+                                        <td>Total Fee much be greater than Zero.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input value="back" type="button" onclick="javascript:document.location.href='@Url.Action("RecheckConfirmation", "Recheck")'" />
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                        <tr>
+
+                            @if (Model.PaymentFormData.Tables[1].Rows[0]["AllowBanks"].ToString().Contains("301"))
+                            {
+                                <td><span>@Html.RadioButtonFor(m => m.BankCode, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span></td>
+                            }
+                            @if (Model.PaymentFormData.Tables[1].Rows[0]["AllowBanks"].ToString().Contains("302"))
+                            {
+                                <td>
+                                    <span style="display:none">@Html.RadioButtonFor(m => m.BankCode, "302", new { id = "ATOM" }) <img src="~/Images/PNSB.jpg" alt="PNSB" width="150" /></span>
+                                </td>
+                            }
+                            @if (Model.PaymentFormData.Tables[1].Rows[0]["AllowBanks"].ToString().Contains("203"))
+                            {
+                                <td style="display:none">@Html.RadioButtonFor(m => m.BankCode, "203", new { id = "HOD" })PSEB HOD</td>
+                            }
+
+                        </tr>
+                                    <tr>
+                                        <td style="padding-bottom:8px">
+
+                                            <input id="btnPayment" type="button" value="Proceed to Final Submit & Pay Online" class="btn" />                                        
+                                        </td>
+                                    </tr>
+                                }
+
+
+
+                            }
+                        </table>
+
+
+                        <table class="table table-bordered" id="t01">
+                            @*<tr>
+                                    <td>Class/ Exam Type/ Category</td>
+                                    <td> @Html.DisplayFor(m => m.Class)/ @Html.DisplayFor(m => m.ExamType)/ @Html.DisplayFor(m => m.category)</td>
+                                </tr>*@
+                            <tr>
+                                <td width="30%">LOT No</td>
+                                <td width="70%">@Html.DisplayFor(m => m.LOTNo)</td>
+                            </tr>
+                            <tr>
+                                <td>Candidate Name</td>
+                                <td>@Html.DisplayFor(m => m.Name)</td>
+                            </tr>
+                            <tr>
+                                <td>Roll. No.</td>
+                                <td>@Html.DisplayFor(m => m.roll)</td>
+                            </tr>
+                            <tr>
+                                <td>Ref. No.</td>
+                                <td>@Html.DisplayFor(m => m.RefNo)</td>
+                            </tr>
+                            <tr>
+                                <td>Rechecking/Re-evaluation Fee</td>
+                                <td>@Html.DisplayFor(m => m.TotalFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Late Fee</td>
+                                <td>@Html.DisplayFor(m => m.TotalLateFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Total Fee</td>
+                                <td>@Html.DisplayFor(m => m.TotalFinalFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Total(In Words)</td>
+                                <td>@Html.DisplayFor(m => m.TotalFeesInWords) ONLY</td>
+                            </tr>
+                            <tr>
+                                @{
+                                    //var fdt = Model.FeeDate.ToString("dd/MM/yyyy");
+                                    var fdt = Model.BankLastDate.ToString("dd/MM/yyyy");
+                                    <td colspan="2" class="text-center rqf">Fee Valid Upto @fdt</td>
+                                }
+                                @*<td colspan="2" class="text-center rqf">Fee Valid Upto @Html.DisplayFor(m => m.FeeDate)</td>*@
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+
+
+
+
+@{
+    if (ViewData["SelectBank"] != null)
+    {
+        if (ViewData["SelectBank"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Bank ");
+                window.location.href = '@Url.Action("PaymentForm", "Recheck")';
+            </script>
+
+        }
+        else if (ViewData["SelectBank"].ToString() == "ERR")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewData["ErrorMessage"]');
+            </script>
+
+        }
+    }
+}
+
+
+
+<script type="text/javascript">
+
+
+
+    $("#btnPayment").click(function () {
+
+        var SBPa = document.getElementById("HDFC").checked;
+        var PNBa = document.getElementById("ATOM").checked;
+
+        if (SBPa == false && PNBa == false) {
+            alert("Please Select Any Bank For Online Payment");
+            return false;
+        }
+        else {
+
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to do online payment?");
+            $('#dialogOnline').dialog('open');
+            return true;
+        }
+
+    });
+    $(function () {
+        $("#dialogOnline").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "",
+            width: 320,
+            height: 180,
+            buttons: {
+                "OK": function () {
+                   $('#myForm').submit();
+
+                },
+                Cancel: function () {
+                    $('#loading1').empty("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+
+</script>
+@*<script type="text/javascript">
+        function valForm() {
+            //alert(TotalFinalFees);
+            //var SBPa = document.getElementById("SBP").checked;
+            //var PNBa = document.getElementById("PNB").checked;
+
+            if (document.getElementById("SBI").checked == false && document.getElementById("PNB").checked == false) {
+                alert("Please select any Bank");
+                return false;
+            }
+            else {
+
+                return true;
+            }
+
+        }
+    </script>*@

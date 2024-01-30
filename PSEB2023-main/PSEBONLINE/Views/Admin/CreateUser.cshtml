@@ -1,0 +1,513 @@
+﻿@model PSEBONLINE.Models.AdminUserModel
+@{
+    ViewBag.Title = "CreateUser";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<style type="text/css">.bvc li {padding-right:1px}.bvc .checkboxP {padding-left:1px} .newList li{padding:0 15px !important}.newList li .checkboxP {margin-right:2px}</style>
+<h1>Create New User</h1>
+
+<div id="divMain1">
+    <h4>User Identity Details</h4>
+    <div class="row">
+        <div class="col-md-4">
+            User ID @Html.TextBoxFor(a => a.user, new { id = "txtUser", @class = "textnone" })
+        </div>
+        
+        @*<div class="col-md-4"  style="display:none">
+            Password @Html.TextBoxFor(a => a.pass, new { id = "txtPass", @class = "textnone" })
+        </div>*@
+        <div class="col-md-4">
+            Full Name @Html.TextBoxFor(a => a.User_fullnm, new { id = "txtFullName", @class = "textnone" })
+        </div>
+        <div class="col-md-4">
+            Email @Html.TextBoxFor(a => a.EmailID, new { id = "txtEmailID", @class = "textnone" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            Mobile No. @Html.TextBoxFor(a => a.Mobno, new { id = "txtMob", @maxlength = "10", onkeypress = "return isNumberKey(event);" })
+        </div>  
+        <div class="col-md-4">
+            @*Branch @Html.TextBoxFor(a => a.Branch, new { id = "txtBranch", @class = "textnone" })*@
+            Branch @Html.DropDownList("Branch", new SelectList(ViewBag.Branch, "Value", "Text", ViewBag.SelectedBranch), "--Select Branch---", new { id = "ddlBranch" })
+        </div>
+        <div class="col-md-4">
+            Designation @Html.TextBoxFor(a => a.Designation, new { id = "txtDesignation", @class = "textnone" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            Remarks  @Html.TextBoxFor(a => a.Remarks, new { id = "txtRemarks", @class = "textnone" })
+        </div>
+       
+        <div class="col-md-4">
+            Select Class <span class="rqf"> (Multiple)</span>
+            @Html.DropDownListFor(m => m.ActionRight, (MultiSelectList)ViewBag.GetAllPSEBCLASS, new { multiple = "multiple", id = "ActionRight" })
+        </div>
+    </div>
+    <h4>Access Right on Set <input type="checkbox" id="selectallS" /></h4>
+    <div class="row">
+        @{
+            int k = 1;
+            foreach (var names in @Model.SetList)
+            {
+                //var SelectedDist = names.Selected == true ? "checked" : "";
+                var checkBoxId = names.Text;
+                var tdId = "tds" + names.Text;
+                if (checkBoxId.Contains("M"))
+                { <div id="@tdId" title="@names.Value" class="col-md-2">
+            @if (names.Selected == true)
+            {<input type="checkbox" id="@names.Value" class="checkboxS" value="@names.Value" checked /><span style="color:darkgreen;font-size:medium">@names.Text</span>}
+            else
+            {<input type="checkbox" id="@names.Value" class="checkboxS" value="@names.Value" /><span style="color:green;font-size:medium">@names.Text</span> }
+        </div> }
+                else
+                { <div id="@tdId" title="@names.Value" class="col-md-2">
+            @if (names.Selected == true)
+                    {<input type="checkbox" id="@names.Value" class="checkboxS" value="@names.Value" checked /><span style="color:darkred;font-size:medium">@names.Text</span>}
+                    else
+                    {<input type="checkbox" id="@names.Value" class="checkboxS" value="@names.Value" /><span style="color:orangered;font-size:medium">@names.Text</span>}
+        </div> }
+
+                k++;
+            }
+        }
+    </div>
+    <h4>Access Right on District <input type="checkbox" id="selectall" /></h4>
+    <div class="row">        
+                @{
+                    int i = 1;
+                    foreach (var names in @Model.DistList)
+                    {
+
+                        var checkBoxId = names.Text;
+                        var tdId = "td" + names.Text;
+
+                        <div id="@tdId"  title="@names.Value" class="col-md-3" >
+                                @*<input type="checkbox" id="cbfd^@names.Value" class="checkboxD" value="@names.Value" />*@
+                                <input type="checkbox" id="@names.Value" class="checkboxD" value="@names.Value" /> @names.Text
+                           </div>
+                            i++;
+                        }
+                }
+        </div>
+    <h4>Access Right on Pages <input type="checkbox" id="selectallP" /></h4>
+    <div class="row">
+        <div class="col-md-12">
+            @if (Model.SiteMenuModel != null && Model.SiteMenuModel.Count() > 0)
+            {
+                <ul class="nav navbar-nav newList">
+                    @MenuView.GetTreeView(Model.SiteMenuModel, Model.SiteMenuModel.FirstOrDefault().ParentMenuID)
+                </ul>
+            }
+        </div>
+       
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-center">
+            <input type="submit" value="Save" id="btnsave" />
+            @*<input type="submit" value="Save" id="Submit" formmethod="post" onclick="return valForm();" />*@
+            <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Reset</a>
+
+        </div>
+    </div>
+</div>
+
+<div id="loading1"></div>
+
+
+<script type="text/javascript">
+    
+      $(document).ready(function ()
+        {
+           // alert("ready");
+            $('.checkboxD').change(function () { //".checkbox" change                
+                if (this.checked == false) { //if this item is unchecked
+                    $("#selectall")[0].checked = false; //change "select all" checked status to false
+
+                }
+            });
+            $('.checkboxP').change(function () { //".checkbox" change                
+                if (this.checked == false) { //if this item is unchecked
+                    $("#selectallP")[0].checked = false; //change "select all" checked status to false
+
+                }
+            });
+            $('.checkboxS').change(function () { //".checkbox" change
+                if (this.checked == false) { //if this item is unchecked
+                    $("#selectallS")[0].checked = false; //change "select all" checked status to false
+
+                }
+            });
+
+          // Select Dist 
+            $("#selectall").change(function () {
+               // alert('Start select dist');
+                //"select all" change
+                var status = this.checked; // "select all" checked status
+                var arr = [];
+                $('.checkboxD').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                   // alert(id);
+                    this.checked = status; //change ".checkbox" checked status
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var j = 0;
+                    var k = 0;
+                    //cb-stdid
+                    for (var i = 3; i < arr.length; i++) {
+                        if (arr[i] == '-')
+                        {
+                            k++;
+                            continue;
+                        }
+                        if (k == 0)
+                        {
+                            arrid += arr[i];
+                        }
+                        j++;
+                    }
+                    //alert(dtype);
+                    for (var k = 3 + j + 5; k < arr.length; k++) {
+                        arrcast += arr[k];
+                    }
+
+                });
+            });
+            // End select all
+
+          // Select Pages 
+          $("#selectallP").change(function () {
+             // alert('Start select pages');
+              //"select all" change
+              var status = this.checked; // "select all" checked status
+              var arr = [];
+              $('.checkboxP').each(function () { //iterate all listed checkbox items
+                  var id = this.id;
+                 // alert(id);
+                  this.checked = status; //change ".checkbox" checked status
+                  var arr = [];
+                  arr = id;
+                  var arrid = "";
+                  var j = 0;
+                  var k = 0;
+                  //cb-stdid
+                  for (var i = 3; i < arr.length; i++) {
+                      if (arr[i] == '-') {
+                          k++;
+                          continue;
+                      }
+                      if (k == 0) {
+                          arrid += arr[i];
+                      }
+                      j++;
+                  }
+                  //alert(dtype);
+                  for (var k = 3 + j + 5; k < arr.length; k++) {
+                      arrcast += arr[k];
+                  }
+
+              });
+          });
+          // End select all
+
+          // Select Set
+          $("#selectallS").change(function () {
+              // alert('Start select pages');
+              //"select all" change
+              var status = this.checked; // "select all" checked status
+              var arr = [];
+              $('.checkboxS').each(function () { //iterate all listed checkbox items
+                  var id = this.id;
+                  // alert(id);
+                  this.checked = status; //change ".checkbox" checked status
+                  var arr = [];
+                  arr = id;
+                  var arrid = "";
+                  var j = 0;
+                  var k = 0;
+                  //cb-stdid
+                  for (var i = 3; i < arr.length; i++) {
+                      if (arr[i] == '-') {
+                          k++;
+                          continue;
+                      }
+                      if (k == 0) {
+                          arrid += arr[i];
+                      }
+                      j++;
+                  }
+                  //alert(dtype);
+                  for (var k = 3 + j + 5; k < arr.length; k++) {
+                      arrcast += arr[k];
+                  }
+
+              });
+          });
+          // End select all
+
+          //Start Save Data
+          $("#btnsave").click(function () {
+              //alert("Start Save Data");
+
+              var isvalid = valForm();
+            //  alert(isvalid);
+              if (isvalid == true) {
+
+                  var modelUser = {
+                      user: $("#txtUser").val(),
+                      pass: "",
+                      User_fullnm: $("#txtFullName").val(),
+                      Designation: $("#txtDesignation").val(),
+                      Branch: $("#ddlBranch").val(),
+                      Mobno: $("#txtMob").val(),
+                      STATUS: 1,
+                      EmailID: $("#txtEmailID").val(),
+                      Remarks: $("#txtRemarks").val(),
+                      listOfActionRight: $("#ActionRight").val()
+                  };
+
+                  var TableData;
+                  TableData = JSON.stringify(modelUser);
+                  // alert(TableData);
+                  var chkdee = "";
+                  var storeid = "";
+                  var pageid = "";
+                  var setid = "";
+                  var storeid1 = "";
+                  var storechkid = "";
+                  var storescid = "";
+                  $('.checkboxD').each(function () {
+                      var id = this.id;
+                      // alert("dist= "+ id);
+                      var arr = [];
+                      arr = id;
+                      var arrid = "";
+                      var arrcast = "";
+                      var j = 0;
+                      if (this.checked) {
+                          storeid += id + ",";
+                      }
+                  });
+
+                  $('.checkboxP').each(function () {
+                      var id = this.id;
+                      // alert("Page= " + id);
+                      var arr = [];
+                      arr = id;
+                      var arrid = "";
+                      var arrcast = "";
+                      var j = 0;
+                      if (this.checked) {
+                          pageid += id + ",";
+                      }
+                  });
+
+
+                  $('.checkboxS').each(function () {
+                      var id = this.id;
+                      // alert("Page= " + id);
+                      var arr = [];
+                      arr = id;
+                      var arrid = "";
+                      var arrcast = "";
+                      var j = 0;
+                      if (this.checked) {
+                          setid += id + ",";
+                      }
+                  });
+
+
+                  if (setid != "") {
+                      setid = setid.slice(0, -1);
+                  }
+
+                  if (storeid == "") {
+                      alert("Please Select District For User .");
+                  }
+                  else if (pageid == "") {
+                      alert("Please Select Page For User .");
+                  }
+                  else if (storeid != "" && pageid != "") {
+                      //alert('Now Save Dist :' + storeid)
+                      //alert('Now Save Page :' + pageid)
+
+
+
+                      $('#divMain1').hide();
+                      $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                      $.post("/Admin/JqCreateUser", { "User": TableData, "distid": storeid.slice(0, -1), "pageid": pageid.slice(0, -1), "setid": setid },
+                    function (data) {
+                        $('#loading1').empty();
+                       // alert('data.status  = ' + data.status);
+                        if (data.status == "1") {
+                            window.location.href = '/Admin/ViewUser';
+                            alert("User Added Successfully");
+                        }
+                        else {
+                            alert("Failure, Please Try Again.");
+                        }
+                    });
+                      //$.ajax({
+                      //    type: "POST",
+                      //    url: "/Admin/JqCreateUser", // this for calling the web method function in cs code.
+                      //    data: '{User:"' + TableData.toString() + '",storeid:"' + storeid + '",pageid:"' + pageid + '" }',
+                      //    contentType: "application/json; charset=utf-8",
+                      //    dataType: "json",
+                      //    success: OnSuccess,
+                      //    failure: function (response) {
+                      //        alert(response);
+                      //        $('#divMain1').show();
+                      //        $('#loading1').empty();
+                      //    }
+                      //});
+                      //function OnSuccess(response) {
+                      //    if (response.status == "1") {
+                      //        window.location.href = '/Admin/ViewUser';
+                      //        alert("User Added Successfully");
+                      //        $('#divMain1').show();
+                      //        $('#loading1').empty();                         
+                      //    }
+                      //    else {                         
+                      //        alert("Something Went Wrong, Please Try Again.");
+                      //        $('#divMain1').show();
+                      //        $('#loading1').empty();
+                      //    }
+                      //}
+                  }
+              }// if true close
+          });
+
+          //End  Save Data
+
+        });
+
+
+
+
+</script>
+
+
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function valForm() {     
+      
+        var txtUser = document.getElementById("txtUser");
+        if (txtUser.value == "") {
+            alert("Enter User Id");
+            txtUser.focus();
+            return false;
+        }
+        //var txtPass = document.getElementById("txtPass");
+        //if (txtPass.value == "") {
+        //    alert("Please Enter Password");
+        //    txtPass.focus();
+        //    return false;
+        //}
+
+        var txtEmailID = document.getElementById("txtEmailID");
+        if (txtEmailID.value == "") {
+            alert("Enter EmailID");
+            txtEmailID.focus();
+            return false;
+        }
+
+       
+        var txtFullName = document.getElementById("txtFullName");
+        if (txtFullName.value == "") {
+            alert("Please Enter User Full Name");
+            txtFullName.focus();
+            return false;
+        }
+
+
+        var txtDesignation = document.getElementById("txtDesignation");
+        if (txtDesignation.value == "") {
+            alert("Please Enter Designation");
+            txtDesignation.focus();
+            return false;
+        }   
+
+      
+        //var txtBranch = document.getElementById("txtBranch");
+        //if (txtBranch.value == "") {
+        //    alert("Enter Branch");
+        //    txtBranch.focus();
+        //    return false;
+        //}
+
+        var ddlBranch = document.getElementById("ddlBranch");
+        if (ddlBranch.value == "0" || ddlBranch.value == "") {
+            alert("Select Branch");
+            ddlBranch.focus();
+            return false;
+        }
+
+
+        var txt_mobileno = document.getElementById("txtMob");
+        if (txt_mobileno.value == "") {
+            alert("Please Enter Mobile Number");
+            txt_mobileno.focus();
+            return false;
+        }
+
+        if (txt_mobileno.value != "") {
+            if (txt_mobileno.value.length != 10) {
+
+                alert("Please Enter 10 digits Mobile Number");
+                txt_mobileno.focus();
+                return false;
+            }
+            else {
+                var Number = document.getElementById('txtMob').value;
+                var IndNum = /^[0]?[789]\d{9}$/;
+
+                if (!IndNum.test(Number)) {
+                    alert("invalid Number");
+                    txt_mobileno.focus();
+                    return false;
+                }
+
+            }
+        }      
+
+
+        var txtRemarks = document.getElementById("txtRemarks");
+        if (txtRemarks.value == "") {
+            alert("Enter Remarks");
+            txtRemarks.focus();
+            return false;
+        }      
+
+        var ActionRight = document.getElementById("ActionRight");
+        if (ActionRight.value == "") {
+            alert("Select Atleast One Class");
+            ActionRight.focus();
+            return false;
+        }
+
+        return true;
+    }
+
+</script>

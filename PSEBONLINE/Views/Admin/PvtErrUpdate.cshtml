@@ -1,0 +1,68 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Firm Add/Remove Error Update";
+    //Layout = "~/Views/Shared/_HeaderCorr.cshtml";  By Rohit
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>Firm Add/Remove Error Update</h1>
+@using (Html.BeginForm("PvtErrUpdate", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+{
+
+    <div class="row" style="padding-bottom:100px">
+        <div class="col-md-4">
+            Upload Add/Remove Error File @Html.TextBoxFor(m => m.file, new { id = "MIS_FILE", type = "file", required = "required" })
+        </div>
+        <div class="col-md-2">
+            <br />
+            <input type="submit" value="Upload" onclick="return valForm();" />
+        </div>
+        <div class="col-md-6 text-right">
+            <br />
+            @*<a href="~/Bank/ErrorList" class="btn">Click Here to See ErrorList</a>*@
+            <a download="" href="~/PDF/PvtErrorUpdate_Sample.xls" class="btn">Click Here to Download Add/Remove Error Sample File</a> 
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("FirmCorrectionHome", "Admin", new { File = "Back" })    '" />
+            
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <h1>Important Instructions:</h1> 
+            <p style="padding-left:15px">
+                1) All Fields are compulsory.<br />                                
+            </p>
+        </div>
+    </div>
+}
+
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+               // window.location.href = 'Url.Action("Welcome", "Bank")';
+            </script>}
+        else
+        {
+            <script type="text/javascript" language="javascript">
+               alert('@ViewBag.Message');
+            </script>}
+
+    }
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select only .xls file format');
+            }
+        });
+    });
+
+</script>

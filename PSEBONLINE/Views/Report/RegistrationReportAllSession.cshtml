@@ -1,0 +1,286 @@
+﻿@model PSEBONLINE.Models.ReportModel
+    @{
+        ViewBag.Title = "Registration Report";
+        Layout = "~/Views/Shared/_Card_Header.cshtml";
+    }
+    <link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4L.css" />    
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript">
+        function myFunction() {
+            window.print();
+        }
+
+        $("#btnPrint").live("click", function () {
+            var divContents = $("#dvContainer").html();
+            var printWindow = window.open('', '', 'height=800,width=1000px');
+            printWindow.document.write('<html><head><title>Registration/Continuation Report</title>');
+            printWindow.document.write('</head><body >');
+            printWindow.document.write(divContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        });
+        $("#btnPrintStatus").live("click", function () {
+            var divContents = $("#tblStatus").html();
+            var printWindow = window.open('', '', 'height=800,width=1000px');
+            printWindow.document.write('<html><head><title>Registration Error List Report</title>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(divContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        });
+    </script>
+    <h1 class="noprint">Registration Return Report</h1>
+    <div class="row">
+        <div class="col-md-12 noprint">
+            <fieldset>
+                <legend>Search</legend>
+                @using (Html.BeginForm("RegistrationReportAllSession", "Report", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <div class="row">
+                        <div class="col-md-2">
+                            Select Session
+                            @Html.DropDownList("Session", new SelectList(ViewBag.SessionList, "Value", "Text", ViewBag.SelectedSession), "--All Session--", new { @class = "", @required = "required" })
+                            @*@Html.DropDownList("district", (List<SelectListItem>)ViewBag.districts, new { required = "required" })*@
+                        </div>
+                        <div class="col-md-2">
+                            Select District
+                            @Html.DropDownList("district", new SelectList(ViewBag.districts, "Value", "Text", ViewBag.SelectedDist), "--All District--", new { @class = "", @required = "required" })
+                            @*@Html.DropDownList("district", (List<SelectListItem>)ViewBag.districts, new { required = "required" })*@
+                        </div>
+                        <div class="col-md-2">
+                            Category Status
+                            @Html.DropDownList("category", new SelectList(ViewBag.cat, "Value", "Text", ViewBag.SelectedCategory), "--All---", new { @class = "" })
+                            @*@Html.DropDownList("category", (List<SelectListItem>)ViewBag.category)*@
+                        </div>
+                        <div class="col-md-2">
+                            Forms @Html.DropDownList("form", new SelectList(ViewBag.forms, "Value", "Text", ViewBag.SelectedForm), "--All---", new { @class = "" })
+                            @*@Html.DropDownList("form", (List<SelectListItem>)ViewBag.forms)*@
+                        </div>
+                        <div class="col-md-2">
+                            School Code
+                            <input type="text" id="schl" maxlength="7" name="schl" value="@Request["schl"]" />
+                            @*@Html.TextBox("schl")*@
+                        </div>
+                        <div class="col-md-2">
+                            <br />
+                            <input type="submit" value="Search" onclick="return formVal();" />
+                        </div>
+                    </div>
+                }
+            </fieldset>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-right" style="display:none">
+            @if (ViewBag.TotalCount1 > 0)
+            {
+                <input type="button" class="btn" value="Print Error-List Report" id="btnPrintStatus" />
+            }
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="col-md-12" id="tblStatus" style="display:none">
+            @if (ViewBag.TotalCount1 > 0)
+            {
+                <div class="table-responsive">
+                    <table width="100%" border="1" style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px">
+                        <thead>
+                            <tr>
+                                <td colspan="1" style="border-right:0 !important"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                                <td colspan="4" style="font-size:16px;text-align:center;line-height:22px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px;">
+                                    <span style="font-size:24px">Punjab School Education Board</span><br />
+                                    <span>Registration Error List Report For Session (@ViewBag.SelectedSession.ToString().Trim())</span>
+                                <td align="right" style="border-left:0 !important">Print Date <br />@DateTime.Now.ToString("dd/MM/yyyy hh:mm tt") &nbsp;</td>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <th style="color:darkslateblue;text-align:left;font-size:13px" width="10%">Form</th>
+                            <th style="color:black;text-align:center;font-size:13px" width="10%">Total</th>
+                            <th style="color:darkorange;text-align:center;font-size:13px" width="10%">Alloted</th>
+                            <th style="color:red;text-align:center;font-size:13px" width="10%">Pending</th>
+                            <th style="color:darkmagenta;text-align:center;font-size:13px" width="10%">Error</th>
+                            <th style="color:dodgerblue;text-align:center;font-size:13px" width="10%">Descrepancy</th>
+                        </tr>
+
+                        @if (Model.StoreAllData.Tables[1].Rows.Count > 0)
+                        {
+                            for (int p = 0; p < Model.StoreAllData.Tables[1].Rows.Count; p++)
+                            {
+                                var form_name = Model.StoreAllData.Tables[1].Rows[p]["form_name"].ToString();
+                                var Total = Model.StoreAllData.Tables[1].Rows[p]["Total"].ToString();
+                                var Alloted = Model.StoreAllData.Tables[1].Rows[p]["Alloted"].ToString();
+                                var Pending = Model.StoreAllData.Tables[1].Rows[p]["Pending"].ToString();
+                                var Error = Model.StoreAllData.Tables[1].Rows[p]["Error"].ToString();
+                                var Descrepancy = Model.StoreAllData.Tables[1].Rows[p]["Descrepancy"].ToString();
+                                <tr>
+                                    <td style="color:darkslateblue;text-align:left;font-size:13px">&nbsp;@form_name</td>
+                                    <td style="color:black;text-align:center;font-size:13px">@Total</td>
+                                    <td style="color:darkorange;text-align:center;font-size:13px"> @Alloted</td>
+                                    <td style="color:red;text-align:center;font-size:13px"> @Pending</td>
+                                    <td style="color:darkmagenta;text-align:center;font-size:13px"> @Error</td>
+                                    <td style="color:dodgerblue;text-align:center;font-size:13px"> @Descrepancy</td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            }
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-right noprint">
+            @*<input type="button" value="Print" class="btn" onclick="window.print()" />*@
+@*            <input type="button" class="btn" value="Print Report" id="btnPrint" />*@
+<button class="btn" onclick="myFunction()">Print Report</button>
+            <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+
+
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12" id="dvContainer1">
+            <div style="border:1px solid #fff !important;display:block;">
+                @{
+                    System.Data.DataSet ds = (System.Data.DataSet)ViewBag.data;
+                    if (ds == null || ds == new System.Data.DataSet())
+                    {
+                        <p>No Data</p>
+                    }
+                    else
+                    {
+                        try
+                        {
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                if (ds.Tables.Count > 0)
+                                {
+                                    if (ds.Tables[0].Rows.Count > 0)
+                                    {
+                                        var prevSchl = string.Empty;
+                                        int sno = 0;
+                                        <table style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px" border="1">
+                                            <thead>
+                                                <tr>
+                                                    <td colspan="3" style="border-right:0 !important">
+                                                        <div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div>
+                                                    </td>
+                                                    <td colspan="5" style="font-size:16px;text-align:center;line-height:22px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px;">
+                                                        <span style="font-size:28px">Punjab School Education Board</span>
+                                                        <br />
+                                                        <span>Registration/Continuation Report For Session (@ViewBag.SelectedSession.ToString().Trim())</span>
+                                                    </td>
+                                                    <td colspan="3" style="border-left:0 !important" align="right">Print Date : @DateTime.Now.ToShortDateString() &nbsp;</td>
+                                                </tr>
+                                                <tr class="active-tr" style="background-color:#dddddd !important;color:#1f1f1f;font-size:11px">
+                                                    <td colspan="3">&nbsp;District Name/Code</td>
+                                                    <td width="6%">&nbsp;SCHL</td>
+                                                    <td width="6%">&nbsp;ID No.</td>
+                                                    <td colspan="6">&nbsp;School Name</td>
+                                                </tr>
+                                                <tr class="active-tr" style="background-color:#dddddd !important;color:#1f1f1f;font-size:11px">
+                                                    <td width="4%">&nbsp;S.No</td>
+                                                    <td width="4%">&nbsp;Form</td>
+                                                    <td width="8%">&nbsp;Student ID</td>
+                                                    <td width="12%" colspan="2">&nbsp;Registration No.</td>
+                                                    <td width="40%">&nbsp;Name/Father's Name/Mother's Name</td>
+                                                    <td width="8%">&nbsp;D.O.B</td>
+                                                    <td width="8%">&nbsp;Adm./Reg. Date</td>
+                                                    <td width="3%">&nbsp;Lot</td>
+                                                    <td width="9%">&nbsp;Challan ID / Date</td>
+                                                    <td width="4%">&nbsp;SCHL</td>
+                                                </tr>
+                                            </thead>
+                                            @foreach (System.Data.DataRow dr in ds.Tables[0].Rows)
+                                            {
+                                                var schl = dr["SCHL"].ToString().Trim().ToUpper();
+                                                var dist = dr["DIST"].ToString().Trim().ToUpper();
+                                                var diste = dr["DISTE"].ToString().Trim().ToUpper();
+                                                if (diste.Contains("(")) { diste = diste.Substring(1); }
+                                                if (diste.Contains(")")) { diste = diste.Substring(0, diste.Length - 1); }
+                                                var idno = dr["IDNO"].ToString().Trim().ToUpper();
+                                                var schle = dr["SCHLE"].ToString().Trim().ToUpper();
+                                                var statione = dr["STATIONE"].ToString().Trim().ToUpper();
+                                                var schlmobile = dr["SCHLMOBILE"].ToString().Trim().ToUpper();
+                                                var schlphone = dr["SCHLPHONE"].ToString().Trim().ToUpper();
+                                                var formname = dr["Form_Name"].ToString().Trim().ToUpper();
+                                                var regno = dr["regno"].ToString().Trim().ToUpper();
+                                                var fullname = dr["FullName"].ToString().Trim().ToUpper();
+                                                var fullnamep = dr["fullnamep"].ToString().Trim();
+                                                var DOB = dr["DOB"].ToString().Trim().ToUpper();
+                                                var Std_id = dr["Std_id"].ToString().Trim().ToUpper();
+                                                var admdate = dr["admdate"].ToString().Trim().ToUpper();
+                                                var regdate = dr["regdate"].ToString().Trim().ToUpper();
+                                                var lot = dr["lot"].ToString().Trim().ToUpper();
+                                                var challanid = dr["Challanid"].ToString().Trim().ToUpper();
+                                                var challandate = dr["regdate"].ToString().Trim().ToUpper();
+                                                if (schl != prevSchl)
+                                                {
+                                                    sno = 0;
+                                                    prevSchl = schl;
+                                                    <tr class="active-tr" style="background-color:#d4d4d4 !important;font-weight:bold;color:#000000;font-size:12px">
+                                                        <td colspan="3">&nbsp;@diste/@dist</td>
+                                                        <td>&nbsp;@schl</td>
+                                                        <td>&nbsp;@idno</td>
+                                                        <td colspan="6" height="35px"><div style="padding-left:4px">@{schle = schle + ((string.IsNullOrEmpty(statione)) ? "" : ", " + statione) + ((string.IsNullOrEmpty(schlmobile)) ? "" : ", " + schlmobile) + ((string.IsNullOrEmpty(schlphone)) ? "" : ", " + schlphone);} @schle</div></td>
+                                                    </tr>
+                                                }
+                                                sno++;
+                                                <tr style="font-weight:normal">
+                                                    <td height="35px">&nbsp;@sno</td>
+                                                    <td>&nbsp;@formname</td>
+                                                    <td>&nbsp;@Std_id</td>
+                                                    <td colspan="2">&nbsp;@regno</td>
+                                                    <td>
+                                                        <div style="padding-left:4px">
+                                                            @fullname<br />
+                                                            <span class="kdsfont" style="text-transform:none !important;font-family:pnb-ttamarenbold;">@fullnamep</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>&nbsp;@DOB</td>
+                                                    <td>&nbsp;@admdate<br />&nbsp;@regdate</td>
+                                                    <td>&nbsp;@lot</td>
+                                                    <td>&nbsp;@challanid<br />&nbsp;@challandate</td>
+                                                    <td>&nbsp;@schl</td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <p>Data Not Found</p>
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            <p>@e.Message <br /> @e.InnerException </p>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formVal() {
+            var district = document.getElementById('district').value;
+            var form = document.getElementById('form').value;
+            var schl = document.getElementById('schl').value;
+
+            if (district == '' || district == '0') {
+                alert("Select District");
+                document.getElementById('district').focus();
+                return false;
+            }
+            if (form == '' || form == '0') {
+                if (schl == '') {
+                    alert("Enter School Code");
+                    document.getElementById('schl').focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+

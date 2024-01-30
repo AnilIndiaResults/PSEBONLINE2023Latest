@@ -1,0 +1,448 @@
+﻿@model PSEBONLINE.Models.Import
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+@using (Html.BeginForm("Import11thCompartment", "ImportData", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <h1>
+        @* Session @if (Session["Session"] != null)
+            {@Session["Session"].ToString()}
+            else { Response.Redirect("~/Login"); }
+            <br />*@
+        Import 11th Compartment students of Self School (Session 2016-17)
+    </h1>
+
+    <div class="row">
+        <div class="col-md-12">
+            <p class="kdsfont">¤ØÆ»ã Ó¨ÞÐ Âã Ú¬¤ØÏÒÛ× ÚÒó°ë× ÇãÐ ÆñÛÚª¤ØÏÁÛ¤Ù ÅÞâ Import ¨ÏÅ Ð¥Û Ú¥Ó ÚÐâ¨ ¼ã ¨ÚÐó¨ ¨Û¼Ø ²ØÒã¢ Ú¥Ó ÚÐâ¨ ÏØÕÛ× ÏëÐ ÅâÉÏ ²Ù ÏÚ²Ó¶ÏãÓÖÅ ÅâÉÏ ÊÏ¨ã ÚÆ±Ðã 1 ÓØÐ Âã ÚÒÚÂ¤ØÏÁÛ Import ¨Û¼ã ²Ø Ó¨Âã ÕÅ¢</p>
+
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-2">
+
+            Select School To Import Data
+        </div><div class="col-md-3">
+            @Html.DropDownList("schoolcode", new SelectList(ViewBag.MySchCode, "Value", "Text"), "---Select Import TO--", new { @class = "ddlschoolcode" })
+
+    </div>
+</div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total Students <label>@ViewBag.TotalCount1</label>
+                </div>
+                <div class="col-md-2" style="display:none">
+                    Search By Year @Html.DropDownList("Session1", new SelectList(ViewBag.MySession, "Value", "Text", ViewBag.SelectedSession), "--Select---", new { @class = "", id = "Session" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-3">
+                    Search By @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem", onchange = "deechange()" })
+                    <span id="reqsellist" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-3">
+                    &nbsp;<br>
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                    <span id="reqsstring" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-2">
+                    <br>
+                    <input type="Submit" value="Search" name="cmd" onclick="return dee()" /> <input type="submit" name="Reset" value="Reset" formaction="CancelForm1" formmethod="post" />
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("T1Master", "RegistrationPortal")'">
+            <input type="button" value="View Imported Data" onclick="javascript:document.location.href='@Url.Action("T1Formgrid", "RegistrationPortal")'">
+            <input type="submit" value="Import Selected Record" /><br />&nbsp;
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+
+                        <th>Sr No.</th>
+                        <th>School Code</th>
+                        <th>Roll</th>
+                        <th>Registration No.</th>
+                        <th>Name/Father's Name/Mother's Name</th>
+                        <th>DOB</th>
+                        <th>Session</th>
+                        <th>Result</th>
+
+                        <th><input type="checkbox" id="select_all" /></th>
+                        @*<th><input type="checkbox" id="chkSelectAll" /></th>*@
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 10 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var scode = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                // var idNo= Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                                var roll = Model.StoreAllData.Tables[0].Rows[i]["OROLL"].ToString();
+                                var regNum = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                                var id = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                                var CFMName = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString() + '/' + Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString() + '/' + Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                                var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                var res = Model.StoreAllData.Tables[0].Rows[i]["result"].ToString();
+                                var yr = Model.StoreAllData.Tables[0].Rows[i]["YEAR"].ToString();
+                                var impflag = Model.StoreAllData.Tables[0].Rows[i]["importflag"].ToString();
+                                //var vfalg = Model.StoreAllData.Tables[0].Rows[i]["vflag"].ToString();
+                                //var Approved = Model.StoreAllData.Tables[0].Rows[i]["Approved"].ToString();
+
+                                Count = Count + 1;
+                                <tr>
+                                    <td>@Count</td>
+                                    <td>@scode</td>
+                                    <td>@roll</td>
+                                    <td>@regNum</td>
+                                    <td>@CFMName</td>
+                                    <td>@DOB</td>
+                                    <td>@yr</td>
+                                    <td>@res</td>
+                                    @*<td><input class="checkbox" type="checkbox" value='@id' name="sport"></td>*@
+
+                                    <td>
+                                        @if(@impflag.ToUpper()=="FALSE")
+                                        {
+                                            <span>Imported</span>
+                                        }
+                                        else
+                                        {
+                                            <input id="chkidHF" name="@Model.chkidList[i].Name" type="hidden" value="@Model.chkidList[i].id" />
+                                            @Html.CheckBoxFor(m => m.chkidList[i].Selected, new { Style = "vertical-align:3px", @class = "checkbox" })
+                                        }
+                                       
+                                       
+
+                                    </td>
+                                </tr>
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="8">
+
+                                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                                            &nbsp;
+
+                                            @if (ViewBag.pagesize == 1)
+
+                                            {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "ImportData11THFailed", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "ImportData11THFailed", new { page = ViewBag.pn })
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (TempData["ImportData11THFailedsearch1"] != null)
+                                                {
+                                                    string str1 = TempData.Peek("ImportData11THFailedsearch1").ToString();
+                                                    string str2 = TempData.Peek("ImportData11THFailedSelList1").ToString();
+                                                    string str3 = TempData.Peek("ImportData11THFailedSearchString1").ToString();
+                                                    string str4 = TempData.Peek("ImportData11THFailedSession1").ToString();
+                                                    TempData["ImportData11THFailedsearch1"] = str1;
+                                                    TempData["ImportData11THFailedSelList1"] = str2;
+                                                    TempData["ImportData11THFailedSearchString1"] = str3;
+                                                    TempData["ImportData11THFailedSession1"] = str4;
+                                                }
+                                                @Html.ActionLink("<<", "ImportData11THFailed", new { page = 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink("< Prev", "ImportData11THFailed", new { page = ViewBag.pagesize - 1 })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "ImportData11THFailed", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "ImportData11THFailed", new { page = ViewBag.pn })
+                                                }
+
+                                            }
+
+
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+                <p>Total Records(Filtered): @ViewBag.TotalCount1</p>
+            </div>
+        </div>
+    </div>
+    @*<script>
+                $("#chkSelectAll").bind("change", function () {
+                    $(".chkSelect").prop("checked", $(this).prop("checked"));
+                });
+                $(".chkSelect").bind("change", function () {
+                    if (!$(this).prop("checked"))
+                        $("#chkSelectAll").prop("checked", false);
+                });
+                $(".alert").hide().fadeIn("slow");
+        </script>*@
+                        }
+@{
+    if (TempData["result"] != null)
+    {
+        if (TempData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                var impcn = @TempData["TotImported"];
+                //alert(impcn);
+                alert(impcn+" Records Imported Successfully");
+            </script>}
+        else if (TempData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Imported");
+            </script>
+        }
+        else if (TempData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data not saved..plz try again");
+            </script>
+        }
+    }
+}
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#select_all").change(function () {
+            //"select all" change
+            var status = this.checked; // "select all" checked status
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                this.checked = status; //change ".checkbox" checked status
+            });
+        });
+
+        //uncheck "select all", if one of the listed checkbox item is unchecked
+        $('.checkbox').change(function () { //".checkbox" change
+            if (this.checked == false) { //if this item is unchecked
+                $("#select_all")[0].checked = false; //change "select all" checked status to false
+            }
+        });
+        $("#isr").click(function () {
+
+            var favorite = [];
+
+            $.each($("input[name='sport']:checked"), function () {
+
+                favorite.push($(this).val());
+
+            });
+
+            alert("IDs are: " + favorite.join(", "));
+            $.getJSON("../ImportData/SomeActionMethod", { id: favorite.join(", ") },
+    function (data) {
+        alert("Jay");
+        alert(data.foo);
+        alert(data.baz);
+    }
+);
+
+        });
+    });
+</script>
+<script>
+    function deetext() {
+        $("#reqsstring").slideUp("slow");
+    }
+    function deechange() {
+
+        if ($("#SelectItem").val() != "") {
+            $("#reqsellist").slideUp("slow");
+        }
+        else {
+            $("#reqsellist").slideDown("slow");
+        }
+    }
+
+    function dee() {
+        //alert("Hello");
+        if ($("#SelectItem").val() == "" && $("#SearchString").val() == "") {
+            $("#reqsellist").slideUp("slow");
+            $("#reqsstring").slideUp("slow");
+        }
+         if ( $("#SelectItem").val() != "" && $("#SearchString").val() == "") {
+
+            $("#reqsstring").slideDown("slow");
+            return false;
+        }
+        //else if ($("#Session").val() != "" && $("#SelectItem").val() == "" && $("#SearchString").val() == "") {
+        //    $("#reqsellist").slideDown("slow");
+        //    $("#reqsstring").slideDown("slow");
+        //    return false;
+        //}
+        else if ( $("#SelectItem").val() != "" && $("#SearchString").val() == "") {
+            $("#reqsellist").slideUp("slow");
+            $("#reqsstring").slideDown("slow");
+            return false;
+        }
+        else
+            return true;
+
+    }
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+
+        //if (value == 5) {
+
+        //    $("#SearchString").datepicker("enable");
+        //    $("#SearchString").off('keypress');
+        //    $("#SearchString").keypress(function (evt) {
+        //        return false;
+
+        //    });
+        //    $("#SearchString").datepicker({
+        //        dateFormat: "dd-mm-yy",
+        //        changeMonth: true,
+        //        changeYear: true,
+        //        maxDate: '-10Y',
+
+        //    });
+
+        //}
+        //else if (value == 2 || value == 3 || value == 4) {
+        //    $("#SearchString").datepicker("disable");
+        //    document.getElementById('SearchString').disabled = false;
+        //    $("#SearchString").off('keypress');
+        //    $("#SearchString").keypress(function (evt) {
+        //        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        //        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+        //            alert("Only Characters Allowed!!");
+        //            return false;
+        //        }
+        //        else {
+        //            return true;
+        //        }
+
+        //    });
+        //}
+
+        //else {
+        //    $("#SearchString").datepicker("disable");
+        //    document.getElementById('SearchString').disabled = false;
+        //    $("#SearchString").off('keypress');
+        //}
+    });
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        //$("#SelectItem").change(function () {
+        //    var value = document.getElementById('SelectItem').value;
+        //    $('#SearchString').val('');
+        //    if (value == 5) {
+        //        $("#SearchString").datepicker("enable");
+        //        $("#SearchString").off('keypress');
+        //        $("#SearchString").keypress(function (evt) {
+        //                return false;
+
+        //        });
+        //        $("#SearchString").datepicker({
+        //            dateFormat: "dd-mm-yy",
+        //            changeMonth: true,
+        //            changeYear: true,
+        //            maxDate: '-10Y',
+
+        //        });
+
+        //    }
+        //    else if (value == 2 || value == 3 || value == 4) {
+        //        $("#SearchString").datepicker("disable");
+        //        document.getElementById('SearchString').disabled = false;
+        //        $("#SearchString").off('keypress');
+        //        $("#SearchString").keypress(function (evt) {
+        //            var keyCode = (evt.which) ? evt.which : evt.keyCode
+        //            if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+        //                alert("Only Characters Allowed!!");
+        //                return false;
+        //            }
+        //            else {
+        //                return true;
+        //            }
+
+        //        });
+        //    }
+
+        //    else {
+        //        $("#SearchString").datepicker("disable");
+        //        document.getElementById('SearchString').disabled = false;
+        //        $("#SearchString").off('keypress');
+        //    }
+
+        //});
+
+</script>

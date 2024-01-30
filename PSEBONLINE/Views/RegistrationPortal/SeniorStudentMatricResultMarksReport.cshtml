@@ -1,0 +1,180 @@
+﻿
+@model PSEBONLINE.Models.SeniorStudentMatricResultMarksViewsModelList
+@{
+    ViewBag.Title = "SeniorStudentMatricResultMarksReport";
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprinta.css" />
+<style type="text/css">
+    .tprint td {
+        padding: 1px 2px;
+        line-height: 16px;
+    }
+</style>
+<table style="width:100%;" border="0" class="bgimg">
+    <tr>
+        <td>
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        <input type="button" value="Print" class="btn" onclick="window.print()" />
+                        @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td align="center">
+            <table border="0" style="width:98%;" align="center" class="brack">
+                <thead>
+                    <tr>
+                        <td colspan="2" style="padding-bottom:5px">
+                            <table width="100%">
+                                <tr>
+                                    <td width="20%"><img src="~/Images/Printlogo.jpg" alt="PSEB" /></td>
+                                    <td width="50%" colspan="8" style="font-size:16px;text-align:center;line-height:25px;">
+                                        <span style="font-size:26px;">Punjab School Education Board</span><br />Matriculation Marks For Senior Secondary Examination, March 2021
+                                        @{
+                                            if (ViewBag.IsFinalLockSubmitted == "0")
+                                            { <span>(Rough Report)</span>}
+                                            else
+                                            { <span>(Final Report)</span>}
+                                        }
+
+                                    </td>
+                                    <td width="30%" align="right">
+                                        PRINT ON :@DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")<br />@*FINAL SBMITTED ON :*@
+                                        @{
+                                            if (ViewBag.IsFinalLockSubmitted == "1")
+                                            { <span>FINAL SUBMITTED ON : @Model.RegistrationSearchModel[0].FinalSubmitOn.Value.ToString("dd/MM/yyyy hh:mm tt")</span>}
+
+
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            School Name/ Code:-  @Session["FullSchoolNameE"].ToString()  / (@Model.RegistrationSearchModel[0].schl)
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">
+                            @if (Model.RegistrationSearchModel.Count > 0)
+                            {
+                                <table width="100%" border="1" class="tprint">
+                                    <thead>
+                                        <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                            <td>Roll No.</td>
+                                            <td>Student Id</td>
+                                            <td>Candidate/Father's Name</td>
+                                            <td>Roll/Month/Year/Board</td>
+                                            <td>Sub Obt Mrks./Max Mrks.</td>
+                                            <td>Sub Obt Mrks./Max Mrks.</td>
+                                            <td>Sub Obt Mrks./Max Mrks.</td>
+                                            <td>Sub Obt Mrks./Max Mrks.</td>
+                                            <td>Sub Obt Mrks./Max Mrks.</td>
+                                            <td>Sub Obt Mrks./Max Mrks.</td>
+                                            <td>Sub Obt Mrks./Max Mrks.</td>
+                                            <td>Obt/Tot/Result</td>
+                                        </tr>                                       
+                                    </thead>
+                                    @{
+                                        int Count = 1;
+                                        foreach (var obj in Model.RegistrationSearchModel)
+                                        {
+
+                                    <tr style="font-size:9px">
+                                        <td>@obj.Roll</td>
+                                        <td>@obj.Std_id</td>
+                                        <td>@obj.Candi_Name/@obj.Father_Name</td>
+                                        <td>@obj.MAT_ROLL/ @obj.MAT_MONTH/ @obj.MAT_YEAR/ @obj.MAT_BOARD</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(obj.SUBNM1))
+                                            {
+                                            <span>  (@obj.SUBNM1)&nbsp; @obj.TOT1 / @obj.MAX1</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(obj.SUBNM2))
+                                            {
+                                            <span>
+                                                (@obj.SUBNM2)&nbsp;@obj.TOT2 / @obj.MAX2
+                                            </span>
+                                                }
+</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(obj.SUBNM3))
+                                            {
+                                            <span>
+                                                (@obj.SUBNM3)&nbsp;@obj.TOT3 / @obj.MAX3
+                                            </span>
+                                                }
+</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(obj.SUBNM4))
+                                            {
+                                            <span>
+                                                (@obj.SUBNM4)&nbsp;@obj.TOT4 / @obj.MAX4
+                                            </span>
+                                                }
+</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(obj.SUBNM5))
+                                            {
+                                            <span>
+                                                (@obj.SUBNM5)&nbsp;@obj.TOT5 / @obj.MAX5
+                                            </span>
+                                                }
+</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(obj.SUBNM6))
+                                            {
+                                            <span>
+                                                (@obj.SUBNM6)&nbsp;@obj.TOT6 / @obj.MAX6
+                                            </span>
+                                                }
+</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(obj.SUBNM7))
+                                            {
+                                            <span>
+                                                (@obj.SUBNM7)&nbsp;@obj.TOT7 / @obj.MAX7
+                                            </span>
+                                                }
+</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(obj.MR_TOTAL))
+                                            {
+                                                <span>  @obj.MR_TOTAL / @obj.MR_TOTMAX / @obj.MR_RESULT</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                            Count++;
+                                        }
+                                    }
+                                </table>
+                            }
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </td>
+    </tr>
+
+
+</table>
+
+
+
+
+

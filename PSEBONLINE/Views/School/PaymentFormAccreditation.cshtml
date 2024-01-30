@@ -1,0 +1,247 @@
+﻿@model PSEBONLINE.Models.FeeMasterAccreditation
+@{
+    ViewBag.Title = "PaymentFormAccreditation";
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<h1>Payment Form Accreditation</h1>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+
+<div id="dialogOnline" style="display: none">
+    <span class="rqf">Click OK button to do Online Payment through Credit Card, Debit Card, Net Banking etc of any bank otherwise click Cancel button.</span>
+</div>
+<div id="loading1"></div>
+@using (Html.BeginForm("PaymentFormAccreditation", "School", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+{
+    <div class="row" id="divall">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <div class="box">
+                    <div class="row">
+                        <div class="col-md-12" id="divMain1">
+                            <table class="table table-bordered" id="t01">
+                                @{
+
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        <tr>
+                                            <td colspan="6">&nbsp;</td>
+                                        </tr>
+
+                                        <tr class="active-tr">
+                                            <th>Refno</th>
+                                            <th>Class</th>
+                                            <th>Group [Accreditation]</th>
+                                            <th>User Type</th>
+                                            <th>New</th>
+                                            <th>Re New</th>
+                                            <th>Late Fee</th>
+                                            <th>Total Fee</th>
+                                        </tr>
+                                        for (int i = 0; i < Model.PaymentFormData.Tables[0].Rows.Count; i++)
+                                        {
+                                            //
+                                            var refno = Model.PaymentFormData.Tables[0].Rows[i]["refno"].ToString();
+                                            var exam = Model.PaymentFormData.Tables[0].Rows[i]["exam"].ToString();
+                                            var Acrtype = Model.PaymentFormData.Tables[0].Rows[i]["Acrtype"].ToString();
+                                            var schl = Model.PaymentFormData.Tables[0].Rows[i]["schl"].ToString();
+                                            var IsFinal = Model.PaymentFormData.Tables[0].Rows[i]["IsFinal"].ToString();
+                                            var cls = Model.PaymentFormData.Tables[0].Rows[i]["class"].ToString();
+                                            var Utype = Model.PaymentFormData.Tables[0].Rows[i]["Utype"].ToString();
+                                            var New = Model.PaymentFormData.Tables[0].Rows[i]["New"].ToString();
+                                            var ReNew = Model.PaymentFormData.Tables[0].Rows[i]["ReNew"].ToString();
+                                            var latefee = Model.PaymentFormData.Tables[0].Rows[i]["latefee"].ToString();
+                                            var Totfee = Model.PaymentFormData.Tables[0].Rows[i]["Totfee"].ToString();
+
+                                            var startdate = Model.PaymentFormData.Tables[0].Rows[i]["startdate"].ToString();
+                                            var enddate = Model.PaymentFormData.Tables[0].Rows[i]["enddate"].ToString();
+                                            var BankEndDate = Model.PaymentFormData.Tables[0].Rows[i]["BankEndDate"].ToString();
+                                            var FEECODE = Model.PaymentFormData.Tables[0].Rows[i]["FEECODE"].ToString();
+                                            var FEECAT = Model.PaymentFormData.Tables[0].Rows[i]["FEECAT"].ToString();
+                                            var BankAllow = Model.PaymentFormData.Tables[0].Rows[i]["BankAllow"].ToString();
+
+                                            <tr>
+                                                <td align="center">@refno</td>
+                                                <td align="center">@cls</td>
+                                                <td align="center">@exam</td>
+                                                <td align="center">@Utype</td>
+                                                <td align="center">@New</td>
+                                                <td align="center">@ReNew</td>
+                                                <td align="center">@latefee</td>
+                                                <td align="center">@Totfee</td>
+                                            </tr>
+                                        }
+
+                                        <tr>
+                                            <td colspan="7" align="right">
+                                                Total Fees (In words) : ₹ @{
+                                                    if (ViewBag.Total != null)
+                                                    {
+                                                        int totalfee = @ViewBag.Total;
+                                                        PSEBONLINE.AbstractLayer.DBClass b = new PSEBONLINE.AbstractLayer.DBClass();
+                                                        string AmountInWords = b.GetAmountInWords(totalfee);
+                                                        <span>@AmountInWords</span>
+                                                    }
+                                                }
+
+                                            </td>
+                                            <td align="center">
+                                                @ViewBag.Total
+                                            </td>
+                                        </tr>
+
+
+
+                                        <tr>
+                                            <td colspan="8" style="border:0" align="right">
+                                                <table>
+                                                    @{
+
+                                                        if (Model.PaymentFormData.Tables[0].Rows[0]["BankAllow"].ToString() == "0")
+                                                        {
+                                                            <tr style="font-size:18px;color:red;">
+                                                                <td>Fee date is expire for this portal.</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input value="back" type="button" onclick="javascript:document.location.href='@Url.Action("SchoolAccreditation", "School")'" />
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @if (Model.PaymentFormData.Tables[0].Rows[0]["BankAllow"].ToString().Contains("301"))
+                                                                    {
+                                                                        <span>@Html.RadioButtonFor(m => m.BankAllow, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span>
+                                                                    }
+                                                                    @if (Model.PaymentFormData.Tables[0].Rows[0]["BankAllow"].ToString().Contains("302"))
+                                                                    {
+                                                                        <span>@Html.RadioButtonFor(m => m.BankAllow, "302", new { id = "ATOM" }) <img src="~/Images/PNSB.jpg" alt="ATOM" width="150" /></span>
+                                                                    }
+																	@if (Model.PaymentFormData.Tables[0].Rows[0]["BankAllow"].ToString().Contains("203"))
+                                                                    {
+                                                                        <span>@Html.RadioButtonFor(m => m.BankAllow, "203", new { id = "HOD" })PSEB HOD</span>
+                                                                    }
+                                                                 
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>       
+                                                                    @if (ViewBag.Total != null && (Model.PaymentFormData.Tables[0].Rows[0]["BankAllow"].ToString().Contains("301") || Model.PaymentFormData.Tables[0].Rows[0]["BankAllow"].ToString().Contains("302")))
+                                                                    {
+                                                                        <input id="btnPayment" type="button" value="Proceed to Pay Online" class="btn" />
+                                                                    }
+                                                                    else if (ViewBag.Total != null && ViewBag.Total==0 && Model.PaymentFormData.Tables[0].Rows[0]["BankAllow"].ToString().Contains("203"))
+                                                                    {
+                                                                        <input id="btnPaymentHOD" name="submit" type="submit" value="Save & Final Submit" class="btn" onclick="return confirm('You are going to submit the data. After that data will be locked for any changes?');" />
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </table>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="8">
+                                                Record Not Found
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                @*End*@
+            </div>
+        </div>
+    </div>
+}
+
+@{
+    if (ViewData["SelectBank"] != null)
+    {
+        if (ViewData["SelectBank"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Bank ");
+                window.location.href = '@Url.Action("PaymentFormAccreditation", "School")';
+            </script>
+
+        }
+    }
+}
+
+
+
+<script type="text/javascript">
+
+    $("#btnPayment").click(function () {
+      
+        var SBPa = document.getElementById("HDFC").checked;
+        var PNBa = document.getElementById("ATOM").checked;
+
+        if (SBPa == false && PNBa == false) {
+            alert("Please Select Any Bank For Online Payment");
+            return false;
+        }
+        else {
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to do online payment?");
+            $('#dialogOnline').dialog('open');
+            return true;
+        }
+
+    });
+    $(function () {
+        $("#dialogOnline").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to do online payment?",
+            width: 400,
+            height: 220,
+            buttons: {
+                "OK": function () {
+                    // $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $('#myForm').submit();
+
+                },
+                Cancel: function () {
+                    $('#loading1').empty("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+</script>
+
+
+<script type="text/javascript">
+        //Start Payment
+        $("#btnPaymentHOD").click(function () {
+            var HOD = document.getElementById("HOD").checked;
+            if (HOD == false) {
+                alert("Please Select Any Bank");
+                return false;
+            }
+            else {
+                $('#Main1').hide();
+                $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                alert("Are you sure to Final Submit ?");
+                return true;
+            }
+
+        });
+    </script>

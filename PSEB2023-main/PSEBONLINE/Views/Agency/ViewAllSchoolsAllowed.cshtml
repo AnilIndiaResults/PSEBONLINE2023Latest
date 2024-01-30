@@ -1,0 +1,207 @@
+﻿@model PSEBONLINE.Models.AgencySchoolModelList
+@{
+    ViewBag.Title = "View All Schools Allowed";
+    Layout = "~/Views/Shared/_AgencyLayout.cshtml";
+}
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+@using (Html.BeginForm("ViewAllSchoolsAllowed", "Agency", FormMethod.Post, new { id = "searchform" }))
+{
+<div id="loading2"></div>
+<div class="row">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            <div class="col-md-3">
+                Select Class:  @Html.DropDownListFor(m => m.AgencyAllowClass, new SelectList(Model.AgencyAllowClassModels, "Id", "Name"), "--Select Class---", new { @class = "", @required = "required" })
+            </div>
+            <div class="col-md-3">
+                Select Subject:   @Html.DropDownListFor(m => m.AgencyAllowSubject, new SelectList(Model.AgencyAllowSubjectModels, "Sub", "SubNM"), "--Select Subject---", new { @class = "", @required = "required" })
+            </div>
+            <div class="col-md-3">
+                Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "" })
+            </div>
+            <div class="col-md-3">
+                &nbsp;<br />
+                @*<input type="text" id="SearchString" name="SearchString" value="@Request[" SearchString"]" />*@
+                <input type="text" id="SearchString" name="SearchString" />
+            </div>
+            <div class="col-md-3">
+                <br />
+                <input type="submit" value="Search" />
+                @*<input type="button" name="Reset" id="Reset" value="Reset" />*@
+
+            </div>
+
+        </fieldset>
+    </div>
+</div>
+}
+
+@{
+    if (Model.AgencySchoolModels != null)
+    {
+        PSEBONLINE.Models.AgencyLoginSession AgencyLoginSession = (PSEBONLINE.Models.AgencyLoginSession)Session["AgencyLoginSession"];
+
+<p>Total Schools : @Model.AgencySchoolModels.Count()</p>
+
+        if (Model.AgencySchoolModels.Count > 0)
+        {
+
+
+<div class="col-md-12">
+@if (Model.AgencySchoolModels[0].FinalStatus.ToLower().Contains("final"))
+{<span class="rqf" style="font-size:20px;">Final Submmitted</span> }
+else
+{
+    <a style="text-align:center" href="/Agency/NSQFPracExamAllSchoolsFinalSubmit/@AgencyLoginSession.AgencyId?cls=@Model.AgencyAllowClass&&sub=@Model.AgencyAllowSubject" class="btn">Click here to Final Submit</a>
+}
+</div>
+
+
+<div class="table-responsive">
+    <table id="example" class="display table table-bordered" style="width:100%">
+        <thead>
+            <tr class="active-tr">
+                <th>Schl</th>
+                <th>UDISE Code</th>
+                <th>School Name</th>
+                <th>Mobile</th>
+                <th>Total Candidate</th>
+                <th>Marks Filled</th>
+                <th>Last Date</th>
+                <th>Final Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model.AgencySchoolModels)
+            {
+            <tr>
+                <td>@obj.Schl</td>
+                <td>@obj.Udisecode</td>
+                <td>@obj.SchlNME </td>
+                <td>@obj.Mobile </td>
+                <td>@obj.NOP </td>
+                <td>@obj.NOMF </td>
+                <td>@obj.LastDate </td>
+                <td>@obj.FinalStatus </td>
+                <td>
+                    <div class="cart">
+                        Choose Action <span class="caret"></span>
+                        <div id="sidebar">
+                            <ul>
+                                @{
+                                if (AgencyLoginSession.UserType.ToUpper() == "ADMIN".ToUpper())
+                                {
+                              
+                               
+                                if (string.IsNullOrEmpty(obj.FinalSubmitLot))
+                                {
+								 <li>@Html.ActionLink("Marks Entry", "MarksEntryPanel", new { id = obj.clsName, schl = obj.Schl, sub = obj.SubCode })</li>
+                               
+                                <li>@Html.ActionLink("Rough Report", "NSQFPracExamRoughReport", new { id = obj.clsName, schl = obj.Schl, sub = obj.SubCode })</li>
+                                }
+                                if (!string.IsNullOrEmpty(obj.FinalSubmitLot))
+                                {
+                                <li>@Html.ActionLink("Final Report", "NSQFPracExamFinalReport", new { id = obj.clsName, schl = obj.Schl, sub = obj.SubCode })</li>
+                                }
+								
+								
+								
+                                }
+                                else
+                                {
+                                if (DateTime.Now.Date <= Convert.ToDateTime(obj.LastDate).Date)
+                                {
+                                <li>@Html.ActionLink("Marks Entry", "MarksEntryPanel", new { id = obj.clsName, schl = obj.Schl, sub = obj.SubCode })</li>
+                                }
+                                if (string.IsNullOrEmpty(obj.FinalSubmitLot))
+                                {
+                                <li>@Html.ActionLink("Rough Report", "NSQFPracExamRoughReport", new { id = obj.clsName, schl = obj.Schl, sub = obj.SubCode })</li>
+                                }
+                                if (!string.IsNullOrEmpty(obj.FinalSubmitLot))
+                                {
+                                <li>@Html.ActionLink("Final Report", "NSQFPracExamFinalReport", new { id = obj.clsName, schl = obj.Schl, sub = obj.SubCode })</li>
+                                }
+                                }
+                                }
+
+
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+
+    </table>
+</div>
+        }
+        else
+        {
+<p>Record Not Found</p>
+        }
+
+
+    }
+
+}
+<div class="clearfix"></div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 25,
+            "order": [[0, 'desc']],
+            language: {
+                searchPlaceholder: "Search By Schl, School Name .."
+            },
+        })
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#AgencyAllowClass").change(function () {
+
+
+            var selectedCLS = { cls: $("#AgencyAllowClass").val() };
+            var selectedText = $(this).find("option:selected").text();
+            $("#loading2").html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                url: '@Url.Action("GetClassSubjectByAgencyId", "Agency")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedCLS),
+                success: function (States) {
+                    $("#loading2").empty();
+                    $("#AgencyAllowSubject").empty();
+                    $("#AgencyAllowSubject").append('<option value="">--Select Subject---</option>');
+                    $.each(States, function (i, agencyAllowSubjectModelList) {
+
+                        $("#AgencyAllowSubject").append('<option value="' + agencyAllowSubjectModelList.Sub + '">' + agencyAllowSubjectModelList.SubNM + '</option>');
+                    });
+                    if (agencyAllowSubjectModelList.success) { }
+                    else { alert('invalid ID' + data.success); }
+                }
+            });
+
+        });
+
+       
+    });
+</script>
+
+
+
+
+
+

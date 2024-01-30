@@ -1,0 +1,236 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Affiliation Certificate";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<style type="text/css">
+    table {
+        border-collapse: collapse;
+    }
+
+    td {
+        vertical-align: top;
+    }
+
+    .tdh {
+        vertical-align: top;
+        font-size: 18px;
+        font-family: 'Times New Roman';
+        height: 40px;
+        font-weight: normal;
+        text-align: left;
+    }
+
+    .kdsfont {
+        font-size: 20px;
+        font-weight: normal;
+    }
+
+    .engfont {
+        font-size: 14px;
+        font-family: 'Times New Roman';
+        font-weight: normal;
+    }
+    /*body {background:url(Certificate-New.jpg) top center no-repeat}*/
+</style>
+
+ 
+@using (Html.BeginForm("AffiliationCertificate", "Admin", FormMethod.Post, new { id = "schl", enctype = "multipart/form-data" }))
+{
+    <form name="myForm">
+        <h1 class="noprint">Affiliation Certificate Session @if (Session["Session"] != null)
+        {@Session["Session"].ToString()}
+        else { Response.Redirect("~/Admin"); } <label style="display:inline-block;background-color:#fff;border:0;width:auto !important;text-transform:unset">School Code - @Html.DisplayFor(a => a.SchlCode, new { })</label>
+            @Html.HiddenFor(a => a.SchlCode)</h1>
+        @if (ViewBag.TotalCount2 > 0 )
+        { }
+        else
+        {
+        <div class="row noprint" id="afc"> 
+            <div class="col-md-2">
+                Certificate No.
+                @Html.TextBoxFor(a => a.CertNo, new { id = "CertNo" })
+            </div>
+            <div class="col-md-2">
+                Certificate Date @Html.TextBoxFor(a => a.CertDate, new { id = "CertDate", @ReadOnly = "ReadOnly" })
+            </div>
+            <div class="col-md-7">
+                Remarks @Html.TextBoxFor(a => a.Remarks, new { id = "Remarks" })
+            </div>
+            <div class="col-md-1">
+                <br />
+                <input value="Submit" type="submit" title="Final Submit" onclick="return formVal();" />
+            </div>
+        </div>
+        }
+        <div class="row noprint">
+            <div class="col-md-12 text-right" style="color:#cc0000">
+                * If Punjabi font is not visible properly <a href="/PNB_FONT.ZIP" target="_blank" style="font-size:14px;"><b style="color:#cc0000"> CLICK HERE </b></a> for Download Punjabi PNB Font
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-right">
+                <input type="button" value="Print" class="btn" onclick="window.print()" /> <a href="/School/Admin_School_Master" class="btn">Back</a>
+            </div>
+        </div>
+@*@if (ViewBag.TotalCount > 0 && Model.StoreAllData.Tables[0].Rows[0]["Certno"].ToString() != "")*@
+        <div style="padding-left:9%;padding-right:9%">
+            @if (ViewBag.TotalCount2 > 0 )
+            {
+                var area = "";
+                var CLASS = Model.StoreAllData.Tables[0].Rows[0]["CLASS"].ToString();
+                var Middle = "";
+                var Matric = "";
+                if (Model.StoreAllData.Tables[0].Rows[0]["AREA"].ToString().ToUpper() == "U")
+                { area = "URBAN"; }
+                else { area = "RURAL"; }
+                //if (Model.StoreAllData.Tables[0].Rows[0]["CLASS"].ToString() == "3")
+                //{ CLASS = "SENIOR SECONDARY"; Middle = "XXX"; Matric = "XXX"; }
+                //else { CLASS = "MATRIC"; Middle = @Model.StoreAllData.Tables[0].Rows[0]["middle"].ToString(); Matric = @Model.StoreAllData.Tables[0].Rows[0]["MATRIC"].ToString(); }
+                <table border="0" cellpadding="0" cellspacing="0" style="width:100%;" align="center">
+                    <tr>
+                        <td colspan="2" style="height:77px"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align:right"> <span style="padding-right:55px">@Model.StoreAllData.Tables[0].Rows[0]["SCHL"].ToString()</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="height:258px"></td>
+                    </tr>
+                    <tr>
+                        <td width="46%" class="tdh"><span class="kdsfont">Ú²ÐðØ</span> / District</td>
+                        <td width="54%"><span class="kdsfont">@Model.StoreAllData.Tables[0].Rows[0]["DISTNMPun"].ToString()</span> / @Model.StoreAllData.Tables[0].Rows[0]["DISTNM"].ToString()</td>
+                    </tr>
+                    <tr>
+                        <td class="tdh"><span class="kdsfont">ÓÖÅØª¼Û Åâ.</span> / Identity No.</td>
+                        <td>@Model.StoreAllData.Tables[0].Rows[0]["IDNO"].ToString()</td>
+                    </tr>
+                    <tr>
+                        <td class="tdh"><span class="kdsfont">ÓâÓÁØ ÂØ ÅÙ</span></td>
+                        <td><span class="kdsfont">@Model.StoreAllData.Tables[0].Rows[0]["SCHLNMP"].ToString()</span></td>
+                    </tr>
+                    <tr>
+                        <td class="tdh">Name of the Organisation</td>
+                        <td>@Model.StoreAllData.Tables[0].Rows[0]["SCHLNME"].ToString()</td>@*SCHLE  P*@
+                    </tr>
+                    <tr>
+                        <td class="tdh"><span class="kdsfont">ªã¼Ï</span> / Area</td>
+                        <td>@area</td>
+                    </tr>
+                    <tr>
+                        <td class="tdh"><span class="kdsfont">ÓâÓÁØ ÂÛ Ú¨ÓÌ</span> / Type of Organisation</td>
+                        <td>@Model.StoreAllData.Tables[0].Rows[0]["USERTYPE"].ToString()</td>
+                    </tr>
+                    <tr>
+                        <td class="tdh"><span class="kdsfont">¤èÇÛÐÛ¥ãÓÖÅ ÂØ ÆóÄÏ</span> / Affiliated Upto</td>
+                        <td>@CLASS</td>
+                    </tr>
+                    <tr>
+                        <td class="tdh"><span class="kdsfont">¤èÇÛÐÛ¥ãÓÖÅ ÂØ ÒãÏÒØ</span> / Affiliation Details</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center">
+                            <table border="1" cellpadding="0" cellspacing="0" align="center" style="width:80%;">
+                                <tr>
+                                    <td rowspan="2"></td>
+                                    <td rowspan="2" align="center">Middle</td>
+                                    <td rowspan="2" align="center">Matric</td>
+                                    <td colspan="4" style="text-align:center">Senior Secondary Groups</td>
+                                </tr>
+                                <tr>
+                                    <td align="center">Humanities</td>
+                                    <td align="center">Science</td>
+                                    <td align="center">Commerce</td>
+                                    <td align="center">Vocational</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;Session</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["Mid_yr"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["Hid_yr"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["HYR"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["SYR"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["CYR"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["VYR"].ToString()</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;Category</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["MID_UTYPE"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["HID_UTYPE"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["H_UTYPE"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["S_UTYPE"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["C_UTYPE"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["V_UTYPE"].ToString()</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;Section</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["MID_S"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["HID_S"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["H_S"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["S_S"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["C_S"].ToString()</td>
+                                    <td align="center">@Model.StoreAllData.Tables[0].Rows[0]["V_S"].ToString()</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="height:30px"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table width="100%">
+                                <tr>
+                                    <td width="30%" style="vertical-align:bottom;"><span class="kdsfont" style="font-size:20px">ÓØÚÕÉ²ÖØÂØ ¤²Û¼ ÚÓâ® Å¬Ï</span><br /><span class="engfont">Sahibzada Ajit Singh Nagar</span><br /><span class="kdsfont" style="font-size:22px">ÚÌ¼Û</span> <span class="engfont">/ Date</span> @Model.StoreAllData.Tables[0].Rows[0]["CertDate"].ToString()</td>
+                                    <td width="40%" style="text-align:center;vertical-align:bottom">
+                                        @*<img src="http://registration2018.pseb.ac.in/Images/Affiliation-Incharge-Sign.png" alt="Incharge Affiliation" width="160px" />*@<br />
+                                        @*<span class="kdsfont" style="font-size:20px">Ú¥â°ØÏ² ¤èÇÛÐÛ¥ãÓÖÅ</span> <span class="engfont"> / Incharge Affiliation</span>*@
+                                    <span class="kdsfont" style="font-size:20px">ÓÕØÚ¥¨-Óó¨¼Ï(¤èÇÖÛÐÛ¥ãÓÖÅ)</span> <span class="engfont"> / Assistant Secretary</span>
+                                    </td>
+                                    <td width="30%" style="text-align:right;vertical-align:bottom">
+                                        <div style="text-align:center">
+                                            <img src="/Images/PSEB-Secretary.png" alt="Secretary Sign" width="160px" /><br />
+                                            <span class="engfont">Mohammad Tayyab</span><br /><span class="kdsfont" style="font-size:20px">Ó¨ó¼Ï</span> <span class="engfont">/ Secretary</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+    </form>
+}
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#CertDate").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0',
+                yearRange: "1930:2021"
+            });
+        })
+
+        function formVal() {
+            if (document.getElementById('CertNo').value == "") {
+                alert('Enter Certificate No');
+                document.getElementById('CertNo').focus();
+                return false;
+            }
+            if (document.getElementById('CertDate').value == "") {
+                alert('Select Any Certificate Date');
+                document.getElementById('CertDate').focus();
+                return false;
+            }
+            if (document.getElementById('Remarks').value == "") {
+                alert('Enter Remarks');
+                document.getElementById('Remarks').focus();
+                return false;
+            }
+        }
+</script>

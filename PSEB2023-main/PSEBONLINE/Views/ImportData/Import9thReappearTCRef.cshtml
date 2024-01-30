@@ -1,0 +1,334 @@
+﻿@model PSEBONLINE.Models.Import
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+@using (Html.BeginForm("Import9thReappearTCRef", "ImportData", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <h1>
+        9th Reappear Students from Other School By TC Ref. No (Session 2016-17)
+    </h1>
+
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Search By TC REF Number
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" /> @*@Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text"), "--All---", new { @class = "", id = "SelectItem" })*@
+                    <span id="reqsstring" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-2">
+                    <input type="Submit" value="Search" name="cmd" onclick="return dee()" /> 
+						 <a href="/ImportData/Import9thReappearTCRef" class="btn"> Reset</a>
+					@*<input type="submit" name="Reset" value="Reset" formaction="CancelTc9thPASS" formmethod="post" />*@
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("M1Master", "RegistrationPortal")'">
+            <input type="button" value="View Imported Data" onclick="javascript:document.location.href='@Url.Action("M1Formgrid", "RegistrationPortal")'">
+            <input type="submit" value="Import Selected Record" /><br />&nbsp;
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>School Code</th>
+                        <th>Form</th>
+                        <th>TC REF</th>
+                        <th>Registration No.</th>
+                        <th>Name</th>
+                        <th>Father's Name</th>
+                        <th>Mother's Name</th>
+                        <th>DOB</th>
+                        <th>Result</th>
+                        <th><input type="checkbox" id="selectall" /></th>
+
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                var scode = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                var form = Model.StoreAllData.Tables[0].Rows[i]["Form"].ToString();
+                                var tc = Model.StoreAllData.Tables[0].Rows[i]["TCrefno"].ToString();
+                                var regNum = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                                var id = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                                var canName = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                                var Fname = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                                var Mname = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                                var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                var res = Model.StoreAllData.Tables[0].Rows[i]["result"].ToString();
+                                var ImpStatus = Model.StoreAllData.Tables[0].Rows[i]["ImpStatus"].ToString();
+                                <tr>
+                                    <td>@scode</td>
+                                    <td>@form</td>
+                                    <td>@tc</td>
+                                    <td>@regNum</td>
+                                    <td>@canName</td>
+                                    <td>@Fname</td>
+                                    <td>@Mname</td>
+                                    <td>@DOB</td>
+                                    <td>@res</td>
+                                    <td>
+                                        @if (@ImpStatus.ToUpper() != "OK")
+                                        {
+                                            <span>@ImpStatus</span>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" class="checkbox" id="cb-@id" value="@id" name="cbImportSelected" />
+                                        }
+                                    </td>
+                                   
+                                </tr>
+
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+                <p>Total Records(Filtered): @ViewBag.TotalCount</p>
+            </div>
+        </div>
+    </div>
+                        }
+
+@{
+    if (TempData["result"] != null)
+    {
+        if (TempData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                var impcn = @TempData["TotImported"];
+                //alert(impcn);
+                alert(impcn+" Records Imported Successfully");
+               // window.location.href = '@Url.Action("Import9thPassedTCRef", "ImportData")';
+            </script>}
+        else if (TempData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Imported");
+            </script>
+        }
+        else if (TempData["result"].ToString() == "5")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Enter TC Ref No");
+            </script>
+        }
+        else if (TempData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data not saved..plz try again");
+            </script>
+        }
+    }
+}
+<script type="text/javascript">
+    function dee() {
+
+        if ($("#SearchString").val() == ""  )
+        {
+            //alert("Please Select year");
+            $("#reqsstring").slideDown("slow");
+            return false;
+        }
+
+       return true;
+
+    }
+</script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+        $(document).ready(function ()
+        {
+            $('.checkbox').change(function () { //".checkbox" change
+                    if (this.checked == false) { //if this item is unchecked
+                    $("#selectall")[0].checked = false; //change "select all" checked status to false
+                }
+            });
+
+            $("#selectall").change(function () {
+                var status = this.checked; // "select all" checked status
+                //alert(status);
+                var arr = [];
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                   // alert(id);
+                    this.checked = status; //change ".checkbox" checked status
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var j = 0;
+                    var k = 0;
+                    //cb-stdid
+                    for (var i = 3; i < arr.length; i++) {
+                        if (arr[i] == '-')
+                        {
+                            k++;
+                            continue;
+                        }
+                        if (k == 0)
+                        {
+                            arrid += arr[i];
+                        }
+                        j++;
+                    }
+                    //alert(dtype);
+                    for (var k = 3 + j + 5; k < arr.length; k++) {
+                        arrcast += arr[k];
+                    }
+
+                });
+            });
+            // End select all
+
+
+        });
+
+
+
+
+</script>
+<script>
+
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+
+        if (value == 5) {
+
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 2 || value == 3 || value == 4) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            if (value == 5) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10Y',
+
+                });
+
+            }
+            else if (value == 2 || value == 3 || value == 4) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+</script>
+
+

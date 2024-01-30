@@ -1,0 +1,263 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Schoollist";
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<style type="text/css">
+    .box {
+     display:none;
+     position: absolute;
+     top: 30px; 
+     right: 10px;
+    background: orange;
+    padding: 5px;
+    border: 1px solid black;
+}
+
+a:hover + .box {
+     display:block;   z-index:9999999
+}
+ .tip{
+    display: inline;
+    position: relative;;text-align:left
+}
+.tip:hover:after{
+    background: #333;
+    background: rgba(248,148,5,.9);
+    border-radius: 5px;
+    bottom: 26px;line-height:20px;
+    color: #000;
+    content: attr(rel);
+    right: 10px;
+    padding: 5px 5px;
+    position: absolute; white-space: pre-wrap;
+    z-index: 98;font-family:Arial;font-size:12px;text-align:left;
+    width: 320px;display:block;
+}
+</style>
+
+<div class="container">
+    <h1>School Details</h1>
+    <div class="row">
+	 <div class="col-md-12">  
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("Schoollist", "School", FormMethod.Post, new { id = "searchform" }))
+            {
+                if (ViewBag.MyDist != null)
+                {
+                    @*required = "required"*@
+                    <div class="col-md-2">School Type @Html.DropDownList("SchoolType", new SelectList(ViewBag.MySchoolType, "Value", "Text", ViewBag.SelectedSchoolType), "-All School Type-", new { @class = "" })</div>
+                    <div class="col-md-2">District @Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "-Select District-", new { @class = "" })</div>
+                    <div class="col-md-2">Select @Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "-Select-", new { @class = "", id = "SelectItem" })</div>
+                    <div class="col-md-4"><br /><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                    <div class="col-md-2"><br /><input type="submit" value="Search" /> @*<input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" />*@ <a href="javascript:void(0);" class="btn" onclick="history.go(-1);">Back</a></div>
+                }
+            }
+        </fieldset>
+		</div>
+		 <div class="clearfix"></div>
+        <div class="col-md-12 rqf">Note : Kindly Click Search Button To Show Records.</div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+                   @{
+                        if (ViewBag.TotalCount > 0)
+                        {                             
+                        <div style="padding:7px 0;text-align:left">Grid Total: @ViewBag.TotalCount</div>
+                        <div class="table-responsive">
+                            <table id="t01" class="table table-bordered" style="font-size:13px">
+
+                                <tr class="active-tr">
+                                    <th width="9%">SCHL</th>
+                                    <th width="55%">School Name</th>
+                                    <th width="18%">School Type</th>
+                                    <th width="18%">Action</th>
+                                </tr>
+
+                                @for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    var schid = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                    var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                    var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                                    var SCHLE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                                    var StationE = Model.StoreAllData.Tables[0].Rows[i]["STATIONE"].ToString();
+                                    var usertype = Model.StoreAllData.Tables[0].Rows[i]["schooltype"].ToString();
+                                    var principalname = Model.StoreAllData.Tables[0].Rows[i]["principalname"].ToString();
+                                    var mobilenumber = Model.StoreAllData.Tables[0].Rows[i]["mobilenumber"].ToString();
+                                    var PhoneNo = Model.StoreAllData.Tables[0].Rows[i]["PhoneNo"].ToString();
+                                    var email = Model.StoreAllData.Tables[0].Rows[i]["email"].ToString();
+                                    var DISTE = Model.StoreAllData.Tables[0].Rows[i]["DISTE"].ToString();
+                                <tr>
+                                    <td>
+                                        @SCHL
+                                    </td>
+                                    <td>
+                                        @SCHLE, @StationE, @DISTE
+                                    </td>
+                                    <td>
+                                        @usertype
+                                    </td>
+
+                                    <td>
+                                        <a href="#" class="tip" rel="&nbsp;
+        Principal Name - @principalname
+        Mobile No. - @mobilenumber
+        Phone No. - @PhoneNo
+        Email ID - @email
+        &nbsp;">View Contact Details<span class="caret"></span></a>
+                                        @* <div class="cart">
+                                                View Contact Details <span class="caret"></span>
+                                                <div id="sidebar" style="font-size:10px;padding:2px">
+
+                                                    Principal Name - @principalname<br /> Mobile No. - @mobilenumber<br />Email ID - @email
+                                                </div>
+                                            </div>*@
+
+
+                                    </td>
+                                </tr>
+                            }
+
+                                <tr>
+                                    <td colspan="4">
+                                        <a id="btnPrevious" href="@Url.Action("P", "School", new { previousPageIndex = ViewBag.PreviousPageIndex })"><span>Previous</span></a>
+                                        @*@{ var previndex = ViewBag.CurrentPageIndex - 1; }*@
+                                        <a id="btnNext" href="@Url.Action("N", "School", new { currentPageIndex = ViewBag.CurrentPageIndex })"><span>Next</span></a>
+                                        <script type="text/javascript">
+                                @** @if (ViewBag.CurrentPageIndex > 1)*@
+           @if (ViewBag.PreviousPageIndex <= 0)
+            {
+               @:$('#btnPrevious').removeAttr('href');
+               @:$("#btnPrevious").css("color", "Gray");
+            }
+            else
+            {
+                   @:$("#btnPrevious").attr("disabled", true);
+             }
+
+             @if (ViewBag.CurrentPageIndex <= ViewBag.LastPageIndex)
+            {
+                   @:$("#btnNext").attr("disabled");
+             }
+            else
+            {
+                   @:$("#btnNext").attr("disabled", true);
+                @:$("#btnNext").css("color", "Gray");
+            }
+                                        </script>
+                                        <input id="previousPageIndex" type="hidden" value=@ViewBag.PreviousPageIndex />
+                                        <input id="currentPageIndex" type="hidden" value=@ViewBag.CurrentPageIndex />
+
+
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                       }
+                }
+
+
+                        
+                </div>
+        <div class="clearfix"></div>
+        <div style="height:300px"></div>
+            </div> 
+        </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script>
+ $(document).ready(function () {
+     $("#SchoolType option[value='ONLY EXAM CENTRE']").remove();
+
+ });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'School/N',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'School/P',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            if (value == 1 || value == 3 || value == 5) {
+                $("#searchform").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        // alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    };
+                });
+            } else {
+                $("#searchform").off('keypress');
+            }
+
+        });
+    });
+        </script>
+
+<script type='text/javascript'>
+var isCtrl = false;
+document.onkeyup=function(e)
+{
+    if(e.which == 17)
+    isCtrl=false;
+}
+document.onkeydown=function(e)
+{
+    if(e.which == 17)
+    isCtrl=true;
+}
+var isNS = (navigator.appName == "Netscape") ? 1 : 0;
+if(navigator.appName == "Netscape") document.captureEvents(Event.MOUSEDOWN||Event.MOUSEUP);
+function mischandler(){
+    return false;
+}
+function mousehandler(e){
+    var myevent = (isNS) ? e : event;
+    var eventbutton = (isNS) ? myevent.which : myevent.button;
+    if((eventbutton==2)||(eventbutton==3)) return false;
+}
+document.oncontextmenu = mischandler;
+document.onmousedown = mousehandler;
+document.onmouseup = mousehandler;
+        </script>
+
+

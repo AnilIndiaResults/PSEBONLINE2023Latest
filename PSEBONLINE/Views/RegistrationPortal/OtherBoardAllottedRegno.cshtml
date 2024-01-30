@@ -1,0 +1,391 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+@*<h1>
+    Session @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+    else { Response.Redirect("~/Login"); }
+</h1>*@
+<h1>Other Board Allotted Registration No. Session @Session["Session"].ToString()</h1>
+        @using(Html.BeginForm("OtherBoardAllottedRegno", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Total Students <label>@ViewBag.TotalCount1</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-3">
+                        Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+
+                    </div>
+                    <div class="col-md-3">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" /> <input type="submit" name="Reset" value="Reset" formaction="ViewN2Records" formmethod="post" /> <a href="/RegistrationPortal/ViewRegNo" class="btn">View Error List</a> 
+                        @*<input type="button" name="Reset" id="Reset" value="Reset" />*@
+                      
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row">
+  
+        <div class="table-responsive">  <div class="col-md-12">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>Sr</th>
+                    <th>Unique ID</th>
+                    <th>Form</th>
+                    <th>Roll/Section</th>
+                    <th>Reg No</th>
+                    <th>Old Roll</th>
+                    <th>Aadhar No</th>
+                    <th>Name / Father'sName / Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Adm Date</th>
+                    <th>Reg Date: Fee Status</th>                    
+                    <th>Lot</th>
+                    <th>Action</th>
+                </tr>
+                @{
+                    DateTime dt = DateTime.Now;
+                    DateTime str = DateTime.Now;// DateTime.Parse(dt.ToString("MM/dd/yyyy").Replace('-', '/'));
+                    DateTime date = str;
+
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 30 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var RowNumber   = Model.StoreAllData.Tables[0].Rows[i]["RowNumber"].ToString();
+                            var std_id = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                            var Form        = Model.StoreAllData.Tables[0].Rows[i]["Form"].ToString();
+                            var Roll        = Model.StoreAllData.Tables[0].Rows[i]["Roll"].ToString();
+                            var Section     = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                            var RegNo       = Model.StoreAllData.Tables[0].Rows[i]["RegNo"].ToString();
+                            var OldRoll     = Model.StoreAllData.Tables[0].Rows[i]["OldRoll"].ToString();
+                            var AadharNo    = Model.StoreAllData.Tables[0].Rows[i]["AadharNo"].ToString();
+                            var Name        = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                            var fname       = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                            var mname       = Model.StoreAllData.Tables[0].Rows[i]["mname"].ToString();
+                            var DOB         = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var AdmDate     = Model.StoreAllData.Tables[0].Rows[i]["AdmDate"].ToString();
+                            var RegDate     = Model.StoreAllData.Tables[0].Rows[i]["RegDate"].ToString();
+                            var Fee         = Model.StoreAllData.Tables[0].Rows[i]["Fee"].ToString();
+                            var Status      = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                            var Lot         = Model.StoreAllData.Tables[0].Rows[i]["Lot"].ToString();
+
+                            //var stdid = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                            //var regNum = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                            //var admDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                            //var canName = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                            //var Fname = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                            //var Mname = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                            //var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            ////var ud = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                            ////var vfalg = Model.StoreAllData.Tables[0].Rows[i]["vflag"].ToString();
+                            ////var Approved = Model.StoreAllData.Tables[0].Rows[i]["Approved"].ToString();
+                            //var LOT = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                            Count = i + 1;
+                            <tr>
+                                <td>
+                                    @RowNumber
+                                </td>
+                                <td>
+                                    @std_id
+                                </td>
+                                <td>
+                                    @Form
+                                </td>
+                                <td>
+                                    @Roll /@Section
+                                </td>
+                                <td>
+                                    @RegNo
+                                </td>
+                                <td>
+                                    @OldRoll
+                                </td>
+                                <td>
+                                    @AadharNo
+                                </td>
+                                <td>
+                                    @Name/ @fname/ @mname 
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @AdmDate
+                                </td>
+                                <td>
+                                    @RegDate:  @Fee / @Status
+                                </td>
+                                <td>
+                                    @Lot
+                                </td>                                
+                                <td>
+                                    <div>
+                                       @Html.ActionLink("View", "CommanFormView", new { id = encrypt.QueryStringModule.Encrypt(std_id), formNM = Form })
+                                    </div>
+                                </td>
+
+                            </tr>
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="8">
+                                        Page @ViewBag.pagesize of @ViewBag.pn
+                                        &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+
+                                        {
+                                            @:<<
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "OtherBoardAllottedRegno", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "OtherBoardAllottedRegno", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                            @Html.ActionLink("<<", "OtherBoardAllottedRegno", new { page = 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @Html.ActionLink("< Prev", "OtherBoardAllottedRegno", new { page = ViewBag.pagesize - 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "OtherBoardAllottedRegno", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "OtherBoardAllottedRegno", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                            }
+
+                                        }
+
+
+                                    </td>
+                                </tr>
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 text-center tbp">
+        @*<input type="button" value="Add New Records" onclick="javascript:document.location.href='@Url.Action("N2Form", "RegistrationPortal")'" />
+    <input type="button" value="Rough Report" onclick="javascript:document.location.href='@Url.Action("RoughReport", "RegistrationPortal", new { Form = "N2" })'" />
+    <input type="button" value="Student Verification Form" onclick="javascript:document.location.href='@Url.Action("StudentVerificationForm", "RegistrationPortal", new { Form = "N2" })'">
+    <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("N2Form", "RegistrationPortal" )'" />*@
+        <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Index", "Home" )'" />
+    </div>
+</div>
+
+<script type="text/javascript">
+        window.setInterval(function () {
+            var current = new Date();
+            var expiry = new Date("March 31, 2017 23:59:59")
+            if (current.getTime() > expiry.getTime()) {
+                $('.hideintm').hide();
+            } else if (current.getTime() < expiry.getTime()) {
+                $('.hideintm').show();
+            }
+        }, 0);
+</script>
+
+
+<script>
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+        if (value == 5) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 2 || value == 3 || value == 4) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            if (value == 5) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10Y',
+
+                });
+
+            }
+            else if (value == 2 || value == 3 || value == 4) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+</script>
+
+<script type='text/javascript'>
+var isCtrl = false;
+document.onkeyup=function(e)
+{
+    if(e.which == 17)
+    isCtrl=false;
+}
+document.onkeydown=function(e)
+{
+    if(e.which == 17)
+    isCtrl=true;
+    if ((e.which == 85)) //85 for Ctrl+U, For Copy= (e.which == 67) && (isCtrl == true)
+    {
+        return false;
+    }
+}
+var isNS = (navigator.appName == "Netscape") ? 1 : 0;
+if(navigator.appName == "Netscape") document.captureEvents(Event.MOUSEDOWN||Event.MOUSEUP);
+function mischandler(){
+    return false;
+}
+function mousehandler(e){
+    var myevent = (isNS) ? e : event;
+    var eventbutton = (isNS) ? myevent.which : myevent.button;
+    if((eventbutton==2)||(eventbutton==3)) return false;
+}
+document.oncontextmenu = mischandler;
+document.onmousedown = mousehandler;
+document.onmouseup = mousehandler;
+</script>

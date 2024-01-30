@@ -1,0 +1,1072 @@
+﻿@model PSEBONLINE.Models.EAffiliationModel
+
+@{
+    ViewBag.Title = "Inbox EAffiliation";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+
+<h2>Inbox EAffiliation List</h2>
+<div class="row">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("InboxEAffiliation", "Admin", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-3">@Html.DropDownList("AppCls", new SelectList(ViewBag.MyAppCls, "Value", "Text", ViewBag.SelectedCls), "--All Class--", new { @class = "", id = "AppCls" })</div>
+                <div class="col-md-3">@Html.DropDownList("AppType", new SelectList(ViewBag.MyAppType, "Value", "Text", ViewBag.SelectedAppType), "--Select Application Type--", new { @class = "", id = "AppType", @required = "required" })</div>
+                <div class="col-md-3">@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District--", new { @class = "", id = "Dist" })</div>
+                <div class="col-md-3">@Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), new { @class = "" })</div>
+                <div class="clearfix"></div>
+                <div class="col-md-3">@Html.DropDownList("searchstatus", new SelectList(ViewBag.searchstatus, "Value", "Text", ViewBag.Selectedsearchstatus), new { @class = "" })</div>
+
+                <div class="col-md-3">@Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                <div class="col-md-3"><input type="text" id="SearchString" name="SearchString" value="@Request[" SearchString"]" /></div>
+                <div c lass="col-md-3">
+                    <input type="submit" value="Search" />
+                </div>
+
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-4 noprint">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        @if (Session["AdminType"].ToString().ToUpper() == "INSPECTION-COMMITTEE")
+        {
+            <br /><a href="/PDF/DownloadInspectionPerformafor10thClass.pdf" class="btn">Download Inspection Performa for 10th Class</a>
+            <a href="/PDF/DownloadInspectionPerformafor12thClass.pdf" class="btn">Download Inspection Performa for 12th Class</a>
+
+        }
+    </div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th style="@(Session["AdminType"].ToString().ToUpper() == "DEALING1"  ? "display:block" : "display:none");dis"><input type="checkbox" id="selectall" />ALL</th>
+                    <th>Application No</th>
+                    <th>SCHL</th>
+                    <th>IDNO</th>
+                    <th>UDISE</th>
+                    <th>APP Type</th>
+                    <td>Aff Type</td>
+                    <td>Class<br />[Group]</td>
+                    <th>School Name</th>
+                    <th>District</th>
+                    <th>Mobile</th>
+                    <th>SchlMaster Status</th>
+                    <th>Currently With</th>
+                    <th>E-File No</th>
+                    <th>App Status </th>
+                    <th>Action</th>
+
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var EAffType = Model.StoreAllData.Tables[0].Rows[i]["EAffType"].ToString();
+                            var APPNO = Model.StoreAllData.Tables[0].Rows[i]["APPNO"].ToString();
+                            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                            var PWD = Model.StoreAllData.Tables[0].Rows[i]["PWD"].ToString();
+                            //  var SCHLNAME = Model.StoreAllData.Tables[0].Rows[i]["SCHLNAME"].ToString().ToUpper();
+                            var SCHLMOBILE = Model.StoreAllData.Tables[0].Rows[i]["SCHLMOBILE"].ToString();
+                            var SCHLEMAIL = Model.StoreAllData.Tables[0].Rows[i]["SCHLEMAIL"].ToString();
+                            var DISTNME = Model.StoreAllData.Tables[0].Rows[i]["DISTNME"].ToString();
+                            var SCHLNME = Model.StoreAllData.Tables[0].Rows[i]["SCHLNME"].ToString();
+                            var STATIONE = Model.StoreAllData.Tables[0].Rows[i]["STATIONE"].ToString();
+                            var UDISECODE = Model.StoreAllData.Tables[0].Rows[i]["UDISECODE"].ToString();
+                            var IsFinal = Model.StoreAllData.Tables[0].Rows[i]["IsFinal"].ToString();
+                            var FinalStatus = Model.StoreAllData.Tables[0].Rows[i]["FinalStatus"].ToString().ToUpper();
+
+                            var HistoryStatus = Model.StoreAllData.Tables[0].Rows[i]["HistoryStatus"].ToString().ToUpper();
+
+                            //
+                            var CurrentApplicationStatusON = Model.StoreAllData.Tables[0].Rows[i]["CurrentApplicationStatusON"].ToString();
+                            var CurrentApplicationStatus = Model.StoreAllData.Tables[0].Rows[i]["CurrentApplicationStatusMain"].ToString();
+                            var CurrentApplicationStatusName = Model.StoreAllData.Tables[0].Rows[i]["CurrentApplicationStatusName"].ToString().ToUpper();
+                            var CurrentApplicationBranch = Model.StoreAllData.Tables[0].Rows[i]["CurrentApplicationBranch"].ToString().ToUpper();
+
+                            var IsFormLock = Model.StoreAllData.Tables[0].Rows[i]["IsFormLock"].ToString().ToUpper();
+
+                            var ApplicationType = Model.StoreAllData.Tables[0].Rows[i]["ApplicationType"].ToString().ToUpper();
+                            var ClassLevel = Model.StoreAllData.Tables[0].Rows[i]["ClassLevel"].ToString().ToUpper();
+                            var SchlMasterStatus = Model.StoreAllData.Tables[0].Rows[i]["SchlMasterStatus"].ToString();
+
+                            var ApprovalStatusNM = Model.StoreAllData.Tables[0].Rows[i]["ApprovalStatusNM"].ToString().ToUpper();
+                            var ApprovalFileNo = Model.StoreAllData.Tables[0].Rows[i]["ApprovalFileNo"].ToString().ToUpper();
+                            var GroupList = Model.StoreAllData.Tables[0].Rows[i]["GroupList"].ToString().ToUpper();
+
+                            Count = Count + 1;
+                                <tr>
+                                    <td style="@(Session["AdminType"].ToString().ToUpper() == "DEALING1" ? "display:block" : "display:none")">
+                                        @if (CurrentApplicationStatus == "1" && IsFormLock == "1")
+                                        {<input type="checkbox" class="checkbox" id="cb-@APPNO" value="@APPNO" />}
+                                        @Count
+                                    </td>
+
+                                    <td>
+                                        @APPNO
+                                        <div class="container">
+                                            <div class="modal fade" id="myModal2-@d" role="dialog">
+                                                <div class="modal-dialog">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>Application Number : @APPNO </h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Email Id <input type="text" id="updtEmail-@d" name="updtEmail" value="@SCHLEMAIL" />
+                                                            Mobile Number <input type="text" id="updtMobile-@d" name="updtMobile" value="@SCHLMOBILE" />
+                                                            <input type="button" class="btn" value="Update Emailid/Mobile" id="btnupdateEmailMobile" onclick="updateEmailMobile(@d,'@APPNO')" />
+                                                            <div id="loading2-@d"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="modal fade" id="myModal3-@d" role="dialog">
+                                                <div class="modal-dialog">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>Application Number : @APPNO </h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Password Id <input type="text" id="updtPWD-@d" name="updtPWD" value="@PWD" readonly />
+                                                            <input type="button" class="btn" value="Send Password" id="btnPassword" onclick="sendPassword(@d,'@APPNO')" />
+                                                            <div id="loading2-@d"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            @*Documents*@
+                                            <div class="modal fade" id="myModalDocument-@d" role="dialog">
+                                                <div class="modal-dialog" style="width:80%">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>View Documents of Application No  : @APPNO</h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                <tr>
+                                                                    <td colspan="4">
+                                                                        <table width="100%" id="view-@d">
+                                                                            <tr class="active-tr">
+
+                                                                                <th width="30%">Document</th>
+                                                                                <th width="50%">Download</th>
+                                                                                <th width="20%">Submitted On</th>
+                                                                            </tr>
+                                                                            @{
+                                                                                for (int h = 0; h < Model.StoreAllData.Tables[3].Rows.Count; h++)
+                                                                                {
+                                                                                    var eDocId = Model.StoreAllData.Tables[3].Rows[h]["eDocId"].ToString();
+                                                                                    var eAPPNO = Model.StoreAllData.Tables[3].Rows[h]["APPNO"].ToString();
+                                                                                    var DocumentName = Model.StoreAllData.Tables[3].Rows[h]["DocumentName"].ToString();
+                                                                                    var DocFile = Model.StoreAllData.Tables[3].Rows[h]["DocFile"].ToString();
+                                                                                    var CreatedDate = Model.StoreAllData.Tables[3].Rows[h]["CreatedDate"].ToString();
+
+                                                                                    if (APPNO == eAPPNO)
+                                                                                    {
+                                                                                        <tr id="trs-@d-@eDocId">
+
+                                                                                            <td>@DocumentName</td>
+                                                                                            <td> <a href="https://psebdata.s3.ap-south-1.amazonaws.com/@DocFile" class="btn" target="_blank">Download</a></td>
+                                                                                            <td>@CreatedDate</td>
+                                                                                        </tr>
+
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            @*History*@
+                                            <div class="modal fade" id="myModalHistory-@d" role="dialog">
+                                                <div class="modal-dialog" style="width:80%">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>View History of Application No  : @APPNO</h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                <tr>
+                                                                    <td colspan="4">
+                                                                        <table width="100%" id="view-@d">
+                                                                            <tr class="active-tr">
+                                                                                <th width="20%">DateTime</th>
+                                                                                <th width="30%">Status</th>
+                                                                                <th width="50%">Remarks</th>
+                                                                            </tr>
+                                                                            @{
+                                                                                for (int h = 0; h < Model.StoreAllData.Tables[2].Rows.Count; h++)
+                                                                                {
+                                                                                    var MHID = Model.StoreAllData.Tables[2].Rows[h]["MHID"].ToString();
+                                                                                    var APPNO11 = Model.StoreAllData.Tables[2].Rows[h]["APPNO"].ToString();
+                                                                                    var NewStatus = Model.StoreAllData.Tables[2].Rows[h]["NewStatus"].ToString();
+                                                                                    var Remarks = Model.StoreAllData.Tables[2].Rows[h]["REMARKS"].ToString();
+                                                                                    var SubmitDate = Model.StoreAllData.Tables[2].Rows[h]["SubmitDate"].ToString();
+                                                                                    var SubmitBy = Model.StoreAllData.Tables[2].Rows[h]["SubmitBy"].ToString();
+
+                                                                                    if (APPNO == APPNO11)
+                                                                                    {
+                                                                                        <tr id="trs-@d-@MHID">
+                                                                                            <td>@SubmitDate</td>
+                                                                                            <td>@NewStatus</td>
+                                                                                            <td>@Remarks</td>
+                                                                                        </tr>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @*Unlock*@
+                                            <div class="modal fade" id="myModalUnlock-@d" role="dialog">
+                                                <div class="modal-dialog">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>Application Number : @APPNO </h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Enter Remarks <input type="text" id="UnlockRemarks-@d" name="UnlockRemarks" value="" />
+                                                            <input type="button" class="btn" value="Unlock Remarks" id="btnUnlockRemarks" onclick="sendUnlockRemarks(@d,'@APPNO','@ViewBag.SelectedAppType','@SCHLMOBILE')" />
+                                                            <div id="loading2-@d"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            @*ObjectionLetter*@
+                                            <div class="modal fade" id="myModalObjectionLetter-@d" role="dialog">
+                                                <div class="modal-dialog" style="width:50%">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>Application Number : @APPNO </h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                <tr>
+                                                                    <td colspan="4"><span class="text-primary">Objection Letter</span></td>
+                                                                </tr>
+
+                                                                @{
+                                                                    if (ViewBag.SelectedAppType == "AFF")
+                                                                    {
+                                                                        using (Html.BeginForm("EAffiliation_ObjectionLetter", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                                        {
+
+                                                                            @Html.Hidden("APPNO", @APPNO)
+                                                                            @Html.Hidden("SCHLMOBILE", @SCHLMOBILE)
+                                                                            <tr>
+                                                                                <td>
+                                                                                    Objection Details <span class="rqf">*</span>
+                                                                                    <textarea id="RemarksObjection" placeholder="Enter Objection Details" name="RemarksObjection" maxlength="100" cols="60" rows="8"></textarea>
+                                                                                    @*<input type="text" id="RemarksObjection" placeholder="Enter Remarks" name="RemarksObjection" maxlength="100" required />*@
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    Objection Letter <span class="rqf">(Optional)</span>
+                                                                                    <input type="file" name="ObjectionLetter" />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button type="submit" value="Upload" class="btn">Submit</button>
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+                                                                    else if (ViewBag.SelectedAppType == "AC")
+                                                                    {
+                                                                        using (Html.BeginForm("AffiliationContinuation_ObjectionLetter", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                                        {
+
+                                                                            @Html.Hidden("APPNO", @APPNO)
+                                                                            @Html.Hidden("SCHLMOBILE", @SCHLMOBILE)
+                                                                            <tr>
+                                                                                <td>
+                                                                                    Objection Details <span class="rqf">*</span>
+                                                                                    <textarea id="RemarksObjection" placeholder="Enter Objection Details" name="RemarksObjection" maxlength="100" cols="60" rows="8"></textarea>
+                                                                                    @*<input type="text" id="RemarksObjection" placeholder="Enter Remarks" name="RemarksObjection" maxlength="100" required />*@
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    Objection Letter <span class="rqf">(Optional)</span>
+                                                                                    <input type="file" name="ObjectionLetter" />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button type="submit" value="Upload" class="btn">Submit</button>
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+                                                                    else if (ViewBag.SelectedAppType == "AS")
+                                                                    {
+                                                                        using (Html.BeginForm("AdditionSection_ObjectionLetter", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                                        {
+
+                                                                            @Html.Hidden("APPNO", @APPNO)
+                                                                            @Html.Hidden("SCHLMOBILE", @SCHLMOBILE)
+                                                                            <tr>
+                                                                                <td>
+                                                                                    Objection Details <span class="rqf">*</span>
+                                                                                    <textarea id="RemarksObjection" placeholder="Enter Objection Details" name="RemarksObjection" maxlength="100" cols="60" rows="8"></textarea>
+                                                                                    @*<input type="text" id="RemarksObjection" placeholder="Enter Remarks" name="RemarksObjection" maxlength="100" required />*@
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    Objection Letter <span class="rqf">(Optional)</span>
+                                                                                    <input type="file" name="ObjectionLetter" />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button type="submit" value="Upload" class="btn">Submit</button>
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @*Forward*@
+                                            <div class="modal fade" id="myModalForward-@d" role="dialog">
+                                                <div class="modal-dialog">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>Application Number : @APPNO </h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Select Forward To @Html.DropDownList("SelForward", new SelectList(ViewBag.MyForwardList, "eApplicationStatusID", "eApplicationBranch"), "--Select Forward To--", new { @ID = "SelForward-" + d, @class = "" })
+                                                            <div class="kds-nu">
+                                                                Remarks (Optional)
+                                                                @*<input type="text" id="ForwardRemarks-@d" placeholder="Enter Remarks" name="ForwardRemarks" maxlength="100" required />*@
+                                                                <textarea id="ForwardRemarks-@d" rows="5" cols="50" placeholder="Enter Remarks" name="ForwardRemarks" maxlength="500" required></textarea>
+                                                            </div>
+                                                            <input type="button" class="btn" value="Forward" id="btnForwardAPPNO" onclick="sendForwardTo(@d,'@APPNO','@ApplicationType')" />
+                                                            <div id="loadingF-@d"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            @*Fill InspectionReport*@
+                                            <div class="modal fade" id="myModalInspectionReport-@d" role="dialog">
+                                                <div class="modal-dialog" style="width:50%">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>Application Number : @APPNO </h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                <tr>
+                                                                    <td colspan="4"><span class="text-primary">Fill Inspection Report</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Fill Inspection Report</td>
+                                                                    @{ using (Html.BeginForm("EAffiliation_FillInspectionReport", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                                        {
+
+                                                                            @Html.Hidden("APPNO", @APPNO)
+                                                                            @Html.Hidden("SCHLMOBILE", @SCHLMOBILE)
+
+                                                                            <td>
+                                                                                <input type="file" name="InspectionReport" required />
+                                                                            </td>
+                                                                            <td><input type="text" id="RemarksInspectionReport" placeholder="Enter Remarks" name="RemarksInspectionReport" maxlength="100" /></td>
+                                                                            <td>
+                                                                                @*<input type="submit" value="Upload">*@
+                                                                                <button type="submit" value="Upload" class="btn">Upload Inspection Report</button>
+                                                                            </td>
+                                                                        }
+
+                                                                    }
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @*ChairMan Approval*@
+
+                                            @*@if (Session["AdminType"].ToString().ToUpper() == "CHAIRMAN")*@
+
+                                            <div class="modal" id="myModalStatus-@d" role="dialog">
+                                                <div class="modal-dialog" style="width:50%">
+
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>Application Number : @APPNO </h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table width="100%">
+                                                                <tr>
+                                                                    <td>Select your Response </td>
+                                                                    <td>@Html.DropDownList("AppStatus", new SelectList(ViewBag.MyApprovalStatusList, "Value", "Text"), "--Select--", new { id = "AppStatus-" + d, @class = "" })</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Efile & Note No  </td>
+                                                                    <td><input id="eApprovalFileNo-@d" value="" type="text" /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Remarks </td>
+                                                                    <td><input id="eSTATUSREMARKS-@d" value="" type="text" /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        <input type="button" class="btn" value="Submit" id="btnUpdateEaffApprovalStatusByChairman" onclick="updateEaffApprovalStatusByChairman('@d','@APPNO','@ApplicationType')" />
+
+                                                                        <div id="loadingAppStatus"></div>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+                                    <td>@SCHL</td>
+                                    <td>@IDNO</td>
+                                    <td>@UDISECODE</td>
+                                    <td>@ApplicationType</td>
+                                    <td>@EAffType</td>
+                                    <td>@ClassLevel<br />@GroupList</td>
+                                    <td> @SCHLNME  @STATIONE</td>
+                                    <td>@DISTNME</td>
+                                    <td>@SCHLMOBILE</td>
+                                    <td>@SchlMasterStatus </td>
+                                    <td>
+                                        @CurrentApplicationStatusName <br /> <span class="rqf">@CurrentApplicationBranch</span>
+                                    </td>
+                                    <td>@ApprovalFileNo</td>
+                                    <td>@ApprovalStatusNM </td>
+                                    <td>
+                                        <div class="cart">
+                                            Choose Action <span class="caret"></span>
+
+                                            @{
+                                                if (ViewBag.SelectedAppType == "AFF")
+                                                {
+                                                    <div id="sidebar">
+                                                                                                    <ul>
+                                                                                                        @{
+                                                                                                            <li><a href="@("/Admin/EaffiliationCombinedDownloadDocuments/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" target="_blank" title="Download Combined Documents">Download Combined Documents</a></li>
+
+                                                                                                            <li> <a data-toggle="modal" data-target="#myModalDocument-@d">View Documents</a></li>
+                                                                                                            <li><a href="/EAffiliation/EAffiliationReport/@APPNO" class="btn">View/Print Application</a></li>
+                                                                                                            <li> <a data-toggle="modal" data-target="#myModalForward-@d">Forward</a></li>
+
+                                                                                                            <li style="@(ViewBag.IsHistory == 1 ? "display:block" : "display:none")"><a href="@("/Admin/ViewEAffiliationHistory/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" id="viewhistory" title="View History" target="_blank">Movement History</a></li>
+
+                                                                                                            if (IsFormLock == "1" && Session["AdminType"].ToString().ToUpper() == "DEALING")
+                                                                                                            {
+                                                                                                                <li style="@(ViewBag.IsUnlockForm == 1 ? "display:block" : "display:none")"> <a data-toggle="modal" data-target="#myModalUnlock-@d">Unlock Form</a></li>
+                                                                                                            }
+                                                                                                            <li style="@(ViewBag.IsObjection == 1 ? "display:block" : "display:none")"><a href="@("/Admin/AffiliationObjectionLetter/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" id="viewObjection" title="View/Add Objection" target="_blank">View/Add Objection</a></li>
+                                                                                                            <li style="@(ViewBag.IsPassword == 1 ? "display:block" : "display:none")"> <a data-toggle="modal" data-target="#myModal2-@d">Update Emailid/Mobile</a></li>
+                                                                                                            <li style="@(ViewBag.IsPassword == 1 ? "display:block" : "display:none")"> <a data-toggle="modal" data-target="#myModal3-@d">View/Send Password</a></li>
+
+                                                                                                            if (Session["AdminType"].ToString().ToUpper().Contains("INSPECTION-COMMITTEE"))
+                                                                                                            {
+                                                                                                                <li style="@(ViewBag.IsFillInspectionReport == 1 ? "display:block" : "display:none")"> <a data-toggle="modal" data-target="#myModalInspectionReport-@d">Fill Inspection Report</a></li>
+                                                                                                            }
+                                                                                                            <li><a href="@("/Admin/ViewEAffiliationInspectionReport/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" class="btn">View Inspection Report</a></li>
+
+                                                                                                            <li style="@(ViewBag.IsCloseApplication == 1 ? "display:block" : "display:none")"> <a data-toggle="modal" data-target="#myModalCloseApplication-@d">Close Application</a></li>
+
+                                                                                                            if (Session["AdminType"].ToString().ToUpper() == "DEALING" || Session["AdminType"].ToString().ToUpper() == "ADMIN")
+                                                                                                            {
+                                                                                                                <li>   <a data-toggle="modal" data-target="#myModalStatus-@d">Approve/Reject</a></li>
+                                                                                                                @*<li style="@(ViewBag.IsApproveForm == 1 ? "display:block" : "display:none")">   <a data-toggle="modal" data-target="#myModalStatus-@d">Approve/Reject</a></li>*@
+                                                                                                            }
+
+
+
+                                                                                                        }
+                                                                                                    </ul>
+                                                    </div>
+                                                }
+                                                else if (ViewBag.SelectedAppType == "AC")
+                                                {
+                                                    <div id="sidebar">
+                                                        <ul>
+                                                            <li><a href="@("/Admin/EaffiliationCombinedDownloadDocuments/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" target="_blank" title="Download Combined Documents">Download Combined Documents</a></li>
+                                                            <li><a href="/Admin/FinalPrintFormAffiliation/@APPNO" target="_blank" class="btn">View/Print Application</a></li>
+                                                            <li> <a data-toggle="modal" data-target="#myModalDocument-@d">View Documents</a></li>
+                                                            <li> <a data-toggle="modal" data-target="#myModalForward-@d">Forward</a></li>
+
+                                                            <li style="@(ViewBag.IsHistory == 1 ? "display:block" : "display:block")"><a href="@("/Admin/ViewEAffiliationHistory/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" id="viewhistory" title="View History" target="_blank">Movement History</a></li>
+                                                            @{
+                                                                if (IsFormLock == "1" && Session["AdminType"].ToString().ToUpper() == "DEALING")
+                                                                {
+                                                                    <li style="@(ViewBag.IsUnlockForm == 1 ? "display:block" : "display:block")"> <a data-toggle="modal" data-target="#myModalUnlock-@d">Unlock Form</a></li>
+                                                                }
+                                                            }
+                                                            @*<li style="@(ViewBag.IsObjection == 1 ? "display:block" : "display:block")"> <a data-toggle="modal" data-target="#myModalObjectionLetter-@d">Objection</a></li>*@
+                                                            <li style="@(ViewBag.IsObjection == 1 ? "display:block" : "display:block")"><a href="@("/Admin/AffiliationObjectionLetter/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" id="viewObjection" title="View/Add Objection" target="_blank">View/Add Objection</a></li>
+                                                            @if (Session["AdminType"].ToString().ToUpper() == "DEALING" || Session["AdminType"].ToString().ToUpper() == "ADMIN")
+                                                            {
+                                                                <li> <a data-toggle="modal" data-target="#myModalStatus-@d">Approve/Reject</a></li>
+                                                                @*<li style="@(ViewBag.IsApproveForm == 1 ? "display:block" : "display:block")">    <a data-toggle="modal" data-target="#myModalStatus-@d">Approve/Reject</a></li>*@
+                                                            }
+
+
+                                                        </ul>
+                                                    </div>
+                                                }
+                                                else if (ViewBag.SelectedAppType == "AS")
+                                                {
+                                                    <div id="sidebar">
+                                                        <ul>
+                                                            <li><a href="@("/Admin/EaffiliationCombinedDownloadDocuments/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" target="_blank" title="Download Combined Documents">Download Combined Documents</a></li>
+                                                            <li><a href="/Admin/FinalPrintFormAdditionalSection/@APPNO" target="_blank" class="btn">View/Print Application</a></li>
+                                                            <li> <a data-toggle="modal" data-target="#myModalDocument-@d">View Documents</a></li>
+                                                            <li> <a data-toggle="modal" data-target="#myModalForward-@d">Forward</a></li>
+
+                                                            <li style="@(ViewBag.IsHistory == 1 ? "display:block" : "display:block")"><a href="@("/Admin/ViewEAffiliationHistory/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" id="viewhistory" title="View History" target="_blank">Movement History</a></li>
+                                                            @{
+                                                                if (IsFormLock == "1" && Session["AdminType"].ToString().ToUpper() == "DEALING")
+                                                                {
+                                                                    <li style="@(ViewBag.IsUnlockForm == 1 ? "display:block" : "display:block")"> <a data-toggle="modal" data-target="#myModalUnlock-@d">Unlock Form</a></li>
+                                                                }
+                                                            }
+                                                            <li style="@(ViewBag.IsObjection == 1 ? "display:block" : "display:block")"><a href="@("/Admin/AffiliationObjectionLetter/" + APPNO  + "?AppType=" + ViewBag.SelectedAppType )" id="viewObjection" title="View/Add Objection" target="_blank">View/Add Objection</a></li>
+                                                            @if (Session["AdminType"].ToString().ToUpper() == "DEALING" || Session["AdminType"].ToString().ToUpper() == "ADMIN")
+                                                            {
+                                                                <li>   <a data-toggle="modal" data-target="#myModalStatus-@d">Approve/Reject</a></li>
+                                                                @*<li style="@(ViewBag.IsApproveForm == 1 ? "display:block" : "display:block")">   <a data-toggle="modal" data-target="#myModalStatus-@d">Approve/Reject</a></li>*@
+                                                            }
+
+                                                        </ul>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                        Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {@:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp = ViewBag.pagesize + 1;
+                                                <a href="~/Admin/InboxEAffiliation?page=@dp">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/Admin/InboxEAffiliation?page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var dp = ViewBag.pagesize - 1;
+                                            <a href="~/Admin/InboxEAffiliation?page=1"><<</a>
+                                            @Html.Raw("&nbsp;");
+                                            <a href="~/Admin/InboxEAffiliation?page=@dp">< Prev</a>
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp1 = ViewBag.pagesize + 1;
+                                                <a href="~/Admin/InboxEAffiliation?page=@dp1">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/Admin/InboxEAffiliation?page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+@{
+    if (TempData["result"] != null)
+    {
+        if (TempData["result"].ToString() != "")
+        {
+            if (TempData["result"].ToString() == "10")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Inspection Report Filled SuccessFully..");
+                </script>
+            }
+
+        }
+    }
+}
+
+
+
+
+<script>
+    //updateEmailMobile
+    function updateEmailMobile(k, APPNO) {
+
+        var flag = 0;
+        if ($("#updtEmail-" + k).val() == "") {
+            $("#updtEmail-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#updtMobile-" + k).val() == "") {
+            $("#updtMobile-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+
+            $("#loading2" + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Admin/updateEmailMobileEAffiliationAdmin", // this for calling the web method function in cs code.
+                data: '{Email: "' + $("#updtEmail-" + k).val() + '",Mobile: "' + $("#updtMobile-" + k).val() + '",APPNO: "' + APPNO + '"}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        alert("Updated Emailid/Mobile Successfully");
+                        $('#myModal2-' + k).modal('hide');
+                        $("#loading2" + k).empty();
+                    }
+                    else if (response.sn == "2") {
+                        alert("Something Wrong");
+                        $('#myModal2-' + k).modal('hide');
+                        $("#loading2" + k).empty();
+                    }
+                    else {
+                        $("#loading2" + k).empty();
+                        alert("Failure, Try Again.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        }
+    }
+
+
+
+    //Start Send Password
+    function sendPassword(k, APPNO) {
+        var flag = 0;
+        if (flag == 1) {
+            return false;
+        }
+        else if (APPNO != "") {
+            $('#divMain1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Admin/JqSendPasswordEAffilication", // this for calling the web method function in cs code.
+                data: '{APPNO:"' + APPNO + '" }',// user name or email value
+                // data: '{storeid:"' + storeid + '",Action:"' + ViewBag.SelectedAction + '" }',// user name or email value  //
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response);
+                    $('#divMain1').show();
+                    $('div#loading1').empty();
+                }
+            });
+            function OnSuccess(response) {
+                if (response.dee == "1") {
+                    alert("Send Password Successfully");
+                    $('#divMain1').show();
+                    $('div#loading1').empty();
+                }
+                else {
+                    alert("Something Went Wrong, Please Try Again.");
+                    $('#divMain1').show();
+                    $('div#loading1').empty();
+                }
+
+            }
+        }
+
+    }
+
+    //End  Send Password
+
+
+    //sendUnlockRemarks
+    function sendUnlockRemarks(k, APPNO, appType, schlmobile) {
+
+        var flag = 0;
+        if ($("#UnlockRemarks-" + k).val() == "") {
+            $("#UnlockRemarks-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+
+            $("#loading2" + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Admin/UnlockEAffiliationByAppNO", // this for calling the web method function in cs code.
+                data: '{UnlockRemarks: "' + $("#UnlockRemarks-" + k).val() + '",APPNO: "' + APPNO + '",AppType: "' + appType + '",SCHLMOBILE: "' + schlmobile + '"}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        //  alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        alert("Unlock Form Successfully");
+                        $('#myModalUnlock-' + k).modal('hide');
+                        $("#loading2" + k).empty();
+                    }
+                    else if (response.sn == "2") {
+                        alert("Failure to Unlock Form");
+                        $('#myModalUnlock-' + k).modal('hide');
+                        $("#loading2" + k).empty();
+                    }
+                    else {
+                        $("#loading2" + k).empty();
+                        alert("Failure, Try Again.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        }
+    }
+    //sendForwardTo
+    function sendForwardTo(k, APPNO, ApplicationType) {
+
+        var flag = 0;
+        var selForward = $("#SelForward-" + k).val();
+        var ForwardRemarks = $("#ForwardRemarks-" + k).val();
+
+        if (selForward == "" || selForward == "0") {
+            $("#SelForward-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (ForwardRemarks == "") {
+            ForwardRemarks = "";
+            //$("#ForwardRemarks-" + k).addClass("input-validation-error");
+            //flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+
+            $("#loadingF" + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Admin/JqEAffiliationForwardStatus",
+                data: '{storeid:"' + APPNO + '",Remarks:"' + ForwardRemarks + '",ApplicationStatus:"' + selForward + '" ,ApplicationType:"' + ApplicationType + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.dee == "1") {
+                        alert("Forward Successfully");
+                        window.location.href = '/Admin/InboxEAffiliation';
+                        $('#myModalForward-' + k).modal('hide');
+                        $("#loadingF" + k).empty();
+                    }
+                    else {
+                        alert("Forward Failure");
+                        $('#myModalForward-' + k).modal('hide');
+                        $("#loadingF" + k).empty();
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        }
+    }
+
+</script>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $('.checkbox').change(function () { //".checkbox" change
+            if (this.checked == false) { //if this item is unchecked
+                $("#selectall")[0].checked = false; //change "select all" checked status to false
+            }
+        });
+
+        $("#selectall").change(function () {
+            var status = this.checked; // "select all" checked status
+            var arr = [];
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                var id = this.id;
+                // alert(id);
+                this.checked = status; //change ".checkbox" checked status
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                var j = 0;
+                var k = 0;
+                //cb-stdid
+                for (var i = 3; i < arr.length; i++) {
+                    if (arr[i] == '-') {
+                        k++;
+                        continue;
+                    }
+                    if (k == 0) {
+                        arrid += arr[i];
+                    }
+                    j++;
+                }
+                //alert(dtype);
+                for (var k = 3 + j + 5; k < arr.length; k++) {
+                    arrcast += arr[k];
+                }
+
+            });
+        });
+        // End select all
+
+
+        $("#btnForward").click(function () {
+            // alert(1);
+            var chkdee = "";
+            var storeid = "";
+            var storeid1 = "";
+            var storechkid = "";
+            var storescid = "";
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                var id = this.id;
+                // alert("userid= "+ id);
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                var arrcast = "";
+                var j = 0;
+                for (var i = 3; i < arr.length; i++) {
+                    if (arr[i] == '-') {
+                        break;
+                    }
+                    arrid += arr[i];
+                }
+                if (this.checked) {
+                    storeid += arrid + ",";
+                }
+            });
+
+            //alert(storeid);
+            storeid = storeid.slice(0, -1);
+            if (storeid == "") {
+                alert("Please Select Records For Forward.");
+            }
+            else if (storeid != "") {
+                //alert('Now forward:' + storeid)
+                $('#divMain1').hide();
+                $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/JqEAffiliationForwardStatus", // this for calling the web method function in cs code.
+                    data: '{storeid:"' + storeid + '",Remarks:"ForwardToInspection",ApplicationStatus:"2" }',// 2	ForwardToInspection
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: OnSuccess,
+                    failure: function (response) {
+                        // alert(response);
+                        $('#divMain1').show();
+                        $('div#loading1').empty();
+                    }
+                });
+                function OnSuccess(response) {
+                    if (response.dee != "1") {
+                        alert("Failure, Please Try Again.");
+                        $('#divMain1').show();
+                        $('div#loading1').empty();
+                    }
+                    else {
+                        // window.location.href = '/Admin/ViewDuplicateCertificate';
+                        alert("Forward To Inspection Committee Successfully");
+                        $('input:checkbox').attr('checked', false);
+                        $('#divMain1').show();
+                        $('div#loading1').empty();
+
+                    }
+
+                }
+            }
+
+        });
+        //
+
+    });
+</script>
+
+<script type="text/javascript">
+
+        //updateStatusStudentSchoolMigration
+        function updateEaffApprovalStatusByChairman(k, APPNO, ApplicationType) {
+            console.log("AFF", ApplicationType);
+            if (ApplicationType == "ADDITIONAL SECTION") {
+                ApplicationType = "AS";
+            }
+            if (ApplicationType == "E-Affiliation") {
+                ApplicationType = "AFF";
+            }
+            if (ApplicationType == "AFFILIATION CONTINUATION") {
+                ApplicationType = "AC";
+            }
+            var flag = 0;
+            if ($("#AppStatus-" + k).val() == "" || $("#AppStatus-" + k).val() == "0") {
+                $("#AppStatus-" + k).addClass("input-validation-error");
+                flag = 1;
+            }
+          
+            if ($("#eApprovalFileNo-" + k).val() == "") {
+                $("#eApprovalFileNo-" + k).addClass("input-validation-error");
+                flag = 1;
+            }
+        
+            if ($("#eSTATUSREMARKS-" + k).val() == "") {
+                $("#eSTATUSREMARKS-" + k).addClass("input-validation-error");
+                flag = 1;
+            }
+
+           
+            
+            if (flag == 1) {
+                return false;
+            }
+            else {
+               
+                $('#loadingAppStatus').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/updateEaffApprovalStatusByChairman", // this for calling the web method function in cs code.
+                    data: '{remarks: "' + $("#eSTATUSREMARKS-" + k).val() + '",AppNo: "' + APPNO + '", ApprovalFileNo: "' + $("#eApprovalFileNo-" + k).val() + '", status: "' + $("#AppStatus-" + k).val() + '", "AppType": "' + ApplicationType+'"}',// 2 for SCHL
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.sn == "1") {
+                            alert("Status Updated Successfully");
+                            $('#myModalStatus-' + k).modal('hide');
+                            $('#loadingAppStatus').empty();
+                            window.location.href = '/Admin/InboxEAffiliation';
+                        }
+                        else {
+                            $('#loadingAppStatus').empty();
+                            alert("Status Updated Failure");
+
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response);
+                    }
+                });
+
+            }
+        }
+
+
+
+    </script>

@@ -1,0 +1,138 @@
+﻿@model PSEBONLINE.Models.Import
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+@*@if (Convert.ToString(Session["Session"]) != "2015-2016" && Convert.ToString(Session["FormName"]) == "M1")
+{ Response.Redirect("~/Login"); }*@
+<script type="text/javascript">
+    $(function () {
+        $("#select_all").change(function () {
+            //"select all" change
+            var status = this.checked; // "select all" checked status
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                this.checked = status; //change ".checkbox" checked status
+            });
+        });
+
+        //uncheck "select all", if one of the listed checkbox item is unchecked
+        $('.checkbox').change(function () { //".checkbox" change
+            if (this.checked == false) { //if this item is unchecked
+                $("#select_all")[0].checked = false; //change "select all" checked status to false
+            }
+        });
+        $("#isr").click(function () {
+
+            var favorite = [];
+
+            $.each($("input[name='sport']:checked"), function () {
+
+                favorite.push($(this).val());
+
+            });
+
+            alert("IDs are: " + favorite.join(", "));
+            $.getJSON("../ImportData/SomeActionMethod", { id: favorite.join(", ") },
+    function (data) {
+        alert("Jay");
+        alert(data.foo);
+        alert(data.baz);
+    }
+);
+
+        });
+    });
+</script>
+<div class="row">
+    <div class="col-md-12"></div>
+
+</div>
+<div class="row">
+    <div class="col-md-12">
+
+        Select School To Import Data <select name="SelList" id="SelectItem" class="">
+    <option value="">--All---</option>
+</select>
+    </div>
+    </div>
+
+<div class="row">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            <div class="col-md-3">
+                Total Students <label>@ViewBag.TotalCount</label>
+            </div>
+
+            <div class="col-md-3">
+                Search By:  <select name="SelList" id="SelectItem" class="">
+                    <option value="">--All---</option>
+                </select>
+
+            </div>
+            <div class="col-md-3">
+                &nbsp;<br>
+                <input type="text" name="SearchString" id="SearchString">
+            </div>
+            <div class="col-md-3">
+                <br>
+                <input type="submit" value="Search"> 
+            </div>
+
+        </fieldset>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <input type="submit" value="Close">  <input type="submit" id="isr" value="Import Selected Record">  @*<input type="submit" value="Import All Record">*@  
+    </div>
+</div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>School Code</th>
+                        <th>Registration No.</th>
+                        <th>Name</th>
+                        <th>Father's Name</th>
+                        <th>Mother's Name</th>
+                        <th>DOB</th>
+                        <th>Result</th>
+                        <th><input type="checkbox" id="select_all" /></th>
+                    </tr>
+                  @{
+                      if (ViewBag.TotalCount > 0)
+                      {
+                          for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                          {
+                              var scode = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                              var regNum = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                              var id = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                              var canName = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                              var Fname = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                              var Mname = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                              var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                              var res = Model.StoreAllData.Tables[0].Rows[i]["result"].ToString();
+                              //var ud = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                              //var vfalg = Model.StoreAllData.Tables[0].Rows[i]["vflag"].ToString();
+                              //var Approved = Model.StoreAllData.Tables[0].Rows[i]["Approved"].ToString();
+
+                              int Count = i + 1;
+                    <tr>
+                        <td>@scode</td>
+                        <td>@regNum</td>
+                        <td>@canName</td>
+                        <td>@Fname</td>
+                        <td>@Mname</td>
+                        <td>@DOB</td>
+                        <td>@res</td>
+                        <td><input class="checkbox" type="checkbox" value='@id' name="sport"></td>
+                    </tr>}
+                          }
+                      }
+                </table>
+                <p>Total Records(Filtered): @ViewBag.TotalCount</p>
+            </div>
+            </div>
+        </div>

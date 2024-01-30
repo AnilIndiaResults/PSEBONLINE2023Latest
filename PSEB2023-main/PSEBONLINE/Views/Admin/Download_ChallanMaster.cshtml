@@ -1,0 +1,277 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Download_ChallanMaster";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h2>Download Challan Master Data (Session @Session["session"].ToString())</h2>
+
+<div class="row" id="divR">
+    <div class="col-md-12">
+        <fieldset>
+            <legend>Search</legend>
+            @using (Html.BeginForm("Download_ChallanMaster", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("Filevalue", "DATE")
+                <div class="row" style="padding-bottom:100px">
+                    <div class="col-md-3">
+                        Select Fee Category @Html.DropDownList("feecat1", new SelectList(ViewBag.feecat, "Value", "Text", ViewBag.feecatselect), "--All---")
+                    </div>
+                    <div class="col-md-3">
+                        From Date                        
+                            <input type="text" onkeypress="return false" required id="FromDate" name="FromDate" class="date" value="@Request["FromDate"]" />
+                        </div>
+                    <div class="col-md-3">
+                        To Date
+                        <input type="text" onkeypress="return false" required id="ToDate" name="ToDate" class="date" value="@Request["ToDate"]" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" name="submit" value="Download_Data" onclick="return valForm1();" />                        
+                    </div>
+                </div>
+            }
+        </fieldset>
+
+        <div class="row">
+            @*<div class="col-md-12">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>BANK</th>
+                    <th>CHALLAN ID</th>
+                    <th>CHLNDATE</th>
+                    <th>FEECAT</th>
+                    <th>Appno/RefNo</th>
+                    <th>SCHLREGID</th>
+                    <th>(FEE+L.Fee+LS.Fine)=Tot</th>
+                    <th>Download</th>
+                    <th>VERIFY</th>
+                    <th>ACTIONS</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var IsCancel = Model.StoreAllData.Tables[0].Rows[i]["IsCancel"].ToString();
+                            var bank = Model.StoreAllData.Tables[0].Rows[i]["Bank"].ToString();
+                            var appno = Model.StoreAllData.Tables[0].Rows[i]["appno"].ToString();
+                            var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                            var CHLNDATE = Model.StoreAllData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                            var FEECAT = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                            var FEECODE = Model.StoreAllData.Tables[0].Rows[i]["FEECODE"].ToString();
+                            var SCHLREGID = Model.StoreAllData.Tables[0].Rows[i]["SCHLREGID"].ToString();
+                            var FEE = Model.StoreAllData.Tables[0].Rows[i]["FEE"].ToString();
+                            var LateFee = Model.StoreAllData.Tables[0].Rows[i]["LateFee"].ToString();
+                            var LumsumFine = Model.StoreAllData.Tables[0].Rows[i]["LumsumFine"].ToString();
+                            var TotFee = Model.StoreAllData.Tables[0].Rows[i]["TotFee"].ToString();
+                            var DOWNLDFLG = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDFLG"].ToString();
+                            var DOWNLDDATE = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDDATE"].ToString();
+                            var VERIFIED = Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString();
+                            if (VERIFIED == "1")
+                            {
+                                VERIFIED = "Verified";
+                            }
+                            else
+                            {
+                                VERIFIED = "Not Verified";
+                            }
+                            if (DOWNLDFLG == "1")
+                            {
+                                DOWNLDFLG = "DOWNLOADED ";
+                            }
+                            else
+                            {
+                                DOWNLDFLG = "Not Downloaded";
+                            }
+
+                            Count = Count + 1;
+                            <tr>
+                                <td>@Count</td>
+                                <td>@bank</td>
+                                <td><span style="@(ViewBag.IsPrint > 0 ? "display:block" : "display:none")"></span>                                        </td>
+                                <td>@CHLNDATE</td>
+                                <td>@FEECAT</td>
+                                <td>@appno</td>
+                                <td>@SCHLREGID</td>
+                                <td>(@FEE+@LateFee+@LumsumFine)=@TotFee</td>
+                                <td>@DOWNLDDATE</td>
+                                <td>@VERIFIED</td>
+
+                            </tr>
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="11">
+
+                                        Page @ViewBag.pagesize of @ViewBag.pn
+
+                                        &nbsp;
+
+                                        @if (ViewBag.pagesize == 1)
+
+                                        {
+                                            @:<<
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "ChallanDetails", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "ChallanDetails", new { page = ViewBag.pn })
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (TempData["search"] != null)
+                                            {
+                                                string str1 = TempData.Peek("search").ToString();
+                                                string str2 = TempData.Peek("SelList").ToString();
+                                                string str3 = TempData.Peek("SearchString").ToString();
+                                                TempData["search"] = str1;
+                                                TempData["SelList"] = str2;
+                                                TempData["SearchString"] = str3;
+                                            }
+                                            @Html.ActionLink("<<", "ChallanDetails", new { page = 1 })
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @Html.ActionLink("< Prev", "ChallanDetails", new { page = ViewBag.pagesize - 1 })
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "ChallanDetails", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "ChallanDetails", new { page = ViewBag.pn })
+                                            }
+
+                                        }
+
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="11">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </table>
+            <p>Total Records(Filtered): @ViewBag.TotalCount1</p>
+        </div>
+    </div>*@
+    </div>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+               $(function () {
+                   $(".date").datepicker({
+                       dateFormat: "dd/mm/yy",
+                       changeMonth: true,
+                       changeYear: true,
+                       yearRange: "2018:2019",
+                       maxDate: 0
+                       // defaultDate: "+1w",
+                       // setDate: new Date()
+
+                   });
+               });
+               function isNumberKey(evt) {
+                   var charCode = (evt.which) ? evt.which : event.keyCode
+                   if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                       return true;
+                   }
+                   else {
+                       alert("Invalid character...Enter Only Number!!");
+                       return false;
+                   }
+               }
+
+
+</script>
+
+<script type="text/javascript">
+               function valForm1() {
+                   var SelectItem = document.getElementById("SelectItem");
+                   if (SelectItem.value == "0" || SelectItem.value == "") {
+                       alert("Select Type");
+                       SelectItem.focus();
+                       return false;
+                   }
+                   var FromDate = document.getElementById("FromDate");
+                   if (FromDate.value == "0" || FromDate.value == "") {
+                       alert("Select From Date");
+                       FromDate.focus();
+                       return false;
+                   }
+                   var ToDate = document.getElementById("ToDate");
+                   if (ToDate.value == "0" || ToDate.value == "") {
+                       alert("Select To Date");
+                       ToDate.focus();
+                       return false;
+                   }
+               }
+
+
+               function valForm() {
+                   var SelectItem1 = document.getElementById("SelectItem1");
+                   if (SelectItem1.value == "0" || SelectItem1.value == "") {
+                       alert("Select Type");
+                       SelectItem1.focus();
+                       return false;
+                   }
+               }
+</script>
+
+<script type="text/javascript">
+
+               $(document).ready(function () {
+                   $('input[type=file]').change(function () {
+                       var val = $(this).val().toLowerCase();
+                       var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+                       if (!(regex.test(val))) {
+                           $(this).val('');
+                           alert('Please select only .xls file format');
+                       }
+                   });
+               });
+
+
+</script>
+
+
+

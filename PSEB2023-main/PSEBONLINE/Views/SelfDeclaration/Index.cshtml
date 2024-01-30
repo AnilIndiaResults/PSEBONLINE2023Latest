@@ -1,0 +1,158 @@
+﻿@model PSEBONLINE.Models.SelfDeclarationLoginModel
+@{
+
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<style type="text/css">
+    .form-signin {
+        background-color: #eee;
+        border: 3px dotted rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+        margin-top: 0px;
+        margin-bottom: 20px !important;
+        max-width: 420px;
+        padding: 30px 38px 30px !important;
+        margin-top: 40px !important;
+    }
+
+    .lst span {
+        color: #cc0000
+    }
+</style>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Merienda+One" rel="stylesheet" type="text/css" />
+<link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<div class="clearfix"></div>
+
+<h3 id="h1t">Self declaration by candidate who unsatisfied with their March 2021 Result (Middle & Matriculation Only)</h3>
+<h3 id="h3t" style="display:none">Self declaration by candidate who is unsatisfied with their March 2021 Result (Additional Subject Only)</h3>
+
+<form class="form-signin" name="Login_Form" method="post" action="">
+    <h3 class="form-signin-heading text-center">Login Panel.</h3>
+    <br />
+    @Html.DropDownListFor(m => m.RP, new SelectList(ViewBag.MyRPList, "Value", "Text"), "--Select Exam Type---", new { required = "required" })
+    @Html.TextBoxFor(m => m.ROLL, new { placeholder = "Enter Roll Number", @class = "form-control", required = "required", maxlength = "10", style = "text-transform: none;" })
+    @Html.TextBoxFor(model => model.REGNO, new { @class = "form-control", placeholder = "Enter Registration Number", maxlength = "25", required = "required", style = "text-transform: none;" })
+
+
+    <p style="text-align:center"><input type="submit" value="Login" />&nbsp;&nbsp;&nbsp;</p>
+</form>
+
+
+<div class="clearfix"></div>
+<div class="col-md-12">
+    <li style="font-size:16px"><a href="/PDF/SelfDeclarationPressNote2021.pdf" target="_blank"><samp>❭</samp>Press Note regarding Self Declaration for Unsatisfied result</a><br /></li>
+
+</div>
+<div class="clearfix"></div>
+<div class="col-md-12">
+    <div id="dvmsgR" style="color:#cc0000;font-weight:bold;font-size:20px;">Last date to upload Self Declaration is 21-07-2021. After this date no application will be accepted.</div>
+    <div id="dvmsgA" style="color:#cc0000;font-weight:bold;font-size:20px;">Last date to upload Self Declaration is 21-07-2021. After this date no application will be accepted.(Additional Subject Only)</div>
+</div>
+<div class="clearfix"></div>
+<div class="col-md-12"><div style="border-top:1px dashed #ccc;padding-top:10px"></div></div>
+<div class="clearfix"></div>
+<div class="col-md-2">
+    Toll Free Help Line No.<br />
+    For Technical Support
+</div>
+<div class="col-md-3">
+    <span style="font-size:26px">
+        8058911911<br /><span style="font-size:10px"></span><br />
+        <span style="font-size:12px"><i class="fa fa-envelope"></i> <a href="mailto:psebhelpdesk@gmail.com" target="_blank" class="redc">psebhelpdesk@gmail.com</a></span>
+    </span>
+</div>
+<div class="col-md-1">
+</div>
+@*<div class="col-md-1"></div>*@
+<div class="col-md-2">
+    Contact No.<br />
+</div>
+<div class="col-md-4">
+    <span style="font-size:14px">
+        0172-5227310 (8th Class)<br />0172-5227291 (10th Class)<br />
+        <span style="font-size:11px"> </span><br /><span style="font-size:12px"><i class="fa fa-envelope"></i> @*<a href="mailto:branchaffiliation@gmail.com" target="_blank" class="redc">branchaffiliation@gmail.com</a>*@</span>
+    </span>
+</div>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Alert",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+    });
+</script>
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "0")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Wrong Credentials..Plz try again with valid Credentials</span>
+            </div>
+        }
+        else if (ViewData["result"].ToString() == "5")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">You are not allowed for self declaration, please contact pseb board</span>
+            </div>
+        }
+        else if (ViewData["result"].ToString().Contains("Error"))
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">@ViewData["result"]</span>
+            </div>
+        }
+    }
+}
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#REGNO').attr('placeholder', 'Enter Registration Number');
+        $('#h3t').hide();
+        $('#h1t').show();
+        $('#dvmsgA').hide();
+        $('#dvmsgR').show();
+    });
+    $("#RP").change(function () {
+
+        var selectedRP = $("#RP").val();
+        if (selectedRP == "A") {
+            $('#REGNO').attr('placeholder', 'Enter Reference Number');
+            $('#h1t').hide();
+            $('#h3t').hide();
+            $('#dvmsgR').hide();
+            $('#dvmsgA').hide();
+        }
+        else {
+            $('#REGNO').attr('placeholder', 'Enter Registration Number');
+            $('#h3t').hide();
+            $('#h1t').show();
+            $('#dvmsgA').hide();
+            $('#dvmsgR').show();
+        }
+
+    });
+</script>
+
+

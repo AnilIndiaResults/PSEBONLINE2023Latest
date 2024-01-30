@@ -1,0 +1,389 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    ViewBag.Title = "Print Admit Card";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprint.css" />
+<style type="text/css">
+    body {
+        font-size: 10px;
+        line-height: 16px
+    }
+</style>
+@using (Html.BeginForm("FinalPrintMatricAdmitCard", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <h1 class="noprint">
+        Matric (Regular) Admit Card March @if (Session["Session"].ToString() == "2018-2019")
+        {<b>2019</b>}
+        else
+        {<b>2023</b>}
+    </h1>
+    {
+        <div class="row noprint">
+            <div class="col-md-12">
+                <fieldset style="margin-bottom:15px">
+                    <legend>Search</legend>
+                    <div class="col-md-1">
+                        TotalCount&nbsp;
+                        <label>@ViewBag.TotalCount</label>
+                    </div>
+                    <div class="col-md-2">
+                        Select
+                        @{
+                            List<SelectListItem> SelList = new List<SelectListItem>();
+                            SelList.Add(new SelectListItem { Text = "---- Select---", Value = "0" });
+                            SelList.Add(new SelectListItem { Text = "ALL", Value = "ALL" });
+
+                        }
+                        @Html.DropDownList("SelList", SelList, new { id = "SelList" })
+                    </div>
+
+                    <div class="col-md-2">
+                        Enter Roll No. &nbsp;
+                        @Html.TextBoxFor(m => m.ExamRoll, new { id = "ExamRoll", @maxlength = "15", onkeypress = "return isNumberKey(event);", placeholder = "Enter Roll No." })
+                    </div>
+                    <div class="col-md-2">
+                        Enter Student ID &nbsp;
+                        @Html.TextBoxFor(m => m.CandId, new { id = "CandId", @maxlength = "10", onkeypress = "return isNumberKey(event);", placeholder = "Enter Student ID" })
+                    </div>
+                    <div class="col-md-2">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm1();" title="Search Record" /></div>
+                </fieldset>
+            </div>
+        </div>
+        <table style="width:100%;" border="0" class="bgimg">
+            <tr>
+                <td>
+                    <table style="width:100%;" border="0" class="noprint">
+                        <tr>
+                            <td style="text-align:right;padding-bottom:3px">
+                                <input type="button" value="Print" class="btn" onclick="window.print()" />
+                                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                var QRCode = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                var Candid = Model.StoreAllData.Tables[0].Rows[i]["Candid"].ToString();
+                                var schl = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
+                                var cent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                                var distnm = Model.StoreAllData.Tables[0].Rows[i]["distnm"].ToString();
+                                var set = Model.StoreAllData.Tables[0].Rows[i]["set"].ToString();
+                                var schlNME = Model.StoreAllData.Tables[0].Rows[i]["schlNME"].ToString();
+                                var schlNMP = Model.StoreAllData.Tables[0].Rows[i]["schlNMP"].ToString();
+                                var centE = Model.StoreAllData.Tables[0].Rows[i]["centE"].ToString();
+                                var centP = Model.StoreAllData.Tables[0].Rows[i]["centP"].ToString();
+                                var cschl = Model.StoreAllData.Tables[0].Rows[i]["cschl"].ToString();
+
+                                var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                var regno = Model.StoreAllData.Tables[0].Rows[i]["regno"].ToString();
+                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                var Candi_Name_P = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name_P"].ToString();
+                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                var Father_Name_P = Model.StoreAllData.Tables[0].Rows[i]["Father_Name_P"].ToString();
+                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                var Mother_Name_P = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name_P"].ToString();
+                                var CandType = Model.StoreAllData.Tables[0].Rows[i]["CandType"].ToString();
+                                var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                                var Religion = Model.StoreAllData.Tables[0].Rows[i]["Religion"].ToString();
+
+                                var Differently_Abled = Model.StoreAllData.Tables[0].Rows[i]["Differently_Abled"].ToString();
+                                var Group_Name = Model.StoreAllData.Tables[0].Rows[i]["Group_Name"].ToString();
+                                var NATION = Model.StoreAllData.Tables[0].Rows[i]["NATION"].ToString();
+                                var Caste = Model.StoreAllData.Tables[0].Rows[i]["Caste"].ToString();
+
+
+                                var std_Photo = Model.StoreAllData.Tables[0].Rows[i]["pht"].ToString();
+                                var std_Sign = Model.StoreAllData.Tables[0].Rows[i]["sig"].ToString();
+
+
+                                var SrExamTime = Model.StoreAllData.Tables[0].Rows[i]["SrExamTime"].ToString();
+                                var StudyMedium = Model.StoreAllData.Tables[0].Rows[i]["StudyMedium"].ToString();
+                                var UPDT = Model.StoreAllData.Tables[0].Rows[i]["UPDT"].ToString();
+                                var todaydt = Model.StoreAllData.Tables[0].Rows[i]["todaydt"].ToString();
+                                var wantwriter = Model.StoreAllData.Tables[0].Rows[i]["wantwriter"].ToString();
+                                var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                var RegStatus = Model.StoreAllData.Tables[0].Rows[i]["RegStatus"].ToString();
+
+                                <table width="100%" class="bigborder">
+                                    <tr>
+                                        <td align="center">
+                                            <table border="0" style="width:98%;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="2" style="padding-bottom:5px;padding-top:2px">
+                                                            <table width="100%">
+                                                                <tr>
+                                                                    <td width="10%"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="55px" height="55px" /></td>
+                                                                    <td width="80%" style="font-size:16px;text-align:center;line-height:20px;">
+                                                                        <span style="font-size:26px;">Punjab School Education Board</span><br />Admit Card For Matric (Regular) Examination March 2023
+
+
+                                                                    </td>
+                                                                    <td>
+                                                                        <img style="vertical-align: middle" src="@String.Format("data:image/png;base64,{0}",Convert.ToBase64String(PSEBONLINE.Controllers.RegistrationPortalController.QRCoder(QRCode)))" height="70" width="70" />
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="3" style="text-align:right;font-size:13px">
+                                                                        @if (RegStatus == "NA")
+                                                                        {
+                                                                            <span style="color:#cc0000;float:left">*  ਇਹ ਰੋਲ ਨੰਬਰ ਆਰਜ਼ੀ ਤੌਰ ਤੇ ਜਾਰੀ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ। This Roll No. is issued provisionally.   </span>
+                                                                        }
+                                                                        <span style="float:left">School Code : @schl</span>
+                                                                        <span style="float:right">Student ID : @Candid</span>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="text-align:left">
+                                                            <table width="100%" border="1">
+                                                                <tr>
+                                                                    <td width="17%">&nbsp;Exam Centre Code</td>
+                                                                    <td width="7%">&nbsp;@cent</td>
+                                                                    <td width="16%">&nbsp;Centre School Code</td>
+                                                                    <td width="10%">&nbsp;@cschl</td>
+                                                                    <td width="14%">&nbsp;District Name</td>
+                                                                    <td width="21%">&nbsp;@distnm</td>
+                                                                    <td width="5%">&nbsp;Set</td>
+                                                                    <td width="6%">&nbsp;@set</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="vertical-align:top">&nbsp;School Name</td>
+                                                                    <td colspan="7" style="vertical-align:top;line-height:15px">&nbsp;@schlNME <br />&nbsp;<span class="kdsfont">@schlNMP</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="vertical-align:top">&nbsp;Exam Centre</td>
+                                                                    <td colspan="7" style="vertical-align:top;line-height:15px">&nbsp;@centE <br />&nbsp;<span class="kdsfont">@centP</span></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:center">&nbsp;Personal Information</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <table width="100%" border="1">
+                                                                <tr>
+                                                                    <td width="17%">&nbsp;Roll No.</td>
+                                                                    <td width="21%">&nbsp;@ROLL</td>
+                                                                    <td>&nbsp;Reg. No.</td>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                        @if (RegStatus == "NA")
+                                                                        {
+                                                                            <span style="color:#cc0000">*</span>
+                                                                        }
+                                                                        @regno
+                                                                    </td>
+                                                                    <td rowspan="6" style="text-align:center">
+                                                                        <img src="@std_Photo" style="width:124px;height:125px;background-color:#000 !important;padding:1px !important;" alt="Photograph" id="imgPhoto" />
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="vertical-align:top">
+                                                                        &nbsp;Candidate Name<br />
+                                                                    </td>
+                                                                    <td colspan="3" style="vertical-align:top">&nbsp;@Candi_Name / <span class="kdsfont">@Candi_Name_P</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="vertical-align:top">
+                                                                        &nbsp;Father&#39;s Name<br />
+                                                                    </td>
+                                                                    <td colspan="3" style="vertical-align:top">&nbsp;@Father_Name / <span class="kdsfont">@Father_Name_P</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="vertical-align:top">
+                                                                        &nbsp;Mother&#39;s Name<br />
+                                                                    </td>
+                                                                    <td colspan="3" style="vertical-align:top">&nbsp;@Mother_Name / <span class="kdsfont">@Mother_Name_P</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>&nbsp;Differently Abled</td>
+                                                                    <td>&nbsp;@Differently_Abled</td>
+                                                                    @*<td>@*&nbsp;Want Writer </td>
+                                                                      <td>@*&nbsp;@wantwriter</td>*@
+                                                                    @*<td>&nbsp;Study Medium</td>
+                                                                    <td>&nbsp;@StudyMedium</td>*@
+                                                                    <td>&nbsp;DOB</td>
+                                                                    <td>&nbsp;@DOB</td>
+                                                                </tr>
+                                                                <tr style="display:none">
+                                                                    <td>&nbsp;Gender</td>
+                                                                    <td>&nbsp;@Gender</td>
+                                                                    <td>&nbsp;Religion</td>
+                                                                    <td>&nbsp;@Religion</td>
+                                                                </tr>
+                                                                <tr>
+
+                                                                    <td>&nbsp;Regular/Open</td>
+                                                                    <td>&nbsp;@CandType</td>
+                                                                    <td width="11%">&nbsp;Exam Group</td>
+                                                                    <td width="31%">&nbsp;@Group_Name</td>
+                                                                </tr>
+                                                                <tr style="display:none">
+                                                                    <td>&nbsp;Nationality</td>
+                                                                    <td>&nbsp;@NATION</td>
+                                                                    <td>&nbsp;Category</td>
+                                                                    <td>&nbsp;@Caste</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="vertical-align:top">&nbsp;Examination Time</td>
+                                                                    <td colspan="3" class="" style="vertical-align:top">
+                                                                        &nbsp;<span class="kdsfont">@SrExamTime</span>@**@<br />
+                                                                    </td>
+                                                                    <td rowspan="2" style="text-align:center;vertical-align:middle;padding-top:2px;padding-bottom:2px">
+                                                                        <img src="@std_Sign" style="height:38px;width:128px;background-color:#000 !important;padding:1px !important" alt="Signature" id="img1" />
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="vertical-align:top">&nbsp;Practical Exam Date</td>
+                                                                    <td colspan="3" style="vertical-align:top;line-height:15px">&nbsp;<span class="kdsfont" style="font-size:16px;font-weight:bold">ÆñÛÚª¤ØÏÁÛ¤Ù ÂÛ ÆñÍë¬Û ÆñÛÚª¤Ø ÚÌ¼Û 25/04/2023 ¼ë× 06/05/2023 ¼ó¨ ¦ÝÕÅÙ Âã ¤ØÆ»ã ÕÛ Ó¨ÞÐÙ ÚÒó° ¨ÏÒØ¥Û ²ØÒã¬Û, Ú²Ó Ó¨ÞÐ ÚÒó° ¦ÝÕÅÙ ÂØ ÂØªÐØ
+</span>
+                                                                        @*&nbsp;<span class="kdsfont" style="font-size:16px;font-weight:bold">
+            ÆñÍë¬Û ÆÏÛÚª¤Ø ÚÌ¼Û
+            @if (Session["Session"].ToString() == "2017-2018")
+            {<span>01/04/2018</span>}
+            else
+            {<span>18/4/2020</span>} ¼ë ÓÖÏÞ Õë ÏÕÛ Õè¢ ÆÏÛÚª¤ØÏÁÛ ÆñÍë¬Û ÆÏÛÚª¤Ø ÓÉâÄÛ ¨ã×ÂÏ ¨â¶ÏëÐÏ/ÓÝÆÏ¸â¶ ÅØÐ ÓâÆÏ¨ ¨ÏÅ¢
+        </span>*@
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:center">Date Sheet</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <table width="100%" border="1">
+                                                                <tr>
+                                                                    <td width="12%">&nbsp;Sub Code</td>
+                                                                    <td width="60%">&nbsp;Subject Name</td>
+                                                                    <td width="16%">&nbsp;Theory Exam Date</td>
+                                                                    <td width="12%">&nbsp;Practical</td>
+                                                                </tr>
+                                                                @for (int j = 0; j < Model.StoreAllData.Tables[1].Rows.Count; j++)
+                                                                {
+                                                                    if (@Candid == Model.StoreAllData.Tables[1].Rows[j]["Candid"].ToString())
+                                                                    {
+                                                                        var CandidSub = Model.StoreAllData.Tables[1].Rows[j]["Candid"].ToString();
+                                                                        var SUB = Model.StoreAllData.Tables[1].Rows[j]["SUB"].ToString();
+                                                                        var SUBNM = Model.StoreAllData.Tables[1].Rows[j]["SUBNM"].ToString();
+                                                                        var exam_date = Model.StoreAllData.Tables[1].Rows[j]["exam_date"].ToString();
+                                                                        var prac = Model.StoreAllData.Tables[1].Rows[j]["prac"].ToString();
+
+                                                                        <tr>
+                                                                            <td>&nbsp;@SUB</td>
+                                                                            <td>&nbsp;@SUBNM</td>
+                                                                            <td>&nbsp;@exam_date</td>
+                                                                            <td>&nbsp;@prac</td>
+                                                                        </tr>
+                                                                    }
+                                                                }
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:center">Instructions</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" class="kdsfont" style="font-size:14px;line-height:14px">
+                                                            <br>1. ÆÏÛÚª¤ØÏÁÛ ¤ØÆ»Ø ÅØÌ/ÚÆ¼Ø ÂØ ÅÙ / ÌØ¼Ø ÂØ ÅÙ/ ÏÚ² ÅâÉÏ/ Çë¶ë ¤¼ã ÚÒÓÖã ¤ØÚÂ ²ÏÞÏ °è¨ ¨Ï Ðè», Ú¨Óã Ú¨ÓÌ ÂÛ ¬Ð¼Û ÂÛ ÓÞÏ¼ ÚÒó° Ó¨ÞÐ ÌÝóªÛ ÅØÐ ÓâÆÏ¨ ¨Û¼Ø ²ØÒã ¼Ù ²ë ÚÅÍÌÙ ¤ÅÝÓØÏ ¨ØÏÒØ¥Û ¨Û¼Û ²ØÒã¢
+                                                            <br>2. ²ã¨Ï ¨ë¥Û ÆÏÛÚª¤ØÏÁÛ ÆÏÛÚª¤Ø ¤ÌÐã ÂÛ ÕÝ¨Ì ¤ÂÞÐÛ ¨ÏÅ ÂØ ÂëÓÖÛ ÆØÚ¥¤Ø ²ÙÂØ Õè ¼Ù ¦ÝÓ ÂØ Å¼Û²Ø ÒÛ ÏóÂ ¨Û¼Ø ²Ø Ó¨ÂØ Õè ¤¼ã ÊÚÒóª ÚÒó° ÆÏÛÚª¤Ø Âã» ¼ë×  ÒÛ ÒÙ´Ø ÏÚÕ Ó¨ÂØ Õè¢
+                                                            <br>3. ÆÏÛÚª¤ØÏÁÛ ¤ØÆ»ã ÏëÐ ÅâÉÏ ÂÛ Çë¶ë ¨ØÆÛ ¤ØÆ»ã ¨ëÐ Ïóª»Û Í¨ÛÅÛ É»Ø¦Ý»¢
+                                                            <br>4. ²ã¨Ï ¨ë¥Û ÆÏÛÚª¤ØÏÁÛ ÆÏÛÚª¤Ø ÂïÏØÅ ÆÏ°Û, Åë¶ ÉÝó¨, ¨ë¥Û Ú¥Ðè¨¶ñëÚÅ¨ Ú¸ÒØ¥ÛÓ,ÌëÉØÚ¥Ð ÇëÅ ¨ë¥Û ÕëÏ Ú¥¼ÏØ²Íë¬ ÓÌó¬ÏÛ ²Ù Ú¥Ó ¼ë× Ú¥ÐØÒØ Ú¨Óã ÕëÏ ¼ÏÛ¨ã ÅØÐ ÆÏÛÚª¤Ø ÚÒó° ¤»¦ÝÚ°ó¼ ÓØÄÅ ÂÛ ÒÏ¼ë× ¨ÏÅ ÂØ ÂëÓÖÛ ÆØÚ¥¤Ø ²ÙÂØ Õè ¼Ù ¦ÝÓ ÂÛ ÆÏÛÚª¤Ø ÂØ Å¼Û²Ø ÏóÂ ¨Û¼Ø ²Ø Ó¨ÂØ Õè ¤¼ã ¦ÝÓ ÅâÞ ¦ÝÓ Âã ÂÝÏÚÒÒÕØÏ ÂÛ ÆñÚ¨Ï¼Û Âã ¤ÅÝÓØÏ ÉëÏ¸ ÂÛ¤Ù ¤¬ÐÛ¤Ù Ú¼âÅ ¼ë× Æâ² Ð¬Ø¼ØÏ ÆÏÛÚª¤ØÒÙ ÚÒó° Éè·» ¼ë× ¤Íë¬ ·ÚÕÏØ ÚÂó¼Ø ²ØÒã¬Ø¢
+                                                            <br>5. ²ã¨Ï ¨ë¥Û ÆÏÛÚª¤ØÏÁÛ ¤ØÆ ÆÏÛÚª¤Ø ÚÒó° ¤ÆÛ¤Ï ÅØ Õë ¨ã Ú¨Óã ÕëÏ ¼ë× ÆÏÛÚª¤Ø ÚÂÒØ¦Ý» ÂØ ÂëÓÖÛ ÆØÚ¥¤Ø Ú¬¤Ø ¼Ù ¦ÝÓ ÚÒÏÝóÄ ¤èÇ Ö¤Ø¥Û Ö¤ØÏ ÖÂÏ² Õë» ¨ØÏÅ ÌØÅÍë¬ ¤ÂØÐ¼ ÒóÐë× ¦ÝÓ ÅâÞ ¤¼ã ÆÏÛÚª¤Ø Âã» ÒØÐã ÅâÞ Ó²Ø Õë Ó¨ÂÛ Õè¢ Ú¥Ó Âã ÅØÐ ÕÛ ¦ÝÕ ÊÚÒóª ÚÒó° ÆÏÛÚª¤Ø Âã» ¼ë× ÒÙ´Ø ÏÚÕ Ó¨ÂØ Õè¢
+                                                            <br>6. The Candidate having 40% or more disability should be allowed 20 minutes extra time per hour as compensatory time.
+                                                            <br>7. ÆÏÛÚª¤ØÏÁÛ¤Ù Ð¥Û ÆÏÛÚª¤Ø ¨ã×ÂÏ ÚÒó° ÆñÛÚª¤Ø ÓÖÝÏÞ Õë» ¼ë× Ú¥ó¨ ®â¶Ø ÆÚÕÐØ ÆÕÝâ°»Ø ²ÏÞÏÛ ÕëÒã¬Ø¢
+                                                            <br>8. ÆÏÛÚª¤ØÏÁÛ¤Ø ¤ØÆ»Û ¨ë¥Û ÒÛ °Û²Ö ÆèÅ, Æè×ÓÐ , ²Ìè¶ÏÛ ÉØ¨Ó, ¨ØÏ¸ ÉëÏ¸ ¤ØÚÂ Ú¨Óã ÅØÐ ÓÙ´Ø ÅÕÛ× ¨ÏÅ¬ã ¢
+                                                            <br>9. ÆÏÛÚª¤ØÏÁÛ ¤ØÆ»ã ÅØÐ ¶ÏÙÓÆãÏè×¶ ÒØ¶Ï Éï¶Ð ¤¼ã ±ë¶Ø Õè×¸ ÓèÅ¶Ø¥Û²ÖÏ ÚÐ¤ØÒã¬Ø ¢
+                                                            <br>10. ÏëÐ Åâ ÓÚÐÆ ¼ë× ÚÉÅðÙ ÆÏÛÚª¤ØÏÁÛ ÆÏÛÚª¤Ø ¨ã×ÂÏ ¤âÂÏ ÂØªÐ ÅÕÛ× Õë Ó¨ã¬Ø  ¢
+                                                            <br>11. ÆÏÛÚª¤ØÏÁÛ ÕóÁ ÚÌÐØ¦Ý» ¼ë× ¬ÝÏã² ¨ÏÅ¬ã ¤¼ã ¦ÝÕ  Ú¥ó¨·ã Õë ¨ã ÒÛ ÅØ Éè·» Ðë¾ ¤ÅÝÓØÏ ÌØÓ¨ ÂÛ ÒÏ¼ë× ÒÛ ¨Û¼Û ²ØÒã ¢
+                                                            <br>12. ÆÏÛÚª¤Ø ÓâÉÄÛ Ú¨Óã ÒÛ Æñ¨ØÏ ÂÛ ²Ø»¨ØÏÛ Ð¥Û ÚÂó¼ã ¬¥ã ÇëÅ ÅâÉÏÙ ¼ã ÓÆâÏ¨ ¨Û¼Ø ²ØÒã ¢ 0172-5227136, 0172-5227137, 0172-5227138
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="padding:4px 0">
+                                                            <span style="float: left; display: none">Updated On: @UPDT </span>
+                                                            <span style="float:right;">Printed On: @todaydt </span>
+                                                        </td>
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <table width="100%" border="1">
+                                                                <tr>
+                                                                    <td style="text-align:left" width="33%">
+                                                                        &nbsp;Signature of Candidate<br /><br />
+                                                                        &nbsp;In Punjabi ---------------------<br /><br />
+                                                                        &nbsp;In English ---------------------<br /><br />
+                                                                    </td>
+                                                                    <td style="vertical-align:bottom;text-align:center" width="34%">Signature of Head of The School<br />With Stamp</td>
+                                                                    <td style="vertical-align:bottom;text-align:center" width="33%">
+                                                                        <img src="https://registration2022.pseb.ac.in/images/Dr-Varinder-Bhatia.jpg" alt="Dr-Varinder-Bhatia" height="70"><br>Vice Chairman
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            <br />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            }
+                        }
+                        else
+                        {
+                            <p class="noprint" style="text-align:center;font-size:20px;color:#f00">Record Not Found</p>
+                        }
+
+
+
+                    }
+
+                </td>
+            </tr>
+        </table>
+    }
+}
+
+
+<script>
+    function valForm1() {
+
+        var SelList = document.getElementById('SelList').value;
+        var ExamRoll = document.getElementById('ExamRoll').value;
+        var CandId = document.getElementById('CandId').value;
+
+        if ((SelList == "0" || SelList == "") && (ExamRoll == "" || CandId == "")) {
+            if (SelList == "0" && (ExamRoll != "" || CandId != "")) {
+                return true
+            }
+            else {
+                alert("Select All Or Enter Roll No. or Student ID");
+                document.getElementById("SelList").focus();
+                return false;
+            }
+
+        }
+    }
+</script>

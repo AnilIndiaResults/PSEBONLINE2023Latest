@@ -1,0 +1,145 @@
+﻿@model PSEBONLINE.Models.MigrateSchoolModels
+@{
+    ViewBag.Title = "AdminAllotRegNo";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>Allot Registration No</h1>
+@using (Html.BeginForm("AdminAllotRegNo", "MigrateSchool", FormMethod.Post, new { id = "RegEntry", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total School <label>@ViewBag.TotalCount</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-2">
+                        Select District:  @Html.DropDownList("SelDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "-- ALL---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text"), "--All---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" maxlength="7" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-4">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" />                      
+                        <input type="button" value="Reset" onClick="this.form.reset()" />
+                       
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>SCHL</th>
+                    <th>IDNO</th>
+                    <th>SCHOOL NAME</th>
+                    <th>DISTRICT</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+
+                            var SCHl = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                            var schlName = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                            var distName = Model.StoreAllData.Tables[0].Rows[i]["DISTE"].ToString();
+                            var status = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                            <tr>
+                                <td>
+                                    @SCHl
+                                </td>
+                                <td>
+                                    @IDNO
+                                </td>
+                                <td>
+                                    @schlName
+                                </td>
+                                <td>
+                                    @distName
+                                </td>
+                                <td>
+                                    @status
+                                </td>
+
+                                <td>
+                                                                                  
+                                              @Html.ActionLink("Allot RegNo", "AllotRegNo", new { id = (SCHl) }, new { Class = "", title = "Student Registration Entries by School" })
+                                           
+                                </td>
+
+                            </tr>
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function formVal()
+    {       
+        var result = document.getElementById('SelDist').value;
+        var schlList1 = document.getElementById('SelList').value;
+        if (result == '' && schlList1 == '') {
+            alert("Select any dist or searchby for search");
+            document.getElementById('SelDist').focus();
+            return false;
+        }
+        var schlList = document.getElementById('SelList').value;
+        if (schlList != '') {
+            var SchlCode = document.getElementById("SearchString");
+            if (SchlCode.value == "" || SchlCode.value == "0") {
+                alert("Enter School Code");
+                document.getElementById("SearchString").focus();
+                return false;
+            }
+        }
+        else {
+            document.getElementById("SearchString").value = "";
+        }
+    }
+</script>
+
+
+
+

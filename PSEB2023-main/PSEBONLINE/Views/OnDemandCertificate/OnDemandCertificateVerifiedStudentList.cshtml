@@ -1,0 +1,187 @@
+﻿@model PSEBONLINE.Models.OnDemandCertificatesVerifiedStudentCompleteDetailsViewsModelList
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+
+
+
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<!-- #endregion -->
+<h1>View Complete Student Details For On Demand Certificate Session @Session["Session"].ToString()</h1>
+
+
+
+
+@using (Html.BeginForm("OnDemandCertificateVerifiedStudentList", "OnDemandCertificate", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    From Date <input type="text" onkeypress="return false" id="FromDate" placeholder="Submit From Date" name="FromDate" class="date" value="@Request["FromDate"]" />
+                </div>
+                <div class="col-md-3">
+                    To Date <input type="text" onkeypress="return false" id="ToDate" placeholder="Submit To Date" name="ToDate" class="date" value="@Request["ToDate"]" />
+                </div>
+                <div class="col-md-3">
+                    Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { })
+
+                </div>
+                <div class="col-md-3">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="Submit" value="Search" name="cmd"  onclick="return formVal();" />
+                    <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("OnDemandCertificateVerifiedStudentList", "OnDemandCertificates")'" />
+
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+}
+
+@if (Model.OnDemandCertificatesVerifiedStudentCompleteDetailsViewsSearchModel != null)
+{
+
+    <div class="row" id="divMain1">
+        <div class="col-md-4">Total Students : @Model.OnDemandCertificatesVerifiedStudentCompleteDetailsViewsSearchModel.Count()</div>
+    </div>
+    <div id="loading1"></div>
+    <div class="table-responsive">
+        <table id="example" class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr class="active-tr">
+                    <th>Class</th>
+                    <th>Schl</th>
+                    <th>Dist</th>
+                    <th>CandId</th>
+                    <th>Roll</th>
+                    <th>Regno</th>
+                    <th width="100px">Name/FName/MName</th>
+                    @*<th>DOB</th>*@
+                    <th>Trans Details</th>
+                    <th>(FEE+L.Fee)=Total</th>
+                    <th>SubmitOn</th>
+                    <th>RegistryNumber</th>
+                    <th>Status</th>
+                    @*<th>Action</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.OnDemandCertificatesVerifiedStudentCompleteDetailsViewsSearchModel)
+                {
+                    <tr>
+                        <td>@obj.Class</td>
+                        <td>@obj.SCHL</td>
+                        <td>@obj.Dist</td>
+                        <td>@obj.Std_id</td>
+                        <td>@obj.roll</td>
+                        <td>@obj.regno</td>
+                        <td>@obj.name/@obj.fname/@obj.mname</td>
+          
+                        @*<td>@obj.DOB</td>*@
+                        <td>@obj.Challanid <br />@obj.Challandt</td>
+                       
+                        <td>@obj.Fee + @obj.LateFee = @obj.TotalFee</td>
+                        <td>@obj.SubmitOn</td>
+                        <td>@obj.RegistryNumber</td>
+                        <td>@obj.Status</td>
+                        @*<td>
+                        </td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 50,
+            "order": [[0, 'desc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By School Code,UniqueID, Roll, RegNo, Transaction Id, Candidate Name or etc" },
+        })
+    });
+</script>
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2020:' + (new Date().getFullYear()),
+            maxDate: 0
+            // defaultDate: "+1w",
+            // setDate: new Date()
+
+        });
+    });
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+
+
+</script>
+
+<script>
+
+
+    function formVal() {
+
+        var FromDate = document.getElementById('FromDate').value;
+        var ToDate = document.getElementById('ToDate').value;
+        var schlList = document.getElementById('SelList').value;
+     
+        if (FromDate == "" && ToDate == "" && schlList == "") {
+                alert("Select any search field either FromDate to ToDate or SearchBy");
+            document.getElementById('SelList').focus();
+                return false;
+           
+        }
+
+     
+       
+        if (schlList != '') {
+            var SchlCode = document.getElementById("SearchString");
+            if (SchlCode.value == "" || SchlCode.value == "0") {               
+                document.getElementById("SearchString").focus();
+                return false;
+            }
+        }        
+    }
+
+
+
+</script>
+
+

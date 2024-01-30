@@ -1,0 +1,294 @@
+﻿@model PSEBONLINE.Models.ReportModel
+
+@{
+    ViewBag.Title = "Summary Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/cardprintr.css" />
+<style type="text/css">
+    .panel-body a {
+        cursor: pointer
+    }
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<h1 class="noprint">Registration-Open Summary Report</h1>
+<div class="row">
+<div class="col-md-12" style="text-align:right">Print Date :@DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")</div>
+<div class="clearfix"></div>
+    <div class="col-md-3 noprint">
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Registration Report</a>
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <ul>
+                            <li><a id="UserTypeDist" onclick="return valForm();">UserType Dist Count Report</a></li>
+                            <li><a id="UserType" onclick="return valForm();">UserType Count Report</a></li>
+                            <li><a id="Summary" onclick="return valForm();">Summary Report</a></li>
+                            <li><a id="Form" value="Form Wise Report" onclick="return valForm();">Form Wise Report</a></li>
+                            <li><a id="School" value="School Wise Report" onclick="return valForm();">School Wise Report</a></li>
+                            <li><a id="Payment" value="Payment Summary" onclick="return valForm();">Payment Summary</a></li>
+                            <li><a id="Regno" value="Regno Error Summary" onclick="return valForm();">Regno Error Summary</a></li>
+                            <li> <a id="RegExam" onclick="return valForm();">Reg & Exam Form/Fee Summary</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Open Report</a>
+                    </h4>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <ul>
+                            <li><a id="Open" onclick="return valForm();">Open Summary Report</a></li>
+                            <li><a id="Openusertpe" onclick="return valForm();">Open User Type Report</a></li>
+                            <li><a id="Opendistwise" onclick="return valForm();">Open Dist Wise Report</a></li>
+                            <li><a id="OpenSchlreport" onclick="return valForm();">Open School Report</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+    <div class="col-md-9">
+<div class="row">
+    <div class="col-md-12 text-right noprint">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+    </div>
+<div class="clearfix"></div>
+<div class="col-md-12">
+        <div class="table-responsive">
+            <div id="loading"></div>
+            <div id="divMain">
+                <div id="dee">
+                    @if (ViewBag.tab == "1")
+                    {
+                        @Html.Partial("_summaryreport")
+                    }
+                    else if (ViewBag.tab == "2")
+                    {
+                        @Html.Partial("_formwisereport")
+
+                    }
+                    else if (ViewBag.tab == "3")
+                    {
+                        @Html.Partial("_schoolwisereport")
+
+                    }
+                    else if (ViewBag.tab == "4")
+                    {
+                        @Html.Partial("_paymentsummary")
+                    }
+                    else if (ViewBag.tab == "5")
+                    {
+                        @Html.Partial("_opensummaryreport")
+                    }
+                    else if (ViewBag.tab == "6")
+                    {
+                        @Html.Partial("_openusertypewisereport")
+                    }
+                    else if (ViewBag.tab == "7")
+                    {
+                        @Html.Partial("_opendistwisereport")
+                    }
+                    else if (ViewBag.tab == "8")
+                    {
+                        @Html.Partial("_openschoolreport")
+                    }
+                    else if (ViewBag.tab == "9")
+                    {
+                        @Html.Partial("_regnoerrorreport")
+                    }
+                    else if (ViewBag.tab == "10")
+                    {
+                        @Html.Partial("_usertypereport")
+                    }
+                    else if (ViewBag.tab == "11")
+                    {
+                        @Html.Partial("_RegExamFormFeeSummary")
+                    }
+                    else if (ViewBag.tab == "12")
+                    {
+                        @Html.Partial("_summarydistreport")
+                    }
+
+                </div>
+            </div>
+        </div>
+</div>
+    </div>
+</div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#UserType").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=10", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+
+        $("#Summary").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=1", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+        $("#Form").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=2", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+        $("#School").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=3", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+
+        $("#Payment").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=4", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+        $("#Open").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=5", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+        $("#Openusertpe").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=6", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+        $("#Opendistwise").click(function () {
+            //alert(7);
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=7", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+
+        $("#OpenSchlreport").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=8", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+
+
+        $("#Regno").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=9", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+
+        $("#RegExam").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=11", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+
+        $("#UserTypeDist").click(function () {
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+            $.get("../Admin/Report?id=12", function (data) {
+                if (data != '') {
+                    $('#divMain').show();
+                    $('#divMain').empty();
+                    $("#divMain").append(data);
+                }
+                $('div#loading').empty();
+            });
+        });
+
+    });
+</script>

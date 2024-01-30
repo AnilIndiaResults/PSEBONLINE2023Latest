@@ -1,0 +1,125 @@
+﻿@{
+    ViewBag.Title = "School List Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<style type="text/css">
+    .table-responsive th {
+        font-size: 9px;
+    }
+
+    .table-responsive th {
+        font-size: 9px;
+    }
+    body {
+        font-size: 10px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .footer {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        z-index: 9999999;
+        display: block;
+    }
+    .tpd td {padding:1px !important;line-height:20px
+    }
+    .kdsfont {
+        line-height:20px
+    }
+</style>
+<link rel="stylesheet" href="http://registration.pseb.ac.in//Content/cardprintr.css" />
+
+
+@using (Html.BeginForm("SchoolListReport", "Report", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    <div class="row noprint">
+        <div class="col-md-12">
+            <h1>List of Non Government School</h1>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>               
+                <div class="col-md-2">@Html.DropDownList("SchoolType", new SelectList(ViewBag.MySchoolType, "Value", "Text", ViewBag.SelectedSchoolType), "--All School Type---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("ClassType", new SelectList(ViewBag.MyClassType, "Value", "Text", ViewBag.SelectedClassType), "--All Class ---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2">
+                    <input type="submit" value="Search" /> <a href="/Report/RegSchoolReport" class="btn">Reset</a>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+}
+<div style="color:#cc0000;width:100%;text-align:right;" class="noprint">
+    * If Punjabi font is not visible properly <a href="/PNB_FONT.ZIP" target="_blank" style="font-size:14px;"><b style="color:#cc0000"> CLICK HERE </b></a> for Download Punjabi PNB Font
+
+</div>
+<div style="width:100%;text-align:right;" class="noprint"><input type="button" value="Print" class="btn noprint" onclick="window.print()" />&nbsp;<a href="javascript:history.back()" class="btn noprint" style="color:#fff">Back</a> </div>
+@if (ViewBag.TotalCount >0 )
+{
+    System.Data.DataSet ds = (System.Data.DataSet)ViewBag.data;
+    try
+    {
+        int sr = 0;
+                <div class="table-responsive">
+                    <table id="t01" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                <td colspan="2" style="border-right:0 !important"><div style="padding:0px"><img src="~/Images/Printlogo.jpg" width="55px" height="55px" alt="PSEB" /></div></td>
+                                <td colspan="5" style="text-align:center;border-left:0 !important;border-right:0 !important"><span style="font-size:24px">Punjab School Education Board</span><br />List of Non Government School - Session @Session["Session"].ToString()</td>
+                                <td style="border-left:0 !important;text-align:right">Print Date: @DateTime.Today.ToString("dd/MM/yyyy") &nbsp;</td>
+                            </tr>
+                            <tr class="active-tr">
+                                <th rowspan="2" style="vertical-align:top" width="4%">Sr No.</th>
+                                <th width="6%" rowspan="2">School Code / ID No.</th>
+                                <th width="45%">School Name (English)</th>
+                                <th width="10%">Class From / To</th>
+								<th width="10%">ESTD Year</th>
+                                <th width="6%">Area</th>
+                                <th width="6%">Type</th>
+                                <th rowspan="2" style="vertical-align:top" width="10%">Contact No.</th>
+                                </tr>
+                                <tr class="active-tr">
+                                    <th>School Name (Punjabi)</th>
+                                    <th colspan="4">Email ID</th>
+                                </tr>
+                        </thead>
+                        @foreach (System.Data.DataRow dr in ds.Tables[0].Rows)
+                    {
+                        sr++;
+                            <tr class="tpd">
+                                <td rowspan="2">@sr</td>
+                                <td rowspan="2">@dr["schl"].ToString() / @dr["idno"].ToString()</td>
+                                <td height="23px">@dr["schle"].ToString()</td>
+                                <td>@dr["Allclass"].ToString()</td>
+		       <td>@dr["SCHLESTD"].ToString()</td>
+                                <td>@dr["area"].ToString()</td>
+                                <td>@dr["category"].ToString()</td>
+                                <td>@dr["mobile"].ToString()</td>
+                            </tr>
+                            <tr class="tpd">
+                                <td height="23px"><span class="kdsfont">@dr["schlp"].ToString()</span></td>
+                                <td colspan="4">@dr["EMAILID"].ToString()</td>
+                                <td>@dr["Phone"].ToString()</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+    }
+    catch (Exception e)
+    {
+        <div class="text-center">
+            <span class="rqf">No Data Found</span>
+        </div>
+    }
+}
+else
+{
+
+}
+
+

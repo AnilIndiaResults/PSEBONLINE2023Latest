@@ -1,0 +1,362 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    ViewBag.Title = "ImportedPrintlistOpen";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+@if (Session["SCHL"] != null)
+{ }
+else { Response.Redirect("~/Login"); }
+<div class="container">
+    @{
+        if (@ViewBag.Id != null)
+        {
+            if (ViewBag.Id == "MO")
+            {
+                <h1>
+                    List Of Imported Candidate for Matriculation Open Examination
+                </h1>
+            }
+            else if (@ViewBag.Id == "SO")
+            {
+                <h1>List Of Imported Candidate for Senior Secondary Open Examination</h1>
+            }
+        }
+    }
+    <div id="update-message" style="color:green"></div>
+    <div class="row">
+        <div class="col-md-4">Grid Total:  @ViewBag.TotalCount1</div>
+        <div class="col-md-2 text-left">
+            <input type="submit" value="Remove Student From List" id="btnsubmit" />
+        </div>
+        <div class="col-md-6 text-right">
+
+            @*  @if (ViewBag.id == "MO")
+                {
+                    <a href="/Home/ExamCalculateFee?id=MO" class="btn">Matric Open Calculate Fee</a>
+                }
+                else if (ViewBag.id == "SO")
+                {
+                    <a href="/Home/ExamCalculateFee?id=SO" class="btn">Senior Open Calculate Fee</a>
+                }
+            *@
+
+            @if (ViewBag.id == "MO")
+            {
+                <a href="/Home/ExamCalculateFee?id=MO" class="btn">Calculate Fee and Generate Challan</a>
+            }
+            else if (ViewBag.id == "SO")
+            {
+                <a href="/Home/ExamCalculateFee?id=SO" class="btn">Calculate Fee and Generate Challan</a>
+            }
+
+            @*<a href="/Home/ExamCalculateFee" class="btn">Calculate Fee and Generate Challan</a>*@
+            <a href="/ExaminationPortal/PrintlistOpen?id=@ViewBag.id" class="btn">Back</a>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div id="loading"></div>
+    <div id="divMain">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="t01" class="table table-bordered">
+                        <tr class="active-tr">
+                            <th>Sr.No</th>
+                            <th>Form</th>
+                            <th>Unique Id</th>
+                            <th>Reg. No.</th>
+                            <th>Name/Father's Name/Mother's Name</th>
+                            <th>Admission Date</th>
+                            <th>Caste</th>
+                            <th>Verified</th>
+                            <th>Want Hard Copy<br />Certificate? </th>
+                            <th><input type="checkbox" id="selectall" />Delete All</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 20 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var id = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                    var stdid = Model.StoreAllData.Tables[0].Rows[i]["reg16id"].ToString();
+                                    var form_Name = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                    var StudentUniqueId = Model.StoreAllData.Tables[0].Rows[i]["reg16id"].ToString();
+                                    var Registration_num = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                    var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                    var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                    var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                    var Admission_Date = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                                    var Caste = Model.StoreAllData.Tables[0].Rows[i]["Caste"].ToString();
+                                    var challanVerify = Model.StoreAllData.Tables[0].Rows[i]["challanVerify"].ToString();
+                                    var exemptionallow = Model.StoreAllData.Tables[0].Rows[i]["exemptionallow"].ToString();
+                                    var aashirwardnumber = Model.StoreAllData.Tables[0].Rows[i]["aashirwardnumber"].ToString();
+                                    var printlotnew = Model.StoreAllData.Tables[0].Rows[i]["printlotnew"].ToString();
+                                    var msg = Model.StoreAllData.Tables[0].Rows[i]["msg"].ToString();
+                                    var IsHardCopyCertificate = Model.StoreAllData.Tables[0].Rows[i]["IsHardCopyCertificate"].ToString();
+                                    Count = Count + 1;
+                                    <tr>
+                                        <td>@Count</td>
+                                        <td>@form_Name</td>
+                                        <td>@StudentUniqueId</td>
+                                        <td>@Registration_num</td>
+                                        <td>@Candi_Name/@Father_Name/@Mother_Name</td>
+                                        <td>@Admission_Date</td>
+                                        <td>@Caste</td>
+                                        <td>@(challanVerify == "1" ? "yes" : "no")</td>
+                                        <td>@IsHardCopyCertificate</td>
+                                        <td>
+                                            @if (printlotnew == "0")
+                                            {
+                                                <input type="checkbox" class="checkbox" id="cb-@id)_@stdid" />
+                                            }
+                                            else
+                                            {
+                                                @msg
+                                            }
+                                        </td>
+                                    </tr>
+                                    if (d == ViewBag.TotalCount)
+                                    {
+                                        <tr>
+                                            <td colspan="11">
+
+                                                Page @ViewBag.pagesize of @ViewBag.pn
+
+                                                &nbsp;
+
+                                                @if (ViewBag.pagesize == 1)
+
+                                                {
+                                                    @:<<
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @:< Prev
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        var dp = ViewBag.pagesize + 1;
+                                                        <a href="~/examinationportal/ImportedPrintlistOpen?id=@ViewBag.id&page=@dp">Next ></a>
+                                                        //@Html.ActionLink("Next >", "PrintlistOpen", new {id= ViewBag.id, page = ViewBag.pagesize + 1 })
+
+                                                        @Html.Raw("&nbsp;");
+                                                        <a href="~/examinationportal/ImportedPrintlistOpen?id=@ViewBag.id&page=@ViewBag.pn">>></a>
+                                                        //@Html.ActionLink(">>", "PrintlistOpen", new { id = ViewBag.id, page = ViewBag.pn })
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    var dp = ViewBag.pagesize - 1;
+                                                    <a href="~/examinationportal/ImportedPrintlistOpen?id=@ViewBag.id&page=1"><<</a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/examinationportal/ImportedPrintlistOpen?id=@ViewBag.id&page=@dp">< Prev</a>
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        var p2 = ViewBag.pagesize + 1;
+                                                        <a href="~/examinationportal/ImportedPrintlistOpen?id=@ViewBag.id&page=@p2">Next ></a>
+
+                                                        @Html.Raw("&nbsp;");
+                                                        <a href="~/examinationportal/ImportedPrintlistOpen?id=@ViewBag.id&page=@ViewBag.pn">>></a>
+                                                    }
+
+                                                }
+
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="10">
+                                        <span class="rqf">@ViewBag.Message</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+
+                    </table>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+            $("#selectall").change(function () {
+                //"select all" change
+                var status = this.checked; // "select all" checked status
+                var arr = [];
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                    //alert(id);
+                    this.checked = status; //change ".checkbox" checked status
+
+                });
+            });
+
+
+            //uncheck "select all", if one of the listed checkbox item is unchecked
+            $('.checkbox').change(function () { //".checkbox" change
+
+                //alert($(this).val());
+                if (this.checked == false) { //if this item is unchecked
+                    $("#selectall")[0].checked = false; //change "select all" checked status to false
+
+                }
+            });
+
+
+
+            $("#btnsubmit").click(function () {
+               // alert("Dee");
+                var chkdee = "";
+                var storeid = "";
+                var storescid = "";
+                var storeaashirwardno = "";
+
+                if ($('.checkbox:checked').length == 0) {
+                    alert("Please Check Atleast One Check box");
+                    return false;
+                }
+
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+
+                    if (this.checked) {
+                        var id = this.id;
+                        //alert(id);
+
+                        var arr = [];
+                        arr = id;
+                        var arrid = "";
+                        var arrscid = "";
+                        var j = 0;
+                        for (var i = 3; i < arr.length; i++) {
+                            if (arr[i] == ')') {
+                                break;
+                            }
+                            arrid += arr[i];
+                            j++;
+
+                        }
+                        for (var k = 3 + j + 2; k < arr.length; k++) {
+                            arrscid += arr[k];
+                        }
+                        storeid += arrid + ",";
+                        storescid += arrscid + ",";
+                    }
+                });
+                if (storeid != "" && storescid != "") {
+                    //alert(storeid);
+                    //alert(storescid);
+                    $.ajax({
+                        type: "POST",
+                        url: "../ExaminationPortal/JqResendPrintlistOpen", // this for calling the web method function in cs code.
+                        data: '{storeid: "' + storeid + '",storescid:"' + storescid + '"}',// user name or email value
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: OnSuccess,
+                        failure: function (response) {
+                            alert(response);
+                        }
+                    });
+                }
+
+
+                function OnSuccess(response) {
+                    if (response.dee == "")
+                        alert("Something Went Wrong,Try Again.");
+                    else {
+                        window.location.href = '/ExaminationPortal/ImportedPrintlistOpen?id=@ViewBag.id';
+                      //  window.location.href = '/ExaminationPortal/ImportedPrintlistOpen';
+                        alert("Deleted SuccessFully");
+
+                    }
+
+                }
+
+            });
+
+    });
+</script>
+
+<script type="text/javascript">
+    function call(recordid) {
+        $('#updateit-' + recordid).slideDown("slow");
+        $('#cancelit-' + recordid).slideDown("slow");
+
+
+    }
+
+    function deecancel(recordid, quantity) {
+        var quant1 = $('#txtupdateaashirward-' + recordid).val();
+        if (quant1 == "") {
+            $('#txtaashirward-' + recordid).val(quantity);
+        }
+        else {
+            $('#txtaashirward-' + recordid).val(quant1);
+        }
+        $('#updateit-' + recordid).slideUp("slow");
+        $('#cancelit-' + recordid).slideUp("slow");
+    }
+
+    function deeupdate(id, reg16id, aashirwardno) {
+        //alert("Jay");
+        var value = parseInt($('#txtaashirward-' + id).val());
+        alert(value);
+        if (isNaN(value) || value == "0") {
+            alert("Invalid Number Of Quantity.");
+            return false;
+        }
+        else {
+            $('#updateit-' + id).slideUp("slow");
+            $('#cancelit-' + id).slideUp("slow");
+            $('#divMain').hide();
+            $('div#loading').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("../ExaminationPortal/UpdateAashirwardNo", { "id": id, "reg16id": reg16id, "aashirwardno": value },
+                function (data) {
+                    $('#divMain').show();
+                    if (data.outstatus == 1) {
+                        $('#update-message').empty();
+                        $('#update-message').html("Aashirward Portal Id Updated Successfully.");
+                        $('#txtaashirward-' + id).val(value);
+                        $('#txtupdateaashirward-' + id).val(value);
+                    }
+                    else {
+                        $('#update-message').html("Something went wrong.");
+                    }
+                    $('div#loading').empty();
+                });
+        }
+
+    }
+
+</script>
+

@@ -1,0 +1,291 @@
+﻿@model PSEBONLINE.Models.OnDemandCertificate_ChallanDetailsViewsModelList
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<!-- #endregion -->
+<h1>View All Challans, Session @Session["Session"].ToString()</h1>
+@if (Model.OnDemandCertificate_ChallanDetailsViews != null)
+{
+
+    <div class="row" id="divMain1">
+        <div class="col-md-4">Total : @Model.OnDemandCertificate_ChallanDetailsViews.Count()</div>
+        <div class="col-md-8" style="text-align:right"><a href="/RegistrationPortal/OnDemandCertificate" class="btn">Back</a></div>
+    </div>
+    <div id="loading1"></div>
+    <div class="table-responsive">
+        <table id="example" class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr class="active-tr">
+                    <th>Class</th>
+                    <th>Challan Id</th>
+                    <th>Challan Date</th>
+                    <th>Valid Date</th>
+                    <th>Verify Date</th>
+                    <th>Fee</th>
+                    <th>Late Fee</th>
+                    <th>Total Fee</th>
+                    <th>NOC</th>
+                    <th>Status</th>
+                    <th width="10%">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.OnDemandCertificate_ChallanDetailsViews)
+                {
+                    <tr>
+                        <td>@obj.Class</td>
+                        <td>
+                            @obj.ChallanId
+                            <div class="container">
+                                <div class="modal fade" id="myModal1-@obj.ChallanId" role="dialog">
+                                    <div class="modal-dialog" style="width:80%">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h3><span style="color:#cc0000">Count : @Model.StoreAllData.Tables[1].Select("Challanid = '" + obj.ChallanId + "'").Count()</span>&nbsp; | &nbsp;Student Details of Challan Id :  @obj.ChallanId</h3>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                    <thead>
+                                                        <tr class="active-tr">
+                                                            <th>Roll</th>
+                                                            <th>Unique ID</th>
+                                                            <th>Form</th>
+                                                            <th>Name/Father's Name/Mother's Name</th>
+                                                            <td>DOB</td>
+                                                            <td>Fee</td>
+                                                            <td>Late Fee</td>
+                                                            <td>Total Fee</td>
+                                                        </tr>
+                                                    </thead>
+                                                    @{
+                                                        int TotalFee = 0, TotalDemandFee = 0, TotalLateFee = 0;
+                                                        for (int s = 0; s < Model.StoreAllData.Tables[1].Rows.Count; s++)
+                                                        {
+                                                            var chlnid = Model.StoreAllData.Tables[1].Rows[s]["ChallanID"].ToString();
+                                                            var Roll = Model.StoreAllData.Tables[1].Rows[s]["Roll"].ToString();
+                                                            var Std_id = Model.StoreAllData.Tables[1].Rows[s]["Std_id"].ToString();
+                                                            var form_Name = Model.StoreAllData.Tables[1].Rows[s]["form"].ToString();
+                                                            var Registration_num = Model.StoreAllData.Tables[1].Rows[s]["regno"].ToString();
+                                                            var Candi_Name = Model.StoreAllData.Tables[1].Rows[s]["Name"].ToString();
+                                                            var Father_Name = Model.StoreAllData.Tables[1].Rows[s]["FName"].ToString();
+                                                            var Mother_Name = Model.StoreAllData.Tables[1].Rows[s]["MName"].ToString();
+                                                            var Fee = Model.StoreAllData.Tables[1].Rows[s]["Fee"].ToString();
+                                                            var LateFee = Model.StoreAllData.Tables[1].Rows[s]["LateFee"].ToString();
+                                                            var TotFee = Model.StoreAllData.Tables[1].Rows[s]["TotalFee"].ToString();
+                                                            var DOB = Model.StoreAllData.Tables[1].Rows[s]["DOB"].ToString();
+                                                            if (obj.ChallanId == chlnid)
+                                                            {
+                                                                TotalDemandFee += Convert.ToInt32(Fee);
+                                                                TotalLateFee += Convert.ToInt32(LateFee);
+                                                                TotalFee += Convert.ToInt32(TotFee);
+                                                                <tr style="font-size:11px">
+                                                                    <td>@Roll</td>
+                                                                    <td>@Std_id</td>
+                                                                    <td>@form_Name</td>
+                                                                    <td>@Candi_Name / @Father_Name / @Mother_Name</td>
+
+                                                                    <td>@DOB</td>
+                                                                    <td>@Fee</td>
+                                                                    <td>@LateFee</td>
+                                                                    <td>@TotFee</td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                        <tr style="color: lightgray; background-color: #000000; font-size: 14px; ">
+                                                            <td colspan="2">Total</td>
+                                                            <td colspan="3" align="left">
+                                                                Total Fees : ₹  @{
+                                                                    if (TotalFee > 0)
+                                                                    {
+                                                                        string AmountInWords = new PSEBONLINE.AbstractLayer.DBClass().GetAmountInWords(TotalFee);
+                                                                        <span>@AmountInWords</span>
+                                                                    }
+                                                                }
+                                                            </td>
+                                                            <td>@TotalDemandFee</td>
+                                                            <td>@TotalLateFee</td>
+                                                            <td>@TotalFee</td>
+                                                        </tr>
+                                                    }
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                @*Regenrate*@
+                                <div class="modal fade" id="myModalReg-@obj.ChallanId" role="dialog">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content" id="printableArea">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Re-Generate Challan</h4>
+                                                <p style="text-align:center;font-size:18px;color:#f00">If you already deposit amount in Bank then please dont Re-Generate Challan. Are you sure to Re-Generate Challan or Cancel?</p>
+                                            </div>
+                                            <div class="modal-body">
+                                                <center> <input type="text" id="txtChallanNo-@obj.ChallanId" name="txtChallanNo" value="@obj.ChallanId" readonly /></center>
+                                                <input name="SBI-@obj.ChallanId" id="SBI-@obj.ChallanId" type="radio" value="204"><img src="~/Images/SBIbank.png" width="150" />
+                                                <input name="PNB-@obj.ChallanId" id="PNB-@obj.ChallanId" type="radio" value="202"><img src="~/Images/PNBbank.gif" width="150" />  <br />
+                                                <input type="button" class="btn" value="Click here to Re-Generate Challan" id="btnSend" onclick="RegenerateChallan(@obj.ChallanId)" />
+                                                <div id="loading1-@obj.ChallanId"></div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@obj.CHLNDATE</td>
+                        <td>@obj.CHLNVDATE  </td>
+                        <td>@obj.ChallanVerifiedOn </td>
+                        <td>@obj.FEE </td>
+                        <td>@obj.LateFee </td>
+                        <td>@obj.TotalFee </td>
+                        <td>@obj.NOC </td>
+                        <td>@obj.Status </td>
+                        <td>
+                            <div class="cart">
+                                Choose&nbsp;Action <span class="caret"></span>
+                                <div id="sidebar">
+                                    <ul>
+                                        <li><a href="" data-toggle="modal" data-target="#myModal1-@obj.ChallanId">View Candidate List</a></li>
+                                        @if (obj.BCODE == "301" || obj.BCODE == "302")
+                                        {
+                                            <li><span>Online Payment</span></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="/Home/GenerateChallaan?ChallanId=@obj.ChallanId">Print Challan</a></li>
+                                            <li>
+                                                @if (obj.StatusNumber.ToString() == "1") //Downloaded by Bank : Date
+                                                {
+                                                    if (obj.ExpireVDate.ToString() == "0" && obj.FeeDepositStatus.ToString() == "0")
+                                                    {
+                                                        <a href="/Home/FeeDepositDetails?Id=@obj.ChallanId">Enter Fee Deposit Details</a>
+
+                                                    }
+                                                    else if (obj.FeeDepositStatus.ToString() == "1")
+                                                    {
+                                                        <span>Challan Verification Pending</span>
+                                                    }
+                                                    else if (obj.ExpireVDate.ToString() == "1" && obj.FeeDepositStatus.ToString() == "0")
+                                                    {
+
+                                                        <a href="/Home/FeeDepositDetails?Id=@obj.ChallanId">Enter Fee Deposit Details</a>
+                                                        <button type="button" class="" data-toggle="modal" data-target="#myModalReg-@obj.ChallanId" onclick="return confirm('If you already deposited amount in Bank then please dont regenerate challan. Are you sure to Re-Generate Challan or Cancel?');">Re-Generate Challan</button>
+
+                                                    }
+                                                }
+
+                                            </li>
+                                        }
+
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 50,
+            "order": [[0, 'desc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By UniqueID, Candidate Name, Father's Name, Mother's Name, DOB.." },
+        })
+    });
+</script>
+
+
+
+<script type="text/javascript">
+
+    function RegenerateChallan(k) {
+        var txtChallanNo = '#txtChallanNo-' + k;
+      //  alert("Start  Re-Generate Challan " + txtChallanNo);
+
+        var SBIa = document.getElementById("SBI-" + k).checked;
+        var PNBa = document.getElementById("PNB-" + k).checked;
+        var BCODE = "";
+        if (SBIa == false && PNBa == false) {
+            alert("Please Select Any Bank");
+            return false;
+        }
+        else if (SBIa == true && PNBa == true) {
+            alert("Please Select Only 1 Bank Either SBI or PNB");
+            document.getElementById("SBI-" + k).checked = false;
+            document.getElementById("PNB-" + k).checked = false;
+            return false;
+        }
+        else {
+            if (document.getElementById("SBI-" + k).checked == true) { BCODE = "204"; }
+            else if (document.getElementById("PNB-" + k).checked == true) { BCODE = "202"; }
+            else { BCODE = ""; }
+        }
+
+        if (BCODE == "") {
+            alert('Please Select Bank')
+            return false;
+        }
+        else if ($('#txtChallanNo-' + k).val() == "") {
+            $('#txtChallanNo-' + k).addClass("input-validation-error");
+            return false;
+        }
+        else {
+            //  alert('Now Re-Generate Challan of :' + $('#txtChallanNo-' + k).val())
+            // $('#Main1').hide();
+            $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Home/jqReGenerateChallaanNew",
+                data: '{ChallanId:"' + $('#txtChallanNo-' + k).val() + '", BCODE:"' + BCODE + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response);
+                    $('#loading1-' + k).empty();
+                }
+            });
+            function OnSuccess(response) {
+                if (response.dee == "1") {
+                    alert("Challan Re-Generated Successfully & Your Challan ID is " + response.chid);
+                    $("#myModal-" + k).hide();
+                    $('#loading1-' + k).empty();
+                    window.open("/Home/GenerateChallaan?ChallanId=" + response.chid, "_blank");
+                }
+                else {
+                    alert("Something Went Wrong, Please Try Again.");
+                    $('#loading1-' + k).empty();
+                }
+            }
+        }
+    }
+
+</script>

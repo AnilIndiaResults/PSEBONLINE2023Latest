@@ -1,0 +1,297 @@
+﻿@model PSEBONLINE.Models.SeniorStudentMatricResultMarksViewsModelList
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<!-- #endregion -->
+<h1>View All Senior Students Matric Marks</h1>
+
+
+@using (Html.BeginForm("ViewAllSeniorStudentMatricMarksDMCCertificate", "Report", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            <div class="col-md-4">@Html.DropDownList("SelRP", new SelectList(ViewBag.MyRPList, "Value", "Text", ViewBag.SelectedRP), "--Select RP---", new { @class = "", @required = "required" })</div>
+            <div class="col-md-4">@Html.DropDownList("SelDist", new SelectList(ViewBag.MyDistList, "Value", "Text", ViewBag.SelectedDist), "--Select District---", new { @class = "", @required = "required" })</div>
+            <div class="col-md-4">@Html.DropDownList("SelBoard", new SelectList(ViewBag.MyBoardList, "Value", "Text", ViewBag.SelectedBoard), new { @class = "" })</div>
+            <div class="col-md-4">@Html.DropDownList("SelAppStatus", new SelectList(ViewBag.MyApprovalStatusList, "Value", "Text", ViewBag.SelectedAppStatus), "--Select Approval Status---", new { @class = "" })</div>
+
+
+            <div class="col-md-4">@Html.DropDownList("SelSearch", new SelectList(ViewBag.MySearchList, "Value", "Text", ViewBag.SelectedSearchList), "--All---", new { @class = "" })</div>
+            <div class="col-md-4"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+            <div class="col-md-4"><input type="submit" value="Search" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/Report/ViewAllSeniorStudentMatricMarksDMCCertificate" class="btn">Reset</a></div>
+        </fieldset>
+    </div>
+}
+<div class="clearfix"></div>
+
+@if (Model.RegistrationSearchModel != null)
+{
+    <div class="col-md-12"><span style="font-size:20px;color:black;">Total : @Model.RegistrationSearchModel.Count()</span></div>
+    if (Model.RegistrationSearchModel.Count() > 0)
+    {
+
+        <div class="table-responsive">
+            <table id="example" class="display table table-bordered" style="width:100%">
+                <thead>
+                    <tr class="active-tr">
+                        <th>DISTNM</th>
+                        <th>SCHL</th>
+                        <th>Roll</th>
+                        <th>Unique Id</th>
+                        <th>Form</th>
+                        @*<th>Admission Date</th>*@
+                        <th>Candidate Name</th>
+                        <th>Father's Name</th>
+                        <th>Mother's Name</th>
+                        <th>DOB</th>
+                        <th>BOARD</th>
+                        @*<th>Inserted On</th>*@
+                        <th>Status</th>
+                        <th>Approval Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var obj in Model.RegistrationSearchModel)
+                    {
+                        <tr>
+
+                            <td>@obj.DistNM</td>
+                            <td>@obj.schl</td>
+                            <td>@obj.Roll</td>
+                            <td>
+                                @obj.Std_id
+                                <div class="container">
+                                    <div class="modal" id="myModalStatus-@obj.Std_id" role="dialog">
+                                        <div class="modal-dialog">
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h3>Student Id : @obj.Std_id  </h3>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <table width="100%">
+                                                        <tr>
+                                                            <td>Select your Response </td>
+                                                            <td>@Html.DropDownList("AppStatus", new SelectList(ViewBag.MyApprovalStatusList, "Value", "Text"), "--Select--", new { id = "AppStatus-" + obj.Std_id, @class = "" })</td>
+                                                        </tr>
+                                                        <tr style="display:none">
+                                                            <td>Remarks </td>
+                                                            <td><input id="eSTATUSREMARKS-@obj.Std_id" value="" type="text" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2" align="center">
+                                                                <input type="button" class="btn" value="Submit" id="btnUpdateApprovalStatus" onclick="updateSeniorStudentMatricMarksDMCCertificateApprovalStatus('@obj.Std_id')" />
+
+                                                                <div id="loading1"></div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </td>
+                            <td>@obj.form_Name</td>
+                            @*<td>@obj.Admission_Date </td>*@
+                            <td>@obj.Candi_Name </td>
+                            <td>@obj.Father_Name </td>
+                            <td>@obj.Mother_Name </td>
+                            <td>@obj.DOB</td>
+                            <td> <span class="rqf"> @obj.MAT_BOARD</span></td>
+                            @*<td>@obj.CreatedDate</td>*@
+                            <td>
+                                @{
+                                    if (obj.IsFinalLock == true && !string.IsNullOrEmpty(obj.ChangeStatus))
+                                    {
+                                        <span class="text-success"> @obj.ChangeStatusNM </span><br />
+                                        if (obj.ChangeStatus == "C")
+                                        {
+                                            <span>Cancel On <br />@obj.CancelOn.Value.ToString("dd/MM/yyyy hh:mm tt")</span>
+                                        }
+                                    }
+                                    else if (string.IsNullOrEmpty(obj.ChangeStatus))
+                                    {
+                                        <span class="text-danger"> @obj.ChangeStatusNM</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning"> @obj.ChangeStatusNM</span>
+                                    }
+
+                                    if (obj.IsFinalLock == true && !string.IsNullOrEmpty(obj.ChangeStatus))
+                                    {
+                                        <span class="rqf">Final Locked On <br />@obj.FinalSubmitOn.Value.ToString("dd/MM/yyyy hh:mm tt")</span>
+
+                                    }
+                                }
+                            </td>
+
+                            <td>
+                                @{
+                                    <span class="text-danger"> @obj.ApprovalStatus</span>
+
+                                    if (!string.IsNullOrEmpty(obj.ApprovalBy))
+                                    {
+                                        <span class="text-warning">Approval On <br />@obj.ApprovalOn.Value.ToString("dd/MM/yyyy hh:mm tt")</span>
+
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{
+
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul class="hideint">
+                                                <li><a class="btn" target="_blank" href="ViewSeniorStudentMatricResultMarks/@obj.Std_id.ToString()">View Marks</a></li>
+                                                @if (obj.ChangeStatus == "U")
+                                                {
+                                                    <a href="/Upload/Upload2020/@obj.FilePath" class="btn" target="_blank">View Certificate </a>
+                                                }
+
+                                                @if (string.IsNullOrEmpty(obj.ApprovalStatus))
+                                                {
+                                                    <a class="btn" href="" data-toggle="modal" data-target="#myModalStatus-@obj.Std_id.ToString()">Update Response</a>
+                                                }
+                                                else if (obj.ApprovalStatus == "REJECT" && Session["AdminUser"].ToString().ToLower()=="rishi".ToLower())
+                                                {
+                                                    <a class="btn" href="" data-toggle="modal" data-target="#myModalStatus-@obj.Std_id.ToString()">Update Response</a>
+                                                }
+
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                }
+
+
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 25,
+            "order": [[0, 'asc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By UniqueID, Student Name, Roll Number, Status or Any." },
+        })
+    });
+</script>
+
+
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+<script type="text/javascript">
+
+    //updateStatusStudentSchoolMigration
+    function updateSeniorStudentMatricMarksDMCCertificateApprovalStatus(std_id) {
+
+        var flag = 0;
+        if ($("#AppStatus-" + std_id).val() == "" || $("#AppStatus-" + std_id).val() == "0") {
+            $("#AppStatus-" + std_id).addClass("input-validation-error");
+            flag = 1;
+        }
+
+        //if ($("#eSTATUSREMARKS-" + std_id).val() == "") {
+        //    $("#eSTATUSREMARKS-" + std_id).addClass("input-validation-error");
+        //    flag = 1;
+        //}
+
+
+        if (flag == 1) {
+            return false;
+        }
+        else {
+
+            $('#loading1').html("<p><img src='http://registration.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Master/updateSeniorStudentMatricMarksDMCCertificateApprovalStatus", // this for calling the web method function in cs code.
+                data: '{remarks: "' + $("#eSTATUSREMARKS-" + std_id).val() + '",std_id: "' + std_id + '", status: "' + $("#AppStatus-" + std_id).val() + '"}',// 2 for SCHL
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        alert("Status Updated Successfully");
+                        $('#myModalStatus-' + std_id).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else {
+                        $('#loading1').empty();
+                        alert("Status Updated Failure");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+
+        }
+    }
+
+
+
+</script>

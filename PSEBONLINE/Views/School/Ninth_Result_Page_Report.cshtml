@@ -1,0 +1,282 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Ninth_Result_Page_report";
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprinta.css" />
+<style type="text/css">
+    body{font-family:Arial,Helvetica,sans-serif;font-size:8pt;}
+    .tprint td {
+        padding: 1px 2px;
+        line-height: 16px;
+    }
+</style>
+@using (Html.BeginForm("Ninth_Result_Page_Report", "School", FormMethod.Post, new { id = "searchform" }))
+{
+    
+    <div class="row noprint">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">Select Section  @Html.DropDownList("Selsec", new SelectList(ViewBag.sec, "Value", "Text"), "--Select Section---", new { @class = "", onchange = "deechange()" }) <span id="reqsession" style="color:red;display:none;">Select One</span></div>
+                <div class="col-md-2"><br /><input type="Submit" value="Search" name="cmd" onclick="return dee()" /> </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <table style="width:100%;" border="0" class="bgimg">
+        <tr>
+            <td>
+                <table style="width:100%;" border="0" class="noprint">
+                    <tr>
+                        <td style="text-align:right;padding-bottom:3px">
+                            <input type="button" value="Print" class="btn" onclick="window.print()" />
+                            @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+                            <a href="/School/Ninth_Result_Page" class="btn">Back</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">&nbsp;
+                @if (ViewBag.TotalCount > 0)
+        {
+        <table border="0" style="width:98%;" align="center" class="brack">
+            <tr>
+                <td colspan="2">
+                    @*<table class="table table-bordered" id="t01">*@
+                    <table width="100%" border="1"id="t01">
+                        <thead>
+                            <tr>
+                                <td colspan="10" style="border:0">
+                                    <table width="100%" border="0">
+                                        <tr>
+                                            <td width="20%" style="border:0;text-indent:5px"><img src="~/Images/Printlogo.jpg" alt="PSEB" /></td>
+                                            <td width="60%" style="border:0;font-size:16px;text-align:center;line-height:25px;">
+                                                <span style="font-size:26px;">Punjab School Education Board</span><br />@ViewBag.ClassName EXAMINATION, March 2023 <br />
+                                                @if (ViewBag.Reportid == "RP")
+                                                {
+                                                <span>
+                                                    Ninth Class Result Sheet March 2023 (Rough Report)
+                                                </span>
+                                                }
+                                                else
+                                                {
+                                                <span>
+                                                    Ninth Class Result Sheet March 2023 (Final Report)
+                                                </span>
+                                                }
+                                            </td>
+                                            <td width="20%" align="right" style="border:0">
+                                                @if (ViewBag.Reportid == "RP")
+                                                {
+                                                <span> DATE: @DateTime.Now.ToString("dd/MM/yyyy")</span>}
+                                                else
+                                                {
+                                                <span>DATE: @DateTime.Now.ToString("dd/MM/yyyy")</span><br />
+                                                <span>FINAL SUBMITTED ON: @ViewBag.Fdate</span><br /> }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" align="left" style="border:0">&nbsp;School Name/ Code:-  @ViewBag.SchoolName  / (@Session["SCHL"].ToString())
+                                            </td>
+                                            <td align="right" style="border:0">
+                                                Section: @ViewBag.SchlSec &nbsp;
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr class="active-tr" style="background-color:#CCC !important;color:#000 !important">
+                                <th width="5%">S.No.</th>
+                                <th width="5%">ID</th>
+                                @*<th width="3%">Section</th>*@
+                                <th width="10%">Roll</th>
+                                @*<th width="5%">Form</th>*@
+                                <th width="5%">Reg. No.</th>
+                                <th width="30%">Name/Father's/Mother's Name</th>
+                                <th width="5%">DOB</th>
+                                <th width="5%">Gender</th>
+                                <th width="11%">Total Marks</th>
+                                <th width="11%">Obt Matrks</th>
+                                <th width="5%">Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    //if (ViewBag.pagesize == 1)
+                                    //{
+                                    //    Count = 0;
+                                    //}
+                                    //else
+                                    //{
+                                    //    Count = 20 * (ViewBag.pagesize - 1);
+                                    //}
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                        var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                                        var ROLL = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                                        var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                        var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                        var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                        var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                        var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                        var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                                        var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                        var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                                        var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                                        var Fee = Model.StoreAllData.Tables[0].Rows[i]["REGFEE"].ToString();
+                                        var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                                        var totmarks = Model.StoreAllData.Tables[0].Rows[i]["totmarks"].ToString();
+                                        var obtmarks = Model.StoreAllData.Tables[0].Rows[i]["obtmarks"].ToString();
+                                        var Result = Model.StoreAllData.Tables[0].Rows[i]["Result"].ToString();
+                                        //totmarks,obtmarks,Result
+                                        Count = Count + 1;
+                                        <tr class="tprint">
+                                            <td>
+                                                @Count
+                                            </td>
+                                            <td>
+                                                @stdid
+                                            </td>
+                                            @*<td>
+                                    @sec
+                                </td>*@
+                                            <td>
+                                                @ROLL
+                                            </td>
+                                            @*<td>
+                                    @FormName
+                                </td>*@
+                                            <td>
+                                                @RegNo
+                                            </td>
+                                            <td>
+                                                @FullName
+                                            </td>
+                                            <td>
+                                                @DOB
+                                            </td>
+                                            <td>
+                                                @Gender
+                                            </td>
+                                            <td>
+                                                @totmarks
+                                            </td>
+                                            <td>
+                                                @obtmarks
+                                            </td>
+                                            <td>
+                                                @Result
+                                            </td>
+
+                                            @*<td>
+                                    @AdmDate
+                                </td>
+                                <td>
+                                    @Fee
+                                </td>
+                                <td>
+                                    @Lot
+                                </td>*@
+                                            @*<td>
+                                    <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
+                                </td>*@
+                                        </tr>
+
+                                        @*if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                        Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {   @:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp = ViewBag.pagesize + 1;
+                                                <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@dp">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var dp = ViewBag.pagesize - 1;
+                                            <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=1"><<</a>
+                                            @Html.Raw("&nbsp;");
+                                            <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@dp">< Prev</a>
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp1 = ViewBag.pagesize + 1;
+                                                <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@dp1">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/School/Ninth_Result_Page?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }*@
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10">
+                                            @ViewBag.Message
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+
+                </td>
+            </tr>
+            <tr>
+                @if (ViewBag.Reportid == "RP")
+                    {
+                    <td colspan="2">
+                        This is Rough Report, Only for School Checking Purpose. Don't Send this report to PSEB Head Office.
+                    </td>
+                    }
+                    else
+                    {
+                    <td colspan="2">
+                        This Result Sheet is For School Record. Don't Send this report to PSEB Head Office.
+                    </td>
+                    }
+
+            </tr>
+            <tr>
+                <td style="text-align:left" colspan="2">Print Date: @DateTime.Now.ToString("dd/MM/yyyy")</td>
+            </tr>
+        </table>
+        }
+
+            </td>
+        </tr>
+    </table>
+                                }
+
+<script type="text/javascript">
+    function dee() {
+
+        if ($("#Selsec").val() == "") {
+
+            $("#reqsession").slideDown("slow");
+            return false;
+        }
+    }
+</script>

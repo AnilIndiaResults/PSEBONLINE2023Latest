@@ -1,0 +1,501 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Attendance Supervisory Staff";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<link rel="stylesheet" href="/Content/print-4PS.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+@using (Html.BeginForm("AttendanceSupervisoryStaff", "School", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row noprint">
+        <div class="col-md-12">
+            <h1>Supervisory Staff List</h1>
+            <!-- <h1>Online Portal For Submit Attendance of Supervisory Staff of Middle, Matric & Senior Secondary Exam</h1> -->
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                @*<div class="col-md-1">
+                    TotalCount&nbsp;
+                    <label>@ViewBag.TotalCount</label>
+                    </div>*@
+                <div class="col-md-6">
+                    Select Exam Centre Block
+                    @Html.DropDownList("ExamCent", new SelectList(ViewBag.MySchCode, "Value", "Text"), "---Select Exam Centre Block--", new { @class = "ddlCentcode" })
+                </div>
+                <div class="col-md-2">
+                    Select Class
+                    @{
+                        List<SelectListItem> SelectList = new List<SelectListItem>();
+                        SelectList.Add(new SelectListItem { Text = "--Select Class--", Value = "" });
+                        SelectList.Add(new SelectListItem { Text = "Middle Class", Value = "8" });
+                        SelectList.Add(new SelectListItem { Text = "Matriculation", Value = "2" });
+                        SelectList.Add(new SelectListItem { Text = "Senior Secondary", Value = "4" });
+                    }
+                    @Html.DropDownList("Class", SelectList, new { id = "Class" })
+                </div>
+                <div class="col-md-2">
+                    Select Exam Date
+                    @Html.TextBoxFor(m => m.IDATE, new
+                    {
+                    id = "txtadmisndate",
+                    @readonly = "readonly",
+                    @maxlength = "20",
+                    //onkeypress = "javascript: return false;",
+                    onpaste = "return false;",
+                    oncopy = "return false;",
+                    oncut = "return false;"
+                    })
+                </div>
+                <div class="col-md-2">
+                    &nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm();" title="Search Record" />
+                    @*<input type="submit" value="Present" name="cmd" onclick="return confirm('Are you sure to submit selected staff to be Present?');" title="Present Staff Data Submit" />
+                        <input type="submit" value="Absent" name="cmd" onclick="return confirm('Are you sure to submit selected staff to be not Present?');" title="Not Present Staff Data Submit" />*@
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12" align="right">
+                    &nbsp;<br />
+                    @*<input type="button" value="Import STAFF" onclick="location.href='@Url.Action("IndexStaffImport", "Webservice",new { CCODEID = encrypt.QueryStringModule.Encrypt(ViewBag.ClusterCode) })'">*@
+
+                    @*<input type="submit" value="Delete Staff" name="cmd" onclick="return confirm('Are you sure to Delete Staff Data from this centre?');" title="Delete Staff Data from this centre" />*@
+
+                    <input type="button" value="Import STAFF" onclick="location.href='@Url.Action("IndexStaffImport", "Webservice",new {  })'">
+                    <input type="submit" value="Present" name="cmd" onclick="return confirm('Are you sure to submit selected staff to be Present?');" title="Present Staff Data Submit" />
+                    <input type="submit" value="Not Present" name="cmd" onclick="return confirm('Are you sure to submit selected staff to be not Present?');" title="Not Present Staff Data Submit" />
+
+                    @*<input type="submit" value="Leave" name="cmd" onclick="return confirm('Are you sure to submit selected staff to be on Leave?');" title="Leave Staff Data Submit" />*@
+
+                    <input type="submit" value="Rough Print" name="cmd" onclick="return valForm2();" title="Rough Print Present Staff Data" />
+                    <input type="submit" value="Final Print" name="cmd" onclick="return valForm2();" title="Final Print Present Staff Data" />
+                    <input type="submit" value="Final Submit" name="cmd" onclick="return valForm3();" title="Final Submit Present Staff Data" />
+                    @*<input type="button" value="Print" dowload class="btn" onclick="window.print()" />*@
+                    @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+                    <input type="button" value="Back" onclick="location.href='@Url.Action("ExamCentre", "School")'">
+                </div>
+            </fieldset>
+            <!-- <ul><li style="color:red;font:16px;"><a href='/Upload/Circular/2018111.pdf' target="_blank" title="click here to open link">Step by step guide /Help to submit online attendance of Supervisory Staff in Exam</a> <img src="/images/new.gif" alt="new" /></li></ul> -->
+
+        </div>
+    </div>
+
+    <table border="1" style="width:100%;">
+        <tbody>
+            <tr class="active-tr">
+                <th>Sr</th>
+                <th>Exam Cent </th>
+                <th>Epun ID</th>
+                <th>Staff Details</th>
+                <th>DCode</th>
+                <th>Duty Type</th>
+                <th>Bank Details</th>
+                @*<th>AC no</th>
+                    <th>IFSC</th>
+                    <th>Bank AC Update</th>*@
+                <th>Class</th>
+                <th>Exam Date</th>
+                <th>Attendance</th>
+                <th>Final Submit Date</th>
+                <th>Select All &nbsp;<input type="checkbox" id="select_all" /> </th>
+            </tr>
+
+            @if (ViewBag.TotalCount > 0)
+            {
+                int d = 0;
+
+                for (int k = 0; k < Model.StoreAllData.Tables[0].Rows.Count; k++)
+                {
+                    var epunjabid = Model.StoreAllData.Tables[0].Rows[k]["epunjabid"].ToString();
+                    var dcode = Model.StoreAllData.Tables[0].Rows[k]["dcode"].ToString();
+
+                    var dutytype = Model.StoreAllData.Tables[0].Rows[k]["dutytype"].ToString();
+                    var cent = Model.StoreAllData.Tables[0].Rows[k]["cent"].ToString();
+                    var staffdetails = Model.StoreAllData.Tables[0].Rows[k]["staffdetails"].ToString();
+
+                    var bankname = Model.StoreAllData.Tables[0].Rows[k]["bank"].ToString();
+                    var acno = Model.StoreAllData.Tables[0].Rows[k]["acno"].ToString();
+                    var ifsc = Model.StoreAllData.Tables[0].Rows[k]["ifsc"].ToString();
+
+                    var cls = Model.StoreAllData.Tables[0].Rows[k]["class"].ToString();
+                    if (cls == "2")
+                    {
+                        cls = "Matric";
+                    }
+                    else if (cls == "4")
+                    {
+                        cls = "Sr.Sec.";
+                    }
+                    var examdate = Model.StoreAllData.Tables[0].Rows[k]["examdate"].ToString();
+                    var attendance = Model.StoreAllData.Tables[0].Rows[k]["attendance"].ToString();
+
+                    var IsFinal = Model.StoreAllData.Tables[0].Rows[k]["IsFinal"].ToString();
+                    var FinalDate = Model.StoreAllData.Tables[0].Rows[k]["FinalDate"].ToString();
+
+                    var ImpStatus = "Final Submitted";
+
+                    d = d + 1;
+                    <tr>
+                        <td align="center">@d</td>
+                        <td align="center">@cent</td>
+                        <td align="center">@epunjabid</td>
+                        <td>@staffdetails</td>
+                        <td>@dcode</td>
+                        <td>@dutytype</td>
+                        <td>
+                            Bank: @bankname <br />AC No.:  @acno <br />IFSC Code: @ifsc <br />
+                            @if (IsFinal == "1")
+                            {
+                                <button type="button" class="">LOCKED</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="" data-toggle="modal" data-target="#myModal1-@epunjabid">Update Bank Acount Details</button>
+                            }
+                        </td>
+                        @*<td></td>
+                            <td></td>
+                            <td>
+                            </td>*@
+                        <td>@cls</td>
+                        <td>@examdate</td>
+                        <td align="center">@attendance</td>
+                        <td>@FinalDate</td>
+                        <td align="center">
+                            @if (IsFinal == "1")
+                            {
+                                <span>@ImpStatus</span>
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="@dcode@epunjabid" value="@dcode@epunjabid" name="ChkStaffID" class="checkbox" />
+
+                            }
+
+                        </td>
+
+                    </tr>
+                }
+            }
+
+            else
+            {
+                <tr>
+                    <td colspan="6">@ViewBag.Message</td>
+
+                </tr>
+
+            }
+
+        </tbody>
+    </table>
+
+
+    if (Model != null)
+    {
+        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+        {
+            var epunjabid = Model.StoreAllData.Tables[0].Rows[i]["epunjabid"].ToString();
+            var dcode = Model.StoreAllData.Tables[0].Rows[i]["dcode"].ToString();
+            var dutytype = Model.StoreAllData.Tables[0].Rows[i]["dutytype"].ToString();
+            var cent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+            var staffdetails = Model.StoreAllData.Tables[0].Rows[i]["staffdetails"].ToString();
+            var bankname = Model.StoreAllData.Tables[0].Rows[i]["bank"].ToString();
+            var acno = Model.StoreAllData.Tables[0].Rows[i]["acno"].ToString();
+            var ifsc = Model.StoreAllData.Tables[0].Rows[i]["ifsc"].ToString();
+
+            // ViewBag.rslist = "1";
+            //totmarks,obtmarks,Result
+            //var IsMarksFilled = Model.StoreAllData.Tables[0].Rows[i]["IsMarksFilled"].ToString();
+            var Prev = "0";
+            var Next = "0";
+            if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count == 1)
+            {
+                Prev = "0";
+                Next = "0";
+            }
+            else if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count > 1)
+            {
+                Prev = "0";
+                Next = Model.StoreAllData.Tables[0].Rows[i + 1]["epunjabid"].ToString();
+            }
+            else if (i > 0 && i < Model.StoreAllData.Tables[0].Rows.Count - 1)
+            {
+                Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["epunjabid"].ToString();
+                Next = Model.StoreAllData.Tables[0].Rows[i + 1]["epunjabid"].ToString();
+            }
+            else if (i > 0 && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
+            {
+                Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["epunjabid"].ToString();
+                Next = "0";
+            }
+            int k = i + 1;
+            <div class="container">
+                <div class="modal fade" id="myModal1-@epunjabid" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                @*<h4 class="modal-title">Student Details Of Unique Id : @stdid</h4>*@
+                                <h4 class="modal-title">Staff Bank Details @*Of @Html.Raw("&nbsp;&nbsp;") : @staffdetails @Html.Raw("") @Html.Raw("&nbsp;&nbsp;")& @Html.Raw("&nbsp;&nbsp;") ePunjab ID No : @epunjabid*@ </h4>
+                            </div>
+                            <div class="modal-body">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="28%">Staff Details</td>
+                                        <td>@staffdetails, ePunjabId- @epunjabid@*@Html.Raw("")@epunjabid@Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")*@ </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Enter Bank AC No<span class="redc"> *</span></td>
+                                        <td><input type="password" id="acno-@epunjabid" name="acno" maxlength="20" class="obt" value="@acno" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Re-Entre Bank AC No<span class="redc"> *</span></td>
+                                        <td><input type="Text" id="acno2-@epunjabid" name="acno2" maxlength="20" class="obt" value="@acno" onfocusout="CalculatePercentFunction(@epunjabid)" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank Name (auto saved)</td>
+                                        <td><input type="Text" id="Bank-@epunjabid" name="bankName" disabled="disabled" maxlength="50" class="obt" value="@bankname" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>IFSC Code<span class="redc"> *</span></td>
+                                        <td><input type="Text" id="ifsc-@epunjabid" name="ifsc" maxlength="20" class="obt" value="@ifsc" onfocusout="ifscVal(@epunjabid)" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><input type="Text" id="ifscDTL-@epunjabid" name="ifsc" readonly="readonly" maxlength="500" class="obt" value="" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="StaffACupdate(@epunjabid,@Next,@Prev,@cent)" /></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <span class="lft">
+                                    <button type="button" class="" data-toggle="modal" data-target="#myModal1-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                                </span>
+                                <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                                @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        }
+    }
+
+}
+
+
+<script type="text/javascript">
+    function CalculatePercentFunction(k) {
+        var acno = $("#acno-" + k).val();
+        var acno2 = $("#acno2-" + k).val();
+        if (acno != acno2) {
+            //alert(comp);
+            $("#acno-" + k).val("");
+            $("#acno2-" + k).val("");
+            alert("Please check given Ac_No, Both should be match.");
+            $("#acno-" + k).focus();
+            return false;
+        }
+    }
+    function ifscVal(k) {
+        var ifsc = $("#ifsc-" + k).val();
+        //alert(ifsc);
+        if (ifsc == '' || ifsc == null) {
+            $("#ifscDTL-" + k).hide();
+            return false;
+        }
+        else {
+            $.post("/School/CheckifscVal", { "ifsc": ifsc },
+                function (data) {
+                    //alert(data);
+                    $("#ifscDTL-" + k).show();
+                    $("#ifscDTL-" + k).empty();
+                    $("#ifscDTL-" + k).val(data);
+                });
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    function StaffACupdate(k, nxt, prv, cent) {
+
+        var Bank = $("#Bank-" + k).val();
+        var acno = $("#acno-" + k).val();
+        var acno2 = $("#acno2-" + k).val();
+        var ifsc = $("#ifsc-" + k).val();
+        var ifscDTL = $("#ifscDTL-" + k).val();
+
+        if (parseInt(acno) != parseInt(acno2)) {
+            alert("Ac no. should Not be diffrent. ");
+            acno.focus();
+            return false;
+        }
+        if (ifsc.trim() == "" || ifscDTL == "" || ifscDTL.trimLeft().trimRight().length < 3) {
+            alert("Please enter correct IFSC Code. ");
+            $("#ifsc-" + k).focus();
+            return false;
+        }
+        else {
+            $.post("/School/UpdateBankAcStaff", { "bankname": Bank, "acno": acno, "ifsc": ifsc, "epunjabid": k, "cent": cent },
+                function (data) {
+                    $('#loading1-' + k).empty();
+                    if (data.status == "0" || data.status == "-1") {
+                        alert("Ac Alloted Failure, Please Try Again");
+                    }
+                    else if (data.status == "-2") {
+                        alert("Ac Greater than Zero !!");
+                    }
+                    else if (data.status == "-3") {
+                        alert("Please Fill All Ac");
+                    }
+                    else {
+                        alert("Ac Details Alloted Successfully of Staff : " + k);
+                        nxtDiv(nxt, k, prv);
+                    }
+                });
+        }
+
+        function storeTblValues() {
+            // alert('3');
+            var TableData = new Array();
+            $('' + tblname + ' tr').each(function (row, tr) {
+                TableData[row] = {
+                    //"SUB": $(tr).find('td:eq(0)').text()
+                    "SUB": $(tr).find('.chksub').val()
+                    , "OBTMARKS": $(tr).find('.chkclass').val()
+                    , "MINMARKS": $(tr).find('.chkmin').val()
+                    , "MAXMARKS": $(tr).find('.chkmax').val()
+                }
+            });
+            TableData.shift();  // first row will be empty - so remove
+            //alert(TableData);
+            return TableData;
+
+        }
+    }
+
+    function nxtDiv(nxt, crnt, prv) {
+        // var cid = '#myModal1-' + crnt
+        $('#myModal1-' + crnt).modal('hide');
+        if (nxt == "0" && prv == "0") { }
+        else if (nxt == "0" && prv != "0") {
+            $('#myModal1-' + prv).modal('show');
+        }
+        else if (prv == "0" && nxt != "0") {
+            $('#myModal1-' + nxt).modal('show');
+        }
+        else if (prv != "0" && nxt != "0") {
+            $('#myModal1-' + nxt).modal('show');
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+            $(document).ready(function () {
+                var dee = '30/04/2023'; @*'@ViewBag.admdate';*@
+                $("#txtadmisndate").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: dee,
+                    yearRange: '2023:' + (new Date().getFullYear())
+                });
+            });
+
+            function valForm() {
+                var schoolcode = document.getElementById("ExamCent").value;
+                if (schoolcode == "" || document.getElementById("ExamCent").value == null) {
+                    alert("Select Block");
+                    document.getElementById("ExamCent").focus();
+                    return false;
+                }
+                var Class = document.getElementById("Class").value;
+                if (Class == "" || document.getElementById("Class").value == null) {
+                    alert("Select Class");
+                    document.getElementById("Class").focus();
+                    return false;
+                }
+                var txtadmisndate = document.getElementById("txtadmisndate").value;
+                if (txtadmisndate == "" || document.getElementById("txtadmisndate").value == null) {
+                    alert("Select Exam date");
+                    document.getElementById("txtadmisndate").focus();
+                    return false;
+                }
+
+            }
+
+            function valForm2() {
+                var schoolcode = document.getElementById("ExamCent").value;
+                if (schoolcode == "" || document.getElementById("ExamCent").value == null) {
+                    alert("Select Block");
+                    document.getElementById("ExamCent").focus();
+                    return false;
+                }
+                var Class = document.getElementById("Class").value;
+                if (Class == "" || document.getElementById("Class").value == null) {
+                    alert("Select Class");
+                    document.getElementById("Class").focus();
+                    return false;
+                }
+            }
+
+            function valForm3() {
+                var schoolcode = document.getElementById("ExamCent").value;
+                var Class = document.getElementById("Class").value;
+                if (schoolcode == "" || document.getElementById("ExamCent").value == null) {
+                    alert("Select Block");
+                    document.getElementById("ExamCent").focus();
+                    return false;
+                }
+                else if (Class == "" || document.getElementById("Class").value == null) {
+                    alert("Select Class");
+                    document.getElementById("Class").focus();
+                    return false;
+                }
+                else if (confirm("Are you sure to Final submit staff attendance sheet for this selected Class? \n If Yes Click to OK otherwise CANCEL button!")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#select_all").change(function () {
+            //"select all" change
+            //alert("abc");
+            var status = this.checked; // "select all" checked status
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                this.checked = status; //change ".checkbox" checked status
+            });
+        });
+
+        //uncheck "select all", if one of the listed checkbox item is unchecked
+        $('.checkbox').change(function () { //".checkbox" change
+
+            //alert($(this).val());
+            if (this.checked == false) { //if this item is unchecked
+                $("#select_all")[0].checked = false; //change "select all" checked status to false
+            }
+        });
+
+    });
+</script>

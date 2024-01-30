@@ -1,0 +1,454 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/print.css" />
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/barcode.css" type="text/css" charset="utf-8" />
+<style type="text/css">
+        /*#content {
+        display: table;
+    }
+    #pageFooter {
+        display: table-footer-group;
+    }
+    #pageFooter:after {
+        counter-increment: page;
+        content: counter(page);
+    }*/
+        .breakhere {
+            page-break-after: always;
+        }
+
+        .border {
+            border: 1px solid #000;
+        }
+
+        .header_outer {
+            display: none;
+        }
+
+        .bs-docs-footer {
+            display: none;
+        }
+
+        body {
+            font-size: 11px;
+        }
+
+        .box {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            display: inline-block;
+        }
+
+        .brcode {
+            font-family: 'idautomationhc39mregular';
+            font-size: 8px;
+        }
+</style>
+<h1 class="noprint">
+    Correction Performa - Session @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+    else { Response.Redirect("~/Login"); }
+</h1>
+@using (Html.BeginForm("SchoolCorrectionPerformaFinalPrintSessionPS", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Print" class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>
+    </table>
+                <table width="100%" border="1">
+                    <thead style="border:0">
+                        <tr>
+                            <td colspan="8" style="border:0;">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="10%" style="text-align:center;vertical-align:top;padding-top:4px"><img src="~/Images/Slogo.jpg" /></td>
+                                        <td width="80%" style="font-size:22px;text-align:center;line-height:28px;">
+                                            Punjab School Education Board<br />
+                                            <span style="font-size:16px">Photo/Signature Correction Performa Session @Session["Session"].ToString()</span> (Final Print)<br />
+                                            <span style="font-size:13px">Final Submitted Date: @Html.DisplayFor(a => a.CorrectionFinalSubmitDt)</span> <span style="font-size:13px;padding:0 20px">Print Date: @DateTime.Now.ToString("dd/MM/yyyy")</span> <span style="font-size:13px">Page No.(For office use only)....</span><br />
+                                            @*<span style="font-size:13px;font-style:italic">Note : For Correction fee, contact with concern Branch.</span>
+        <br />*@
+                                           
+                                                    @*<div class="kdsfont" style="font-size:16px;line-height:17px;text-align:left;padding-bottom:6px">
+                    ÕÂØÚ¥¼Ù: ÆñÛÚª¤Ø ÓÖØªØ ÚÒó° ²ÌðÙ ¨ÏÒØ¥Û ²ØÒã¢ ÓëÄÙ ÂÛ É»ÂÛ ÇÛÓ ÓÉâÄ¼ ÆñÛÚª¤Ø ÓÖØªØ ÒóÐë× ¨ëÏè¨ÓÖÅ ÆñëÇØÏÌØ/ Final Print ÂÛ ¨ØÆÛ °èó¨ ¨ÏÅ ¦ÝÆÏâ¼ ÂóÓÛ ²ØÒã¬Û ¤¼ã Ú¥Õ ÇÛÓ ¨èÓÖÛ¤Ï, ÌÝóª ÂÇ¼Ï ¨ëÐ ²ÌðÙ ÕëÒã¬Û¢
+                </div>*@
+                                                </td>
+                                        <td width="10%" style="vertical-align:top">
+                                            @*&nbsp;<br />
+                                            Correction Final Date: @Html.DisplayFor(a => a.CorrectionFinalSubmitDt)
+                                            <br />
+                                            Page No.(for office use only)*@
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            @{
+                                                var classTypeHeader = Model.Correctiondatafinal.Tables[0].Rows[0]["Class"].ToString();
+
+                                                if (classTypeHeader == "Matriculation Regular" || classTypeHeader == "Matriculation Open" || classTypeHeader == "Sr.Secondary Regular" || classTypeHeader == "Sr.Secondary Open")
+                                                {/*10th12*/
+                                                    <div class="kdsfont" style="font-size:16px;line-height:17px;text-align:left;padding:6px;text-align:justify">
+                                                        @*Åë¶ : Ú¥Õ ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ Ðï¾Û×Âã ÂÓ¼ØÒã²ÖÙ ÓÌã¼ ÓÉâÄ¼ ÆñÛÚª¤Ø ÓÖØªØ
+                                                        (ÌÝóª ÂÇ¼Ï) Âã Óèó¶ ¨ëÐ ²ÌðÙ ¨ÏÒØÚ¥¤Ø ²ØÒã¢ ÉëÏ¸ ÂÛ¤Ù ÕÂØÚ¥¼Ù ÌÝ¼ØÉ¨ ÓëÄÙ ÂÛ
+                                                        É»ÂÛ ÇÛÓ (²ã¨Ï ÕëÒã) ÓÉâÄ¼ ÆñÛÚª¤Ø ÓÖØªØ ÒóÐë× ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ/Final Print
+                                                        ÂÛ ¨ØÆÛ °èó¨ ¨ÏÅ ¤¼ã ÂÓ¼ØÒã²Ö ÒèÏÛÇØ¥Û ¨ÏÅ ¦ÝÆÏâ¼ ÂóÓÛ ²ØÒã¬Û ¤¼ã Ú¥Õ ÇÛÓ
+                                                        ¨èÓÖÛ¤Ï, ÌÝóª ÂÇ¼Ï ¨ëÐ ²ÌðÙ ÕëÒã¬Û¢ Ó¨ÞÐ ÒóÐë× ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ÅÞâ
+                                                        ÂÓ¼ØÒã²ÖÙ Âã ¤ÄØÏ ¼ã ÆñÒØÅ/¤ÆñÒØÅ ¨ÏÅ ÂØ ¤ÚÄ¨ØÏ ÉëÏ¸ ¨ëÐ Õè¢ ²ã¨Ï ¨ë¥Û ¤ÆÐØ¥Û
+                                                        ¨Û¼Û ¬¥Û ÓëÄ ¬Ð¼ ÊÏÛ ¬¥Û ²Ù ÓëÄ ÅÕÛ× ¨ÏÒØ¦Ý»Ø °ØÕÝâÂã ¼Ù ¦ÝÓÅâÞ ÒèÏÛÇØ¥Û
+                                                        Õë» ¼ë× ÆÚÕÐÙ-ÆÚÕÐÙ ¨âÚÆ¦Þ¶Ï ÓèóÐ, ÌÝóª ÂÇ¼Ï ÚÒó° Ó¨ÞÐ Ðè¶ÏÕè¸ ¼ã ÚÉÅèÆó¼Ï
+                                                        Âã ¨ã (Ó¨ÞÐ ¨ë¸, Ðë¶ Åâ, Ó¶Þ¸è×¶ ¤Ø¥Û.¸Û., ¨ÝÏè¨ÓÖÅ ¤Ø¥Û.¸Û. ÐØ²ÌÛ ÂÏ² ¨Û¼Ø ²ØÒã) ÏóÂ
+                                                        ¨ÏÒØÚ¥¤Ø ²Ø Ó¨ÂØ Õè¢*@
+                                                        Åë¶ : Ú¥Õ ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ Ðï¾Û×Âã ÂÓ¼ØÒã²ÖÙ ÓÌã¼ ÓÉâÄ¼ ÆñÛÚª¤Ø ÓÖØªØ (ÌÝóª ÂÇ¼Ï) Âã Óèó¶ ¨ëÐ ²ÌðÙ ¨ÏÒØÚ¥¤Ø ²ØÒã¢  ÉëÏ¸ ÂÛ¤Ù ÕÂØÚ¥¼Ù ÌÝ¼ØÉ¨ ÓëÄÙ ÂÛ É»ÂÛ ÇÛÓ (²ã¨Ï ÕëÒã) ÓÉâÄ¼ ÆñÛÚª¤Ø ÓÖØªØ ÒóÐë× ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ/Final Print ÂÛ ¨ØÆÛ °èó¨ ¨ÏÅ ¤¼ã ÂÓ¼ØÒã²Ö ÒèÏÛÇØ¥Û ¨ÏÅ ¦ÝÆÏâ¼ ÂóÓÛ ²ØÒã¬Û ¤¼ã Ú¥Õ ÇÛÓ ¨èÓÖÛ¤Ï, ÌÝóª ÂÇ¼Ï ¨ëÐ ²ÌðÙ ÕëÒã¬Û¢ Ó¨ÞÐ ÒóÐë× ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ÅÞâ ÂÓ¼ØÒã²ÖÙ Âã ¤ÄØÏ ¼ã ÆñÒØÅ/¤ÆñÒØÅ ¨ÏÅ ÂØ ¤ÚÄ¨ØÏ ÉëÏ¸ ¨ëÐ Õè¢ ²ã¨Ï ¨ë¥Û ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ¬Ð¼ ÊÏÛ ¬¥Û ²Ù ÓëÄ ÅÕÛ× ¨ÏÒØ¦Ý»Ø °ØÕÝâÂã ¼Ù Ó¨ÞÐ ¤ØÆ»ã ÆóÄÏ ¼ã ÕÛ ÐØ¬Ú¥âÅ ¤Ø¥Û.¸Û. ÚÒó° Status of Correction ÚÐâ¨ ¤ÄÛÅ ¦ÝÓ ¨ÝÏè¨ÓÖÅ ÅÞâ Reject ¨Û¼Ø ²Ø Ó¨ÂØ Õè¢
+                                                     ਨੋਟ:- ਮਿਤੀ 22 OCT 2023 ਤੱਕ ਬਿਨ੍ਹਾਂ ਫੀਸ ਤੋਂ ਕੁਰੈਕਸ਼ਨ ਪ੍ਰੋਫਾਰਮੇ ਅਧੀਨ ਅਪਲਾਈ ਕੀਤੀਆਂ ਸੋਧਾਂ ਸਕੂਲ ਲਾਗਇੰਨ ਆਈ. ਡੀ. ਵਿੱਚ ਦਿੱਤੇ ਲਿੰਕ Verify Correction ਰਾਹੀਂ ਸਕੂਲ ਮੁੱਖੀ ਵੱਲੋਂ ਖੁਦ ਵੈਰੀਫਾਈ ਕੀਤੀਆਂ ਜਾਣਗੀਆਂ ਅਤੇ ਇਸ ਕੁਰੈਕਸ਼ਨ ਪ੍ਰੋਫਾਰਮੇ ਨੂੰ ਸਕੂਲ ਰਿਕਾਰਡ ਵਿੱਚ ਰੱਖਿਆ ਜਾਵੇ। ਬੋਰਡ ਵੱਲੋਂ ਲੋੜ ਪੈਣ ਤੇ ਇਸਦੀ ਮੰਗ ਕੀਤੀ ਜਾ ਸਕਦੀ ਹੈ। ਜੇਕਰ ਕੋਈ ਅਪਲਾਈ ਕੀਤੀ ਸੋਧ ਗਲਤ ਭਰੀ ਗਈ ਜਾਂ ਸੋਧ ਨਹੀਂ ਕਰਵਾਉਣਾ ਚਾਹੁੰਦੇ, ਤਾਂ ਸਕੂਲ ਵੱਲੋਂ ਆਪਣੇ ਪੱਧਰ ਤੇ ਹੀ ਲਾਗਇੰਨ ਆਈ. ਡੀ. ਵਿੱਚ ਦਿੱਤੇ ਲਿੰਕ Status of Correction ਅਧੀਨ ਉਸ ਕੁਰੈਕਸ਼ਨ ਨੂੰ Reject ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ।
+													</div>
+                                                }
+                                                if (classTypeHeader == "11th Class")
+                                                {
+                                        <div class="kdsfont" style="font-size:16px;line-height:17px;text-align:left;padding:6px;text-align:justify">
+                                            @*Åë¶ : Ú¥Õ ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ Ðï¾Û×Âã ÂÓ¼ØÒã²ÖÙ ÓÌã¼ Ú²ÐðØ ªã¼ÏÛ ÂÇ¼Ï ¨ëÐ ²ÌðÙ
+        ¨ÏÒØÚ¥¤Ø ²ØÒã¢ ÉëÏ¸ ÂÛ¤Ù ÕÂØÚ¥¼Ù ÌÝ¼ØÉ¨ ÓëÄÙ ÂÛ É»ÂÛ ÇÛÓ (²ã¨Ï ÕëÒã) ÓÉâÄ¼
+        Ú²ÐðØ ÌèÅã²Ï ÒóÐë× ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ/Final Print ÂÛ ¨ØÆÛ °èó¨ ¨ÏÅ ¤¼ã ÂÓ¼ØÒã²Ö
+        ÒèÏÛÇØ¥Û ¨ÏÅ ¦ÝÆÏâ¼ ÂóÓÛ ²ØÒã¬Û ¤¼ã Ú¥Õ ÇÛÓ ¨èÓÖÛ¤Ï, Ú²ÐØ ªã¼ÏÛ ÂÇ¼Ï ¨ëÐ ²ÌðÙ
+        ÕëÒã¬Û¢ Ó¨ÞÐ ÒóÐë× ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ÅÞâ ÂÓ¼ØÒã²ÖÙ Âã ¤ÄØÏ ¼ã
+        ÆñÒØÅ/¤ÆñÒØÅ ¨ÏÅ ÂØ ¤ÚÄ¨ØÏ Ú²ÐØ ÌèÅã²Ï ¨ëÐ ÕëÒã¬Ø¢ ²ã¨Ï ¨ë¥Û ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û
+        ÓëÄ ¬Ð¼ ÊÏÛ ¬¥Û ²Ù ÓëÄ ÅÕÛ× ¨ÏÒØ¦Ý»Ø °ØÕÝâÂã ¼Ù ¦ÝÓÅâÞ ÒèÏÛÇØ¥Û Õë» ¼ë×
+        ÆÚÕÐÙ-ÆÚÕÐÙ ¨âÚÆ¦Þ¶Ï ÓèóÐ, ÌÝóª ÂÇ¼Ï ÚÒó° Ó¨ÞÐ Ðè¶ÏÕè¸ ¼ã ÚÉÅèÆó¼Ï Âã ¨ã
+        (Ó¨ÞÐ ¨ë¸, Ðë¶ Åâ, Ó¶Þ¸è×¶ ¤Ø¥Û.¸Û., ¨ÝÏè¨ÓÖÅ ¤Ø¥Û.¸Û. ÐØ²ÌÛ ÂÏ² ¨Û¼Ø ²ØÒã) ÏóÂ
+        ¨ÏÒØÚ¥¤Ø ²Ø Ó¨ÂØ Õè¢*@
+                                            @*Åë¶ : Ú¥Õ ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ Ðï¾Û×Âã ÂÓ¼ØÒã²ÖÙ ÓÌã¼ Ú²ÐðØ ªã¼ÏÛ ÂÇ¼Ï ¨ëÐ ²ÌðÙ ¨ÏÒØÚ¥¤Ø ²ØÒã¢ ÉëÏ¸ ÂÛ¤Ù ÕÂØÚ¥¼Ù ÌÝ¼ØÉ¨ ÓëÄÙ ÂÛ É»ÂÛ ÇÛÓ (²ã¨Ï ÕëÒã) ÓÉâÄ¼ Ú²ÐðØ ÌèÅã²Ï ÒóÐë× ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ/Final Print ÂÛ ¨ØÆÛ °èó¨ ¨ÏÅ ¤¼ã ÂÓ¼ØÒã²Ö ÒèÏÛÇØ¥Û ¨ÏÅ ¦ÝÆÏâ¼ ÂóÓÛ ²ØÒã¬Û ¤¼ã Ú¥Õ ÇÛÓ ¨èÓÖÛ¤Ï, Ú²ÐØ ªã¼ÏÛ ÂÇ¼Ï ¨ëÐ ²ÌðÙ ÕëÒã¬Û¢ Ó¨ÞÐ ÒóÐë× ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ÅÞâ ÂÓ¼ØÒã²ÖÙ Âã ¤ÄØÏ ¼ã ÆñÒØÅ/¤ÆñÒØÅ ¨ÏÅ ÂØ ¤ÚÄ¨ØÏ Ú²ÐØ ÌèÅã²Ï ¨ëÐ ÕëÒã¬Ø¢ ²ã¨Ï ¨ë¥Û ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ¬Ð¼ ÊÏÛ ¬¥Û ²Ù ÓëÄ ÅÕÛ× ¨ÏÒØ¦Ý»Ø °ØÕÝâÂã ¼Ù ¦ÝÓÅâÞ ÒèÏÛÇØ¥Û Õë» ¼ë× ÆÚÕÐÙ-ÆÚÕÐÙ ¨âÚÆ¦Þ¶Ï ÓèóÐ, ÌÝóª ÂÇ¼Ï ÚÒó° Ó¨ÞÐ Ðè¶ÏÕè¸ ¼ã ÚÉÅèÆó¼Ï Âã ¨ã (Ó¨ÞÐ ¨ë¸, Ðë¶ Åâ, Ó¶Þ¸è×¶ ¤Ø¥Û.¸Û., ¨ÝÏè¨ÓÖÅ ¤Ø¥Û.¸Û. ÐØ²ÌÛ ÂÏ² ¨Û¼Ø ²ØÒã) ÏóÂ ¨ÏÒØÚ¥¤Ø ²Ø Ó¨ÂØ Õè¢*@
+                                            Åë¶ : ÚÌ¼Û 15-01-2020 ¼ó¨ ÚÉÅðÙ ÇÛÓ ¼ë× ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌã ¤ÄÛÅ ¤ÆÐØ¥Û ¨Û¼Û¤Ù ÓëÄÙ Ó¨ÞÐ ÐØ¬Ú¥âÅ ¤Ø¥Û. ¸Û. ÚÒó° ÚÂó¼ã ÚÐâ¨ Verify Correction ÏØÕÛ× Ó¨ÞÐ ÌÝóªÛ ÒóÐë× ªÝÂ ÒèÏÛÇØ¥Û ¨Û¼Û¤Ù ²Ø Ó¨ÂÛ¤Ù ÕÅ ¤¼ã Ú¥Ó ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌã ÅÞâ Ó¨ÞÐ ÚÏ¨ØÏ¸ ÚÒó° ÏóÚª¤Ø ²ØÒã, ÉëÏ¸ ÒóÐë× Ðë¾ Æè» ¼ã Ú¥ÓÂÛ Ìâ¬ ¨Û¼Û ²Ø Ó¨ÂÛ Õè¢ Ú¥Ó ÚÌ¼Û ¼ë× ÉØ¤Â Ú¥Õ ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ Ðï¾Û×Âã ÂÓ¼ØÒã²ÖÙ ÓÌã¼ Ú²ÐðØ ªã¼ÏÛ ÂÇ¼Ï ¨ëÐ ²ÌðÙ ¨ÏÒØÚ¥¤Ø ²ØÒã, ÉëÏ¸ ÂÛ¤Ù ÕÂØÚ¥¼Ù ÌÝ¼ØÉ¨ ÓëÄÙ ÂÛ É»ÂÛ ÇÛÓ ÓÉâÄ¼ Ú²ÐðØ ÌèÅã²Ï ÒóÐë× ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ/Final Print ÂÛ ¨ØÆÛ °èó¨ ¨ÏÅ ¤¼ã ÂÓ¼ØÒã²Ö ÒèÏÛÇØ¥Û ¨ÏÅ ¦ÝÆÏâ¼ ÂóÓÛ ²ØÒã¬Û ¤¼ã Ú¥Õ ÇÛÓ ¨èÓÖÛ¤Ï, Ú²ÐØ ªã¼ÏÛ ÂÇ¼Ï ¨ëÐ ²ÌðÙ ÕëÒã¬Û¢ ÚÅÏÄØÚÏ¼ ÚÌ¼Û ¼ë× ÉØ¤Â Ó¨ÞÐ ÒóÐë× ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ÅÞâ ÂÓ¼ØÒã²ÖÙ Âã ¤ÄØÏ ¼ã ÆñÒØÅ/¤ÆñÒØÅ ¨ÏÅ ÂØ ¤ÚÄ¨ØÏ Ú²ÐØ ÌèÅã²Ï ¨ëÐ ÕëÒã¬Ø¢ ²ã¨Ï ¨ë¥Û ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ¬Ð¼ ÊÏÛ ¬¥Û ²Ù ÓëÄ ÅÕÛ× ¨ÏÒØ¦Ý»Ø °ØÕÝâÂã ¼Ù Ó¨ÞÐ ¤ØÆ»ã ÆóÄÏ ¼ã ÕÛ ÐØ¬Ú¥âÅ ¤Ø¥Û.¸Û. ÚÒó° Status of Correction ÚÐâ¨ ¤ÄÛÅ ¦ÝÓ ¨ÝÏè¨ÓÖÅ ÅÞâ Reject ¨Û¼Ø ²Ø Ó¨ÂØ Õè¢
+                                         ਨੋਟ:- ਮਿਤੀ 22 OCT 2023 ਤੱਕ ਬਿਨ੍ਹਾਂ ਫੀਸ ਤੋਂ ਕੁਰੈਕਸ਼ਨ ਪ੍ਰੋਫਾਰਮੇ ਅਧੀਨ ਅਪਲਾਈ ਕੀਤੀਆਂ ਸੋਧਾਂ ਸਕੂਲ ਲਾਗਇੰਨ ਆਈ. ਡੀ. ਵਿੱਚ ਦਿੱਤੇ ਲਿੰਕ Verify Correction ਰਾਹੀਂ ਸਕੂਲ ਮੁੱਖੀ ਵੱਲੋਂ ਖੁਦ ਵੈਰੀਫਾਈ ਕੀਤੀਆਂ ਜਾਣਗੀਆਂ ਅਤੇ ਇਸ ਕੁਰੈਕਸ਼ਨ ਪ੍ਰੋਫਾਰਮੇ ਨੂੰ ਸਕੂਲ ਰਿਕਾਰਡ ਵਿੱਚ ਰੱਖਿਆ ਜਾਵੇ। ਬੋਰਡ ਵੱਲੋਂ ਲੋੜ ਪੈਣ ਤੇ ਇਸਦੀ ਮੰਗ ਕੀਤੀ ਜਾ ਸਕਦੀ ਹੈ। ਜੇਕਰ ਕੋਈ ਅਪਲਾਈ ਕੀਤੀ ਸੋਧ ਗਲਤ ਭਰੀ ਗਈ ਜਾਂ ਸੋਧ ਨਹੀਂ ਕਰਵਾਉਣਾ ਚਾਹੁੰਦੇ, ਤਾਂ ਸਕੂਲ ਵੱਲੋਂ ਆਪਣੇ ਪੱਧਰ ਤੇ ਹੀ ਲਾਗਇੰਨ ਆਈ. ਡੀ. ਵਿੱਚ ਦਿੱਤੇ ਲਿੰਕ Status of Correction ਅਧੀਨ ਉਸ ਕੁਰੈਕਸ਼ਨ ਨੂੰ Reject ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ।
+										</div>
+
+                                                }
+                                                if (classTypeHeader == "9th Class")
+                                                {
+                                                    <div class="kdsfont" style="font-size:16px;line-height:17px;text-align:left;padding:6px;text-align:justify">
+                                                        @*Åë¶ : Ú¥Õ ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ/ÂÓ¼ØÒã²Ö Ó¨ÞÐ ÚÏ¨ØÏ¸ ÚÕó¼ Ïóª ÚÐ¤Ø ²ØÒã¢ Ó¨ÞÐ
+        ÌÝóªÛ ÒóÐë× ÓëÄ ÂÓ¼ØÒã²ÖÙ Âã ¤ÄØÏ ¼ã ¨Û¼Û ²ØÒã, Ú¥ÕÅÙ ÓëÄÙ ÅÞâ ÒèÏÛÇØ¥Û ¨ÏÅ
+        ÂØ ¤ÚÄ¨ØÏ Ó¨ÞÐ ÌÝóªÛ ÅÞâ ÕÛ ÚÂó¼Ø Ú¬¤Ø Õè¢ ÉëÏ¸ ÒóÐë× ÚÅÏÄØÚÏ¼ ¨Û¼Û ÚÅÍ¼
+        ÚÌ¼Û ¼ó¨ Ó¨ÞÐ ÆèÅÐ ÏØÕÛ× ÅëÒÛ× ÓÖñã»Û ÂÛ ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ÅÞâ
+        ÒèÏÛÇØ¥Û/ÏóÂ ¨ÏÅ Ð¥Û ÚÐâ¨ ÚÂó¼Ø ²ØÒã¬Ø, Ú²Ó ÏØÕÛ× Ó¨ÞÐ ÌÝóªÛ ÒóÐë×
+        ÂÓ¼ØÒã²ÖÙ Âã ¤ÄØÏ ¼ã Íë¬ ÓëÄÙ ÒèÏÛÇØ¥Û ¤¼ã ÏóÂ ¨Û¼Û¤Ø ²Ø»¬Û¤Ø¢ Ú¥Ó ÓÉâÄÛ
+        ÉëÏ¸/Ú²ÐðØ ªã¼ÏÛ ÂÇ¼Ï ÚÒó° ¨ë¥Û ÚÏ¨ØÏ¸ ²ÌðÙ ¨ÏÒØ¦Ý» ÂÛ Ðë¾ð ÅÕÛ× Õè, Æñâ¼Þ ÉëÏ¸
+        ÒóÐë× Ðë¾ð Æè» ¼ã/°èÚ¨â¬ Ð¥Û Ú¨Óã ÒÛ ÓÌãð× ÓëÄ ¨Û¼ã ÒãÏÚÒ¤Ù Âã ÚÏ¨ØÏ¸ ÂÛ Ìâ¬
+        ¨Û¼Û ²Ø Ó¨ÂÛ Õè¢*@
+                                                        Åë¶ : Ú¥Õ ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ Ðï¾Û×Âã ÂÓ¼ØÒã²ÖÙ ÓÌã¼ Ú²ÐðØ ªã¼ÏÛ ÂÇ¼Ï ¨ëÐ ²ÌðÙ ¨ÏÒØÚ¥¤Ø ²ØÒã¢ ÉëÏ¸ ÂÛ¤Ù ÕÂØÚ¥¼Ù ÌÝ¼ØÉ¨ ÓëÄÙ ÂÛ É»ÂÛ ÇÛÓ (²ã¨Ï ÕëÒã) ÓÉâÄ¼ Ú²ÐðØ ÌèÅã²Ï ÒóÐë× ¨ÝÏè¨ÓÖÅ ÆñëÇØÏÌØ/Final Print ÂÛ ¨ØÆÛ °èó¨ ¨ÏÅ ¤¼ã ÂÓ¼ØÒã²Ö ÒèÏÛÇØ¥Û ¨ÏÅ ¦ÝÆÏâ¼ ÂóÓÛ ²ØÒã¬Û ¤¼ã Ú¥Õ ÇÛÓ ¨èÓÖÛ¤Ï, Ú²ÐØ ªã¼ÏÛ ÂÇ¼Ï ¨ëÐ ²ÌðÙ ÕëÒã¬Û¢ Ó¨ÞÐ ÒóÐë× ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ÅÞâ ÂÓ¼ØÒã²ÖÙ Âã ¤ÄØÏ ¼ã ÆñÒØÅ/¤ÆñÒØÅ ¨ÏÅ ÂØ ¤ÚÄ¨ØÏ Ú²ÐØ ÌèÅã²Ï ¨ëÐ ÕëÒã¬Ø¢ ²ã¨Ï ¨ë¥Û ¤ÆÐØ¥Û ¨Û¼Û ¬¥Û ÓëÄ ¬Ð¼ ÊÏÛ ¬¥Û ²Ù ÓëÄ ÅÕÛ× ¨ÏÒØ¦Ý»Ø °ØÕÝâÂã ¼Ù ¦ÝÓÅâÞ ÒèÏÛÇØ¥Û Õë» ¼ë× ÆÚÕÐÙ-ÆÚÕÐÙ ¨âÚÆ¦Þ¶Ï ÓèóÐ, ÌÝóª ÂÇ¼Ï ÚÒó° Ó¨ÞÐ Ðè¶ÏÕè¸ ¼ã ÚÉÅèÆó¼Ï Âã ¨ã (Ó¨ÞÐ ¨ë¸, Ðë¶ Åâ, Ó¶Þ¸è×¶ ¤Ø¥Û.¸Û., ¨ÝÏè¨ÓÖÅ ¤Ø¥Û.¸Û. ÐØ²ÌÛ ÂÏ² ¨Û¼Ø ²ØÒã) ÏóÂ ¨ÏÒØÚ¥¤Ø ²Ø Ó¨ÂØ Õè¢
+                                                     ਨੋਟ:- ਮਿਤੀ 22 OCT 2023 ਤੱਕ ਬਿਨ੍ਹਾਂ ਫੀਸ ਤੋਂ ਕੁਰੈਕਸ਼ਨ ਪ੍ਰੋਫਾਰਮੇ ਅਧੀਨ ਅਪਲਾਈ ਕੀਤੀਆਂ ਸੋਧਾਂ ਸਕੂਲ ਲਾਗਇੰਨ ਆਈ. ਡੀ. ਵਿੱਚ ਦਿੱਤੇ ਲਿੰਕ Verify Correction ਰਾਹੀਂ ਸਕੂਲ ਮੁੱਖੀ ਵੱਲੋਂ ਖੁਦ ਵੈਰੀਫਾਈ ਕੀਤੀਆਂ ਜਾਣਗੀਆਂ ਅਤੇ ਇਸ ਕੁਰੈਕਸ਼ਨ ਪ੍ਰੋਫਾਰਮੇ ਨੂੰ ਸਕੂਲ ਰਿਕਾਰਡ ਵਿੱਚ ਰੱਖਿਆ ਜਾਵੇ। ਬੋਰਡ ਵੱਲੋਂ ਲੋੜ ਪੈਣ ਤੇ ਇਸਦੀ ਮੰਗ ਕੀਤੀ ਜਾ ਸਕਦੀ ਹੈ। ਜੇਕਰ ਕੋਈ ਅਪਲਾਈ ਕੀਤੀ ਸੋਧ ਗਲਤ ਭਰੀ ਗਈ ਜਾਂ ਸੋਧ ਨਹੀਂ ਕਰਵਾਉਣਾ ਚਾਹੁੰਦੇ, ਤਾਂ ਸਕੂਲ ਵੱਲੋਂ ਆਪਣੇ ਪੱਧਰ ਤੇ ਹੀ ਲਾਗਇੰਨ ਆਈ. ਡੀ. ਵਿੱਚ ਦਿੱਤੇ ਲਿੰਕ Status of Correction ਅਧੀਨ ਉਸ ਕੁਰੈਕਸ਼ਨ ਨੂੰ Reject ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ।
+													</div>
+
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table width="100%" style="border-top:1px solid #000;border-bottom:1px solid #000">
+                                    <tr>
+                                        <td colspan="4" style="text-align:left;font-size:16px;vertical-align:top;line-height:28px">
+                                            &nbsp;Class :&nbsp;@Html.DisplayFor(a => a.Class)
+                                        </td>
+                                        <td style="height:40px;vertical-align:middle;text-align:center" class="brcode">
+                                            *@Html.DisplayFor(a => a.CorrectionLot)*
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="18%">
+                                            &nbsp;School Code :&nbsp;@Html.DisplayFor(a => a.SCHL)
+                                        </td>
+                                        <td width="16%">District Code :&nbsp;@Html.DisplayFor(a => a.DIST)</td>
+                                        @{
+                                            if (ViewBag.TotalCountaddedRecord > 0)
+                                            {
+
+                                                var classType = Model.Correctiondatafinal.Tables[0].Rows[0]["Class"].ToString();
+                                                var CorrectionBranch = "";
+                                                if (classType == "Matriculation Regular" || classType == "Matriculation Open" || classType == "9th Class")
+                                                { CorrectionBranch = "Examination Matriculation"; }
+                                                if (classType == "Sr.Secondary Regular" || classType == "Sr.Secondary Open" || classType == "11th Class")
+                                                { CorrectionBranch = "Examination Senior Secondary"; }
+
+
+                                                //for (int i = 0; i < Model.Correctiondatafinal.Tables[0].Rows.Count; i++)
+                                                //{
+                                                // var classType = Model.Correctiondatafinal.Tables[0].Rows[0]["Class"].ToString();
+                                                if (classType == "Matriculation Regular" || classType == "9th Class")
+                                                {
+                                                    //var CorrectionBranch = Model.Correctiondatafinal.Tables[0].Rows[0]["MSET"].ToString();
+                                                    var CorrectionSet = Model.Correctiondatafinal.Tables[0].Rows[0]["MSET"].ToString();
+                                                    if (CorrectionBranch != "")
+                                                    {
+                                                        var fChar = CorrectionBranch.Substring(0, 1);
+                                                        switch (fChar)
+                                                        {
+                                                            case "A": CorrectionBranch = "01"; break;
+                                                            case "B": CorrectionBranch = "02"; break;
+                                                            case "C": CorrectionBranch = "03"; break;
+                                                        }
+                                                    }
+
+                                                    <td width="34%">
+                                                        @if (classType == "9th Class" || classType == "11th Class")
+                                                        {
+                                                            <span>Branch : PSEB District Sub Office</span>
+                                                        }
+                                                        else {<span>Branch : Exam - @CorrectionBranch</span>}
+
+                                                    </td>
+                                                    <td width="12%">
+                                                        @if (classType == "9th Class" || classType == "11th Class")
+                                                        {
+
+                                                        }
+                                                        else{<span>SET : @CorrectionSet</span>}
+                                                    </td>
+                                                }
+                                                if (classType == "Matriculation Open")
+                                                {
+                                                    //var CorrectionBranch = Model.Correctiondatafinal.Tables[0].Rows[0]["MOSET"].ToString();
+                                                    var CorrectionSet = Model.Correctiondatafinal.Tables[0].Rows[0]["MOSET"].ToString();
+                                                    if (CorrectionBranch != "")
+                                                    {
+                                                        var fChar = CorrectionBranch.Substring(0, 1);
+                                                        switch (fChar)
+                                                        {
+                                                            case "A": CorrectionBranch = "01"; break;
+                                                            case "B": CorrectionBranch = "02"; break;
+                                                            case "C": CorrectionBranch = "03"; break;
+                                                        }
+                                                    }
+                                                    <td width="34%">Branch : @CorrectionBranch</td>
+                                                    <td width="14%">SET : @CorrectionSet</td>
+                                                }
+                                                if (classType == "Sr.Secondary Regular" || classType == "11th Class")
+                                                {
+                                                    //var CorrectionBranch = Model.Correctiondatafinal.Tables[0].Rows[0]["SSET"].ToString();
+                                                    var CorrectionSet = Model.Correctiondatafinal.Tables[0].Rows[0]["SSET"].ToString();
+                                                    if (CorrectionBranch != "")
+                                                    {
+                                                        var fChar = CorrectionBranch.Substring(0, 1);
+                                                        switch (fChar)
+                                                        {
+                                                            case "A": CorrectionBranch = "01"; break;
+                                                            case "B": CorrectionBranch = "02"; break;
+                                                            case "C": CorrectionBranch = "03"; break;
+                                                        }
+                                                    }
+                                                    <td width="34%">Branch : @CorrectionBranch</td>
+                                                    <td width="14%">SET : @CorrectionSet</td>
+                                                }
+                                                if (classType == "Sr.Secondary Open")
+                                                {
+                                                    //var CorrectionBranch = Model.Correctiondatafinal.Tables[0].Rows[0]["SOSET"].ToString();
+                                                    var CorrectionSet = Model.Correctiondatafinal.Tables[0].Rows[0]["SOSET"].ToString();
+                                                    if (CorrectionBranch != "")
+                                                    {
+                                                        var fChar = CorrectionBranch.Substring(0, 1);
+                                                        switch (fChar)
+                                                        {
+                                                            case "A": CorrectionBranch = "01"; break;
+                                                            case "B": CorrectionBranch = "02"; break;
+                                                            case "C": CorrectionBranch = "03"; break;
+                                                        }
+                                                    }
+                                                    <td width="34%">Branch : @CorrectionBranch</td>
+                                                    <td width="14%">SET : @CorrectionSet</td>
+                                                }
+                                                //}
+                                            }
+                                        }
+                                        @*<td width="20%">Branch :</td>
+        <td width="14%">SET :</td>*@
+                                        <td width="20%">LOT No. :&nbsp;@Html.DisplayFor(a => a.CorrectionLot)</td>
+
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="5">
+                                            &nbsp;School Name :&nbsp;@Html.DisplayFor(a => a.schlCorNameE)
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5">
+                                            &nbsp;Contact Details :&nbsp;@Html.DisplayFor(a => a.schlCorConDetails)
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="5" style="height:10px"></td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="color:#fff;background-color:#000;text-align:left">
+                            <td width="5%">&nbsp;Sr.No</td>
+                            <td width="11%">&nbsp;Student ID</td>
+                            <td width="11%">&nbsp;Correction ID</td>
+                            @*<td width="15%">&nbsp;Class</td>*@
+                            <td width="13%">&nbsp;Correction Type</td>
+                            <td width="25%">&nbsp;Before Correction</td>
+                            <td width="25%">&nbsp;After Correction</td>
+                            <td width="10%">&nbsp;For Office<br />&nbsp;Use Only</td>
+                            @*<td width="10%">&nbsp;CRC</td>*@
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCountaddedRecord > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                int NextPage = 1;
+                                //int PageNo = 0;
+                                for (int i = 0; i < Model.Correctiondatafinal.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var CorrectionId = Model.Correctiondatafinal.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                    var stdid = Model.Correctiondatafinal.Tables[0].Rows[i]["std_id"].ToString();
+                                    //var Class = Model.Correctiondatafinal.Tables[0].Rows[i]["Class"].ToString();
+                                    var CorrectionType = Model.Correctiondatafinal.Tables[0].Rows[i]["CorrectionFieldDisplayName"].ToString();
+                                    var cls = Model.Correctiondatafinal.Tables[0].Rows[i]["Class"].ToString();
+                                    var AWS_URL = System.Configuration.ConfigurationManager.AppSettings["AWSURL"].ToString();
+                                    var OldValue = "";
+                                    if (cls == "Matriculation Open" || cls == "Sr.Secondary Open")
+                                    {
+                                        OldValue = AWS_URL + Model.Correctiondatafinal.Tables[0].Rows[i]["OldValue"].ToString();
+                                    }
+                                    else
+                                    {
+                                        OldValue = AWS_URL + Model.Correctiondatafinal.Tables[0].Rows[i]["OldValue"].ToString();
+                                    }
+
+
+                                    var NewValue = "https://psebdata.s3.ap-south-1.amazonaws.com/" +  Model.Correctiondatafinal.Tables[0].Rows[i]["NewValue"].ToString();
+                                    var Lot = Model.Correctiondatafinal.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                                    var Remark = Model.Correctiondatafinal.Tables[0].Rows[i]["Remark"].ToString();
+                                    var OldSubjlist = Model.Correctiondatafinal.Tables[0].Rows[i]["OlDsubjectList"].ToString();
+                                    var NewSubjectList = Model.Correctiondatafinal.Tables[0].Rows[i]["NewSubjectList"].ToString();
+                                    //var CRC = Model.Correctiondatafinal.Tables[0].Rows[i]["CRC"].ToString();
+                                    Count = Count + 1;
+                                    NextPage = NextPage + 1;
+                                    <tr>
+                                        <td>
+                                            &nbsp;@Count
+                                        </td>
+                                        <td>
+                                            &nbsp;@stdid
+                                        </td>
+                                        <td>
+                                            &nbsp;@CorrectionId
+                                        </td>
+                                        @*<td>
+                            &nbsp;@Class
+                        </td>*@
+                                        <td>
+                                            &nbsp;@CorrectionType
+                                        </td>
+                                        <td><div class="kdsfont" style="padding:2px"><img src="@OldValue" class="" style="max-width:25%" alt="Photo" id="imgPhotoO" /></div>
+                                        </td>
+                                        <td><div class="kdsfont" style="padding:2px"><img src="@NewValue" class="" style="max-width:25%" alt="Photo" id="imgPhotoN" /></div>
+                                        </td>
+                                        <td style="text-align:left">&nbsp;Accept <div class="box"></div><br />&nbsp;Reject <div class="box"></div>	@Remark
+                                        </td>
+                                        @if (OldSubjlist != "")
+                                        {
+                                        <tr>
+                                            <td colspan="2">Old Subject List</td>
+                                            <td colspan="5">&nbsp;@OldSubjlist</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">New Subject List</td>
+                                            <td colspan="5">&nbsp;@NewSubjectList</td>
+                                        </tr>}
+
+                                        </tr>
+                                        if (NextPage == 21)
+                                        {
+                                            //PageNo = PageNo + 1;
+                                            @*<tr class="breakhere text-center"><td colspan="7">@PageNo</td></tr>*@
+                                            <tr class="breakhere"><td></td></tr>
+                                            NextPage = 1;
+
+                                        }
+                                    }
+                                }
+                        }
+
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="8" style="border:0;padding-top:40px">
+                                <table width="100%" border="0">
+                                    @*<tr>
+            <td style="padding:10px 0;font-weight:normal" colspan="3">
+                <div style="text-align:left;padding:3px">
+                    &nbsp;Important Note<br />
+                    &nbsp;*<b>R</b> - Regular Subject, <b>G</b> - Grading Subject, <b>A</b> - Additional Subject, <b>C</b> - Credit Carry Subject (CRC)
+                </div>
+            </td>
+        </tr>*@
+                                    <tr>
+                                        <td style="padding:10px 0" class="kdsfont" colspan="3">
+                                            <div style="text-align:left;padding:3px">
+                                                ¼ÓÂÛ¨ ¨Û¼Ø ²ÙÂØ Õè Ú¨ ¦Ý¨¼ ÂÏ² ÆñÛÚª¤ØÏÁÛ¤Ù
+                                                ÂÛ ¦ÝÆÏë¨¼ ¼ë× Ú¥ÐØÒÙ Ú¨Óã Ú¨ÓÌ ÂÛ ÕëÏ
+                                                ÓëÄ ÉØ¨Û ÅÕÜ Õè ¤¼ã Ú¥Õ ÒãÏÒã ÂØªÐØ ªØÏ²
+                                                ÏÚ²Ó¶Ï ÌÝ¼ØÉ¨ ÓÕÜ ÕÅ¢
+												
+@*<br><span style="font-size:12px" class="kdsfont">NOTE : ਇਹ ਸੋਧ ਸਲਿੱਪ ਸਮੇਤ ਲੋੜੀਂਦੇ ਦਸਤਾਵੇਜ ਬੋਰਡ ਦੇ ਮੁੱਖ ਦਫਤਰ ਬਣਦੀ ਫੀਸ ਸਮੇਤ ਜਮਾਂ ਕਰਵਾਏ ਜਾਣ ।</span>*@
+                                            </div>
+                                        </td>
+                                    </tr>
+									
+                                    <tr>
+                                        <td style="text-align:right" colspan="3">Signature of School Head (With Stamp)&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:center" colspan="3"><u>For Office Use Only (Checked &amp; verified By)</u></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="33%">&nbsp;No of Correction Given by School :@ViewBag.TotalCountaddedRecord</td>
+                                        <td width="34%"></td>
+                                        <td width="33%">&nbsp;No of Correction Approved by Set :</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;Receipt No. :</td>
+                                        <td>&nbsp;Date :</td>
+                                        <td>&nbsp;Amount :</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;Senior Assistant/Clerk</td>
+                                        <td></td>
+                                        <td style="text-align:right">Superintendent&nbsp;</td>
+                                    </tr>
+
+                                    <tr class="text-center">
+                                        <td colspan="3">
+                                            <div id="content">
+                                                <div id="pageFooter"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </tfoot>
+
+                </table>
+                            }

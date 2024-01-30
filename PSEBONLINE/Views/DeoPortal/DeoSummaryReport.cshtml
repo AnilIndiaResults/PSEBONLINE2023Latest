@@ -1,0 +1,352 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/print.css" />
+<style type="text/css">
+    .header_outer {
+        display: none;
+    }
+
+    .bs-docs-footer {
+        display: none;
+    }
+
+    body {
+        font-size: 9px;
+    }
+
+    td {
+        padding: 0 7px;
+    }
+</style>
+@* <h1>Centre List Report</h1><p>
+        Welcome: @if (Session["NAME"] != null)
+        {@Session["NAME"].ToString()}
+        else { Response.Redirect("~/DeoPortal/Index"); }
+    </p>*@
+
+@using (Html.BeginForm("DeoSummaryReport", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Click Here to Print" dowload class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" border="1">
+        <thead style="border:0">
+            <tr>
+                <td colspan="20" style="border:0;text-align:center;padding:15px 0 5px 0">
+                    <span style="font-size:32px">Punjab School Education Board</span><br />
+                                                                                     <span style="font-size:18px">District wise Examination Summary Report for @Session["DeoSessionMonthYear"].ToString()</span>
+                    <br /><span style="font-size:16px">Date: @ViewBag.Date</span>
+</td>
+            </tr>
+            <tr>
+                <td colspan="14" style="text-align:left;border:0">
+                    @*District Name: (@Session["Dist"].ToString()) @if (Session["NAME"] != null)
+                    {
+
+                        @Session["DISTNM"].ToString();
+                    }
+                    else { Response.Redirect("~/DeoPortal/Index"); }*@
+                   
+                </td>
+              
+                <td colspan="6" style="text-align:right;border:0"></td>
+              </tr>
+            <tr>
+                <td colspan="20" style="padding-bottom:4px">
+                    <table width="100%" border="1">
+                        <tr>
+                            <td width="5%">dist</td><td width="2%">:</td><td width="16%">District Code</td>
+                            <td width="5%">rdspdt</td><td width="2%">:</td><td width="20%">Required Deputy Superintendent</td>
+                            <td width="5%">ucent</td><td width="2%">:</td><td width="20%">Centre Added In Block (Final Submited)</td>
+                            <td width="5%">rdcv</td><td width="2%">:</td><td width="20%">Required Deputy Controller(Vigilance)</td>
+                        </tr>
+                        <tr>
+                            <td>cent</td><td width="2%">:</td><td>Count of Centres</td>
+                            <td>rivg</td><td width="2%">:</td><td>Required Invigilator</td>
+                            <td>fblck</td><td width="2%">:</td><td>Count of Block (Final Submited)</td>
+                            <td>fdcv</td><td width="2%">:</td><td>Deputy Controller(Vigilance) (Final Submited)</td>                            
+                        </tr>
+                        <tr>
+                            <td>ucent</td><td width="2%">:</td><td>Centre Added In Block	</td>
+                            <td> spdt</td><td width="2%">:</td><td>Superintendent</td>
+                            <td>fspdt</td><td width="2%">:</td><td>Superintendent (Final Submited)</td>
+                            <td>rflys</td><td width="2%">:</td><td>Required Flying Squid</td>                           
+                        </tr>
+                        <tr>
+                            <td>blck</td><td width="2%">:</td><td>Count of Block 	</td>
+                            <td> dspdt</td><td width="2%">:</td><td>Deputy Superintendent	</td>
+                            <td>fdspd</td><td width="2%">:</td><td>Deputy Superintendent (Final Submited)</td>
+                            <td>fflys</td><td width="2%">:</td><td>Flying Squid (Final Submited)</td>
+                        </tr>
+                        <tr>
+                            <td>rspdt</td><td width="2%">:</td><td>Required Superintendent	</td>
+                            <td>ivg</td><td width="2%">:</td><td>Invigilator	</td>
+                            <td>fivg</td><td width="2%">:</td><td>Invigilator (Final Submited)</td>
+                            <td>robsr</td><td width="2%">:</td><td>Required Observer</td>                            
+                        </tr>
+                        <tr>
+                            <td></td><td width="2%">:</td><td></td>                            
+                            <td></td><td width="2%">:</td><td></td>
+                            <td></td><td width="2%">:</td><td></td>
+                            <td>fobsr</td><td width="2%">:</td><td>Observer (Final Submited)</td>
+                        </tr>
+
+                    </table>                   
+
+</td>
+
+            </tr>
+           
+            <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                <th width="5%">dist</th>
+                <th width="11%">District</th>
+                <th width="15%">DEO Name</th>
+                <th width="8%">Mobile</th>
+                <th width="8%">Phone</th>
+                <th width="10%">Email ID</th>
+                
+                <th width="3%">cent</th>
+                <th width="3%">ucent</th>
+                <th width="3%">blck</th>
+                @*REQUIRED              SELCTED             FINAL SUBMITED
+                cent	ucent	clst	,rspdt	rObsr	rdcv,	spdt	Obsr dcv,	fucent	fclst	fspdt	fObsr	fdcv*@
+
+                <th width="3%">rspdt</th>
+                <th width="3%">robsr</th>            
+                <th width="3%">rdcv</th>    
+
+                <th width="3%">spdt</th>
+                <th width="3%">obsr</th>
+                <th width="3%">dcv</th>    
+                                
+                <th width="3%">fucent</th>
+                <th width="3%">fblck</th>
+                <th width="3%">fspdt</th>
+                <th width="3%">fobsr</th>                
+                <th width="3%">fdcv</th>
+                             
+            </tr>
+        </thead>
+        <tbody>
+
+    @{
+        if (ViewBag.TotalCount > 0)
+        {
+            int TotCent = 0, TotUcent = 0, Totclst = 0, Totrspdt = 0, Totrdspdt = 0;
+            int Totrivg = 0, Totspdt = 0, Totdspdt = 0, Totivg = 0;
+            int Totfucent = 0, Totfclst = 0, Totfspdt = 0;
+            int Totfdspdt = 0, Totfivg = 0;
+
+            int d = 0;
+            int Count = 0;
+            if (ViewBag.pagesize == 1)
+            {
+                Count = 0;
+            }
+            //dist	District	DEO_Name	Mobile	PhoneNo	EmailID	cent	ucent	clst	rspdt	rdspdt	rivg	spdt	dspdt	ivg	fucent	fclst	fspdt	fdspdt	fivg
+            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+            {
+                d = d + 1;
+                var dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                var District = Model.StoreAllData.Tables[0].Rows[i]["District"].ToString();
+                var DEO_Name = Model.StoreAllData.Tables[0].Rows[i]["DEO_Name"].ToString();
+                var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                var PhoneNo = Model.StoreAllData.Tables[0].Rows[i]["PhoneNo"].ToString();
+                var EmailID = Model.StoreAllData.Tables[0].Rows[i]["EmailID"].ToString();
+
+                var cent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                var ucent = Model.StoreAllData.Tables[0].Rows[i]["ucent"].ToString();
+                var clst = Model.StoreAllData.Tables[0].Rows[i]["clst"].ToString();
+
+                var rspdt = Model.StoreAllData.Tables[0].Rows[i]["rspdt"].ToString();
+                var robsr = Model.StoreAllData.Tables[0].Rows[i]["robsr"].ToString();
+                var rdcv = Model.StoreAllData.Tables[0].Rows[i]["rdcv"].ToString();
+
+           
+                var spdt = Model.StoreAllData.Tables[0].Rows[i]["spdt"].ToString();
+                var obsr = Model.StoreAllData.Tables[0].Rows[i]["obsr"].ToString();
+                var dcv = Model.StoreAllData.Tables[0].Rows[i]["dcv"].ToString();
+
+                var fucent = Model.StoreAllData.Tables[0].Rows[i]["fucent"].ToString();
+                var fclst = Model.StoreAllData.Tables[0].Rows[i]["fclst"].ToString();
+                var fspdt = Model.StoreAllData.Tables[0].Rows[i]["fspdt"].ToString();
+                var fobsr = Model.StoreAllData.Tables[0].Rows[i]["fobsr"].ToString();
+                var fdcv = Model.StoreAllData.Tables[0].Rows[i]["fdcv"].ToString();
+
+                TotCent = TotCent + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString());
+                TotUcent = TotUcent + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["ucent"].ToString());
+                Totclst = Totclst + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["clst"].ToString());
+                Totrspdt = Totrspdt + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["rspdt"].ToString());
+
+                Totrdspdt = Totrdspdt + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["rdspdt"].ToString());
+                //Totrivg   = Totrivg + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["rivg"].ToString());
+                if (Model.StoreAllData.Tables[0].Rows[i]["rivg"].ToString() == "") { Totrivg = 0 + Totrivg; }
+                else { Totrivg = Totrivg + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["rivg"].ToString()); }
+                Totspdt = Totspdt + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["spdt"].ToString());
+                Totdspdt = Totdspdt + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["dspdt"].ToString());
+                Totivg = Totivg + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["ivg"].ToString());
+                Totfucent = Totfucent + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["fucent"].ToString());
+                Totfclst = Totfclst + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["fclst"].ToString());
+                Totfspdt = Totfspdt + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["fspdt"].ToString());
+                Totfdspdt = Totfdspdt + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["fdspdt"].ToString());
+                Totfivg = Totfivg + Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["fivg"].ToString());
+                
+                Count = Count + 1;
+                        <tr>
+                            <td>@dist</td>
+                            <td>@District</td>
+                            <td>@DEO_Name</td>
+                            <td>@Mobile</td>
+                            <td>@PhoneNo</td>
+                            <td>@EmailID</td>
+                            
+                            <td>@cent</td>                           
+                            <td>@ucent</td>
+                            <td>@clst</td>
+                            
+                            <td>@rspdt</td>
+                            <td>@robsr</td>
+                            <td>@rdcv</td>
+
+                            <td>@spdt</td>
+                            <td>@obsr</td>
+                            <td>@dcv</td>
+                                                        
+                            <td>@fucent</td>
+                            <td>@fclst</td>
+                            <td>@fspdt</td>                            
+                            <td>@fobsr</td>                            
+                            <td>@fdcv</td>
+
+</tr>
+
+                        if (d == ViewBag.TotalCount)
+                        {
+                            <tr style="background-color:#c1c1c1">
+                                <td colspan="6" align="right">
+                                    Total Count
+                                </td>
+                                <td align="center">                                   
+                                    @TotCent
+                                </td>
+                                <td align="center">
+                                   @TotUcent
+                                </td>
+                                <td align="center">
+                                    @Totclst
+                                </td>
+                                <td align="center">
+                                   @Totrspdt
+                                </td>
+                                <td align="center">
+                                    @Totrdspdt
+                                </td>
+                                <td align="center">@Totrivg</td>
+                                <td align="center">@Totspdt</td>
+                                <td align="center">@Totdspdt</td>
+                                <td align="center">@Totivg</td>
+                                <td align="center">@Totfucent</td>
+                                <td align="center">@Totfclst</td>
+                                <td align="center">@Totfspdt</td>
+                                <td align="center">@Totfdspdt</td>
+                                <td align="center">@Totfivg</td>                              
+                                
+                            </tr>
+                            @*<tr class="noprint">                                
+                                <td colspan="10" style="text-align:right" class="rqf">Total Records(Filtered): @ViewBag.TotalCount1</td>
+                            </tr>*@
+
+                        }
+                    }
+
+                }
+                else
+                {
+                    <tr class="noprint">
+                        <td colspan="12">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+
+    @* <input type="Submit" value="Click Here to Download & Print" />*@
+
+
+                }
+
+<script>
+
+                        function dee() {
+
+                            if ($("#SelDist").val() == "") {
+
+                                $("#reqsession").slideDown("slow");
+                                return false;
+                            }
+                            if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+
+                                $("#reqsellist").slideDown("slow");
+                                return false;
+                            }
+
+                                //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+                                //    $("#reqsellist").slideUp("slow");
+                                //    $("#reqsstring").slideDown("slow");
+                                //    return false;
+                                //}
+                            else
+                                return true;
+
+                        }
+                        $(document).ready(function () {
+
+                            $("#SelDist").change(function () {
+                                if ($("#SelDist").val() == "") {
+                                    // $("#SearchString").focus(function () { $("#reqsellist").slideUp("slow"); });
+                                    $("#reqsession").slideDown("slow");
+                                }
+                                else {
+                                    $("#reqsession").slideUp("slow");
+                                }
+
+                            });
+
+                        });
+
+
+                        var form = $("#searchform").serialize();
+                        $("#btnNext").click(function () {
+                            $.ajax({
+                                url: 'DeoPortal/Next',
+                                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                                success: function (response) {
+                                    $("body").html(response);
+                                }
+                            });
+                        });
+
+                        $("#btnPrevious").click(function () {
+                            $.ajax({
+                                url: 'DeoPortal/Previous',
+                                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                                success: function (response) {
+                                    $("body").html(response);
+                                }
+                            });
+                        });
+
+
+
+</script>

@@ -1,0 +1,188 @@
+﻿@model PSEBONLINE.Models.CompPaymentformViewModel
+@{
+    ViewBag.Title = "PaymentForm";
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<style type="text/css">input[type="text"] {border:1px solid #fff !important}</style>
+
+<h1>
+    @if (Session["ClassStatus"] != null)
+    {@Session["ClassStatus"].ToString()}
+    else { Response.Redirect("~/CompartmentCandidates/CompCandidateIntroForm"); }
+   
+</h1>
+
+
+
+@if (Session["Oroll"] != null)
+{
+}
+else { Response.Redirect("~/Login"); }
+
+
+@using (Html.BeginForm("PaymentForm", "CompartmentCandidates", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+<div class="row" id="divall">
+    <div class="col-md-12">
+        <div class="table-responsive">
+		<p style="text-align:center;font-size:16px;color:#f00">If you already deposited amount in Bank, then please don't regenerate challan.</p>
+            <table width="100%" style="margin-bottom:10px">               
+                <tr>
+                <td  style="@(ViewBag.CheckForm == 0 ? "display:block" : "display:none")">  
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                
+                                var bcode = Model.StoreAllData.Tables[0].Rows[i]["BCODE"].ToString();
+                                var status = Model.StoreAllData.Tables[0].Rows[i]["status"].ToString();
+                                var bname = Model.StoreAllData.Tables[0].Rows[i]["BANKNAME"].ToString();
+                                if (bcode=="203")
+                                {
+                                    @Html.RadioButtonFor(m => m.BankCode, bcode, new { }) @bname
+                                }
+                                @*else
+                                {
+                                    if (status == "1")
+                                    {                                  
+                                 @Html.RadioButtonFor(m => m.BankCode, bcode, new { }) @bname
+                                        }
+                                    }*@
+                                }
+                            }
+                            else
+                            {
+                                @ViewBag.Message
+                            }
+                        }
+
+                     @*@if (@viewbag.Bstatus == "1")
+                     {
+                        @Html.RadioButtonFor(m => m.BankCode, "201", new { id = "SBP" })State Bank of India
+                     }
+                    @if (@viewbag.Bstatus == "1")
+                    {
+                        @Html.RadioButtonFor(m => m.BankCode, "202", new { id = "PNB" })Punjab National Bank
+                     }
+                    @if (@viewbag.Bstatus == "1")
+                    {
+                        @Html.RadioButtonFor(m => m.BankCode, "202", new { id = "PNB" })Punjab National Bank
+                     }
+                        @if (@viewbag.Bstatus == "1")
+                        {
+                            @Html.RadioButtonFor(m => m.BankCode, "202", new { id = "PNB" })Punjab National Bank
+                         }*@
+                        @*@Html.RadioButtonFor(m => m.BankCode, "203", new { id = "HOD" })PSEB HOD*@                     
+                    </td>
+                </tr>
+                <tr>
+                <td style="padding-top:10px">
+                        @*<input value="Proceed to Final Submit & Generate Challan" type="button" onclick="return valForm(); javascript:document.location.href='@Url.Action("PaymentForm", "PrivateCandidate")'" />*@
+                    <input type="submit" value="Proceed to Final Submit & Generate Challan" onclick="return valForm();" />
+                   @*@Html.ActionLink("Proceed to Final Submit & Generate Challan", "PaymentForm", "Home", new { @class = "btn", @OnClick = "return confirm('You are going to submit the data. After that data will be locked for any changes?');" })*@
+                    
+                    </td></tr>
+
+            </table>
+           
+
+            <table class="table table-bordered" id="t01">
+                    <tr>
+                        <td>Class/ Exam Type/ Category</td>
+                        @*<td> @Html.DisplayFor(m => m.Class)/ @Html.DisplayFor(m => m.ExamType)/ @Html.DisplayFor(m => m.category)</td>*@
+                        <td> @Html.DisplayFor(m => m.Class)/ Regular/ @Html.DisplayFor(m => m.category)</td>
+                    </tr>
+                @*<tr>
+                    <td>LOT No</td>
+                    <td>@Html.DisplayFor(m => m.LOTNo)</td>
+                </tr>*@
+                <tr>
+                    <td>Candidate Name</td>
+                    <td>@Html.DisplayFor(m => m.Name)</td>
+                </tr>
+                <tr>
+                    <td>Reg. No.</td>
+                    <td>@Html.DisplayFor(m => m.RegNo)</td>
+                </tr>
+                <tr>
+                    <td>Ref. No.</td>
+                    <td>@Html.DisplayFor(m => m.RefNo)</td>
+                </tr>
+                <tr>
+                    <td>District Code/Name</td>
+                    <td>@Html.DisplayFor(m => m.Dist) / @Html.DisplayFor(m => m.District)</td>
+                </tr>
+                <tr>
+                    <td>Old Roll No</td>
+                    <td>@Html.DisplayFor(m => m.roll)</td>
+                </tr>
+                @*<tr>
+                    <td>School Name</td>
+                    <td>@Html.DisplayFor(m => m.SchoolName)</td>
+                </tr>*@
+                @*<tr>
+                    <td>Total Candidates</td>
+                    <td>@Html.DisplayFor(m => m.TotalCandidates)</td>
+                </tr>*@
+                <tr>
+                    <td>Fee</td>
+                    <td>₹@Html.DisplayFor(m => m.TotalFees)</td>
+                </tr>
+                <tr>
+                    <td>Late Fee</td>
+                    <td>₹@Html.DisplayFor(m => m.TotalLateFees)</td>
+                </tr>
+                <tr>
+                    <td>Total Fee</td>
+                    <td>₹@Html.DisplayFor(m => m.TotalFinalFees)</td>
+                </tr>
+                <tr>
+                    <td>Total(In Words)</td>
+                    <td>@Html.DisplayFor(m => m.TotalFeesInWords)</td>
+                </tr>
+                <tr>              
+                    @*<td colspan="2" class="text-center rqf">Fee Valid Upto @Html.DisplayFor(m => m.FeeDate)</td>*@
+                  @*<td colspan="2" class="text-center rqf">Fee Valid Upto @Html.DisplayFor(m => m.FeeDate, "{0:dd/MM/yyyy}",new { })</td>*@
+                    <td>Fee Valid Upto</td>
+		<td>@Html.TextBoxFor(m => m.FeeDate, "{0:dd/MM/yyyy hh:mm}", new { Readonly = "Readonly", style= "color:#cc0000;font-weight:bold;font-size:1.2em" })</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+}
+
+@{
+    if (ViewData["SelectBank"] != null)
+    {
+        if (ViewData["SelectBank"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Bank ");
+                window.location.href = '@Url.Action("PaymentForm", "CompartmentCandidates")';
+            </script>
+            
+        }
+    }
+}
+
+
+
+<script type="text/javascript">
+    function valForm() {      
+        //alert(TotalFinalFees);
+        //var SBPa = document.getElementById("SBP").checked;        
+        //var PNBa = document.getElementById("PNB").checked;
+       
+        if (document.getElementById("SBP").checked == false && document.getElementById("PNB").checked == false) {
+            alert("Please select any Bank");
+            return false;
+        }
+        else {
+
+            return true;
+        }
+        
+    }
+</script>

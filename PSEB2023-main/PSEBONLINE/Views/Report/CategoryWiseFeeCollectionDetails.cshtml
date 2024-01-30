@@ -1,0 +1,85 @@
+﻿@{
+    ViewBag.Title = "Category Wise Fee Collection Details";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/cardprintr.css" />
+<h1 class="noprint">Category Wise Fee Collection Details</h1>
+<div class="row">
+    <div class="col-md-12 noprint">
+@using (Html.BeginForm("CategoryWiseFeeCollectionDetails", "Report", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    if (Model != null)
+    {
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            <div class="col-md-6">
+                Fee Category
+                @*@Html.DropDownList("FEECAT", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })*@
+                @Html.ListBox("FEECAT", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), new { id = "FEECAT", @class = "selectpicker show-tick form-control input-md" })
+            </div>            
+            <div class="col-md-3">
+                Branch Name <input type="text" onkeypress="return false" id="Branch" name="Branch" value="@Request["Branch"]" /></div>
+				
+            <div class="col-md-2"><br /><input type="submit" value="Search" class="btn" /></div>
+</fieldset>
+    }
+}
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-right noprint">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div style="border:1px solid #fff !important;display:block;margin-bottom:30px">
+            <table border="1" width="100%" class="tprint">
+                <thead>
+                    <tr>
+                        <td style="border-right:0 !important" width="15%" colspan="2"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                        <td colspan="4" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                            <span style="font-size:28px">Punjab School Education Board</span><br /><span>Fee Head (Fee Category) Wise Fee Collection Details (Session @Session["session"].ToString())</span>
+                        </td>
+                        <td style="text-align:right;border-left:0 !important;border-right:0 !important;" width="15%">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td width="10%">&nbsp;Srno</td>
+                        <td width="15%" colspan="2">&nbsp;Fee Head Code</td>
+                        <td width="25%">&nbsp;Fee Head/Category Name</td>
+                        <td width="25%">&nbsp;Branch Name</td>
+						<td width="25%">&nbsp;No Of Records</td>
+                        <td width="15%">&nbsp;Amount</td>
+                    </tr>
+                </thead>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            Count = Count + 1;
+                            var FEECODE = Model.StoreAllData.Tables[0].Rows[i]["FEECODE"].ToString();
+                            var FEECAT = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                            var BRANCH = Model.StoreAllData.Tables[0].Rows[i]["BRANCH"].ToString();              
+                            var TOTFEE = Model.StoreAllData.Tables[0].Rows[i]["TOTFEE"].ToString();
+                            var NoOfRecords = Model.StoreAllData.Tables[0].Rows[i]["NoOfRecords"].ToString();
+
+                            <tr> 
+                                <td>&nbsp;@Count</td>                               
+                                <td colspan="2">&nbsp;@FEECODE</td>
+                                <td>&nbsp;@FEECAT</td>
+                                <td>&nbsp;@BRANCH</td>                               
+                                <td>&nbsp;@NoOfRecords</td>                               
+                                <td>&nbsp;@TOTFEE</td>
+                            </tr>
+                        }
+                    }
+                }
+                <tr>                    
+                    <td colspan="6" style="text-align:right;font-size:16px">Total &nbsp; @*Amount(In Words) :&nbsp;@ViewBag.AmountInWords*@</td>
+                    <td style="font-size:16px">&nbsp;@ViewBag.Total</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

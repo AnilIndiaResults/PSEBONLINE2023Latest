@@ -1,0 +1,310 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+<h1>Current Status For Final Submission</h1>
+<p style="display:none;">
+    Welcome: @if (Session["NAME"] != null)
+    {@Session["NAME"].ToString()}
+    else { Response.Redirect("~/DeoPortal/Index"); }
+</p>
+@using (Html.BeginForm("FinalSubmitDeoPortal", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+            @*<div class="col-md-12">No of Center: No of Staffs: No of Clusters:</div>*@
+            <div class="col-md-12" style="line-height:24PX">
+                @{
+                    if (@ViewBag.Succ1 != "1" || @ViewBag.Succ2 != "1" || @ViewBag.Succ3 != "1" || @ViewBag.Succ4 != "1")
+                    {
+                        <span style="color:red">Following Details are Incomplete Due To One of the Reason </span> <br />
+                    }
+                }
+                
+                1.List of Block have less than 8 Centres. <br />
+                <div class="">
+                    <table class="table table-bordered">
+                        <tr class="active-tr">
+                            <td style="text-align:center">S.No</td>
+                            <td style="text-align:left">Block Code</td>
+                            <td style="text-align:left">Block Name</td>
+                            <td style="text-align:left">Address</td>
+                            <td style="text-align:left">Tot Centre</td>
+                        </tr>
+                        @{
+                                if (ViewBag.TotalCount1 > 0)
+                                {
+                                    int d = 0;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+                                        var ClusterName = Model.StoreAllData.Tables[0].Rows[i]["clusternam"].ToString();
+                                        var add = Model.StoreAllData.Tables[0].Rows[i]["ADDRESS"].ToString();
+                                        var totcen = Model.StoreAllData.Tables[0].Rows[i]["centres"].ToString();
+                                    <tr>
+                                        <td style="text-align:center">@d</td>
+                                        <td style="text-align:left">@CCODE</td>
+                                        <td style="text-align:left">@ClusterName</td>
+                                        <td style="text-align:left">@add</td>
+                                        <td style="text-align:left">@totcen</td>
+                                    </tr>
+                                    }
+
+                                }
+                                else
+                                {
+                                <tr>
+                                    <td colspan="5">@ViewBag.Message1</td>
+                                </tr>
+    
+
+                            }
+                            }
+
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+                2. List of Block have less supervisory staff then required supervisory staff.<br />               
+                <div class="">
+                    <table class="table table-bordered">
+                        <tr class="active-tr">
+                            <td style="text-align:center">S.No</td>
+                            <td style="text-align:center">Block Code</td>
+                            <td style="text-align:center">Block Name</td>
+                            <td style="text-align:center">Address</td>
+                            <td style="text-align:center">Tot Centre</td>
+                            <td style="text-align:center">Tot Staff</td>
+                            <td style="text-align:center">Required Staff</td>
+                            <td style="text-align:center">Difference</td>
+                        </tr>
+                        @{
+                                if (ViewBag.TotalCount2 > 0)
+                                {
+                                    int d = 0;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[1].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var CCODE = Model.StoreAllData.Tables[1].Rows[i]["CCODE"].ToString();
+                                        var ClusterName = Model.StoreAllData.Tables[1].Rows[i]["clusternam"].ToString();
+                                        var add = Model.StoreAllData.Tables[1].Rows[i]["ADDRESS"].ToString();
+                                        var totcen = Model.StoreAllData.Tables[1].Rows[i]["centres"].ToString();
+                                        var totstaff = Model.StoreAllData.Tables[1].Rows[i]["staff"].ToString();
+                                        var totreqstaff = Model.StoreAllData.Tables[1].Rows[i]["rstaff"].ToString();
+                                        var Diff = Model.StoreAllData.Tables[1].Rows[i]["diff"].ToString();
+
+                                    <tr>
+                                        <td style="text-align:center">@d</td>
+                                        <td style="text-align:center">@CCODE</td>
+                                        <td style="text-align:left">@ClusterName</td>
+                                        <td style="text-align:left">@add</td>
+                                        <td style="text-align:center">@totcen</td>
+                                        <td style="text-align:left">@totstaff</td>
+                                        <td style="text-align:left">@totreqstaff</td>
+                                        <td style="text-align:left">@Diff</td>
+                                    </tr>
+                                    }
+
+                                }
+                                else
+                                {
+                                <tr>
+                                    <td colspan="8">@ViewBag.Message2</td>
+                                </tr>
+    
+                            }
+                            }
+
+                    </table>
+                </div>
+                 <div class="clearfix"></div>
+                3. List of Centres which are still not added in any Block.
+                 <div class="">
+                        <table class="table table-bordered">
+                            <tr class="active-tr">
+                                <td style="text-align:center">S.No</td>
+                                <td style="text-align:center">Centre</td>
+                                <td style="text-align:center">Cschl</td>
+                                <td style="text-align:center">Ecentre</td>
+                                <td style="text-align:center">Building</td>
+                                <td style="text-align:center">Matric</td>
+                                <td style="text-align:center">Sr.Secondary</td>
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCount3 > 0)
+                                {
+                                    int d = 0;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var cent = Model.StoreAllData.Tables[2].Rows[i]["cent"].ToString();
+                            var cschl = Model.StoreAllData.Tables[2].Rows[i]["cschl"].ToString();
+                            var ecentre = Model.StoreAllData.Tables[2].Rows[i]["ecentre"].ToString();
+                            var building = Model.StoreAllData.Tables[2].Rows[i]["building"].ToString();
+                            var mat = Model.StoreAllData.Tables[2].Rows[i]["mat"].ToString();
+                            var ss = Model.StoreAllData.Tables[2].Rows[i]["ss"].ToString();
+
+                                        <tr>
+                                            <td style="text-align:center">@d</td>
+                                            <td style="text-align:center">@cent</td>
+                                            <td style="text-align:center">@cschl</td>
+                                            <td style="text-align:left">@ecentre</td>
+                                            <td style="text-align:left">@building</td>
+                                            <td style="text-align:center">@mat</td>
+                                            <td style="text-align:center">@ss</td>
+
+                                        </tr>
+
+                                    }
+
+                    }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7">@ViewBag.Message3</td>
+                                    </tr>
+
+                                }
+                            }
+
+                        </table>
+                    </div>
+                 <div class="clearfix"></div>
+            4. Some Details are Pending of Following Staff, Kinldy Modify & Update it Before Final Submit<br />            
+            <div class="">
+                <table class="table table-bordered">
+                    <tr class="active-tr">
+                        <td style="text-align:center">Sno.</td>
+                        <td style="text-align:center">Ccode</td>
+                        <td style="text-align:center">Dcode</td>
+                        <td style="text-align:center">Staffid</td>
+                        @*<td style="text-align:center">dutytype</td>*@
+                        <td style="text-align:center">Adharno</td>
+                        <td style="text-align:center">Name / FName</td>
+                        <td style="text-align:center">SCHL</td>
+                        <td style="text-align:center">Cadre</td>
+                        <td style="text-align:center">Subject</td>
+                        <td style="text-align:center">Gender</td>
+                        <td style="text-align:center">Expyear</td>
+                        <td style="text-align:center">Expmonth</td>
+                        <td style="text-align:center">IFSC</td>
+                        <td style="text-align:center">ACNo</td>
+                        <td style="text-align:center">Mobile</td>
+                    </tr>
+
+                    @{
+                        if (ViewBag.TotalCount4 > 0)
+                        {
+                            int d = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[3].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var cent = Model.StoreAllData.Tables[3].Rows[i]["ccode"].ToString();
+                                var dcode = Model.StoreAllData.Tables[3].Rows[i]["dcode"].ToString();
+                                var staffid = Model.StoreAllData.Tables[3].Rows[i]["staffid"].ToString();
+                                //var dutytype = Model.StoreAllData.Tables[3].Rows[i]["dutytype"].ToString();
+                                var adharno = Model.StoreAllData.Tables[3].Rows[i]["adharno"].ToString();
+                                var name = Model.StoreAllData.Tables[3].Rows[i]["name"].ToString();
+                                var fname = Model.StoreAllData.Tables[3].Rows[i]["fname"].ToString();
+                                var schlnm = Model.StoreAllData.Tables[3].Rows[i]["schlnm"].ToString();
+
+                                var cadre = Model.StoreAllData.Tables[3].Rows[i]["cadre"].ToString();
+                                var subject = Model.StoreAllData.Tables[3].Rows[i]["subject"].ToString();
+                                var gender = Model.StoreAllData.Tables[3].Rows[i]["gender"].ToString();
+                                var expyear = Model.StoreAllData.Tables[3].Rows[i]["expyear"].ToString();
+                                var expmonth = Model.StoreAllData.Tables[3].Rows[i]["expmonth"].ToString();
+                                var ifsc = Model.StoreAllData.Tables[3].Rows[i]["ifsc"].ToString();
+                                var acno = Model.StoreAllData.Tables[3].Rows[i]["acno"].ToString();
+
+                                var mobile = Model.StoreAllData.Tables[3].Rows[i]["mobile"].ToString();
+
+                                <tr>
+                                    <td style="text-align:center">@d</td>
+                                    <td style="text-align:center">@cent</td>
+                                    <td style="text-align:center">@dcode</td>
+                                    <td style="text-align:center">@staffid</td>
+                                    @*<td style="text-align:center">@dutytype</td>*@
+                                    <td style="text-align:center">@adharno</td>
+                                    <td style="text-align:left">@name / @fname</td>
+                                    <td style="text-align:left">@schlnm</td>
+                                    <td style="text-align:left">@cadre</td>
+                                    <td style="text-align:left">@subject</td>
+                                    <td style="text-align:left">@gender</td>
+                                    <td style="text-align:center">@expyear</td>
+                                    <td style="text-align:center">@expmonth</td>
+                                    <td style="text-align:center">@ifsc</td>
+                                    <td style="text-align:center">@acno</td>
+                                    <td style="text-align:center">@mobile</td>
+
+                                </tr>
+
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="16">@ViewBag.Message4</td>
+                            </tr>
+
+                        }
+                    }
+
+                </table>
+            </div>
+                </div>
+        </div>
+        <div class="col-md-12" style="line-height:24PX;">
+            @*@if (@ViewBag.Succ1 == "1")*@
+            @if (@ViewBag.Succ1 == "1" && @ViewBag.Succ2 == "1" && @ViewBag.Succ3 == "1" && @ViewBag.Succ4 == "1")            
+            {
+                if (@ViewBag.TotalCountFV > 0)
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b style="font-size:16px;color:#c25101">Deo Portal Summary</b><br />
+                            <b>Kindly make Final submition of following :</b> <br /><br />
+                            No of Block:&nbsp;&nbsp;@ViewBag.clust<br />
+                            No of Centres:&nbsp;&nbsp;@ViewBag.centre<br />
+                            No of Superintendent: &nbsp;&nbsp;@ViewBag.supdt<br />
+                            @*No of Deputy Superintendent:&nbsp;&nbsp; @ViewBag.dsupdt<br />
+                            No of Invisilator: &nbsp;&nbsp;@ViewBag.invg<br />*@
+
+                            No of Observer: &nbsp;&nbsp;@ViewBag.Obsr<br />
+                            No of Flying Squid:&nbsp;&nbsp; @ViewBag.FlyS<br />
+                            No of Deputy Controller(Vigilance): &nbsp;&nbsp;@ViewBag.DupCntlr<br />
+
+                            Total No. of Staff: &nbsp;&nbsp;@ViewBag.staff<br /><br />
+                        </div>
+                    </div>
+                    <input type="submit" value="Final Submit" />
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b style="font-size:16px;color:#c25101">Deo Portal Summary</b><br />
+                            There is no record for final Submition..
+                        </div>
+                    </div>
+                }
+
+            }
+        </div>
+  }
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Data Submitted Successfully");               
+            </script>
+        }       
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data not Submitted..plz try again");
+            </script>
+        }
+    }
+}

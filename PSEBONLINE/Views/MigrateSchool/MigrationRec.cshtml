@@ -1,0 +1,275 @@
+﻿@model PSEBONLINE.Models.MigrateSchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>School Migration List</h1>
+<link href="https://registration2022.pseb.ac.in/content/print.css" rel="stylesheet" />
+@using (Html.BeginForm("MigrationRec", "MigrateSchool", FormMethod.Post, new { id = "Migrate", enctype = "multipart/form-data" }))
+{
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend class="text-center">Migration List (Session <b>
+                    @if (Session["Session"] != null)
+                    {@Session["Session"].ToString()}
+                    else { Response.Redirect("~/Admin"); }
+                    </b>)</legend>
+                <div class="col-md-1">
+                    Total <label>@ViewBag.TotalCount</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-2">
+                        Select District:  @Html.DropDownList("SelDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--All Dist---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text"), "--All---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-4">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" />
+                        <input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" />
+                        <a href="javascript:void(0);" class="btn" onclick="history.go(-1);">Back</a>
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    @*<th>S.No</th>
+                        <th>SCHL <br />(MIGRATION FROM)</th>
+                        <th>CANDIDATE<br /> ID</th>
+                        <th>DISTRICT</th>
+                        <th>CANDIDATE/FATHER/MOTHER NAME</th>
+                        <th>SCHL <br />(MIGRATION TO)</th>
+                        <th>FEE</th>
+                        <th>DDNO</th>
+                        <th>USER BY</th>
+                        <th>DATE TIME</th>
+                        <th>ACTIONS</th>*@
+                    <th>S.No</th>
+                    <th>DISTRICT</th>
+                    <th>MIGRATION NO</th>
+                    <th>CANDIDATE ID</th>
+                    <th>CANDIDATE/ FATHER/ MOTHER NAME</th>
+                    <th>SCHL FROM</th>
+                    <th>SCHL TO</th>
+                    <th>CASE NO</th>
+                    <th>FEE/DD_NO/RECPT_NO<BR />(DD_DATE/RECPT_DATE)</th>
+                    <th>USER BY</th>
+                    <th>DATE TIME</th>
+                    <th>ACTIONS</th>
+
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+
+                            var DistName = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                            var migrationNo = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                            var SCHlfrm = Model.StoreAllData.Tables[0].Rows[i]["SchlCode"].ToString();
+                            var CANDID = Model.StoreAllData.Tables[0].Rows[i]["StdId"].ToString();
+
+                            var Cname = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                            var Fname = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                            var Mname = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                            var FullName = Cname + '/' + Fname + '/' + Mname;
+                            var SCHlto = Model.StoreAllData.Tables[0].Rows[i]["SchlCodeNew"].ToString();
+                            var CaseNo = Model.StoreAllData.Tables[0].Rows[i]["DiryOrderNo"].ToString();
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["Amount"].ToString();
+                            var DDno = Model.StoreAllData.Tables[0].Rows[i]["DDRcptNo"].ToString();
+                            var DepositDt = Model.StoreAllData.Tables[0].Rows[i]["DepositDt"].ToString();
+                            //var OrderDt = Model.StoreAllData.Tables[0].Rows[i]["OrderDt"].ToString();
+
+                            var FeeDDnoRcptNoRcptDT = Fee + '/' + DDno + '(' + DepositDt + ')';
+
+                            //var UserBy = Model.StoreAllData.Tables[0].Rows[i]["UserIP"].ToString();
+                            var Mdate = Model.StoreAllData.Tables[0].Rows[i]["CreateDT"].ToString();
+                            var userName = Model.StoreAllData.Tables[0].Rows[i]["userName"].ToString();
+
+                            Count++;
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @DistName
+                                </td>
+                                <td>
+                                    @migrationNo
+                                </td>
+                                <td>
+                                    @CANDID
+                                </td>
+                                <td>
+                                    @FullName
+                                </td>
+                                <td>
+                                    @SCHlfrm
+                                </td>
+                                <td>
+                                    @SCHlto
+                                </td>
+                                <td>
+                                    @CaseNo
+                                </td>
+                                <td>
+                                    @FeeDDnoRcptNoRcptDT
+                                </td>
+                                <td>
+                                    @userName
+                                </td>
+                                <td>
+                                    @Mdate
+                                </td>
+                                @*<td>
+                                        @DDno
+                                    </td>
+                                    <td>
+                                        @UserBy
+                                    </td> *@
+
+
+                                <td>
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+
+                                                @*<li>@Html.ActionLink("View", "MigrationDetailView", new { id = encrypt.QueryStringModule.Encrypt(CANDID) }, new { Class = "", title = "View" })</li>
+                                                    <li>@Html.ActionLink("Print", "MigrationPrint", new { id = encrypt.QueryStringModule.Encrypt(CANDID) }, new { Class = "", title = "Print" })</li>*@
+                                                @*<li>@Html.ActionLink("Delete", "PageDelete", new { id = encrypt.QueryStringModule.Encrypt(CANDID) }, new { Class = "", title = "Delete" })</li>*@
+                                                @*@if (Model.StoreAllData.Tables[0].Rows[i]["StdId"].ToString() != "0")
+                                                {
+                                                    <li>@Html.ActionLink("View", "MigrationDetailView", new { id = CANDID }, new { Class = "", title = "View" })</li>
+                                                    <li>@Html.ActionLink("Print", "MigrationPrint", new { id = CANDID }, new { Class = "", title = "Print" })</li>
+                                                    <li>@Html.ActionLink("Delete", "MigrationDelete", new { id = CANDID }, new { onclick = "return confirm('Are you sure want to Delete?');" })</li>
+                                                }*@
+
+                                                @if (Model.StoreAllData.Tables[0].Rows[i]["StdId"].ToString() != "0")
+                                                {
+                                                    <li>@Html.ActionLink("View", "MigrationDetailView", new { id = migrationNo }, new { Class = "", title = "View" })</li>
+                                                    <li>@Html.ActionLink("Print", "MigrationPrint", new { id = migrationNo }, new { Class = "", title = "Print" })</li>
+                                                    <li>@Html.ActionLink("Delete", "MigrationDelete", new { id = migrationNo }, new { onclick = "return confirm('Are you sure want to Delete?');" })</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+
+                            </tr>
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+
+@{
+
+    if (ViewData["MigrateStatus"] != null)
+    {
+        if (ViewData["MigrateStatus"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Migrate Successfully Done. click ok to view Migrate Record");
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Migrate Not Done.");
+            </script>
+        }
+    }
+
+
+    if (ViewData["MigrateDeleteStatus"] != null)
+    {
+        if (ViewData["MigrateDeleteStatus"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Record Successfully Deleted");
+            </script>
+        }
+    }
+}
+
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function formVal() {
+        var AdminType = '@Session["AdminType"]';
+         //alert(AdminType);
+        var result = document.getElementById('SelDist').value;
+        if (result == '' && AdminType != "ADMIN") {
+            alert("Select District");
+            document.getElementById('SelDist').focus();
+            return false;
+        }
+        var schlList = document.getElementById('SelList').value;
+        if (schlList != '') {
+            var SchlCode = document.getElementById("SearchString");
+            if (SchlCode.value == "" || SchlCode.value == "0") {
+                alert("Enter School Code");
+                document.getElementById("SearchString").focus();
+                return false;
+            }
+        }
+        else {
+            document.getElementById("SearchString").value = "";
+        }
+
+        //    var obtMark = document.getElementById("ObtainedMarks");
+        //    if (obtMark.value == "" || obtMark.value == "0") {
+        //        alert("Enter obtaining Mark");
+        //        obtMark.focus();
+        //        return false;
+        //    }
+        //}
+
+    }
+
+
+
+</script>
+

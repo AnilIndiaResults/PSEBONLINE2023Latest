@@ -1,0 +1,162 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    ViewBag.Title = "Upload Photo and Sign";
+    //Layout = "~/Views/Shared/_Header.cshtml";
+Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>Upload Colour Photo and Signature, Reference Number @Session["refno"] </h1>
+@{ if (Session["refno"]!=null)
+    {}
+    else
+    {Response.Redirect("~/privateCandidate/Private_Candidate_Examination_Form");}
+   }
+@using (Html.BeginForm("imgUpd", "PrivateCandidate", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+{
+   <div class="row">
+       
+            <div class="col-md-4">
+                Upload Photo <a href="/PDF/Instruction_To_Upload_Photographs.pdf" target="_blank" class="rqf" style="font-size:11PX;color:#CC0000">? Instruction To Upload Photographs</a>
+                    @{                    
+                        @Html.TextBoxFor(a => a.std_Photo, new { id = "std_Photo", type = "file", onchange = "findSizeAndPreview(this)" })
+                        <span class="rqf">*Photo Size 5 to 50 KB (Only JPG)</span>
+                    }
+            </div>
+            <div class="col-md-2"><br />
+                <div style="background-color:#c1c1c1;text-align:center;height:180px">
+                    <img src="@ViewBag.Photo" class="img-responsive" alt="Photo" id="imgPhoto" />
+                    </div>
+                </div>            
+            <div class="col-md-4">                
+                Upload Signature
+
+                @{                   
+                    {
+                        @Html.TextBoxFor(a => a.std_Sign, new { id = "std_Sign", type = "file", onchange = "findSizeAndPreviewSign(this)" })
+                        <span class="rqf">*Signature Size 1 to 50 KB (Only JPG)</span>
+                    }
+                }
+            </div>
+            <div class="col-md-2">
+                <br />
+                <div style="background-color:#c1c1c1;text-align:center;height:60px">
+                    <img src="@ViewBag.sign" class="img-responsive" alt="Signature" id="imgSign" />
+                    </div>
+                </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center tbp">
+                @*<input value="Final Submit" type="button" title="Final Submit" name="cmd" />*@
+                <input type="submit" value="Final Submit" />
+                <input value="Back" type="button" onclick="javascript:document.location.href='@Url.Action("PrivateCandidateConfirmation", "PrivateCandidate")'" />
+            </div>
+        </div>   
+}
+@{
+
+    if (ViewData["Status"] != null)
+    {
+        var result = ViewData["Status"].ToString();
+
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Photo and Sign updated successfully.");
+            </script>
+        }
+        if (result == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Photo and Sign not updated, Please try again.");
+            </script>
+        }
+    }
+}
+
+<script type="text/javascript">
+    function findSizeAndPreview(input) {
+        if (typeof ($("#std_Photo")[0].files) != "undefined") {
+
+            var size = parseFloat($("#std_Photo")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 50) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#imgPhoto').attr('src', e.target.result);
+
+                }
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#std_Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+
+
+            }
+        }
+
+    }
+    function findSizeAndPreviewSign(input) {
+        if (typeof ($("#std_Sign")[0].files) != "undefined") {
+
+            var size = parseFloat($("#std_Sign")[0].files[0].size / 1024).toFixed(2);
+            // alert(size);
+            if (parseInt(size) >= 1 && parseInt(size) <= 50) {
+                var filerdrS = new FileReader();
+                filerdrS.onload = function (e) {
+                    $('#imgSign').attr('src', e.target.result);
+
+                }
+                filerdrS.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 1) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#std_Sign').val('');
+                    ('#imgSign').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#Sign').val('');
+                    ('#imgSign').hide();
+                }
+
+            }
+        }
+
+    }
+
+    function val(){
+        if (!window.confirm("Are you Sure to Final Submit changes of Photo and Signature ?")) {
+            return false;
+        }
+        else {
+            //document.location.href = '@Url.Action("imgUpdPvtPS?id=" + 123, "PrivateCandidate")';
+            return true;
+        }
+    }
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(jpg|jpeg)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select only .jpg file format');
+            }
+        });
+    });
+    
+</script>

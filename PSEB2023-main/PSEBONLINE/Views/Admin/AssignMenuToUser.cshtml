@@ -1,0 +1,290 @@
+﻿@model PSEBONLINE.Models.AdminUserModel
+@{
+    ViewBag.Title = "Assign Menu To User";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<style>
+    .input-validation-error {
+        /*background-color: #00cc00 !important;*/
+        border: solid 1px Red !important;
+    }
+</style>
+
+<style type="text/css">
+    .bvc li {
+        padding-right: 1px;
+    }
+
+    .bvc .checkboxP {
+        padding-left: 1px;
+    }
+
+    .newList li {
+        padding: 0 15px !important;
+    }
+
+        .newList li .checkboxP {
+            margin-right: 2px;
+        }
+</style>
+<h1>Assign Menu To Users</h1>
+<div id="divMain1">
+    <div style="display:none">
+        <h4>Select Menu <input type="checkbox" id="selectallP" /></h4>
+        <div class="row">
+            <div class="col-md-12">
+                @if (Model.SiteMenuModel != null && Model.SiteMenuModel.Count() > 0)
+                {
+                    <ul class="nav navbar-nav newList">
+                        @MenuView.GetTreeView(Model.SiteMenuModel, Model.SiteMenuModel.FirstOrDefault().ParentMenuID)
+                    </ul>
+                }
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+    <h4>Select Sub-Menu </h4>
+    <div class="row">
+        <div class="col-md-12">
+            @Html.DropDownList("Menu", new SelectList(ViewBag.MyMenu, "Value", "Text", ViewBag.SelectedMenu), "--Select---", new { @class = "", id = "Menu", required = "required" })
+            <br />
+            <div id="loadreg"></div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <h4>Select Users <input type="checkbox" id="selectall" /></h4>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                int i = 1;
+                foreach (var names in @Model.AdminList)
+                {
+                    var checkBoxId = names.Text;
+                    var tdId = "td" + names.Text;
+                    <div id="@tdId" title="@names.Value" class="col-md-3">
+                        <input type="checkbox" id="@names.Value" class="checkboxD" value="@names.Value" /> @names.Text
+                    </div>
+                    i++;
+                }
+            }
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-center">
+            <br />
+            <input type="submit" value="Save" id="btnsave" />&nbsp;&nbsp;&nbsp;<a href="/Admin/ViewUser" class="btn">Back</a>
+        </div>
+    </div>
+
+</div>
+
+<div id="loading1"></div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {      
+
+        $("#Menu").change(function () {
+            var selectedMenu = { Menu: $("#Menu").val() };
+            $("div").removeClass("input-validation-error");
+            $('div#loadreg').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+             $.ajax({
+                url: '@Url.Action("GetUserbyMenu", "Admin")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedMenu),
+                success: function (results) {
+                    $(".checkboxD").empty();
+                    $('div#loadreg').empty();
+                   //alert('done');
+                   //console.log('results : ' +results.Usertd);
+                   //alert("Usertd: " + results.Usertd);                    
+                    if (results.Usertd != "") {                       
+                        $('' + results.Usertd + '').addClass("input-validation-error");
+                    }
+                    else
+                    {
+                        alert("This menu is not assign to any user");        
+                        $("div").removeClass("input-validation-error");                            
+                    }            
+                }
+            });
+        });
+
+        // alert("ready");
+        $('.checkboxD').change(function () { //".checkbox" change
+            if (this.checked == false) { //if this item is unchecked
+                $("#selectall")[0].checked = false; //change "select all" checked status to false
+
+            }
+        });
+        $('.checkboxP').change(function () { //".checkbox" change
+            if (this.checked == false) { //if this item is unchecked
+                $("#selectallP")[0].checked = false; //change "select all" checked status to false
+
+            }
+        });
+
+        // Select Dist
+        $("#selectall").change(function () {
+            // alert('Start select dist');
+            //"select all" change
+            var status = this.checked; // "select all" checked status
+            var arr = [];
+            $('.checkboxD').each(function () { //iterate all listed checkbox items
+                var id = this.id;
+                // alert(id);
+                this.checked = status; //change ".checkbox" checked status
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                var j = 0;
+                var k = 0;
+                //cb-stdid
+                for (var i = 3; i < arr.length; i++) {
+                    if (arr[i] == '-') {
+                        k++;
+                        continue;
+                    }
+                    if (k == 0) {
+                        arrid += arr[i];
+                    }
+                    j++;
+                }
+                //alert(dtype);
+                for (var k = 3 + j + 5; k < arr.length; k++) {
+                    arrcast += arr[k];
+                }
+
+            });
+        });
+        // End select all
+
+        // Select Pages
+        $("#selectallP").change(function () {
+            // alert('Start select pages');
+            //"select all" change
+            var status = this.checked; // "select all" checked status
+            var arr = [];
+            $('.checkboxP').each(function () { //iterate all listed checkbox items
+                var id = this.id;
+                // alert(id);
+                this.checked = status; //change ".checkbox" checked status
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                var j = 0;
+                var k = 0;
+                //cb-stdid
+                for (var i = 3; i < arr.length; i++) {
+                    if (arr[i] == '-') {
+                        k++;
+                        continue;
+                    }
+                    if (k == 0) {
+                        arrid += arr[i];
+                    }
+                    j++;
+                }
+                //alert(dtype);
+                for (var k = 3 + j + 5; k < arr.length; k++) {
+                    arrcast += arr[k];
+                }
+
+            });
+        });
+        // End select all
+
+
+
+        //Start Save Data
+        $("#btnsave").click(function () {
+            // alert("Start Save Data");
+
+            var isvalid = true;
+            //  alert(isvalid);
+            if (isvalid == true) {
+                var chkdee = "";
+                var storeid = "";
+                var pageid = "";
+                var storeid1 = "";
+                var storechkid = "";
+                var storescid = "";
+                $('.checkboxD').each(function () {
+                    var id = this.id;
+                    // alert("dist= "+ id);
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var arrcast = "";
+                    var j = 0;
+                    if (this.checked) {
+                        storeid += id + ",";
+                    }
+                });
+
+                ////$('.checkboxP').each(function () {
+                ////    var id = this.id;
+                ////    // alert("Page= " + id);
+                ////    var arr = [];
+                ////    arr = id;
+                ////    var arrid = "";
+                ////    var arrcast = "";
+                ////    var j = 0;
+                ////    if (this.checked) {
+                ////        pageid += id + ",";
+                ////    }
+                ////});
+
+                pageid = $("#Menu").val();
+                if (storeid == "") {
+                    alert("Please Select Atleast 1 User .");
+                }
+                else if (pageid == "") {
+                    alert("Please Select Menu .");
+                    $("#Menu").focus();
+                }
+                else if (storeid != "" && pageid != "") {
+
+                    //alert('Now Save User :' + storeid);
+                    // alert('Now Save Menu :' + pageid);
+                    $('#divMain1').hide();
+                    $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $.post("/Admin/AssignMenuToUser", { "adminlist": storeid.slice(0, -1), "pagelist": pageid },
+                        function (data) {
+                            $('#loading1').empty();
+                            $('#divMain1').show();
+                            //  alert('data.status  = ' + data.status);
+                            if (data.status == "1") {
+                                // window.location.href = '/Admin/ViewUser';
+                                alert("Assign Successfully");
+                                //window.location.reload(true);
+                                $('input:checkbox').attr('checked', false);
+                                $("#Menu").val("");
+                            }
+                            else {
+                                alert("Failure, Please Try Again.");
+                            }
+                        });
+                }
+            }// if true close
+        });
+        //End  Save Data
+
+    });
+
+
+
+
+</script>
+
+
+
+
+
+

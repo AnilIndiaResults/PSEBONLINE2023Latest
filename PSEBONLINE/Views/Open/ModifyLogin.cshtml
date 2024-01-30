@@ -1,0 +1,596 @@
+﻿@model PSEBONLINE.Models.OpenUserLogin
+
+@{
+    ViewBag.Title = "Modify Login Information";
+    Layout = "~/Views/Shared/_HeaderOPEN.cshtml";
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="/Scripts/jquery-1.10.2.js"></script>
+<script src="/Scripts/jquery-1.12.4.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="/Scripts/common.js"></script>
+<script src="/Scripts/punjabi.js"></script>
+<script src="/Scripts/keyboard.js"></script>
+<script src="/Scripts/bootstrap.js"></script>
+<script src="/Scripts/respond.js"></script>
+
+<style type="text/css">
+    .btnback {
+        background-color: orangered;
+        -moz-user-select: none;
+        background-image: none;
+        border: 1px solid orangered;
+        border-radius: 4px;
+        color: #fff !important;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857;
+        margin-bottom: 0;
+        padding: 3px 12px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .btngo {
+        background-color: green !important;
+        -moz-user-select: none;
+        background-image: none;
+        border: 1px solid green !important;
+        border-radius: 4px;
+        color: #fff !important;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857;
+        margin-bottom: 0;
+        padding: 3px 12px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    #loading1 {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: 9999;
+        background: url("https://www.creditmutuel.fr/cmne/fr/banques/webservices/nswr/images/loading.gif") no-repeat center center rgba(255,255,255,0.6)
+    }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Error Details",
+            width: 450,
+            height: 250,
+            buttons: {
+                Close: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+</script>
+
+<h2>Modify Login Information of Application Number : <span class="rqf">@Model.APPNO</span></h2>
+<div class="row">
+    <div class="col-md-12">
+
+
+
+        @using (Html.BeginForm("ModifyLogin", "Open", new { id = Model.APPNO }, FormMethod.Post, new { @id = "login_form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-horizontal">
+                @if (Model.FORM.ToLower() == "m3")
+                {
+                    <h4>Online Matriculation Open Registration</h4>}
+                else
+                { <h4>Online Senior Secondary Open Registration</h4>}
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="row">
+                    <div class="col-md-2">Category<sup style="color:red;font-size:15px;">*</sup></div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(model => model.CATEGORY, (List<SelectListItem>)ViewBag.categories, new { required = "required", id = "ddlcategory" })
+                        @Html.ValidationMessageFor(model => model.CATEGORY, "", new { @class = "text-danger" })
+                    </div>
+                    @if (Model != null)
+                    {
+                        if (Model.FORM.ToLower() == "t3")
+                        {
+                            <div class="col-md-2">
+                                Stream<sup style="color:red;font-size:15px;">*</sup>
+                            </div>
+                            <div class="col-md-4">
+                                @Html.DropDownListFor(model => model.STREAM, new SelectList(ViewBag.streams, "Value", "Text"), new { required = "required", id = "ddlSTREAM" })
+                                @Html.ValidationMessageFor(model => model.STREAM, "", new { @class = "text-danger" })
+                            </div>
+
+                        }
+                    }
+
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">Name<sup style="color:red;font-size:15px;">*</sup></div>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(model => model.NAME, new { onpaste = "return false;", oncopy = "return false;", oncut = "return false;", required = "required", id = "txtNAME", @maxlength = "50", onkeypress = "return ValidateAlpha(event);" })
+                        @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-2">Email ID<sup style="color:red;font-size:15px;">*</sup></div>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(model => model.EMAILID, new { onpaste = "return false;", oncopy = "return false;", oncut = "return false;", required = "required", id = "txtEMAILID", type = "email", @maxlength = "30" })
+                        @Html.ValidationMessageFor(model => model.EMAILID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">Mobile Number<sup style="color:red;font-size:15px;">*</sup></div>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(model => model.MOBILENO, new { required = "required", id = "txtMobile", @maxlength = "10", onkeypress = "return isNumberKey(event);", onpaste = "return false;", oncopy = "return false;", oncut = "return false;" })
+                        @Html.ValidationMessageFor(model => model.MOBILENO, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-2">Date Of Birth<sup style="color:red;font-size:15px;">*</sup></div>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(model => model.DOB, new { onpaste = "return false;", oncopy = "return false;", oncut = "return false;", required = "required", id = "txtDOB", @maxlength = "10" })
+                        @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-6">
+                        <span class="rqf">Kindly fill valid mobile Number of self or closed relative. All communications will be made on this number by Board or School in future.</span>
+                    </div>
+                    <div class="col-md-2">
+                        Aadhar Number<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(model => model.AADHAR_NO, new { onpaste = "return false;", oncopy = "return false;", oncut = "return false;", required = "required", id = "txtAadhar", @minlength = "12", @maxlength = "12", onkeypress = "return isNumberKey(event);" })
+                        @Html.ValidationMessageFor(model => model.AADHAR_NO, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12"><h4>Fill Address </h4></div>
+                    <div class="col-md-2">
+                        Address<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.ADDRESS, new { @required = "required", @maxlength = "200" })
+                        @Html.ValidationMessageFor(model => model.ADDRESS, "", new { @class = "text-danger" })
+                        <div style="padding:1px 0 4px 0">ਵਿਦਿਆਰਥੀ/ਪ੍ਰੀਖਿਆਰਥੀ ਵੱਲੋਂ ਕੇਵਲ ਆਪਣਾ ਰਿਹਾਇਸ਼ੀ ਪਤਾ ਹੀ ਭਰਿਆ ਜਾਵੇ| ਕਿਸੇ ਅਕਾਦਮੀ/ਸਕੂਲ/ਸੰਸਥਾ ਦਾ ਪਤਾ ਭਰਿਆ ਜਾਣਾ ਦਾਖਲਾ ਰੱਦ ਕਰ ਦਿੱਤੇ ਜਾਣ ਦਾ ਅਧਾਰ ਬਣੇਗਾ|</div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        Study Centre District<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.FORM.ToLower() == "t3")
+                        {
+                            @Html.DropDownListFor(model => model.HOMEDIST, (List<SelectListItem>)ViewBag.Dist, new { required = "required", id = "ddlHOMEDISTNM" })
+                        }
+                        else
+                        {@Html.DropDownListFor(model => model.HOMEDIST, (List<SelectListItem>)ViewBag.Dist, new { required = "required", id = "ddlHOMEDISTNM" })}
+                        @Html.ValidationMessageFor(model => model.HOMEDIST, "", new { @class = "text-danger" })<label id="noTehsilLabel" hidden="hidden" style="color:red">No Tehsil present for this stream. Please select another district</label>
+                    </div>
+                    <div class="col-md-2">
+                        Tehsil<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(model => model.TEHSIL, (List<SelectListItem>)ViewBag.Tehsils, "--Select---", new { required = "required", id = "ddlTEHSIL" })
+                        @Html.ValidationMessageFor(model => model.TEHSIL, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        Pin Code<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(model => model.PINCODE, new { onpaste = "return false;", oncopy = "return false;", oncut = "return false;", required = "required", id = "txtPin", @maxlength = "6", onkeypress = "return isNumberKey(event);" })
+                        @Html.ValidationMessageFor(model => model.PINCODE, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12 text-center ptb">
+                        @Html.HiddenFor(model => model.PWD)
+                        @Html.HiddenFor(model => model.FORM)
+                        @Html.HiddenFor(model => model.APPNO)
+
+                        @if (Session["payStatus"].ToString() == "0" && Session["subStatus"].ToString() == "1")
+                        {
+                            <span class="rqf" style="font-size:14px;text-align:right">Kindly remove subjects to modify login details under [Choose Subject] menu.</span>
+                        }
+                        else if (Session["payStatus"].ToString() == "1" && Session["subStatus"].ToString() == "1")
+                        {
+                            <span class="rqf" style="font-size:14px;text-align:right">You cannot modify your login details due to fee challan is generated & data is locked.</span>
+                        }
+                        else
+                        {
+
+                            <input type="submit" value="Submit" class="btngo" onclick="return valForm();" />
+                        }
+                    </div>
+
+
+                </div>
+            </div>
+        }
+
+
+
+
+
+
+        @{
+
+            if (ViewBag.val != null)
+            {
+                if (ViewBag.val.ToString() != string.Empty && ViewBag.val.ToString().Length == 11)
+                {
+                    <script type="text/javascript" language="javascript">
+                        alert("Updated Login Information Successfully");
+                        window.location.href = '/Open/Applicationstatus';
+                    </script>
+                }
+                else if (ViewBag.val.ToString() == "10")
+                {
+                    <div id="dPending" style="display: none;padding:30px 10px" align="center" class="kdsfont">
+                        <span class="rqf">Please Fill All Information</span>
+                    </div>
+                }
+                else if (ViewBag.val.ToString() == "DUP")
+                {
+                    <div id="dPending" style="display: none;padding:30px 10px" align="center" class="kdsfont">
+                        <span class="rqf">@ViewBag.error</span>
+                        @if (ViewBag.flag == 3)
+                        {
+                            <span class="text-primary">Application No: @ViewBag.errorAppNo</span><br />
+                            <span>Name: @ViewBag.errorName</span><br />
+                            <span>MobileNo: @ViewBag.errorMOBILENO</span><br />
+                            <span>Distict:  @ViewBag.errorHOMEDISTNM</span>
+                        }
+                    </div>
+                }
+                else if (ViewBag.error != string.Empty)
+                {
+                    <div id="dPending" style="display: none;padding:30px 10px" align="center" class="kdsfont">
+                        <span class="rqf">@ViewBag.error</span>
+                    </div>
+                }
+                else
+                {
+                    <div id="dPending" style="display: none;padding:30px 10px" align="center" class="kdsfont">
+                        <span class="rqf">Data not Updated..plz try again</span>
+                    </div>
+                }
+            }
+        }
+    </div>
+</div>
+<style type="text/css">
+    .ui-datepicker {
+        background: #ffffff;
+        border: 0px solid #555;
+        color: #336DC0;
+    }
+</style>
+
+<script>
+
+
+    $(function () {
+        $("#txtDOB").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date('1 January 1990'),
+            yearRange:'1900:'+(new Date().getFullYear() - 13)
+        });
+    });
+
+    function getParameterByName(name, url) {
+        if (!url) {
+            url = window.location.href;
+        }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+
+
+
+    $(document).ready(function () {
+
+        $("#ddlHOMEDISTNM").change(function () {
+            var selectedDIST = $("#ddlHOMEDISTNM").val() ;
+            var selectedStream = $("#ddlSTREAM").val() ;
+            //alert($("#ddlSTREAM").val());
+            if(selectedStream==null)
+            {
+                selectedStream='';
+            }
+            $('#loading1').html("<p style='background-color:rgba(0,0,0,0.6);width:100%;height:100%;position:absolute;z-index:9999999'><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            //var selectedText = $(this).find("option:selected").text();
+            // document.getElementById("hidText").value = selectedText;
+            //alert(document.getElementById("hidText").value);
+            $.ajax({
+                url: '@Url.Action("GetTehID", "Open")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({DIST:selectedDIST,strm:selectedStream}),
+                success: function (States) {
+                    //document.getElementById("Address").value = StatesList;
+                    $("#ddlTEHSIL").empty();
+                    $('#loading1').empty();
+                    $.each(States, function (i, TehList) {
+                        $("#ddlTEHSIL").append('<option value="'
+                           + TehList.Value + '">'
+                           + TehList.Text + '</option>');
+
+                        if(TehList.Text.toLowerCase().includes("no tehsil"))
+                        {
+                            $("#noTehsilLabel").show();
+                        }
+                        else
+                        {
+                            $("#noTehsilLabel").hide();
+                        }
+
+                    });
+                    if (TehList.success) {
+
+                        //document.getElementById("MName").value = data.result;
+                        // $("#TextBoxID").val(data.result.MName);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        });
+    //});
+
+
+
+        if ('@ViewBag.mode' == "t3")
+        {
+
+            $("#ddlcategory").change(function () {
+
+                var selectedCategory = { category : $("#ddlcategory").val() };
+                $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                $.ajax({
+                    url: '@Url.Action("GetStreams", "Open")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedCategory),
+                    success: function (States) {
+                        //alert(StatesList);
+                        //document.getElementById("Address").value = StatesList;
+                        $("#ddlSTREAM").empty();
+                        $('#loading1').empty();
+                        $.each(States, function (i, Streams) {
+                            $("#ddlSTREAM").append('<option value="'
+                               + Streams.Value + '">'
+                               + Streams.Text + '</option>');
+                        });
+                        if (Streams.success) {
+
+                            //document.getElementById("MName").value = data.result;
+                            // $("#TextBoxID").val(data.result.MName);
+                        }
+                        else {
+                            alert('invalid ID' + data.success);
+                        }
+                    }
+                });
+            });
+
+
+
+            $("#ddlSTREAM").change(function () {
+                var selectedStream = $("#ddlSTREAM").val() ;
+                if(selectedStream==0 || selectedStream=="")
+                {  document.getElementById("ddlHOMEDISTNM").disabled = true;
+                }
+                else
+                {
+                    document.getElementById("ddlHOMEDISTNM").disabled = false;
+
+                    if(selectedStream.includes("IG"))
+                    {
+                        var selectedCategory = { strm : $("#ddlSTREAM").val() };
+                    }
+                    else
+                    {
+                        var selectedCategory = { strm : "all" };
+                    }
+                    $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $.ajax({
+                        url: '@Url.Action("GetDistID", "Open")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedCategory),
+                        success: function (States) {
+                            $("#ddlHOMEDISTNM").empty();
+                            $('#loading1').empty();
+                            $.each(States, function (i, Streams) {
+                                $("#ddlHOMEDISTNM").append('<option value="'
+                                   + Streams.Value + '">'
+                                   + Streams.Text + '</option>');
+                            });
+                            if (Streams.success) {
+                            }
+                            else {
+                                alert('invalid ID' + data.success);
+                            }
+                        }
+                    });
+
+                }
+
+            });
+
+        }
+
+    });
+</script>
+
+
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function valForm() {
+       // alert('1');
+        var cat = document.getElementById("ddlcategory");
+        if (cat.value == "0" || cat.value == "") {
+            alert("Select Category");
+            cat.focus();
+            return false;
+        }
+
+        var txtNAME = document.getElementById("txtNAME");
+       
+        if (txtNAME.value == "") {
+            alert("Enter Name");
+            txtNAME.focus();
+            return false;
+        }
+        var txtEMAILID = document.getElementById("txtEMAILID");
+        if (txtEMAILID.value == "") {
+            alert("Enter EMAILID");
+            txtEMAILID.focus();
+            return false;
+        }
+              
+       
+        if (document.getElementById("txtAadhar").value == "") {
+            alert("Please Enter AADHAR Number");
+            document.getElementById("txtAadhar").focus();
+            return false;
+        }
+        
+        if (document.getElementById("txtAadhar").value != "") {            
+
+            if (document.getElementById("txtAadhar").value.length != 12) {
+
+                alert("Please Enter 12 digits Aadhar Number");
+                document.getElementById("txtAadhar").focus();
+                return false;
+            }
+            //else {
+            //    var regexp = /^[2-9]{1}[0-9]{3}\s{1}[0-9]{4}\s{1}[0-9]{4}$/;
+            //    var Number = document.getElementById('txtAadhar').value;
+
+            //    if (!regexp.test(Number)) {
+            //        alert("Please Enter 12 digits Valid Aadhar Number");
+            //        document.getElementById("txtAadhar").focus();
+            //        return false;
+            //    }          
+            //}
+        }
+
+
+       
+        if (txtMobile.value == "") {
+            alert("Please Enter Mobile Number");
+            txtMobile.focus();
+            return false;
+        }
+
+        if (txtMobile.value != "") {
+            if (txtMobile.value.length != 10) {
+
+                alert("Please Enter 10 digits Mobile Number");
+                txtMobile.focus();
+                return false;
+            }
+            else {
+                var Number = document.getElementById('txtMobile').value;
+                var IndNum = /^[0]?[789]\d{9}$/;
+
+                if (!IndNum.test(Number)) {
+                    alert("invalid Number");
+                    txtMobile.focus();
+                    return false;
+                }
+
+            }
+        }
+     
+        if (document.getElementById("txtDOB").value.trim().length == 0) {
+            alert('Enter Date of Birth');
+            document.getElementById("txtDOB").focus();
+            return false;
+        }
+       
+        if (document.getElementById("ADDRESS").value.trim().length == 0 || document.getElementById("ADDRESS").value.trim() == "") {           
+            alert('Enter Address');
+            document.getElementById("ADDRESS").focus();
+            return false;
+        }
+       
+        var ddlHOMEDISTNM = document.getElementById("ddlHOMEDISTNM").value;
+        if (ddlHOMEDISTNM == "" || ddlHOMEDISTNM == "0") {
+            alert("Select District");
+            return false;
+        }
+      
+        var ddlTEHSIL = document.getElementById("ddlTEHSIL").value;
+        if (ddlTEHSIL == "" || ddlTEHSIL == "0") {
+            alert("Select Tehsil");
+            return false;
+        }
+      
+        if (document.getElementById("txtPin").value.trim().length == 0) {
+            alert('Enter Pincode');
+            document.getElementById("txtPin").focus();
+            return false;
+        }
+      
+        if (document.getElementById("txtPin").value != "") {
+            if (txtPin.value.length != 6) {
+                alert("Please Enter 6 digits Pincode");
+                txtPin.focus();
+                return false;
+            }
+        }
+      
+        return true;
+    }
+
+</script>
+
+
+
+

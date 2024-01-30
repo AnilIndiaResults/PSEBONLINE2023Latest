@@ -1,0 +1,264 @@
+﻿@model PSEBONLINE.Models.EAffiliationDashBoardViewModel
+
+@{
+    ViewBag.Title = "EAffiliation Dashboard";
+    Layout = "~/Views/Shared/_HeaderEAffiliation.cshtml";
+}
+
+
+<div class="box">
+
+
+    @{
+        if (Model != null)
+        {
+
+            using (Html.BeginForm("Dashboard", "EAffiliation", FormMethod.Post, new { @id = "login_form" }))
+            {
+
+        <div class="row">
+            <div class="col-md-12 text-center"><h2>SCHOOL NAME : @Model.SCHLNAME </h2>&nbsp;<br> </div>
+            <div class="clearfix"></div>
+            <div class="col-md-4">
+                Application No.
+                <label>@Model.APPNO</label>
+            </div>
+            <div class="col-md-4">
+                Application Registered On
+                <label>@Model.CREATEDDATE</label>
+            </div>
+            <div class="col-md-4">
+                Fee Paid
+                <label class="kds-bold">@Model.FeePaidStatus</label>
+            </div>
+            <div class="col-md-4">
+                Form Lock Status  <br>
+                <label class="kds-bold">@Model.FormUnlocked</label>
+                @if (Model.FormUnlocked.ToUpper() == "FORM UNLOCKED" && Model.FeePaidStatus.ToUpper() == "PAID")
+                {
+                    <input type="submit" name="submit" value="Click here to Lock Your Form" class="btngo" onclick="return confirm('Are you sure to Lock Your Form ?');" />
+                }
+            </div>
+
+            <div class="col-md-4">
+                Application Status
+                <label class="kds-bold" style="color:green">@Model.ApprovedStatus</label>
+            </div>
+
+            <div class="col-md-4">
+               Applied for Class
+                <label class="kds-bold" style="color:green">@Session["Class"]</label>
+            </div>
+            <div class="col-md-4">
+                Applied for Category
+                <label class="kds-bold" style="color:green">@Session["Category"]</label>
+            </div>
+
+
+        </div>
+            }
+            <div class="clearfix"></div>
+
+            <br /> <h3 class="rqf">Objection Status/Details</h3>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table id="t01" class="table table-bordered">
+                            <tr>
+                                <td colspan="4">
+                                    <table width="100%" id="view">
+                                        <tr class="active-tr">
+                                            <th>Objection Id</th>
+                                            <th>Objection Details</th>
+                                            <td>Status</td>
+                                            <th>Response Details</th>
+                                            <th>Approval Details</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        @{
+
+                                            if (Model.affObjectionLettersViewList.Count > 0)
+                                            {
+                                                for (int h = 0; h < Model.affObjectionLettersViewList.Count; h++)
+                                                {
+                                                                                <tr id="trs">
+                                                                                    <td>@Model.affObjectionLettersViewList[h].OLID</td>
+                                                                                    <td>
+                                                                                        <span class="text-success">
+                                                                                            [@Model.affObjectionLettersViewList[h].ObjCode]
+                                                                                        </span><br />
+                                                                                        @Model.affObjectionLettersViewList[h].ObjName<br />
+                                                                                        <span class="rqf">Objection On : @Model.affObjectionLettersViewList[h].ObjDate.Value.ToString("dd/MM/yyyy hh:mm tt")</span><br />
+                                                                                        @if (!string.IsNullOrEmpty(Model.affObjectionLettersViewList[h].ObjectionFile))
+                                                                                        {
+                                                                                            <a class="btn" target="_blank" href="/Upload/Upload2023/@Model.affObjectionLettersViewList[h].ObjectionFile">View Objection File</a>
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td>@Model.affObjectionLettersViewList[h].ObjStatus</td>
+                                                                                    <td>
+                                                                                        @if (string.IsNullOrEmpty(Model.affObjectionLettersViewList[h].Attachment))
+                                                                                        {@Model.affObjectionLettersViewList[h].SchoolReply}
+                                                                                    else
+                                                                                    {
+                                                                                        @Model.affObjectionLettersViewList[h].SchoolReply<br />
+                                                                                        <span class="rqf">Response On : @Model.affObjectionLettersViewList[h].SchoolReplyOn.Value.ToString("dd/MM/yyyy hh:mm tt")</span><br />
+
+                                                                                        <a class="btn" target="_blank" href="/Upload/Upload2023/@Model.affObjectionLettersViewList[h].Attachment">View File</a>
+                                                                                    }
+                                                                                    </td>
+                                                                                    @*approval*@
+                                                                                <td>
+                                                                                    @if (!string.IsNullOrEmpty(Model.affObjectionLettersViewList[h].ApprovalStatus))
+                                                                                    {
+                                                                                        @Model.affObjectionLettersViewList[h].ApprovalStatus
+                                                                                        <span class="rqf"> On : @Model.affObjectionLettersViewList[h].ApprovalOn.Value.ToString("dd/MM/yyyy hh:mm tt")</span><br />
+                                                                                        if (Model.affObjectionLettersViewList[h].ApprovalStatus.ToUpper() != "ACCEPT")
+                                                                                        {
+                                                                                            <span class="kdsfont">@Model.affObjectionLettersViewList[h].ApprovalRemarks</span>
+                                                                                        }
+
+                                                                                    }
+                                                                                </td>
+                                                                                    <td>
+                                                                                        @if (string.IsNullOrEmpty(Model.affObjectionLettersViewList[h].SchoolReply))
+                                                                                        {
+                                                                                            <a data-toggle="modal" data-target="#myModalReply-@Model.affObjectionLettersViewList[h].OLID">Reply</a>
+
+                                                                                            <div class="modal fade" id="myModalReply-@Model.affObjectionLettersViewList[h].OLID" role="dialog">
+                                                                                                <div class="modal-dialog" style="width:80%">
+                                                                                                    <!-- Modal content-->
+                                                                                                    <div class="modal-content">
+                                                                                                        <div class="modal-header">
+                                                                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                                                                            <h3>Application Number : @Model.affObjectionLettersViewList[h].AppNo </h3>
+                                                                                                        </div>
+                                                                                                        <div class="modal-body">
+                                                                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                                                                <tr>
+                                                                                                                    <td colspan="4"><span class="text-primary">Objection Details</span></td>
+                                                                                                                </tr>
+                                                                                                                <tr>
+                                                                                                                    <td>
+                                                                                                                        Objection :  <span class="text-danger">@Model.affObjectionLettersViewList[h].ObjName</span><br />
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                                @{
+                                                                                                                    <tr>
+                                                                                                                        <td>
+                                                                                                                            Objection Response <span class="rqf">*</span>
+                                                                                                                            <textarea id="ObjectionSchoolReply-@Model.affObjectionLettersViewList[h].OLID" placeholder="Enter Response" name="ObjectionSchoolReply" maxlength="100" cols="60" rows="8"></textarea>
+
+                                                                                                                        </td>
+                                                                                                                    </tr>
+                                                                                                                    <tr>
+                                                                                                                        <td>
+                                                                                                                            Attachment <span class="rqf">*</span><br>
+                                                                                                                            <span style="color:#cc0000">ਨੋਟ - Objection ਨਾਲ ਸਬੰਧਤ ਨੱਥੀ ਕੀਤੇ ਜਾਣ ਵਾਲੇ ਸਾਰੇ ਦਸਤਾਵੇਜ਼ ਇੱਕ ਹੀ PDF ਫਾਈਲ ਵਿੱਚ ਮਰਜ਼ ਕਰਕੇ ਅਪਲੋਡ ਕੀਤੇ ਜਾਣ।</span><br>
+                                                                                                                            <input type="file" name="ObjectionAttachment" id="ObjectionAttachment-@Model.affObjectionLettersViewList[h].OLID" />
+                                                                                                                        </td>
+                                                                                                                        <td>
+                                                                                                                            @*<button type="submit" value="Submit" class="btn">Submit</button>*@
+
+                                                                                                                            <input type="button" class="btn" value="Submit" id="btnSubmitObjectionResponse" onclick="sendObjectionResponse(@h,'@Model.affObjectionLettersViewList[h].AppType','@Model.affObjectionLettersViewList[h].AppNo','@Model.affObjectionLettersViewList[h].ObjCode',@Model.affObjectionLettersViewList[h].OLID)" />
+                                                                                                                            <div id="loadingF-@h"></div>
+                                                                                                                        </td>
+                                                                                                                    </tr>
+
+
+                                                                                                                }
+
+                                                                                                            </table>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                        }
+                                                                                    </td>
+                                                                                </tr>
+                                                }
+                                            }
+                                        }
+                                    </table>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+
+
+</div>
+            <style>
+                .input-validation-error {
+                    background-color: #FF9494 !important;
+                    border: solid 1px Red !important;
+                }
+            </style>
+
+            <script>
+                function sendObjectionResponse(k, AppType, AppNo, ObjCode, OLID) {
+
+                    var flag = 0;
+                    var ObjectionSchoolReply = $("#ObjectionSchoolReply-" + OLID).val();
+                    if (ObjectionSchoolReply == "") {
+                        $("#ObjectionSchoolReply-" + OLID).addClass("input-validation-error");
+                        flag = 1;
+                    }
+
+                    var files = $("#ObjectionAttachment-" + OLID).get(0).files;
+                    var fileData = new FormData();
+                    for (var i = 0; i < files.length; i++) {
+                        fileData.append("ObjectionAttachment", files[i]);
+                    }
+
+                    if ($("#ObjectionAttachment-" + OLID).get(0).files.length === 0) {
+                        $("#ObjectionAttachment-" + OLID).addClass("input-validation-error");
+                        flag = 1;
+                    }
+
+                    fileData.append("ObjectionSchoolReply", ObjectionSchoolReply);
+                    fileData.append("AppType", AppType);
+                    fileData.append("AppNo", AppNo);
+                    fileData.append("ObjCode", ObjCode);
+                    fileData.append("OLID", OLID);
+
+
+                    if (flag == 1) {
+                        return false;
+                    }
+                    else {
+
+                        $("#loadingF" + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                        $.ajax({
+                            url: '/Master/JqSendEaffObjectionResponse',
+                            type: "POST",
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            data: fileData,
+                            success: function (response) {
+                                $("#loadingF" + k).empty();
+                                if (response.oid == 1) {
+                                    alert("Response Submit Successfully");
+                                    $('#myModalReply-' + ObjCode).modal('hide');
+                                    window.location.href = '/EAffiliation/Dashboard';
+                                }
+                                else {
+                                    alert(response.msg);
+                                }
+
+                            },
+                            error: function (err) {
+                                $("#loadingF" + k).empty();
+                                alert("Response Submit Failure");
+                                $('#myModalReply-' + ObjCode).modal('hide');
+                            }
+                        });
+                    }
+                }
+
+            </script>

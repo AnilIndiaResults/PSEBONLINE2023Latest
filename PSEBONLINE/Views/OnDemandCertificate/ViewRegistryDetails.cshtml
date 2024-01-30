@@ -1,0 +1,77 @@
+﻿
+@model PSEBONLINE.Models.OnDemandCertificates
+@{
+    ViewBag.Title = "View Registry Details";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+
+<h1>View Registry Details</h1>
+@using (Html.BeginForm("ViewRegistryDetails", "OnDemandCertificate", FormMethod.Post))
+{
+
+    <div class="row">
+        <div class="col-md-3">Select Lot: @Html.DropDownList("RegistryLot", new SelectList(ViewBag.LotList, "Value", "Text", new { }))</div>
+        <div class="col-md-3">
+            Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+        </div>
+        <div class="col-md-3">
+            &nbsp;<br />
+            <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+        </div>
+        <div class="col-md-3">
+            <br /><input type="submit" value="Search" onclick="return valForm();" />
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Welcome", "OnDemandCertificates")'" />
+        </div>
+    </div>
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>Roll</th>
+                    <th>Certificate Number</th>
+                    <th>Registry Number</th>
+                    <th>Registry Lot</th>
+                    <th>Registry ON</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[1].Rows.Count; i++)
+                        {
+                            var Roll = Model.StoreAllData.Tables[1].Rows[i]["Roll"].ToString();
+                            var CertNo = Model.StoreAllData.Tables[1].Rows[i]["CertNo"].ToString(); 
+                            var RegistryNumber = Model.StoreAllData.Tables[1].Rows[i]["RegistryNumber"].ToString();
+                            var RegistryLot = Model.StoreAllData.Tables[1].Rows[i]["RegistryLot"].ToString();
+                            var RegistryON = Model.StoreAllData.Tables[1].Rows[i]["RegistryON"].ToString();
+                            int Count = i + 1;
+                            <tr>
+                                <td>@Count</td>
+                                <td>@Roll</td>
+                                <td>@CertNo</td>
+                                <td>@RegistryNumber</td>
+                                <td>@RegistryLot</td>
+                                <td>@RegistryON</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+

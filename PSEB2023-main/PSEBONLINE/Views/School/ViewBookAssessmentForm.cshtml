@@ -1,0 +1,254 @@
+﻿@model PSEBONLINE.Models.BookAssessmentForm
+@{
+    ViewBag.Title = "ViewBookAssessmentForm";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<style type="text/css">
+    body, td, th {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 13px
+    }
+
+    td, th {
+        height: 30px;
+        padding-left: 4px
+    }
+</style>
+@if (!(new[] { "AFF", "ASS" }).Contains(Session["SchType"].ToString(), StringComparer.OrdinalIgnoreCase))
+{
+    Response.Redirect("~/Login");
+}
+
+
+<script type="text/javascript">
+    window.setInterval(function () {
+        var current = new Date();
+        var expiry = new Date("Apr 30, 2022 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideint').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideint').show();
+        }
+    }, 0);
+</script>
+
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<h1 class="noprint" style="font-size:22px;padding:10px 0">View BookAssessment Form</h1>
+<div class="row noprint">
+    <div class="col-md-12 noprint">
+        @using (Html.BeginForm("ViewBookAssessmentForm", "School", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div style="@(ViewBag.Id == "FinalPrint" && ViewBag.IsPrint == "1" ? "display:block" : "display:none" )">
+                <fieldset style="margin-bottom:15px">
+                    <legend>Search</legend>
+                    <div class="col-md-3">
+                        Select Class @Html.DropDownList("Class", new SelectList(ViewBag.Class, "Value", "Text", ViewBag.SelectedClass), "--All Class---", new { id = "ddlClass" })
+                    </div>
+                    <br />  <div class="col-md-3"><input type="submit" value="Search" name="cmd" /> </div>
+                </fieldset>
+            </div>
+        }
+    </div>
+    <div class="col-md-12 noprint text-right">
+        @if (Model != null && Model.BookRequestList != null)
+        {
+            if (ViewBag.Id == "FinalPrint" && ViewBag.IsPrint == "1")
+            {
+                <span class="hideint"><input type="submit" name="submit" value="Final Print Submission" class="btn" data-confirm="are u sure to take Final Print of this Report?" /> </span>
+
+            }
+            else
+            { <input type="button" value="Print" class="btn" onclick="window.print()" />}
+
+        }
+    </div>
+</div>
+<div class="clearfix"></div>
+@{
+    if (Model != null && Model.BookRequestList != null)
+    {
+        <div class="row">
+            <div class="col-md-12" style="vertical-align:top">
+                <table border="1" align="center" class="kdstbl" width="100%">
+                    <tr>
+                        <td colspan="5" valign="top">
+                            <table width="100%">
+                                <tr>
+                                    <td align="left" width="18%">
+                                        <div style="padding:2px"><img src="~/Images/slogo.jpg" height="55" alt="PSEB" width="55" /></div>
+                                    </td>
+                                    <td align="center" width="64%" style="line-height:24px">
+                                        <span class="kdsfont" style="font-size:32px">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span><br />
+                                        <span style="font-size:16px">
+                                            Book Demand For The Year 2023-2024
+                                            @if (ViewBag.Id == "RoughPrint")
+                                            {<br /><span>Rough Print</span>}
+                                        </span>
+                                    </td>
+                                    <td align="right" width="18%">
+                                        <div style="padding-right:4px">
+                                            Print Date & Time<br />
+                                            @if (ViewBag.IsPrint == "1")
+                                            {@DateTime.Now.ToString("dd/MM/yyyy & hh:mmtt") }
+                                        else
+                                        {
+                                            @Convert.ToDateTime(ViewBag.PrintOn).ToString("dd/MM/yyyy & hh:mmtt")
+                                        }
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" colspan="2">School Name</td>
+                        <td align="left" colspan="3">@ViewBag.schoolname</td>
+                    </tr>
+                    <tr>
+                        <td align="left" colspan="2"><span class="kdsfont">Ó¨ÞÐ ÂØ ÅÙ</span></td>
+                        <td align="left" colspan="3"><span class="kdsfont">@ViewBag.schoolnamep</span></td>
+                    </tr>
+                    <tr>
+                        <td align="left" width="22%" colspan="2">School Code / <spn class="kdsfont">Ó¨ÞÐ ÂØ ¨ë¸</spn></td>
+                        <td align="left" width="36%">@ViewBag.schl </td>
+                        <td align="left" width="19%">ID No. / <spn class="kdsfont">ÔÅØª¼Û ÅâÉÏ</spn></td>
+                        <td align="left" width="23%">@ViewBag.IDNO </td>
+                    </tr>
+                    <tr>
+                        <td align="left" colspan="2">Principal Name</td>
+                        <td align="left" colspan="3">@ViewBag.PrincipalName</td>
+                    </tr>
+
+                    <tr>
+                        <td align="left" colspan="2">Email ID</td>
+                        <td align="left" colspan="3">@ViewBag.Email</td>
+                    </tr>
+
+                    <tr>
+                        <td align="left" colspan="2">Ladline No.</td>
+                        <td align="left" colspan="3">@ViewBag.Phone </td>
+                    </tr>
+
+                    <tr>
+                        <td align="left" colspan="2">Mobile No.</td>
+                        <td align="left" colspan="3">@ViewBag.SchoolMobile</td>
+                    </tr>
+
+                    <tr>
+                        <td align="left" colspan="2">School Address</td>
+                        <td align="left" colspan="3">@ViewBag.Address </td>
+                    </tr>
+
+                    <tr>
+                        <td align="left" colspan="2">Note</td>
+                        <td align="left" colspan="3"> </td>
+                    </tr>
+
+                    <tr>
+                        <td align="left" colspan="2">Helpline No.</td>
+                        <td align="left" colspan="3"></td>
+                    </tr>
+
+
+                    <tr class="active-tr" style="background-color:#c4c4c4 !important;color:#000 !important">
+                        <th width="6%">SRL</th>
+                        <th width="8%">Book ID</th>
+                        <th>Class</th>
+                        <th>Books</th>
+                        <th>Total Books Request</th>
+                    </tr>
+
+                    @if (Model.BookRequestList.Count > 0)
+                    {
+                        int Count = 0;
+                        for (int i = 0; i < Model.BookRequestList.Count; i++)
+                        {
+                            Count = Count + 1;
+                            <tr>
+                                <td>@Count</td>
+                                <td>@Html.DisplayFor(m => m.BookRequestList[i].BookId, new { })</td>
+                                <td>@Html.DisplayFor(m => m.BookRequestList[i].Class, new { })</td>
+                                <td><span class="kdsfont">@Html.DisplayFor(m => m.BookRequestList[i].BookNM, new { })</span></td>
+                                <td>@Html.DisplayFor(m => m.BookRequestList[i].NOS, new { })</td>
+                            </tr>
+                        }
+                    }
+
+                    <tr>
+                        <td align="left">Summary</td>
+                        <td align="left" colspan="4">@ViewBag.Summary</td>
+                    </tr>
+                    <tr>
+                        <td style="height:60px" colspan="5">
+                            Note:<br />
+                            1. <span class="kdsfont">Ú¥Ó ÂÛ ÚÆñÚ¶â¸ ¨ØÆÛ ¤ØÆ»ã ÓÉâÄ¼ Ú²ÐØ ÌèÅã²Ï ªã¼ÏÛ ÂÇ¼Ï ÅÞâ Êã²Û ²ØÒã¢</span><br />
+                            2. <span class="kdsfont">
+                                ÆÝÓ¼¨ ÂØ ÅÙ Âã ÓØÕÌ»ã ÒØÐØ ¨ØÏÌ ªØÐÛ ÅØ ±óÚ¸¤Ø ²ØÒã ÊØÒ ²ã¨Ï ÆÝÓ¼¨ Ðë¾Û×ÂÛ ÅÕÛ× ¼Ù 0 ÂÏÓØÚ¥¤Ø ²ØÒã ¢
+                                ¦ÝÆÏ ÚÂó¼Û Ú¬»¼Û Ó¨ÞÐ ÚÏ¨ØÏ¸ ¤ÅÞÓØÏ ÓÕÛ Õè¢ ¤ÓÛ× Ú¥Ó Ú¬»¼Û ¤ÅÝÓØÏ ÆÝÓ¼¨Ù ÉëÏ¸ ÂÇ¼Ï ¼ë ªñÛÂ» Ð¥Û ÓÚÕÌ¼ ÕÙ¢
+                            </span><br /><br />
+                            <div class="kdsfont" style="float:right;padding-right:10px">
+                                <span style="padding:0 14px"></span>ÚÆâñÓÛÆÐ<br /> ÌëÕÏ ¤¼ã ÕÓ¼ØªÏ<br /><br /><br />
+                            </div><br /><br /><br />
+                            @*<div class="kdsfont" style="float:right">
+                                   <br /><br />
+                                </div>*@
+                        </td>
+
+
+                    </tr>
+
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+    }
+    else
+    { <p>Record Not Found</p>}
+}
+
+
+<script>
+    jQuery(document).ready(function () {
+        jQuery('[data-confirm]').click(function (e) {
+            if (!confirm(jQuery(this).attr("data-confirm"))) {
+                e.preventDefault();
+            }
+            else {
+                goPrint();
+            }
+        });
+    });
+
+</script>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+
+    function goPrint() {
+        $.ajax({
+            type: "POST",
+            url: "/School/JqUpdatePrint", // this for calling the web method function in cs code.
+            data: '{storeid:"' + '@ViewBag.schl' + '",class1:"' + '@ViewBag.SelectedClass' + '",Action:"1" }',// user name or email value  //
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccess,
+            failure: function (response) {
+            }
+        });
+        function OnSuccess(response) {
+            alert('Final Print SuccessFully Submitted');
+            //alert('response dee: ' + response.dee);
+            if (response.dee == 1) {
+                window.print();
+            }
+            else { alert('Please Try Again'); }
+        }
+    }
+</script>

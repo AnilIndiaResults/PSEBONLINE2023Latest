@@ -1,0 +1,89 @@
+﻿@model PSEBONLINE.Models.AdditionalSectionModel
+@{
+    ViewBag.Title = "Balance Sheet Details";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">@Html.Partial("_AdditionalSectionHeading")</div>
+    <div class="clearfix"></div>
+    <div class="col-md-3">
+        @Html.Partial("_AdditionalSectionMenu")
+    </div>
+    <div class="col-md-9">
+        <h4>Books Purchased Summary</h4>
+        @using (Html.BeginForm("BooksPurchaseDetails", "AdditionalSection", FormMethod.Post, new {  id = "uploadform", enctype = "multipart/form-data" }))
+        {
+            <div class="row">
+                <div class="col-md-3">Total Students<span class="rqf">*</span></div>
+                <div class="col-md-3">@Html.TextBoxFor(a => a.BPTS, new {  @maxlength = "7", onkeypress = "return isNumberKey(event);", })</div>
+                <div class="col-md-3">Percentage of Books Purchased<span class="rqf">*</span></div>
+                <div class="col-md-3">@Html.TextBoxFor(a => a.BPBOOKPERCENT, new {  @maxlength = "7", onkeypress = "return isNumberKey(event);", })</div>
+                <div class="clearfix"></div>
+                <div class="col-md-3">Total Amount of Purchased Books<span class="rqf">*</span></div>
+                <div class="col-md-3">@Html.TextBoxFor(a => a.BPAMOUNT, new {  @maxlength = "7", onkeypress = "return isNumberKey(event);", })</div>
+                <div class="col-md-3">Name of District Sub Office<span class="rqf">*</span></div>
+                <div class="col-md-3">@Html.DropDownListFor(a => a.BPNAME, new SelectList(ViewBag.DistOfficerList, "Value", "Text", ViewBag.SelectedItem), "---Select Session---", new {  @class = "" })</div>
+                <div class="clearfix"></div>
+                <div class="col-md-3">Bill No.<span class="rqf">*</span></div>
+                <div class="col-md-3">@Html.TextBoxFor(a => a.BPBILL, new {  @maxlength = "30" })</div>
+                <div class="col-md-3">Bill Date<span class="rqf">*</span></div>
+                <div class="col-md-3">@Html.TextBoxFor(a => a.BPBILLDATE, new {  @class = "date" })</div>
+                <div class="clearfix"></div>
+                @*<div class="col-md-12"><span class="rqf">Note : Attach Bill Copy.</span></div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">@Html.TextBoxFor(a => a.BPFILE, null, new { @required= "required", id = "BPFILE", type = "file" })</div>
+                       <div class="clearfix"></div>*@
+
+                <div class="col-md-12"><span class="rqf">Note: If books purchased in multiple times then enter bill no as comma separated in bill no column e.g. 251,4514,4821) and Enter recent bill date in date column.</span></div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 text-center tbp">
+                    @if (string.IsNullOrEmpty(Model.ChallanId))
+                    {
+                        <input type="submit" name="submit" value="SAVE" />
+                    }
+                    <a href="/AdditionalSection/Index" class="btn">Back</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                </script>}
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                </script>
+            }
+        }
+    }
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<script>
+    $(document).ready(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            showButtonPanel: false,
+            changeMonth: false,
+            changeYear: false,
+            yearRange: '2018:2019',
+            minDate: new Date(2018, 4 - 1, 1),  //new Date(yyyy, current month - 1, date),
+            maxDate: new Date(),
+            inline: true
+        });
+        //$(".date").datepicker().datepicker("setDate", new Date());
+    });
+</script>

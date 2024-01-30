@@ -1,0 +1,148 @@
+﻿
+@{
+    ViewBag.Title = "BankMISPage";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+@using (Html.BeginForm("BankMISPage", "Challan", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    int j = 0;
+    <h1>Bank MIS Report
+
+
+        @if (Session["UserName"] != null && Session["RoleType"].ToString() == "Admin") { }
+        else { Response.Redirect("~/Admin"); }
+    </h1>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+
+                <div class="col-md-3">
+                    Search By:
+                    @Html.DropDownList("searchby", new List<SelectListItem>
+{
+    new SelectListItem{ Text="Select", Value = "" },
+    new SelectListItem{ Text="Challan ID", Value = "challanid" },
+    new SelectListItem{ Text="Journal Ref No", Value = "J_REF_NO" },
+ })
+                </div>
+                <div class="col-md-3">
+                    &nbsp;<br>
+
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" />
+                </div>
+                <div class="col-md-3">
+                    <br>
+                    <input type="Submit" value="Search" name="cmd"/>
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>Bank</th>
+                        <th>Challan ID</th>
+                        <th>SCHLREGID</th>
+                        <th>J.No</th>
+                        <th>APP No</th>
+                        <th>Challan Date</th>
+                        <th>Download Date</th>
+                        <th>Verify Date</th>
+                        <th>FEE</th>
+                        <th>Bar Code</th>
+                        <th>Deposit Date</th>
+                        <th>Type</th>
+                        @*<th><input type="checkbox" id="chkSelectAll" /></th>*@
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                var bank = Model.StoreAllData.Tables[0].Rows[i]["Bank"].ToString();
+                                // var idNo= Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                                var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                                var CHLNDATE = Model.StoreAllData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                                var FEECAT = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                                var SCHLREGID = Model.StoreAllData.Tables[0].Rows[i]["SCHLREGID"].ToString();
+                                var FEE = Model.StoreAllData.Tables[0].Rows[i]["FEE"].ToString();
+                                var DOWNLDFLG = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDFLG"].ToString();
+                                var DOWNLDDATE = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDDATE"].ToString();
+                                var VERIFIED = Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString();
+                                var J_REF_No = Model.StoreAllData.Tables[0].Rows[i]["J_REF_No"].ToString();
+                                var APPNO = Model.StoreAllData.Tables[0].Rows[i]["APPNO"].ToString();
+                                var VERIFYDATE = Model.StoreAllData.Tables[0].Rows[i]["VERIFYDATE"].ToString();
+                                var BRCODE = Model.StoreAllData.Tables[0].Rows[i]["BRCODE"].ToString();
+                                var DEPOSITDT = Model.StoreAllData.Tables[0].Rows[i]["DEPOSITDT"].ToString();
+                                var type = Model.StoreAllData.Tables[0].Rows[i]["type"].ToString();
+                                //var dee = Model.StoreAllData.Tables[0].Rows[i]["TID"].ToString();
+                                //var ud = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                                //var vfalg = Model.StoreAllData.Tables[0].Rows[i]["vflag"].ToString();
+                                //var Approved = Model.StoreAllData.Tables[0].Rows[i]["Approved"].ToString();
+                                
+                                <tr>
+                                    <td>@bank</td>
+                                    <td>@challanid</td>
+                                    <td>@SCHLREGID</td>
+                                    <td>@J_REF_No</td>
+                                    <td>@APPNO</td>
+                                    <td>@CHLNDATE</td>
+                                    <td>@DOWNLDDATE</td>
+                                    <td>@VERIFYDATE</td>
+                                    
+                                    @*<td><input class="checkbox" type="checkbox" value='@id' name="sport"></td>*@
+
+                                    <td>
+                                        @FEE
+
+                                    </td>
+                                    <td>
+                                        @BRCODE
+
+                                    </td>
+                                    <td>@DEPOSITDT</td>
+                                    <td>@type</td>
+                                </tr>
+                                
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="11">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+                       
+
+                        @*<script>
+                                    $("#chkSelectAll").bind("change", function () {
+                                        $(".chkSelect").prop("checked", $(this).prop("checked"));
+                                    });
+                                    $(".chkSelect").bind("change", function () {
+                                        if (!$(this).prop("checked"))
+                                            $("#chkSelectAll").prop("checked", false);
+                                    });
+                                    $(".alert").hide().fadeIn("slow");
+                            </script>*@
+                        }
+

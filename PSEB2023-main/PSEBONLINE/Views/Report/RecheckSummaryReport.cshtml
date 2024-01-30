@@ -1,0 +1,168 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "Recheck Summary Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4L.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<h1 class="noprint">Recking & Re-Evaluation Summary Report</h1>
+<div class="row">
+    <div class="col-md-12 noprint">
+  <fieldset>
+            <legend>Search</legend>
+        @using (Html.BeginForm("RecheckSummaryReport", "Report", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+        {
+            @Html.Hidden("Filevalue", "CENT")
+            <div class="row">             
+                <div class="col-md-2">
+                    Session
+                    @{
+                        List<SelectListItem> batchYear = new List<SelectListItem>();
+                        batchYear.Add(new SelectListItem { Text = "2020", Value = "2020" });
+                    }
+                    @Html.DropDownList("batchYear", batchYear, new { id = "batchYear" })
+                </div>  
+                <div class="col-md-2">  Batch   <span class="rqf">*</span>         
+                   @Html.DropDownList("batch", new SelectList(ViewBag.Mybatch, "Value", "Text", ViewBag.Month), "--Select---", new { @class = "", id = "batch", required = "required" })
+                </div>      
+                <div class="col-md-2">
+                    Class<span class="rqf">*</span>  @Html.DropDownList("Class", new SelectList(ViewBag.Mycls, "Value", "Text", ViewBag.Selectedcls), "--Select---", new { @class = "", id = "Class", required = "required" })
+                </div>            
+                <div class="col-md-2">
+                  Exam Type  @Html.DropDownList("RP", new SelectList(ViewBag.MyRP, "Value", "Text", ViewBag.SelectedRP), "--All---", new { @class = "", id = "RP" })
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="submit" name="submit" value="Search" onclick="return valForm();" />
+                </div>
+            </div>
+                        }
+ </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-right noprint">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12" style="@(ViewBag.TotalCount > 0 ? "display:block" : "display:none")">
+        <div style="border:1px solid #fff !important;display:block;margin-bottom:30px">
+            <table border="1" width="100%" class="tprint" id="t03">
+                <thead
+                    <tr>
+                        <td style="border-right:0 !important" colspan="2"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                        <td colspan="5" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                            <span style="font-size:28px">Punjab School Education Board</span><br /><span>
+                            @{
+                                if (ViewBag.Selectedcls == "12")
+                                { <span>Senior</span> }
+                                else
+                                { <span>Matric</span> }
+
+                            }
+                            @{
+                                if (ViewBag.SelectedRP == "1")
+                                { <span>(Regular)</span> }
+                                else if (ViewBag.SelectedRP == "2")
+                                { <span>(Open)</span> }
+                                else if (ViewBag.SelectedRP == "3")
+                                { <span>(Private)</span> }
+                                else
+                                { <span></span> }
+
+                            }
+                            Rechecking/Re-Evaluation Summary Report @ViewBag.Month-@ViewBag.Year</span>
+                        </td>
+                        <td colspan="2" style="text-align:right;border-left:0 !important;">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                    </tr>
+                </thead>
+                <tr class="active-tr" style="background-color:#dddddd !important;color:#1f1f1f;">
+                    <td>&nbsp;Total</td>
+                    <td>&nbsp;Recheck</td>
+                    <td colspan="2">&nbsp;Recheck-Final Submitted</td>
+                    <td>&nbsp;Recheck-Pending</td>
+                    <td>&nbsp;Revaluation</td>
+                    <td colspan="2">&nbsp;Revaluation-Final Submitted</td>
+                    <td>&nbsp;Revaluation-Pending</td>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {                       
+                        <tr>
+                            <td>&nbsp;@ViewBag.Total</td>
+                            <td>&nbsp;@ViewBag.Rechecking</td>
+                            <td colspan="2">&nbsp;@ViewBag.RCFS</td>
+                            <td style="color:#f00">&nbsp;@ViewBag.RCFP</td>
+                            <td>&nbsp;@ViewBag.Revaluation</td>
+                            <td colspan="2">&nbsp;@ViewBag.REFS</td>
+                            <td style="color:#f00">&nbsp;@ViewBag.REFP</td>
+                        </tr>
+                        <tr><td colspan="9" height="20px"></td></tr>
+                    }
+                }
+                <tr class="active-tr" style="background-color:#dddddd !important;color:#1f1f1f;">
+                    <td width="24%">&nbsp;SUBNM</td>
+                    <td width="5%">&nbsp;SUB</td>
+                    <td width="8%">&nbsp;Total</td>
+                    <td width="8%">&nbsp;Recheck</td>
+                    <td width="10%">&nbsp;Recheck-Final</td>
+                    <td width="11%">&nbsp;Recheck-Pending</td>
+                    <td width="10%">&nbsp;Revaluation</td>
+                    <td width="11%">&nbsp;Revaluation-Final</td>
+                    <td width="13%">&nbsp;Revaluation-Pending</td>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            Count = Count + 1;
+                            var SubCode = Model.StoreAllData.Tables[0].Rows[i]["SubCode"].ToString();
+                            var SubNM = Model.StoreAllData.Tables[0].Rows[i]["SubNM"].ToString();
+                            var Total = Model.StoreAllData.Tables[0].Rows[i]["Total"].ToString();
+                            var Rechecking = Model.StoreAllData.Tables[0].Rows[i]["Rechecking"].ToString();
+                            var RCFS = Model.StoreAllData.Tables[0].Rows[i]["RCFS"].ToString();
+                            var RCFP = Model.StoreAllData.Tables[0].Rows[i]["RCFP"].ToString();
+                            var Revaluation = Model.StoreAllData.Tables[0].Rows[i]["Revaluation"].ToString();
+                            var REFS = Model.StoreAllData.Tables[0].Rows[i]["REFS"].ToString();
+                            var REFP = Model.StoreAllData.Tables[0].Rows[i]["REFP"].ToString();
+                            <tr>
+                                <td>&nbsp;@SubNM</td>
+                                <td>&nbsp;@SubCode</td>
+                                <td>&nbsp;@Total</td>
+                                <td>&nbsp;@Rechecking</td>
+                                <td>&nbsp;@RCFS</td>
+                                <td>&nbsp;@RCFP</td>
+                                <td>&nbsp;@Revaluation</td>
+                                <td>&nbsp;@REFS</td>
+                                <td>&nbsp;@REFP</td>
+                            </tr>
+                        }
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">   
+    //------------------------------------------------
+    function valForm() {
+        var batch = document.getElementById("batch");
+        if (batch == "0" || batch == "") {
+            alert("Select Session");
+            document.getElementById("batch").focus();
+            return false;
+        }         
+        var txtClass = document.getElementById("Class").value;
+        if (txtClass == "0" || txtClass == "") {
+            alert("Select Class");
+            document.getElementById("Class").focus();
+            return false;
+        }      
+       
+    }   
+</script>

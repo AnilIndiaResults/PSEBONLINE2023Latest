@@ -1,0 +1,117 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<!-- #endregion -->
+
+<h1>List of Examination Centres</h1>
+@using (Html.BeginForm("CentreList", "Home", FormMethod.Post, new { id = "searchform" }))
+{
+
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">                  
+                    @Html.DropDownList("SelExamCategoryMonth", new SelectList(ViewBag.ExamCategoryMastersActiveList, "ExamCategoryMonth", "ExamCategoryName"), "--Select Examination--", new { @class = "",@required= "required" })
+                </div>
+                <div class="col-md-2">
+                    @Html.DropDownList("SelDist", new SelectList(ViewBag.Dist, "Value", "Text"), "--All District--", new { @class = "", onchange = "deechange()" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> SelectList = new List<SelectListItem>();
+                        SelectList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        SelectList.Add(new SelectListItem { Text = "Centre Code", Value = "1" });
+                        SelectList.Add(new SelectListItem { Text = "Centre Name", Value = "2" });
+                        SelectList.Add(new SelectListItem { Text = "Building Name", Value = "3" });
+                        SelectList.Add(new SelectListItem { Text = "CCode", Value = "4" });
+                    }
+
+                    @Html.DropDownList("Category", SelectList, new { id = "Category" })
+
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                    <span id="reqsellist" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-1"><input type="Submit" value="Search" name="cmd" onclick="return dee()" /></div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-md-12">
+            <p>Total Records : @ViewBag.TotalCount</p>
+            <div class="table-responsive">
+                <table id="example" class="display table table-bordered" style="width:100%">
+                    <thead>
+                        <tr class="active-tr">
+                            <th>S.No</th>
+                            <th>Centre</th>
+                            <th>Centre Name</th>
+                            <th>Building Name</th>
+                            <th>District</th>
+                            @*<th>CCODE</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int Count = 0;
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    var Center = Model.StoreAllData.Tables[0].Rows[i]["CENT"].ToString();
+                                    var CenterName = Model.StoreAllData.Tables[0].Rows[i]["ECENTRE"].ToString();
+                                    var Buildingname = Model.StoreAllData.Tables[0].Rows[i]["SCHOOLE"].ToString() + "" + Model.StoreAllData.Tables[0].Rows[i]["Blocke"].ToString();
+                                    var District = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+
+
+                                    Count = Count + 1;
+                                    <tr>
+                                        <td>@Count</td>
+                                        <td>@Center</td>
+                                        <td>@CenterName</td>
+                                        <td>@Buildingname</td>
+                                        <td>@District</td>
+                                    </tr>
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="9">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 50,
+            "order": [[0, 'asc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By Any.." },
+        })
+    });
+</script>

@@ -1,0 +1,292 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+
+@using (Html.BeginForm("Examiner", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <h1>Examiner</h1>
+<div class="row">
+    <div class="col-md-12">
+            <fieldset>
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    @{
+                        List<SelectListItem> SelectList = new List<SelectListItem>();
+                        SelectList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        SelectList.Add(new SelectListItem { Text = "ID", Value = "1" });
+                        SelectList.Add(new SelectListItem { Text = "Name", Value = "2" });
+                        SelectList.Add(new SelectListItem { Text = "Designation", Value = "3" });
+                        SelectList.Add(new SelectListItem { Text = "Class", Value = "4" });
+                        SelectList.Add(new SelectListItem { Text = "Mobile", Value = "5" });
+                    }
+                    @Html.DropDownList("Category", SelectList, new { id = "Category" })
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                </div>
+                <div class="col-md-3 text-left">
+                    <input type="Submit" value="Search" name="cmd" onclick="return dee()" /> <input value="Reset" type="button" />
+                </div>
+            </fieldset>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-right">
+            <input value="Add New Examiner" type="button" onclick="javascript:document.location.href='@Url.Action("ADDExaminer", "DeoPortal")'" />
+            <input value="Print Report" type="button" onclick="javascript:document.location.href='@Url.Action("Examinersreport", "DeoPortal")'" />
+            <input value="Final Submit" type="button" onclick="javascript:document.location.href='@Url.Action("FinalSubmitExaminer", "DeoPortal")'" />
+        </div>
+    </div>
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <tr class="active-tr">
+                <td width="5%">S.No</td>
+                <td width="4%">ID</td>
+                <td width="5%">Class</td>
+                <td width="20%">Name/Father's Name</td>
+                <td width="20%">Subject</td>
+                <td width="22%">Cadre/Designation</td>
+                <td width="10%">Mobile No.</td>
+                <td width="4%">Lot</td>
+                <td width="20%">Action</td>
+            </tr>
+            
+    @{
+        if (@ViewBag.message == "1")
+        {
+            //Examinerid,Class,SubjectList,Name,fname,Designation,SchoolCode,EmailID,Mobile,Quali,Teachingexp
+            int Count = 0;
+            int d = 0;
+            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+            {
+                d = d + 1;
+                var Eid = Model.StoreAllData.Tables[0].Rows[i]["Examinerid"].ToString();
+                var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                var SubjectList = Model.StoreAllData.Tables[0].Rows[i]["SubjectList"].ToString();
+                var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                var fname = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                var CDesi= Model.StoreAllData.Tables[0].Rows[i]["cadre"].ToString()+"/"+ Model.StoreAllData.Tables[0].Rows[i]["Designation"].ToString();
+                var SchoolCode = Model.StoreAllData.Tables[0].Rows[i]["SchoolCode"].ToString();
+                var EmailID = Model.StoreAllData.Tables[0].Rows[i]["EmailID"].ToString();
+                var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                var Quali = Model.StoreAllData.Tables[0].Rows[i]["Quali"].ToString();
+                var Teachingexp = Model.StoreAllData.Tables[0].Rows[i]["Teachingexp"].ToString();
+                var lot= Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["lot"].ToString());
+
+
+
+                Count = Count + 1;
+                <tr>
+                    <td>@Count</td>
+                    <td>@Eid</td>
+                    <td>@Class</td>
+                    <td>@Name/@fname</td>
+                    <td>@SubjectList</td>
+                    <td>@CDesi</td>
+                    <td>@Mobile</td>
+                    <td>@lot</td>
+                    <td>
+                        <div class="cart">
+                            ChooseAction<span class="caret"></span>
+                            <div id="sidebar">
+                                <ul>
+                                    <li><a link="#" data-toggle="modal" data-target="#myModal1-@d">View</a></li>
+                                    @if (lot > 0)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        <li>@Html.ActionLink("Update", "UpdateExaminer", new { Exid = encrypt.QueryStringModule.Encrypt(Eid) })</li>
+                                        <li>@Html.ActionLink("Delete", "ExaminerDELETE", new { Exid = Eid }, new { onclick = "return confirm('Are You Sure?');" })</li>
+                                    }
+                                 
+                                    
+
+                                </ul>
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+        <tr>
+            <td colspan="7">
+                @ViewBag.Message
+            </td>
+        </tr>
+        }
+
+    }
+            
+        </table>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <b style="font-size:16px;color:#c25101">Teachers Summary</b><br />
+        @*@{
+            if (ViewBag.TotalCount > 0)
+            {
+
+                <tr>
+                    <td>@ViewBag.ClusterCode</td>
+                    <td>@ViewBag.ClusterName</td>
+                    <td>@ViewBag.ClusterSchoolCode</td>
+                    <td>@ViewBag.Address</td>
+                </tr>
+
+            }
+
+            else
+            {
+                <tr>
+                    <td colspan="5">
+                        @ViewBag.Message
+                    </td>
+                </tr>
+            }
+        }*@
+
+        Class: 10 (@ViewBag.cnt10)<br />
+
+        Class: 12 (@ViewBag.cnt12)<br />
+
+        Class 10 Subject Wise Summary: @ViewBag.Class10WiseSub<br />
+
+        Class 12 Subject Wise Summary: @ViewBag.Class12WiseSub<br />
+
+        <span style="font-size:16px">Total Records: @ViewBag.TotalRecords</span><br />&nbsp;<br />&nbsp;
+        </div></div>
+
+
+        if (Model != null)
+        {
+            if (ViewBag.TotalCount > 0)
+            {
+                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                {
+                    var Eid = Model.StoreAllData.Tables[0].Rows[i]["Examinerid"].ToString();
+                    var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                    var SubjectList = Model.StoreAllData.Tables[0].Rows[i]["SubjectList"].ToString();
+                    var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                    var fname = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                    var Designation = Model.StoreAllData.Tables[0].Rows[i]["cadre"].ToString() + "/" + Model.StoreAllData.Tables[0].Rows[i]["Designation"].ToString();
+                    var SchoolCode = Model.StoreAllData.Tables[0].Rows[i]["SchoolCode"].ToString();
+                    var EmailID = Model.StoreAllData.Tables[0].Rows[i]["EmailID"].ToString();
+                    var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                    var Quali = Model.StoreAllData.Tables[0].Rows[i]["Quali"].ToString();
+                    var Teachingexp = Model.StoreAllData.Tables[0].Rows[i]["Teachingexp"].ToString();
+                    var eva = Model.StoreAllData.Tables[0].Rows[i]["Evaexp"].ToString();
+                    var HomeAddress = Model.StoreAllData.Tables[0].Rows[i]["HomeAddress"].ToString();
+                    var Homedist = Model.StoreAllData.Tables[0].Rows[i]["DistNM"].ToString();
+                    var Hometehsil = Model.StoreAllData.Tables[0].Rows[i]["TEHSIL"].ToString();
+                    var HomePinCode = Model.StoreAllData.Tables[0].Rows[i]["HomePinCode"].ToString();
+                    var insdate = Model.StoreAllData.Tables[0].Rows[i]["insdate"].ToString();
+
+
+                    int k = i + 1;
+                <div class="container">
+                    <!-- Trigger the modal with a button -->
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal1-@k" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <span style="font-size:24px">Examiner Details</span>
+                                </div>
+                                <div class="modal-body">
+                                    <table style="width:100%">
+                                        <tr>
+                                            <td width="30%">Eid</td>
+                                            <td>@Eid</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Class</td>
+                                            <td>@Class</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Subjects</td>
+                                            <td>@SubjectList</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>@Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Father's Name</td>
+                                            <td>@fname</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cadre/Designation</td>
+                                            <td>@Designation</td>
+                                        </tr>
+                                        <tr>
+                                            <td>School Name</td>
+                                            <td>@SchoolCode</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mobile</td>
+                                            <td>@Mobile</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Email</td>
+                                            <td>@EmailID</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Education Qualification</td>
+                                            <td>@Quali</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Teaching experience</td>
+                                            <td>@Teachingexp</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Evaluation Experience</td>
+                                            <td>@eva</td>
+                                        </tr>
+                                        <tr>
+                                            <td>HomeAddress</td>
+                                            <td>@HomeAddress</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Home Dist</td>
+                                            <td>@Homedist</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Home Tehsil</td>
+                                            <td>@Hometehsil</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Home PinCode</td>
+                                            <td>@HomePinCode</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Inserted Date</td>
+                                            <td>@insdate</td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+                    }
+                }
+            }
+        }
+

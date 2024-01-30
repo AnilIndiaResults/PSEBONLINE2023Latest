@@ -1,0 +1,418 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Practical Exam Final Submit";
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="/Content/cardprinta.css" />
+<style type="text/css">
+    .tprint td {
+        padding: 1px 2px;
+        line-height: 16px;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<script type="text/javascript">
+    window.setInterval(function () {
+        var current = new Date();
+        var expiry = new Date("Feb 02, 2021 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideint2').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideint2').show();
+        }
+    }, 0);
+	
+	   window.setInterval(function () {
+            var current = new Date();
+           var expiry = new Date("Feb 02, 2021 23:59:59")
+            if (current.getTime() > expiry.getTime()) {
+                $('.hideintm2').hide();
+            } else if (current.getTime() < expiry.getTime()) {
+                $('.hideintm2').show();
+            }
+        }, 0);
+</script>
+
+<div id="loading1"></div>
+@{
+    if (ViewBag.TotalCount > 0)
+    {
+        <div class="row" id="divMain1">
+            <div class="col-md-12">Centre Code & Name:  @ViewBag.CentreCode<span>&</span> @ViewBag.CentreName</div>
+            <div class="clearefix"></div>
+            <div class="col-md-6">Subject Code & Name: @ViewBag.SubCode<span>&</span> @ViewBag.SubName</div>
+            <div class="col-md-6">Min/Max Marks: @ViewBag.PrMin<span>&</span> @ViewBag.PrMax</div>
+        </div>
+        <table style="width:100%;" border="0" class="bgimg">
+
+            <tr>
+                <td>
+
+                    <table id="t01" width="100%" border="1" class="tprint">
+                        <thead>
+                            <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                <td>Type</td>
+                                <td>Name</td>
+                                <td>School Code</td>
+                                <td>Teacher ID No</td>
+                                <td>Mobile No</td>
+                            </tr>
+                        </thead>
+                        <tr style="font-size:9px">
+                            <td>Examiner</td>
+                            <td>@Html.TextBox("ExaminerName", "", new { @class = "chkEN", @maxlength = "50" })</td>
+                            <td>@Html.TextBox("ExaminerSCHL", "", new { @class = "chkES", @maxlength = "7", onkeypress = "return validateNumber1(event)", onchange = "SchoolCodeAvailability(this)" }) </td>
+                            <td>@Html.TextBox("ExaminerTeacher", "", new { @class = "chkET", @maxlength = "50" })</td>
+                            <td>@Html.TextBox("ExaminerMobile", "", new { @class = "chkEM", @maxlength = "10" })</td>
+                        </tr>
+                        <tr style="font-size:9px">
+                            <td>Head Examiner</td>
+                            <td>@Html.TextBox("HeadExaminerName", "", new { @class = "chkEN", @maxlength = "50" })</td>
+                            <td>@Html.TextBox("HeadExaminerSCHL", "", new { @class = "chkES", @maxlength = "7", onkeypress = "return validateNumber1(event)", onchange = "SchoolCodeAvailability(this)" }) </td>
+                            <td>@Html.TextBox("HeadExaminerTeacher", "", new { @class = "chkET", @maxlength = "50" })</td>
+                            <td>@Html.TextBox("HeadExaminerMobile", "", new { @class = "chkEM", @maxlength = "10" })</td>
+                        </tr>
+                        <tr style="font-size:9px">
+                            <td>Controller</td>
+                            <td>@Html.TextBox("ControllerName", "", new { @class = "chkEN", @maxlength = "50" })</td>
+                            <td>@Html.TextBox("ControllerSCHL", "", new { @class = "chkES", @maxlength = "7", onkeypress = "return validateNumber1(event)", onchange = "SchoolCodeAvailability(this)" }) </td>
+                            <td>@Html.TextBox("ControllerTeacher", "", new { @class = "chkET", @maxlength = "50" })</td>
+                            <td>@Html.TextBox("ControllerMobile", "", new { @class = "chkEM", @maxlength = "10" })</td>
+                        </tr>
+                      @if (ViewBag.SubCode == "137")
+                        {
+                            <tr>
+                                <td colspan="2"></td>
+                                <td align="center">
+                                    <span class="rqf"> Enter School Code of Exam Centre where Exam was Conducted :</span>
+                                    @Html.TextBox("ExamCent", "", new { @maxlength = "7", onkeypress = "return validateNumber1(event)", onchange = "SchoolCodeAvailability(this)" })
+                                    <span id="lblStatus" class="rqf"></span>
+                                </td>
+                                <td colspan="2"></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr style="display:none">                                
+                                <td align="center">                                  
+                                    @Html.TextBox("ExamCent", "", new { @maxlength = "7",  })
+                               </td>
+                               
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="5" align="center">
+                                <span class="rqf"> Total Records for Final Submission :</span> @ViewBag.TotalCount<br />
+
+                                @{
+                                    if (ViewBag.LastDateofSub != null)
+                                    {
+                                        DateTime todayDate = DateTime.Today;
+                                        DateTime LastDate = Convert.ToDateTime(ViewBag.LastDateofSub);
+
+
+
+                                        if (ViewBag.Unlocked == 1)
+                                        {<input type="submit" id="btnsubmit" value="Save & Final Submit" class="btn" data-confirm="Are u sure to Final Submit this Data?" /> }
+                                        else
+                                        {
+                                            if (todayDate <= LastDate)
+                                            {
+                                                if (ViewBag.SelClass == "2" || ViewBag.SelClass == "10")
+                                                {
+                                                    <span class="hideintm">
+                                                        <input type="submit" id="btnsubmit" value="Save & Final Submit" class="btn" data-confirm="Are u sure to Final Submit this Data?" />
+                                                    </span>
+                                                }
+                                                else
+
+                                                {
+                                                    <span class="hideint">
+                                                        <input type="submit" id="btnsubmit" value="Save & Final Submit" class="btn" data-confirm="Are u sure to Final Submit this Data?" />
+                                                    </span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="rqf">Last date is over for Enter Marks or Final Submit</span>
+                                            }
+
+                                        }
+
+
+                                        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                                        @Html.Hidden("cid", (string)ViewBag.cid)
+                                    }
+                                }
+
+
+                            </td>
+
+
+                        </tr>
+
+
+                    </table>
+
+
+
+
+                </td>
+            </tr>
+        </table>
+    }
+    else
+    { <p class="rqf">Record Not Found</p> }
+}
+
+
+
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>*@
+<script src="Scripts/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+    function validateNumber1(event) {
+        var key = window.event ? event.keyCode : event.which;
+        if (event.keyCode === 8 || event.keyCode === 46
+            || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        else return true;
+
+
+    }
+
+
+    function SchoolCodeAvailability(obj) { //This function call on text change.
+        var schlval = obj.value;
+        var schlid = obj.id;
+        var msg = $('#lblStatus');
+        $.ajax({
+            type: "POST",
+            url: "/School/CheckSchoolCode", // this for calling the web method function in cs code.
+            data: '{schoolcode: "' + schlval + '" }',// user name or email value
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                switch (response.oid) {
+                    case "0":
+                       // alert("School Code is Wrong.")
+                        $("#btnsubmit").hide();
+                        $("#" + schlid).addClass("input-validation-error");
+                        msg.css("slidedown", "slow");
+                        msg.css("color", "red");
+                        msg.text("School Code is Wrong.");
+                        break;
+                    case "1":
+                        $("#btnsubmit").show();
+                        $("#" + schlid).removeClass("input-validation-error");
+                       // $("#lblStatus").val(response.sn);
+                        msg.css("slidedown", "slow");
+                        msg.css("color", "green");
+                        msg.text("School Name : " + response.sn);
+                        break;
+                }
+            },
+            failure: function (response) {
+                // alert(response);
+            }
+        });
+    }
+
+    // function OnSuccess
+    //function OnSuccess(response) {
+    //    var msg = $('#lblStatus');
+    //    switch (response.oid) {
+    //        case "0":
+    //            msg.css("slidedown", "slow");
+    //            msg.css("color", "red");
+    //            msg.text("School Code is Wrong.");
+    //            $("#btnsubmit").hide();
+    //            $("#" + schlid).addClass("input-validation-error");
+    //            break;
+    //        case "1":
+    //            msg.css("slidedown", "slow");
+    //            msg.css("color", "green");
+    //            msg.text("School Code is Correct .");
+    //            $("#btnsubmit").show();
+    //            $("#" + schlid).removeClass("input-validation-error");
+    //            break;
+    //    }
+   // }
+
+
+
+</script>
+
+
+
+
+<script>
+    jQuery(document).ready(function () {
+        jQuery('[data-confirm]').click(function (e) {
+            if (!confirm(jQuery(this).attr("data-confirm"))) {
+                e.preventDefault();
+            }
+            else {
+                var ExaminerName = document.getElementById('ExaminerName').value;
+                var HeadExaminerName = document.getElementById('HeadExaminerName').value;
+                var ControllerName = document.getElementById('ControllerName').value;
+                var ExaminerSCHL = document.getElementById('ExaminerSCHL').value;
+                var HeadExaminerSCHL = document.getElementById('HeadExaminerSCHL').value;
+                var ControllerSCHL = document.getElementById('ControllerSCHL').value;
+                var ExaminerTeacher = document.getElementById('ExaminerTeacher').value;
+                var HeadExaminerTeacher = document.getElementById('HeadExaminerTeacher').value;
+                var ControllerTeacher = document.getElementById('ControllerTeacher').value;
+                var ExaminerMobile = document.getElementById('ExaminerMobile').value;
+                var HeadExaminerMobile = document.getElementById('HeadExaminerMobile').value;
+                var ControllerMobile = document.getElementById('ControllerMobile').value;
+                //if (ExaminerName == '' || ExaminerName == '0') {
+                //    alert("Select Examiner Name");
+                //    document.getElementById('ExaminerName').focus();
+                //    return false;
+                //}
+
+                //if (ExaminerSCHL == '' || ExaminerSCHL == '0') {
+                //    alert("Select Examiner SCHL");
+                //    document.getElementById('ExaminerSCHL').focus();
+                //    return false;
+                //}
+                //if (ExaminerTeacher == '' || ExaminerTeacher == '0') {
+                //    alert("Select Examiner Teacher");
+                //    document.getElementById('ExaminerTeacher').focus();
+                //    return false;
+                //}
+
+                //if (ExaminerMobile == '' || ExaminerMobile == '0') {
+                //    alert("Select Examiner Mobile");
+                //    document.getElementById('ExaminerMobile').focus();
+                //    return false;
+                //}
+
+                //if (HeadExaminerName == '' || HeadExaminerName == '0') {
+                //    alert("Select Head Examiner Name");
+                //    document.getElementById('HeadExaminerName').focus();
+                //    return false;
+                //}
+                //if (ControllerName == '' || ControllerName == '0') {
+                //    alert("Select Controller Name");
+                //    document.getElementById('ControllerName').focus();
+                //    return false;
+                //}
+
+              
+                //if (HeadExaminerSCHL == '' || HeadExaminerSCHL == '0') {
+                //    alert("Select Head Examiner SCHL");
+                //    document.getElementById('HeadExaminerSCHL').focus();
+                //    return false;
+                //}
+                //if (ControllerSCHL == '' || ControllerSCHL == '0') {
+                //    alert("Select Controller SCHL");
+                //    document.getElementById('ControllerSCHL').focus();
+                //    return false;
+                //}
+
+                
+                //if (HeadExaminerTeacher == '' || HeadExaminerTeacher == '0') {
+                //    alert("Select Head Examiner Teacher");
+                //    document.getElementById('HeadExaminerTeacher').focus();
+                //    return false;
+                //}
+                //if (ControllerTeacher == '' || ControllerTeacher == '0') {
+                //    alert("Select Controller Teacher");
+                //    document.getElementById('ControllerTeacher').focus();
+                //    return false;
+                //}
+
+               
+                //if (HeadExaminerMobile == '' || HeadExaminerMobile == '0') {
+                //    alert("Select Head Examiner Mobile");
+                //    document.getElementById('HeadExaminerMobile').focus();
+                //    return false;
+                //}
+                //if (ControllerMobile == '' || ControllerMobile == '0') {
+                //    alert("Select Controller Mobile");
+                //    document.getElementById('ControllerMobile').focus();
+                //    return false;
+                //}
+                goFinal();
+            }
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+    function goFinal() {
+
+     //alert("Start goFinal");
+        var subcode1 = '@ViewBag.SubCode';
+        var examCent = document.getElementById('ExamCent').value; 
+        if (subcode1 == "137")
+        {
+            if (examCent == '' || examCent == '0') {
+                alert("Please Enter Exam Center");
+                document.getElementById('ExamCent').focus();
+                return false;
+            }
+        }
+
+        
+        var tblname = '#t01';
+        var TableData;
+        TableData = JSON.stringify(storeTblValues());
+         console.log("JsonString  = " + TableData + "\n");
+        //post
+        if (TableData == "false") {
+            alert("Not Submitted, Please Try Again");
+        }
+        else if (TableData != "false") {
+          /// alert('Now Start:' + TableData);
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/JqPracExamFinalReport", { "ExamCent": examCent, "SelClass": '@ViewBag.Class', "RP": '@ViewBag.RP', "CandPracExaminer": TableData },
+                function (data) {
+                    $('#loading1').empty();
+                    if (data.status == "0" || data.status == "-1") {
+                        alert("Final Submit Failure, Please Try Again");
+                    }
+                    else if (data.status == "1") {
+                        alert("Final Submit Successfully");
+                        window.location.href = "/School/PracExamFinalReport/@ViewBag.cid";
+                    }
+                    else {
+                        alert("Final Submit Failure : " + data.status);
+                    }
+                });
+        }
+
+        function storeTblValues() {
+           //  alert('3');
+            var TableData = new Array();
+            $('' + tblname + ' tr').each(function (row, tr) {
+                TableData[row] = {
+                    "SUB":'@ViewBag.SubCode',
+                    "CENT": '@ViewBag.CentreCode',
+                    "EXAMINER": $(tr).find('.chkEN').val(),
+                    "SCHOOL": $(tr).find('.chkES').val(),
+                    "TEACHER": $(tr).find('.chkET').val(),
+                    "MOBILE": $(tr).find('.chkEM').val()
+                }
+            });
+            TableData.shift();  // first row will be empty - so remove
+            //alert(TableData);
+            return TableData;
+
+        }
+    }
+</script>

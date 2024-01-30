@@ -1,0 +1,508 @@
+﻿@model PSEBONLINE.Models.MigrateSchoolModels
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>Search Student for School to School Migration</h1>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+@using (Html.BeginForm("ApplyStudentSchoolMigration", "School", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+{<fieldset style="margin-bottom:15px">
+        <legend>
+            Search Student for School to School Migration for(Session <b>@Session["Session"].ToString() </b>)
+        </legend>
+        <form id="myForm">
+
+            <div class="row">
+                <div class="col-md-2">
+                    Search By:  @Html.DropDownList("SelFilter", new SelectList(ViewBag.MyFilter, "Value", "Text", ViewBag.SelectedItem), "Select", new { @class = "" })
+                </div>
+                <div class="col-md-4">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="submit" value="Search" onclick="return formVal();" />
+                    <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a>
+                </div>
+
+            </div>
+        </form>
+    </fieldset>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>Student Id</th>
+                    <th>Form Name</th>
+                    <th>Reg.No.</th>
+                    <th>Name/Father's Name/Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Stream/Group</th>
+                    <th>Current School Name</th>
+                    <th>School Contact No</th>
+                    <th>Registration Fee Status</th>
+                    <th>ACTIONS</th>
+                </tr>
+                @{
+				 DateTime todayDate = DateTime.Now;
+                    if (ViewBag.TotalCount > 0)
+                    {
+                      
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                            var cls = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+
+                            var Std_Sub = Model.StoreAllData.Tables[0].Rows[i]["StdSub"].ToString();
+                            var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                            var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                            var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                            var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+
+                            var CurrentSCHL = Model.StoreAllData.Tables[0].Rows[i]["CurrentSCHL"].ToString();
+                            var CurrentSCHLNME = Model.StoreAllData.Tables[0].Rows[i]["CurrentSCHLNME"].ToString();
+                            var CurrentSCHLMOBILE = Model.StoreAllData.Tables[0].Rows[i]["CurrentSCHLMOBILE"].ToString();
+
+                            var NEWSCHL = Model.StoreAllData.Tables[0].Rows[i]["NEWSCHL"].ToString();
+                            var NEWSCHLNME = Model.StoreAllData.Tables[0].Rows[i]["NEWSCHLNME"].ToString();
+                            var NEWSCHLMOBILE = Model.StoreAllData.Tables[0].Rows[i]["NEWSCHLMOBILE"].ToString();
+
+                            var stream = Model.StoreAllData.Tables[0].Rows[i]["Group_Name"].ToString();
+                            var FeeStatus = Model.StoreAllData.Tables[0].Rows[i]["FeeStatus"].ToString();
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["REGFEE"].ToString();
+                            var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                            var Challanid = Model.StoreAllData.Tables[0].Rows[i]["Challanid"].ToString();
+                            var Challanverify = Model.StoreAllData.Tables[0].Rows[i]["Challanverify"].ToString();
+
+                            //
+                            var IsSchoolMigrationApplied = Model.StoreAllData.Tables[0].Rows[i]["IsSchoolMigrationApplied"].ToString();
+
+                            var LastDate = Model.StoreAllData.Tables[0].Rows[i]["LastDate"].ToString();
+                            var AppLevelByLastDate = Model.StoreAllData.Tables[0].Rows[i]["AppLevelByLastDate"].ToString();
+                            DateTime SubmitLastDate = Convert.ToDateTime(LastDate);
+                            var MigrationId = Model.StoreAllData.Tables[0].Rows[i]["MigrationId"].ToString();
+                            <tr>
+                                <td>
+                                    @stdid
+                                    <div class="container">
+                                        <div class="modal" id="myModalMigrate-@stdid" role="dialog">
+                                            <div class="modal-dialog">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Student Details for Migration : @stdid</h3>
+                                                    </div>
+                                                    @if (ViewBag.GroupAvailable == "False")
+                                                    {
+                                                         <div class="modal-body">New School doesn't have this stream, Candidate can't migrate to this school</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="modal-body">
+                                                            <table width="100%">
+                                                                <tr>
+                                                                    <td width="30%">Student Id</td>
+                                                                    <td><input id="eStdId" type="text" value="@stdid" readonly /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Reg No </td>
+                                                                    <td><input id="eRegNo" value="@RegNo" type="text" readonly /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Student Name</td>
+                                                                    <td><input id="eCandi_Name" value="@Candi_Name" type="text" readonly /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Father Name</td>
+                                                                    <td><input id="eFather_Name" value="@Father_Name" type="text" readonly /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Mother Name</td>
+                                                                    <td><input id="eMother_Name" value="@Mother_Name" type="text" readonly /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>DOB</td>
+                                                                    <td><input id="eDOB" value="@DOB" type="text" readonly /></td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Old School Name</td>
+                                                                    <td><input id="eCurrentSCHLNME" value="@CurrentSCHLNME" type="text" readonly /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>New School Name</td>
+                                                                    <td><input id="eSCHLNME" value="@NEWSCHLNME" type="text" readonly /></td>
+                                                                </tr>
+                                                                @if (cls == "4" || cls == "3")
+                                                                {
+                                                                    <tr>
+                                                                        <td>Old Stream</td>
+                                                                        <td><input id="eOldStream" value="@stream" type="text" readonly /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>New Stream</td>
+                                                                        <td>
+                                                                            @if (cls == "4")
+                                                                            {
+                                                                                @Html.DropDownList("Tgroup", new SelectList(ViewBag.MyGroup, "Value", "Text", @stream), new { @class = "", @disabled = "disabled" })
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @Html.DropDownList("Tgroup", new SelectList(ViewBag.MyGroup, "Value", "Text", @stream), new { @class = "" })
+                                                                            }
+
+
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                                <tr>
+                                                                    <td>Upload Candidate Application </td>
+                                                                    <td><input type="file" id="StudentMigrationLetter" onchange="CheckSelfDeclarationDocument(this)" name="StudentMigrationLetter" required /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Reason of Migration</td>
+                                                                    <td><input id="StudentMigrationReason" value="" type="text" /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        <input id="eClass" type="hidden" value="@cls" />
+                                                                        <input id="eCurrentSCHL" type="hidden" value="@CurrentSCHL" />
+                                                                        <input id="eNewSCHL" type="hidden" value="@NEWSCHL" />
+                                                                        <input id="eCandi_Name" type="hidden" value="@Candi_Name" />
+
+                                                                        <input id="eCurrentSCHLMOBILE" type="hidden" value="@CurrentSCHLMOBILE" />
+
+                                                                        <input id="eAppLevelByLastDate" type="hidden" value="@AppLevelByLastDate" />
+
+                                                                        <input type="button" class="btn" value="Apply Migration" id="btnApplyMigration" />
+                                                                        <div id="loading1"></div>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                        </div>
+
+                                                    }
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                    </td>
+                    <td>@FormName</td>
+                    <td>
+                        @RegNo
+                    </td>
+                    <td>
+                        @FullName
+                    </td>
+                    <td>
+                        @DOB
+                    </td>
+                    <td>
+                        @stream
+                    </td>
+                    <td>
+                        @CurrentSCHLNME
+                    </td>
+                    <td>
+                        @CurrentSCHLMOBILE
+                    </td>
+                    <td>
+                        @FeeStatus
+                    </td>
+
+                    <td>
+
+                        <div class="cart">
+                            Choose Action <span class="caret"></span>
+                            <div id="sidebar">
+                                <ul>
+                                    <li>
+                                        @{
+                                            if (Lot != "0" && Challanverify.ToLower() == "true".ToLower())
+                                            {
+                                                //if (IsSchoolMigrationApplied == "0")
+                                                //{
+
+                                                    //DateTime finalSubmitLastDate = Convert.ToDateTime("15-02-2022");// for HOD
+
+                                                    DateTime finalSubmitLastDate = Convert.ToDateTime(LastDate);
+                                                    //if (finalSubmitLastDate.Date >= todayDate.Date)
+                                                    //{
+                                                    if (cls == "1" || cls == "3" || cls == "2" || cls == "4")
+                                                    {
+
+                                                            <a onclick="checkMigStatus(@stdid)">Migrate</a>
+                                                            @*<a  onclick="makeAjaxRequest()" href="" id="migrateClick"  data-toggle="modal" data-target="#myModalMigrate-@stdid">Migrate</a>*@
+                                                        //}
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>School Migration Last Data is over which is <b>@LastDate</b> </span>
+                                                    }
+                                               // }
+                                                @*else
+                                                {
+                                                    <span>Migration Already Applied</span>
+
+                                                    <a href="/School/StudentMigrationView/@MigrationId" target="_blank" class="btn">View Details</a>
+
+                                                    /**/
+
+                                                }*@
+
+                                            }
+                                            else
+                                            {
+                                                <span>Final Submission Pending</span>
+                                            }
+
+                                        }
+
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+
+                    </tr>
+                    /**/
+
+
+
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8">
+                        @ViewBag.Message
+                    </td>
+                </tr>
+            }
+                }
+                </table>
+            </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<script type="text/javascript">
+
+    $("#btnApplyMigration").click(function () {
+
+        debugger;
+        var eClass = document.getElementById("eClass").value;
+        
+        if (eClass == "4" || eClass == "3") {
+
+            if (document.getElementById("Tgroup").value == "" || document.getElementById("Tgroup").value == "0") {
+                alert("Please Select New Stream");
+                $('#Tgroup').addClass("input-validation-error");
+                return false;
+            }
+        }
+
+        if (document.getElementById("StudentMigrationReason").value == "") {
+            alert("Please Enter Reason of Migration");
+            $('#StudentMigrationReason').addClass("input-validation-error");
+            return false;
+        }
+        else if (document.getElementById("StudentMigrationLetter").files.length == 0) {
+            alert("Please Upload Student Migration Letter");
+            $('#StudentMigrationLetter').addClass("input-validation-error");
+            return false;
+        }
+        
+        else {
+            var eOldStream = "";
+            var newStream = "";
+            if (eClass == "4" || eClass == "3") {
+
+                $('#Tgroup').removeClass("input-validation-error");
+                 eOldStream = document.getElementById("eOldStream").value;
+                 newStream = document.getElementById("Tgroup").value;
+
+            }
+            else
+            {
+                eOldStream = "";
+                newStream = "";
+            }
+            $('#StudentMigrationLetter').removeClass("input-validation-error");           
+
+            
+            var eReason = document.getElementById("StudentMigrationReason").value;
+
+            var eStdId = document.getElementById("eStdId").value;
+            var eCurrentSCHL = document.getElementById("eCurrentSCHL").value;
+            var eNewSCHL = document.getElementById("eNewSCHL").value;
+            
+            var eRegNo = document.getElementById("eRegNo").value;
+            var eAppLevelByLastDate = document.getElementById("eAppLevelByLastDate").value;
+            var eCurrentSCHLMOBILE = document.getElementById("eCurrentSCHLMOBILE").value;
+
+            var eCandi_Name = document.getElementById("eCandi_Name").value;
+            
+            
+            var fileUpload = $("#StudentMigrationLetter").get(0);
+            var files = fileUpload.files;
+
+
+            // Create FormData object
+            var fileData = new FormData();
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+            }
+            
+            // Adding one more key to FormData object
+            fileData.append('StdId', eStdId);
+            fileData.append('RegNo', eRegNo);            
+            fileData.append('OldStream', eOldStream);
+            fileData.append('NewStream', newStream);
+            fileData.append('CurrentSCHL', eCurrentSCHL);
+            fileData.append('NewSCHL', eNewSCHL);
+            fileData.append('AppLevel', eAppLevelByLastDate);
+            fileData.append('MigrationReason', eReason);
+            fileData.append('OldSchoolMobile', eCurrentSCHLMOBILE);
+
+            
+
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                url: '/School/AddStudentMigration',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    
+                    $('#loading1').empty();
+                    if (result.migid == "1") {
+                        alert('Migration of ' + eStdId + ' [' + eCandi_Name + '] is applied successfully');
+                        
+                        window.location.href = '/School/StudentSchoolMigrationApplied';
+                    }
+                    else if (result.migid == "0") { alert('Failure'); }
+                    else if (result.migid == "err") { alert(result.outStatus); }
+                    $('#myModalMigrate-' + eStdId).modal('hide');
+
+                },
+                error: function (err) {
+                    $('#myModalMigrate-' + eStdId).modal('hide');
+                    $('#loading1').empty();
+                   // alert(err.statusText);
+                }
+            });
+           // 
+            return true;
+        }
+
+    });
+
+
+
+</script>
+
+<script type="text/javascript">
+
+    function CheckSelfDeclarationDocument(input) {
+        if (typeof ($("#StudentMigrationLetter")[0].files) != "undefined") {
+
+            var ext = $('#StudentMigrationLetter').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#StudentMigrationLetter').val('');
+                return false;
+            }
+            var size = parseFloat($("#StudentMigrationLetter")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#StudentMigrationLetter').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#StudentMigrationLetter').val('');
+                }
+            }
+        }
+
+    }
+
+    //$("#Tgroup").val("Science");
+</script>
+
+
+
+
+
+<script>
+
+    function checkMigStatus(stdId) {
+
+        $("#myModalMigrate").modal('hide');
+        
+        var selecteStdId = { stdId: stdId }
+
+        var result = "";
+        $.ajax({
+            url: '/School/checkMigStatus',
+            type: 'Post',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(selecteStdId),
+            success: function (result) {
+
+                
+                if (result == "1") {
+                    
+                    var message = "You cannot apply for migration of this candidates, because one migration request (" + '@ViewBag.MigrationId' + ") already under process with school" + '@ViewBag.NewSchlName';
+                    $("#myModalMigrate").modal('hide');
+                    alert(message);
+                }
+                else {
+                    
+                    $('#myModalMigrate-' + stdId).modal('show');
+                    
+                }
+
+            },
+            error: function (err) {
+                $('#myModalMigrate-' + eStdId).modal('hide');
+                $('#loading1').empty();
+
+            }
+        });
+        //
+       
+    }
+</script>
+
+

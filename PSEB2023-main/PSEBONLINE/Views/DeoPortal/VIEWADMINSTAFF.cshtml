@@ -1,0 +1,447 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+
+<style type="text/css">
+    input[type="checkbox"]:focus {
+        box-shadow: 0 0 1px 2px #cc0000;
+        border: 2px solid #cc0000;
+    }
+</style>
+<h1>View Admin Staff Details</h1>
+@using (Html.BeginForm("VIEWADMINSTAFF", "DeoPortal", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+           <div class="row">
+            <div class="table-responsive">
+                <div class="col-md-12">
+                    <table id="t01" class="table table-bordered">
+                        <tr class="active-tr">
+
+                            <th>SLNO. </th>
+                            <th>Staff ID </th>
+                            <th>Cluster Code </th>
+                            <th>Teacher Name</th>
+                            <th>Father's Name</th>
+                            <th>Designation</th>
+                            <th>Type Of Duty</th>
+                            <th>Mobile</th>
+                            <th>Aadhar</th>
+                            <th>lot</th>
+                            @*<th><input type="checkbox" id="select_all" /></th>*@
+                            <th>Update Details</th>
+
+                        </tr>
+                        <tr>
+                            @{
+                                if (@ViewBag.message == "1")
+                                {
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        int d = 0;
+                                        int Count = 0;
+                                        //if (ViewBag.pagesize == 1)
+                                        //{
+                                        //    Count = 0;
+                                        //}
+                                        //else
+                                        //{
+                                        //    Count = 10 * (ViewBag.pagesize - 1);
+                                        //}
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            //CCODE, TeacherName, FatherName, Designation, TypeOfDuty, Mobile
+                                            d = d + 1;
+                                            var staffid = Model.StoreAllData.Tables[0].Rows[i]["staffid"].ToString();
+                                            var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+                                            var TeacherName = Model.StoreAllData.Tables[0].Rows[i]["name"].ToString();
+                                            var FatherName = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                                            var VDesignation = Model.StoreAllData.Tables[0].Rows[i]["subject"].ToString();
+                                            var TypeOfDuty = Model.StoreAllData.Tables[0].Rows[i]["dutytype"].ToString();
+                                            var lot = Model.StoreAllData.Tables[0].Rows[i]["lot"].ToString();
+                                            var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                            var aadhar = Model.StoreAllData.Tables[0].Rows[i]["adharno"].ToString();
+                                            Count = Count + 1;
+                                        <tr>
+                                            <td>@Count </td>
+                                            <td>@staffid </td>
+                                            <td>@CCODE</td>
+                                            <td>@TeacherName</td>
+                                            <td>@FatherName</td>
+                                            <td>@VDesignation</td>
+                                            <td>@TypeOfDuty</td>
+                                            <td>@Mobile</td>
+                                            <td>@aadhar</td>
+                                            <td>@lot</td>
+                                            @*<td>
+                                                <input type="checkbox" value="@staffid" name="StaffName" class="checkbox" />
+                                            </td>*@
+                                            <td>
+                                                <div class="cart">
+                                                    Choose Action
+                                                    <span class="caret"></span>
+                                                    <div id="sidebar">
+                                                        <ul>
+
+                                                            @*<li>@Html.ActionLink("Update STAFF", "UPDATESTAFF", new { Sid = staffid })</li>*@
+
+                                                            @if (@lot == "0")
+                                                            {
+                                                                <li>
+                                                                    @Html.ActionLink("DELETE", "STAFFDELETE", new { id = staffid }, new { onclick = "return confirm('Are You Sure, Delete Particular Staff?');" })
+                                                                </li>
+
+                                                            }
+
+
+                                                        </ul>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="7">
+                                                @ViewBag.Message
+                                            </td>
+                                        </tr>
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    <td colspan="4">@ViewBag.message </td>
+                                }
+
+                            }
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+                                }
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Data Deleted Successfully");
+                                // window.location.href = '@Url.Action("ADDSTAFF", "DeoPortal")';
+            </script>}
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Data Already Exist");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Data not saved..plz try again");
+            </script>
+        }
+    }
+    if (TempData["result"] != null)
+    {
+        if (TempData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                                var impcn = @TempData["TotImported"];
+                                //alert(impcn);
+                                alert("Selected Staff is shifted successfully to '"+impcn+"' cluster.")
+                                //alert(impcn+" Records Imported Successfully");
+            </script>
+        }
+        else if (TempData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Data Not Shifted");
+            </script>
+        }
+        else if (TempData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Data not Shifted..plz try again");
+            </script>
+        }
+    }
+    if (TempData["Uploadresult"] != null)
+    {
+        if (TempData["Uploadresult"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Staffs uploaded successfully.")
+            </script>
+        }
+        else if (TempData["Uploadresult"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Staffs Not uploaded");
+            </script>
+        }
+        else if (TempData["Uploadresult"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Staffs Not uploaded..plz try again");
+            </script>
+        }
+        else if (TempData["Uploadresult"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Duplicate mobile Number");
+            </script>
+        }
+    }
+    if (TempData["chkMIS"] != null)
+    {
+        if (TempData["chkMIS"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert(@Html.Raw(Json.Encode(TempData["chkMISMessage"])));
+                                @*var chkmsg = @TempData["chkMISMessage"];
+                alert("Error '"+chkmsg+"'");
+                alert("Error '"+chkmsg+"'");
+                alert(<p>@TempData["chkMISMessage"]</p>);*@
+                                @*<p>@TempData["chkMISMessage"]</p>*@
+                                //alert("Please Check Your Excel Sheet.")
+            </script>
+        }
+
+    }
+    if (TempData["chkExcelSheet"] != null)
+    {
+        if (TempData["chkExcelSheet"].ToString() == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                                alert("Please Upload Only .xls and .xlsx only.")
+            </script>
+        }
+
+    }
+}
+
+
+
+<script type="text/javascript">
+
+                    function valFormModalpop()
+                    {
+                        //var chks = document.getElementsByName('StaffName');
+                        //$('StaffName').on('change', function (e) {
+                        //    if (e.target.checked) {
+                        //        $('#myModal').modal();
+                        //    }
+                        //    else
+                        //    {
+                        //        $("#myModal").modal('hide');
+                        //    }
+                        //});
+
+                        var chks = document.getElementsByName('StaffName');
+                        var hasChecked = false;
+                        for (var i = 0; i < chks.length; i++) {
+                            if (chks[i].checked) {
+                                hasChecked = true;
+                                $("#myModal").modal('show');
+                                break;
+                                // data-toggle="modal";
+                            }
+                        }
+                        if (hasChecked == false) {
+                            alert("Please Select Atleast One CheckBox For Staff Shift To Cluster Code");
+                            document.getElementById('select_all').focus();
+                            return false;
+                        }
+
+                        //return true;
+                    }
+                    function valFormChk()
+                    {
+                        var ClsCode = document.getElementById("ClusterCode");
+                        if (ClsCode.value == "" || ClsCode.value == "0")
+                        {
+                            alert("Please Choose Atleast One Cluster Code");
+                            ClsCode.focus();
+                            return false;
+                        }
+
+                        //var checkboxes = document.getElementsByName('StaffName');
+                        //var selected = [];
+                        //for (var i = 0; i < checkboxes.length; i++) {
+                        //    if (checkboxes[i].checked==false) {
+                        //        alert("Please Check Atleast One Staff Shift To Cluster Code");
+                        //        $("#myModal").modal('hide');
+                        //       // $('#select_all').focus();
+                        //       // $('#select_all').style.borderColor = 'red';
+                        //       // document.getElementById("select_all").style.borderColor = "red";
+                        //        return false;
+                        //    }
+                        //}
+                        //var chks = document.getElementsByName('StaffName');
+                        //var hasChecked = false;
+                        //for (var i = 0; i < chks.length; i++) {
+                        //    if (chks[i].checked) {
+                        //        hasChecked = true;
+                        //        break;
+                        //    }
+                        //}
+                        //if (hasChecked == false) {
+                        //    alert("Please Select Atleast One CheckBox For Staff Shift To Cluster Code");
+                        //    $("#myModal").modal('hide');
+                        //    $('#select_all').focus();
+                        //    return false;
+                        //}
+                        return true;
+                    }
+                    function valFormErrorlist()
+                    {
+                        var Errlist = document.getElementById("ErrorList");
+                        if (Errlist.value == "" || Errlist.value == "0") {
+                            alert("Please Choose Error list");
+                            Errlist.focus();
+                            return false;
+                        }
+                    }
+                    function valForm()
+                    {
+                        var Fn = document.getElementById("MIS_FILE");
+                        var td = document.getElementById("typeDuty");
+                        var sn = document.getElementById("StaffName");
+                        var sfn = document.getElementById("StaffFatherName");
+                        var expyear = document.getElementById("experience");
+                        var expmon = document.getElementById("expmonth");
+                        var gen = document.getElementById("gender");
+                        var mob = document.getElementById("Mobile");
+                        var sc = document.getElementById("schlcode");
+                        var scname = document.getElementById("Selschool");
+                        var aadhar = document.getElementById("adharno");
+                        var punid = document.getElementById("teacherepunjabid");
+                        var cadre = document.getElementById("cadre");
+                        var desi = document.getElementById("desi");
+                        var ifc = document.getElementById("ifsccode");
+                        var accno = document.getElementById("bankaccno");
+
+                        if (Fn.value == "" || Fn.value == "0") {
+                            alert("Please Choose File");
+                            Fn.focus();
+                            return false;
+                        }
+
+                        if (td.value == "" || td.value == "0") {
+                            alert("Please Select Type Of Duty");
+                            td.focus();
+                            return false;
+                        }
+                        if (sn.value == "") {
+                            alert("Please Enter Teacher's Name ");
+                            sn.focus();
+                            return false;
+                        }
+                        if (sfn.value == "") {
+                            alert("Please Enter Teacher's Father Name");
+                            sfn.focus();
+                            return false;
+                        }
+                        if (expyear.value == "" || expyear.value == "0") {
+                            alert("Please Select Year");
+                            expyear.focus();
+                            return false;
+                        }
+                        if (expmon.value == "" || expmon.value == "0") {
+                            alert("Please Select Month");
+                            expmon.focus();
+                            return false;
+                        }
+                        if (gen.value == "" || gen.value == "0") {
+                            alert("Please Select Gender");
+                            gen.focus();
+                            return false;
+                        }
+                        if (mob.value == "" ) {
+                            alert("Enter Mobile Number");
+                            mob.focus();
+                            return false;
+                        }
+                        if (sc.value == "") {
+                            alert("Enter School Code");
+                            sc.focus();
+                            return false;
+                        }
+                        if (scname.value == "" || scname.value == "0") {
+                            alert("Please Select School Name");
+                            scname.focus();
+                            return false;
+                        }
+                        if (aadhar.value == "") {
+                            alert("Enter Mobile Adhar number");
+                            aadhar.focus();
+                            return false;
+                        }
+                        if (aadhar != "") {
+                            if (aadhar.value.trim().length != 12) {
+                                alert("Please Enter 12 digits Aadhar No");
+                                aadhar.focus();
+                                return false;
+                            }
+                        }
+                        //if (punid.value == "") {
+                        //    alert("Enter Punjab Id");
+                        //    return false;
+                        //}
+                        if (cadre.value == "" || cadre.value == "0") {
+                            alert("Please Select Cadre");
+                            cadre.focus();
+                            return false;
+                        }
+                        if (desi.value == "" || desi.value == "0") {
+                            alert("Please Enter Subject/Designation ");
+                            desi.focus();
+                            return false;
+                        }
+                        if (ifc.value == "") {
+                            alert("Enter IFSC Code");
+                            td.focus();
+                            return false;
+                        }
+                        if (accno.value == "") {
+                            alert("Enter Bank Account Number");
+                            accno.focus();
+                            return false;
+                        }
+                        return true;
+                    }
+</script>
+<script type="text/javascript">
+     $(function() {
+     //    $("#file").uploadify({
+     //        height        : 30,
+     //        swf           : '/uploadify/uploadify.swf',
+     //        uploader      : '/uploadify/uploadify.php',
+     //        width         : 120
+     //    });
+
+
+     $("#file").uploadify({
+         'uploader': '<%= Url.SiteRoot() %>/public/images/uploadify.swf',
+         'script': 'Deoportal/VIEWSTAFF',
+         'cancelImg': '<%= Url.SiteRoot() %>/public/images/cancel.png',
+         'auto': false,
+         'multi': false
+     });
+ });
+</script>
+<script type="text/javascript" language="javascript">
+        function JavascriptFunction() {
+            var url = '@Url.Action("VIEWSTAFF", "Deoportal")';
+            $("#divLoading").show();
+
+        }
+</script>

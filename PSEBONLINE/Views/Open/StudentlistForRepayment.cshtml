@@ -1,0 +1,265 @@
+﻿
+@{
+    ViewBag.Title = "Open Repayment";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+
+
+
+
+
+
+@using (Html.BeginForm("StudentlistForRepayment", "Open", new { id= ViewBag.Id }, FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Total Students <label>@ViewBag.TotalCount1</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-3">
+                        Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+                    </div>
+                    <div class="col-md-3">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" name="SearchString" value="@ViewBag.SearchString" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" id="modal" value="Search" />
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>Id</th>
+                    <th>AppNo</th>
+                    <th>Candidate's Name</th>
+                    <th>Father's Name</th>
+                    <th>Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Mobile</th>
+                    <th>CATEGORY</th>
+                    <th>Last Fee Paid</th>
+                    <th>Fee To Pay</th>
+                    <th>Fee Difference </th>
+                    <th>Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                       
+                       
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var id = Model.StoreAllData.Tables[0].Rows[i]["Id"].ToString();
+                            var APPNO = Model.StoreAllData.Tables[0].Rows[i]["APPNO"].ToString();
+                            var NAME = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                            var Fname = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var Mname = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var MOBILENO = Model.StoreAllData.Tables[0].Rows[i]["MOBILENO"].ToString();
+                            var CATEGORY = Model.StoreAllData.Tables[0].Rows[i]["CATEGORY"].ToString();
+                            var lastpaidFee = Model.StoreAllData.Tables[0].Rows[i]["lastpaidFee"].ToString();
+                            var feetoPay = Model.StoreAllData.Tables[0].Rows[i]["feetoPay"].ToString();
+                            var feeDiffernce = Model.StoreAllData.Tables[0].Rows[i]["feeDiffernce"].ToString();
+                            Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        @id
+                                    </td>
+                                    <td>
+                                        @APPNO
+                                    </td>
+                                    <td>
+                                        @NAME
+                                    </td>
+                                    <td>
+                                        @Fname
+                                    </td>
+                                    <td>
+                                        @Mname
+                                    </td>
+                                    <td>
+                                        @DOB
+                                    </td>
+                                    <td>
+                                        @MOBILENO
+                                    </td>
+                                    <td>
+                                        @CATEGORY
+                                    </td>
+                                    <td>
+                                        @lastpaidFee
+                                    </td>
+
+                                    <td>
+                                        @feetoPay
+                                    </td>
+
+                                    <td>
+                                        @feeDiffernce
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("View", "ViewRegistration", new { id = APPNO })
+                                        &nbsp; ||&nbsp;
+                                        @Html.ActionLink("Download Form", "AdmissionForm", new { id = APPNO })
+                                    </td>
+
+                                </tr>
+
+                            if (d == ViewBag.TotalCount)
+                            {
+                          
+            }
+        }
+    }
+    else
+    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<script>
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+        if (value == 5) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 2 || value == 3 || value == 4) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            if (value == 5) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10Y',
+
+                });
+
+            }
+            else if (value == 2 || value == 3 || value == 4) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+</script>
+
+
+

@@ -1,0 +1,88 @@
+﻿@model PSEBONLINE.Models.BankModels
+@{
+    ViewBag.Title = "Bulk Upload Staff";
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+
+<h1>Bulk Upload Staff</h1>
+
+@using (Html.BeginForm("BulkUploadStaff", "DeoPortal", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+{
+
+    <div class="row" style="padding-bottom:100px">
+        <div class="col-md-4">
+            Upload Staff File @Html.TextBoxFor(m => m.file, new { id = "MIS_FILE", type = "file", required = "required" })
+
+        </div>
+        <div class="col-md-2">
+            <br />
+            <input type="submit" value="Upload" onclick="return valForm();" />
+        </div>
+        <div class="col-md-6 text-right">
+            <br />
+            <a href="~/Bank/ErrorList" class="btn">Click Here to See ErrorList</a>
+            <a download="" href="~/PDF/BankSample.xls" class="btn">Click Here to Download Sample File</a>
+            <input type="button" value="Back" class="btn" onclick="history.go(-1);" /> 
+            @*<input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Welcome", "Bank", new { File = "Back" })    '" />*@
+        </div>
+    </div>
+            <div class="clear"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>Important Instructions:</h1>
+                    <p style="padding-left:15px">
+                        1) Challan ID and Challan amount(total fee) must match as downloaded by Banks.<br />
+                        2) Date and time should be in same format as shown in sample file.
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <img src="/images/Important_Instructions_2016.jpg" alt="Important Instructions" class="img-responsive" />
+                </div>
+            </div>
+
+}
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Result1');
+                window.location.href = '@Url.Action("Welcome", "Bank")';
+            </script>}
+        else if (ViewData["Result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+               alert('@ViewBag.Message');
+            </script>}
+        else if (ViewData["Result"].ToString() == "2")
+        {
+            <script type="text/javascript" language="javascript">
+               alert('@ViewBag.Message');
+            </script>}
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+                //alert("File not Uploaded..plz try again");
+            </script>
+        }
+    }
+}
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select correct file format');
+            }
+        });
+    });
+
+</script>

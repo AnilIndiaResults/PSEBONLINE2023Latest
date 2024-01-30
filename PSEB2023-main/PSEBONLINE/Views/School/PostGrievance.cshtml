@@ -1,0 +1,267 @@
+﻿@model PSEBONLINE.Models.CallCenter
+@{
+    ViewBag.Title = "PostGrievance";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>Post Grievance</h1>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Post Grievance</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>  
+</head>
+<body>
+    @using (Html.BeginForm("PostGrievance", "School", FormMethod.Post,new {enctype="multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <div class="row">
+            @if (ViewBag.ticketNo != null)
+                { <div class="col-md-12" style="font-size:16px">
+                @Html.Raw("Grievance No: ")@ViewBag.ticketNo <br />&nbsp;
+            </div>
+            }
+
+
+            <div class="clearfix"></div>
+            <div class="col-md-3">
+                School Code <span class="rqf">*</span>
+                <label>@ViewBag.schl.ToString()</label>
+                <span style="color:red">@Html.ValidationMessageFor(model => model.schoolcode)</span><span id="lblStatus"></span>
+
+
+
+            </div>
+            <div class="col-md-3">
+                District <span class="rqf">*</span>
+                <label>@ViewBag.districtname.ToString()</label>
+                <span style="color:red">@Html.ValidationMessageFor(model => model.district)</span>
+            </div>
+            <div class="col-md-6">
+                School Name <span class="rqf">*</span>
+                <label>@ViewBag.schoolname.ToString()</label>
+                <span style="color:red">@Html.ValidationMessageFor(model => model.schoolname)</span>
+            </div>
+            @*<div class="col-md-3">
+                Class <span class="rqf">*</span>
+                @Html.DropDownListFor(m => m.classname, (List<SelectListItem>)ViewBag.classes)<div style="color:red">@Html.ValidationMessageFor(model => model.classname)</div>
+            </div>*@
+            <div class="clearfix"></div>
+            <div class="col-md-3">
+                Category of Grievance <span class="rqf">*</span>
+                @Html.DropDownListFor(m => m.formname, (List<SelectListItem>)ViewBag.forms)<div style="color:red">@Html.ValidationMessageFor(model => model.formname)</div>
+            </div>
+            <div class="col-md-3">
+                Contact Person's Name <span class="rqf">*</span> @Html.TextBoxFor(model => model.cpname)<div style="color:red">@Html.ValidationMessageFor(model => model.cpname)</div>
+            </div>
+            <div class="col-md-3">
+                Contact Person's Mobile No. <span class="rqf">*</span> @Html.TextBoxFor(model => model.cpmobile, new { id = "mobno", onkeypress = "return validateNumber(event)" }) <div style="color:red">@Html.ValidationMessageFor(model => model.cpmobile)</div>
+            </div>
+            <div class="col-md-3">
+                Contact Person's Email Id <span class="rqf">*</span> @Html.TextBoxFor(model => model.cpemail) <div style="color:red">@Html.ValidationMessageFor(model => model.cpemail)</div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="col-md-8">
+                Descriptions <span class="rqf">*</span><br />
+                @Html.TextAreaFor(model => model.description, new { required="required"})<div style="color:red">@Html.ValidationMessageFor(model => model.description)</div>
+            </div>
+            <div class="col-md-4">
+                @*<input type="file" id="Gri_Img" name="Gri_Img" accept="image/jpg,image/jpeg" /> <span class="rqf">(Upload Image Only)*</span> 
+                <input type="file" id="Gri_pdf" name="Gri_pdf" accept="application/pdf" /><span class="rqf">(Upload PDF Only)*</span>*@ 
+                Upload File <span class="rqf">(Multiple Max 3)</span>  @Html.TextBoxFor(a => a.files, "", new { id = "FileUpload2", @class = "FileUpload", @type = "file", @multiple = "multiple" })
+                <span class="rqf">Note: Upload PDF and JPG File only and less than 50KB per file</span>
+            </div>
+            <div class="clearfix"></div>
+            @if (ViewBag.btn == "Update")
+                {
+                <div class="col-md-3">
+                    Status
+                    @{ int st = Model.status;
+                        var listItems2 = new List<System.Web.UI.WebControls.ListItem>();
+                        if (st == 0) { listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Pending", Value = "0" }); }
+                        if (st < 2) { listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Inprogress", Value = "1" }); }
+                        if (st < 3)
+                        {
+                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Completed", Value = "2" });
+                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Rejected", Value = "3" });
+                            if ((Session["Role_Type"] != null && Session["Role_Type"].ToString() != "admin"))
+                            { listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Forward To P.S.E.B", Value = "4" }); }
+                        }
+                    }
+
+                    @Html.DropDownListFor(m => m.status, new SelectList(listItems2, "Value", "Text"), new { id = "statusdrop" })
+                </div>
+                <div class="col-md-9" id="remarksentry">
+                    Remarks<br />@Html.TextArea("remarksname", (string)ViewBag.remarks, new { id = "remarksname", @required = "required" })
+                    <div style="color:red"></div>
+                </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12 text-center pdntb">
+                        <input type="submit" value="Update" name="cmd" />
+                        <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Grievances", "School",new { })'" />
+                    </div>
+                        }
+                        else
+                        {
+                            <div class="col-md-12 text-center pdntb">
+                                <input type="submit" value="Save" name="cmd" />
+                                <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Grievances", "School",new { })'" />
+                            </div>
+                        }
+           
+        </div>
+    }
+
+    @{
+        if (ViewData["result"] != null)
+        {
+            if (ViewData["result"].ToString() != "")
+            {
+                if (ViewData["result"].ToString() == "2")
+                {
+                    <script type="text/javascript" language="javascript">
+
+                     alert('@ViewBag.Message');
+                    window.location.href = '@Url.Action("DisplayGrievances", "School")';
+                    </script>}
+                else if (ViewData["result"].ToString() == "1")
+                {
+                    <script type="text/javascript" language="javascript">
+                    alert('@ViewBag.Message');
+                    window.location.href = '@Url.Action("DisplayGrievances", "School")';
+                    </script>
+                }
+                else if (ViewData["result"].ToString() == "3")
+                {
+                    <script type="text/javascript" language="javascript">
+                    alert('@ViewBag.Message');
+                    </script>
+                }
+                else if (ViewData["result"].ToString() == "10")
+                {
+                    <script type="text/javascript" language="javascript">
+                       alert("Please Select Files less than equal to 3");
+                    </script>
+                }
+                else if (ViewData["result"].ToString() == "20")
+                {
+                    <script type="text/javascript" language="javascript">
+                        alert("Please Select PDF and JPG File only and less than 50KB per file");
+                    </script>
+                }
+				 else if (ViewData["result"].ToString() == "4")
+                {
+                    <script type="text/javascript" language="javascript">
+                        alert("Sorry you can't apply more than 3 Grievances until your Grievance not closed ");
+                    </script>
+                }
+                else
+                {
+                    <script type="text/javascript" language="javascript">
+                    alert("SomeThing Wrong, Plz Try Again");
+                    </script>
+                }
+            }
+        }
+    }
+    <script>
+        $(document).ready(function () {           
+            $('input[type=file]').change(function () {               
+                var val = $(this).val().toLowerCase();
+              //  alert('val ' + val);
+                var regex = new RegExp("(.*?)\.(pdf|jpeg|jpg)$");
+                if (!(regex.test(val))) {
+                    $(this).val('');
+                    alert('Please select correct file format');
+                }
+                
+            });
+        });
+    </script>
+    <script src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+
+       function validateNumber(event) {
+           var key = window.event ? event.keyCode : event.which;
+           var c = $("#mobno").val();
+           if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 37 || event.keyCode === 39)
+           {
+               return true;
+           }
+           if (key < 48 || key > 57)
+           {
+               return false;
+           }
+           if (c.length > 9)
+           {
+               return false;
+           }
+           else return true;
+       }
+       function validateNumber1(event) {
+           var key = window.event ? event.keyCode : event.which;
+           var c = $("#sccode").val();
+           if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 37 || event.keyCode === 39)
+           {
+               return true;
+           }
+           if (key < 48 || key > 57)
+           {
+               return false;
+           }
+           if (c.length > 6)
+           {
+               return false;
+           }
+           else return true;
+       }
+    </script>
+    <script type="text/javascript">
+
+
+        function SchoolCodeAvailability() { //This function call on text change.
+            $.ajax({
+                type: "POST",
+                url: "../School/CheckSchoolCode", // this for calling the web method function in cs code.
+                data: '{schoolcode: "' + $("#sccode").val() + '" }',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        }
+
+
+        //function on class select
+        $("#classname").change(function () {
+            var clas = $("#classname").val();
+            $.ajax({
+                url: '@Url.Action("GetForms", "School")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({ clas: clas }),
+                success: function (forms) {
+                    $("#formname").empty();
+
+                    $.each(forms, function (i, FormsList) {
+                        $("#formname").append('<option value="'
+                           + FormsList.Value + '">'
+                           + FormsList.Text + '</option>');
+                    });
+                    if (TehList.success) {}
+                    else {alert('invalid ID' + data.success);}
+                }
+            });
+        });
+
+    </script>
+
+</body>
+</html>

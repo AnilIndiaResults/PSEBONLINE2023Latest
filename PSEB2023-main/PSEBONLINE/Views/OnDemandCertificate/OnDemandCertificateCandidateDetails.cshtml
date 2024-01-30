@@ -1,0 +1,408 @@
+﻿@model PSEBONLINE.Models.OnDemandCertificatesIndividuals
+@{
+    Layout = "~/Views/Shared/_HeaderOnDemand.cshtml";
+}
+
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script type="text/javascript">
+    window.setInterval(function () {
+        var current = new Date();
+        var expiry = new Date("Oct 30, 2021 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideint').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideint').show();
+        }
+    }, 0);
+</script>
+
+<div id="loading1"></div>
+@{
+    <h3>Apply On Demand Certificate For March 2021  </h3>
+}
+
+<div class="container KDBG">
+
+    @using (Html.BeginForm("OnDemandCertificateCandidateDetails", "OnDemandCertificate", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+    {
+        <h4>Candidate Details</h4>
+        <div class="row">
+            <div class="col-md-3">Exam Type</div>
+            <div class="col-md-3">
+                @{
+                    string RP = string.Empty;
+                    if (Model.RP == "O")
+                    {
+                        RP = "Open";
+                    }
+                    else if (Model.RP == "R")
+                    {
+                        RP = "Regular";
+                    }
+
+                }
+                @Html.TextBox("RP1", RP, new { @ReadOnly = "ReadOnly" })
+                @Html.HiddenFor(m => m.RP)
+            </div>
+            <div class="col-md-3">Roll Number</div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(a => a.Roll, new { @ReadOnly = "ReadOnly" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">
+                <span>Registration Number</span>
+            </div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(a => a.RegNo, new { @ReadOnly = "ReadOnly" })
+            </div>
+            <div class="col-md-3">Class</div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(a => a.Class, new { @ReadOnly = "ReadOnly" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Candidate Name</div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(a => a.Name, new { @ReadOnly = "ReadOnly" })
+            </div>
+            <div class="col-md-3">Father's Name</div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(a => a.FName, new { @ReadOnly = "ReadOnly" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Mother's Name</div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(a => a.MName, new { @ReadOnly = "ReadOnly" })
+            </div>
+
+            <div class="col-md-3">
+                Mobile<span class="rqf">*</span>
+            </div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(a => a.Mobile, new { @ReadOnly = "ReadOnly" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Result Details</div>
+            <div class="col-md-9">
+                @Html.TextBoxFor(a => a.Resultdtl, new { @ReadOnly = "ReadOnly" })
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="col-md-3">Present Address <span class="rqf">*</span></div>
+            <div class="col-md-9">
+                @Html.TextAreaFor(a => a.Address, new { @required = "required", cols = "10", rows = "3", @class = "form-control" })
+            </div>
+        </div>
+
+
+        @*<h4>Enter Details</h4>*@
+        if (Model.IsFinalSubmit == 1)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <p style="font-size:16px;text-align:center" class="rqf">NOTE : Registry Number will allot after dispatch of certificate.</p><br />
+                </div>
+
+                <div class="col-md-12">
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+
+                            List<PSEBONLINE.Models.OnDemandCertificate_ChallanDetailsViews> OnDemandCertificate_ChallanDetailsViews = (List<PSEBONLINE.Models.OnDemandCertificate_ChallanDetailsViews>)Session["OnDemandCertificate_ChallanDetailsViews"];
+
+                            <table id="example" class="display table table-bordered" style="width:100%">
+                                <thead>
+                                    <tr class="active-tr">
+                                        <th>Class</th>
+                                        <th>Transaction Id</th>
+                                        <th>Transaction Date</th>
+                                        <th>Valid Date</th>
+                                        <th>Verify Date</th>
+
+                                        <th>(Fee+Late Fee)=Total Fee</th>
+                                        <th>Transaction Status </th>
+                                        <th>Registry Number</th>
+                                        <th>Registry Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var obj in OnDemandCertificate_ChallanDetailsViews)
+                                    {
+                                        <tr>
+                                            <td>@obj.Class</td>
+                                            <td> @obj.ChallanId</td>
+                                            <td>@obj.CHLNDATE</td>
+                                            <td>@obj.CHLNVDATE  </td>
+                                            <td>@obj.ChallanVerifiedOn </td>
+                                            <td>(@obj.FEE+@obj.LateFee)=@obj.TotalFee</td>
+                                            <td>@obj.Status </td>
+                                            <td>@obj.RegistryNumber</td>
+                                            <td>@obj.RegistryNumberStatus </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+
+            </div>
+        }
+        else
+        {<div class="row">
+
+                <div class="col-md-12">
+                    @Html.HiddenFor(m => m.OnDemandCertificatesIndividualId)
+
+                    @{
+
+
+                        if (Model.OnDemandCertificatesIndividualId == 0)
+                        {
+                            <div class="row hideint">
+
+                                <div class="col-md-12" style="text-align:center">
+                                    <input id="btnSubmit" type="submit" name="cmd" value="Submit" class="btn" onclick="return valForm();" />
+                                </div>
+
+                            </div>
+
+                        }
+                        else if (Model.OnDemandCertificatesIndividualId > 0 && Model.IsCancel == 1)
+                        {
+                            <div class="row hideint">
+
+                                <div class="col-md-12" style="text-align:center">
+                                    <span class="rqf" style="font-size:24px;font-weight:bold;">Cancelled  [@Model.CancelRemarks] (@Model.CancelOn.Value.ToString("dd/MM/yyyy hh:mm tt"))</span><br /><br />
+
+                                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input id="btnSubmit" type="submit" name="cmd" value="Unlock Application" class="btn" onclick="return confirm('You are sure to Unlock Application');" />
+                                 
+
+                                </div>
+
+                            </div>
+
+                        }
+                        else if (Model.OnDemandCertificatesIndividualId > 0 && ViewBag.TotalCount == 0)
+                        {
+                            <div class="row hideint">
+
+                                <div class="col-md-12" style="text-align:center">
+                                    <span style="font-size:16px;text-align:center" class="rqf">Last Date is Over to Apply On Demand Certificate.</span><br />
+                                </div>
+                            </div>
+                        }
+
+                        else if (ViewBag.TotalCount > 0)
+                        {
+
+
+                            <div class="row hideint">
+
+                                <div class="col-md-12" style="text-align:center">
+                                    <input id="btnSubmit" type="submit" name="cmd" value="Update" class="btn" onclick="return valForm();" />
+                                    @if (Model.OnDemandCertificatesIndividualId > 0 && ViewBag.IsChallanCancel == 0)
+                                    {
+                                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <input id="btnSubmit" type="submit" name="cmd" value="Cancel Application" class="btn" onclick="return confirm('You are sure to cancel');" /><br />
+                                        <span style="font-size:16px;text-align:center" class="rqf">NOTE : You can cancelled it, Before Payment Proceess.</span><br />
+
+
+                                    }
+                                </div>
+
+                            </div>
+                            <h4>Fee Details</h4>
+                            <div class="row hideint" style="padding-top : 20px">
+                                <div class="col-md-12">
+
+                                    <table style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px" border="1" class="tbl">
+                                        <tr>
+                                            <td>Fee Category</td>
+                                            <td>@ViewBag.FeeCategory</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Fees</td>
+                                            <td>@ViewBag.TotalFees</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Fees(In Words)</td>
+                                            <td>@ViewBag.TotalFeesInWords</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-center rqf">Fee Valid Upto @ViewBag.EndDate</td>
+                                        </tr>
+                                        <tr style="font-size:18px;color:red;">
+                                            <td colspan="5" align="center">
+                                                <h3>Select Payment Gateway</h3><br>
+                                                <span class="rqf" style="font-size:15px">Note : After selection of payment gateway, you can pay fee from any bank (which listed) in any mode like Debit Card, Credit Card, Net banking etc.</span>
+                                                <br>
+                                                <span style="font-size:12px">You will not be able to unlock final submission once you click on the Pay Online Button. So make sure you have filled correct data.</span>
+                                            </td>
+                                        </tr>
+                                        <tr class="hideint">
+                                            <td colspan="5" align="center">
+                                                <span>@Html.RadioButtonFor(m => m.AllowBanks, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span>
+                                                <span>@Html.RadioButtonFor(m => m.AllowBanks, "302", new { id = "ATOM" }) <img src="~/Images/PNSB.jpg" alt="ATOM" width="150" /></span>
+                                            </td>
+                                        </tr>
+                                        <tr class="hideint">
+                                            <td colspan="5" align="center">
+                                                <br /><input id="btnPaymentOnline" type="button" name="cmd" value="Final Submit & Proceed to Pay Online" class="btn" />
+                                                <br />&nbsp;
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                        }
+
+
+                    }
+
+
+                </div>
+            </div>}
+    }
+
+
+</div>
+    </div>
+    }
+
+    }
+    </div>
+
+
+
+@{
+    if (ViewData["resultIns"] != null)
+    {
+        if (ViewData["resultIns"].ToString() == "F")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Final Submit Successfully</span>
+            </div>
+        }
+        else if (ViewData["resultIns"].ToString() == "S")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Submit Successfully</span>
+            </div>
+        }
+        else if (ViewData["resultIns"].ToString() == "M")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Updated Successfully</span>
+            </div>
+        }
+        else if (ViewData["resultIns"].ToString() == "C")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Cancelled Successfully</span>
+            </div>
+        }
+        else if (ViewData["resultIns"].ToString() == "0")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Failure to Submit</span>
+            </div>
+        }
+        else if (ViewData["resultIns"].ToString().ToLower().Contains("error"))
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">@ViewData["resultIns"]</span>
+            </div>
+        }
+    }
+}
+
+
+
+
+<script type="text/javascript">
+
+    function valForm() {
+        if (document.getElementById("Address").value == "") {
+            alert("Please Enter Address");
+            return false;
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Alert",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+    });
+</script>
+
+
+
+
+<div id="dialogOnline" style="display: none">
+    <span class="rqf">Click OK button to do Online Payment through Credit Card, Debit Card, Net Banking etc of any bank otherwise click Cancel button.</span>
+</div>
+<script type="text/javascript">
+
+    $("#btnPaymentOnline").click(function () {
+
+        if (document.getElementById("Address").value == "") {
+            alert("Please Enter Address");
+            return false;
+        }
+
+
+        var SBPa = document.getElementById("HDFC").checked;
+        var PNBa = document.getElementById("ATOM").checked;
+
+        if (SBPa == false && PNBa == false) {
+            alert("Please Select Any Bank For Online Payment");
+            return false;
+        }
+        else {
+            //$('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to do online payment?");
+            $('#dialogOnline').dialog('open');
+            return true;
+        }
+
+    });
+    $(function () {
+        $("#dialogOnline").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to do online payment?",
+            width: 400,
+            height: 220,
+            buttons: {
+                "OK": function () {
+                    $("#btnPaymentOnline").attr('disabled', 'disabled');
+                    $('#myForm').submit();
+                    $(this).dialog("close");
+
+                },
+                Cancel: function () {
+                    $('#loading1').empty("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+
+</script>

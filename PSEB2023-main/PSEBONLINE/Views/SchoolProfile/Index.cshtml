@@ -1,0 +1,878 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+@if (Convert.ToInt32(Session["Session"].ToString().Substring(0, 4)) < 2017)
+{
+}
+else
+{
+    if (Session["schlInfoUpdFlag"].ToString().ToUpper() == "FALSE")
+    {
+        <meta http-equiv="refresh" content="0;url=/SchoolProfile/Update_School_Information" />
+    }
+}
+<style type="text/css">
+    #ac-wrapper1 {
+        background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    #popup1 {
+        height: auto;
+        left: 0;
+        padding: 0;
+        position: absolute;
+        top: 15%;
+        width: 100%;
+    }
+
+        #popup1 table {
+            background: #fff none repeat scroll 0 0;
+            border-radius: 25px;
+            max-width: 500px;
+            min-width: 900px;
+            height: 165px;
+        }
+
+    #ac-wrapper {
+        background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    #popup {
+        min-height: auto;
+        left: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+
+        #popup table {
+            background: #fff none repeat scroll 0 0;
+            border-radius: 0 0 25px 25px;
+            max-width: 500px;
+            min-width: 320px;
+        }
+
+        #popup .button {
+            background: #efba09; /* Old browsers */
+            background: -moz-linear-gradient(top, #efba09 0%, #fb9709 50%, #efba09 100%); /* FF3.6-15 */
+            background: -webkit-linear-gradient(top, #efba09 0%,#fb9709 50%,#efba09 100%); /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(to bottom, #efba09 0%,#fb9709 50%,#efba09 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efba09', endColorstr='#efba09',GradientType=0 ); /* IE6-9 */
+        }
+
+        #popup .txtbox {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #555;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: inherit;
+            margin-bottom: 10px;
+            height: auto;
+            width: 80%;
+        }
+
+    input[type="text"] {
+        margin: 3px;
+        width: 96% !important;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+
+    input[type="text"] {
+        margin: 3px;
+        width: 96% !important;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+
+    .listitm {
+        font-size: 18px;
+        font-weight: 400;
+        padding: 25px 0;
+    }
+
+        .listitm span {
+            color: #cc0000;
+        }
+</style>
+<h1>
+    Welcome to Punjab School Education Board!!! - Session @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+else { Response.Redirect("~/Login"); }
+</h1>
+<div class="KDBG">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel-group" id="accordion">
+                @if (Convert.ToInt32(Session["Session"].ToString().Substring(0, 4)) < 2017)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Examination Portal</a>
+                            </h4>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <ul>
+                                    <li><a href="/PDF/Instructions_For_Generate_Examination_Forms_Session_2016_17.pdf" target="_blank"><samp>&#10093;</samp> Instructions For Generate Examination Forms Session 2016-   </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @* <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Check Reg. No. of 2016-17</a>
+                            </h4>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <ul>
+                                    <li><a href="/ImportData/ImportedData2017"><samp>&#10093;</samp> Imported Data 2016-17</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>*@
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Utility</a>
+                        </h4>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <ul>
+                                <li><a href="/PNB_FONT.ZIP" target="_blank"><samp>&#10093;</samp> Download Punjabi PNB Font</a>
+                                <li><a href="/Images/PNB_Character_Map.jpg" target="_blank"><samp>&#10093;</samp> View English to Punjabi Character Map</a></li>
+                                <li>
+                                    <a href="/PDF/Instruction_To_Upload_Photographs.pdf" target="_blank">
+                                        <samp>&#10093;</samp> Instruction to Upload Photographs!
+                                    </a>
+                                </li>
+                                @* <li>
+                                        <a href="">
+                                            &#10093; N1 Form Help?
+                                        </a>
+                                    </li>*@
+                                <li><a href="/PDF/Keyboard_Instructions.pdf" target="_blank"><samp>&#10093;</samp> Keyboard Instructions</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                @if (Convert.ToInt32(Session["Session"].ToString().Substring(0, 4)) < 2017)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">Download Forms </a>
+                            </h4>
+                        </div>
+                        <div id="collapse5" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <ul>
+                                    <li><a href="#"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">Press and Circular </a>
+                        </h4>
+                    </div>
+                    <div id="collapse6" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <ul>
+                                <li><a href="/PDF/Press-Note-10-07-2018.pdf" target="_blank"><samp>&#10093;</samp> Regarding Dr. APJ Abdul Kalam IGNITE Competition 2018: A National campaign to harness the creative and innovative sprite of school children by Innovation Foundation-India(NIF)</a></li>
+
+                            </ul>
+
+                            <div class="panel-body" style="display:none">
+                                @if (Convert.ToInt32(Session["Session"].ToString().Substring(0, 4)) < 2017)
+                                {
+                                    <ul>
+                                        <li><a href="/PDF/Press-Note-25-11-2016.pdf" target="_blank"><samp>&#10093;</samp> Press Note Regarding Examination Fee Submission for Session 2016-2017</a></li>
+                                        <li><a href="/PDF/rbi1-2016-11-11-850.pdf" target="_blank"><samp>&#10093;</samp> RBI Notification Regarding Payment of Fee. </a></li>
+                                        <li><a href="/PDF/Press_Regarding_Date_Extended_For_Generate_Examination_Forms_Session_2016_17.pdf" target="_blank"><samp>&#10093;</samp> Press Regarding Date Extended For Generate Examination Forms Session 2016-17</a></li>
+                                        <li><a href="/PDF/Reg2016_17_Date_Extend.pdf" target="_blank"><samp>&#10093;</samp> Press Note regarding revised schedule of Registration/Continuation 2016-17.</a></li>
+
+                                        <li><a href="/PDF/Registration_Schedule_Session_2016-17.pdf" target="_blank"><samp>&#10093;</samp> Registration Schedule Session 2016-17</a></li>
+                                        <li><a href="/PDF/Fee_Schedule_For_Registration_Continuation_2016_17.pdf" target="_blank"><samp>&#10093;</samp>  Fee Schedule for Registration Continuation 2016-17</a></li>
+                                        <li><a href="/PDF/Class_IX_X/Instruction_2016_17_09th_10th_Class.pdf" target="_blank"><samp>&#10093;</samp> Registration/Continuation instuctions of 9th & 10th class for Session 2016-17</a></li>
+                                        <li><a href="/PDF/Class_XI_XII/Instruction_2016_17_11th_12th_Class.pdf" target="_blank"><samp>&#10093;</samp> Registration/Continuation instuctions of 11th & 12th class for Session 2016-17</a></li>
+
+
+                                    </ul>
+                                }
+
+                                else
+                                { <ul>
+                                        @*//*@
+                                        @if (ViewBag.SchoolType == "ASS")
+                                        {
+                                            <li><a href="/PDF/Continuation_Fees_Schedule_201819.pdf" target="_blank"><samp>&#10093;</samp> Session 2018-19 Continuation Fees Schedule Associate Schools <img src="/images/new.gif" alt="new" /></a></li>
+                                        }
+                                        @*//*@
+
+                                        <li><a href="/PDF/PressNote10CCE.pdf" target="_blank"><samp>&#10093;</samp> Press Note Regarding CCE of Matriculation examination march 2018</a></li>
+                                        <li><a href="/PDF/press note CCE.pdf" target="_blank"><samp>&#10093;</samp> Press Note Regarding Fill Online C.C.E Instructions</a></li>
+                                        <li><a href="/PDF/instruction of disable student.pdf" target="_blank"><samp>&#10093;</samp> Change in Instructions Regarding 10th and 12th Exam For Disable Students</a></li>
+                                        <li><a href="/PDF/List-of-Teachers.pdf" target="_blank"><samp>&#10093;</samp> List of Teachers/Lecturers of Affiliated Schools for 10th and 12th Examination Year 2018</a></li>
+
+                                        <li><a href="/PDF/Regarding Books Demand2017.pdf" target="_blank"><samp>&#10093;</samp> Press Note Regarding Books Demand </a></li>
+                                        <li><a href="/PDF/Notice Vidyak mukable 03-10-2017.pdf" target="_blank"><samp>&#10093;</samp> Now Zonal Level Vidyak Mukable will be held from 24 October to 26 October 2017</a></li>
+
+                                        <li><a href="/PDF/Training-22-09-2017.pdf" target="_blank"><samp>&#10093;</samp>Training of untrained in service Elementary Teachers in the Govt./Govt.Aided/unaided Private Schools</a></li>
+
+                                        <li><a href="/PDF/Date-Extended-For-Online-Generated-Transfer-Certificate.pdf" target="_blank"><samp>&#10093;</samp> Date Extended for Online Generated Transfer Certificate </a></li>
+                                        <li><a href="/PDF/Regarding_Registration_Fees.pdf" target="_blank"><samp>&#10093;</samp> Regarding Registration Fees</a></li>
+                                        <li>
+                                            <a href="/PDF/Correct_Aadhar_CardNo.pdf" target="_blank"><samp>&#10093;</samp> Regarding Entry of Correct Aadhar Card No. While online Registration for Session 2017-18 </a>
+                                        </li>
+                                        <li>
+                                            <a href="/PDF/Press_Note.pdf" target="_blank"><samp>&#10093;</samp> Press Note Regarding Transfer Certificate</a>
+                                        </li>
+                                        <li>
+                                            <a href="/PDF/Awareness_About_MHRD_New_Delhi_Scheme_Scholarship.pdf" target="_blank"><samp>&#10093;</samp> Awareness About  MHRD New Delhi Scheme (Scholarship)</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="/PDF/Class_IX_X/RegistrationContinuationInstructionsClass09th-10th-2017-18.pdf" target="_blank"><samp>&#10093;</samp> Revised - Registration/Continuation instuctions of 9th &amp; 10th class for Session 2017-18</a>
+                                        </li>
+                                        <li>
+                                            <a href="/PDF/Class_XI_XII/RegistrationContinuationInstructionsClass11th-12th-2017-18.pdf" target="_blank"><samp>&#10093;</samp> Revised - Registration/Continuation instuctions of 11th &amp; 12th class for Session 2017-18</a>
+                                        </li>
+                                        <li><a href="/PDF/Aadhar-Card-News.pdf" target="_blank"><samp>&#10093;</samp> Regarding To Fill The Aadhar Card Number at The Time of Registration/Continution</a></li>
+                                        @*<li><a href="/PDF/Instruction-2017-18-9th-10th.pdf" target="_blank"><samp>&#10093;</samp> Revised - Registration/Continuation instuctions of 9th &amp; 10th class for Session 2017-18</a></li>
+                                            <li><a href="/PDF/Instruction-2017-18-11th-12th.pdf" target="_blank"><samp>&#10093;</samp> Revised - Registration/Continuation instuctions of 11th &amp; 12th class for Session 2017-18</a></li>*@
+                                    </ul>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="http://www.pseb.ac.in/academic" target="_blank">Academic</a>
+                        </h4>
+                    </div>
+
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="http://www.pseb.ac.in/syllabus" target="_blank">Syllabus</a>
+                        </h4>
+                    </div>
+
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse7">Other</a>
+                        </h4>
+                    </div>
+                    @*@if (ViewBag.SchoolType == "AFF" || ViewBag.SchoolType == "ASS")
+                        {
+                            <div id="collapse7" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <ul>
+                                        <li><a href="/PDF/Dr_APJ_Abdul_kalam_IGNITE_17Competition_Form.pdf" target="_blank"><samp>&#10093;</samp> Dr. APJ Abdul kalam IGNITE 17 Competition Form : National competition  of school student's original unaided technological ideas and innovations organised by National Innovation Foundation-India (NIF)</a></li>
+                                        <li><a href="/PDF/Dr_APJ_Abdul_kalam_IGNITE_17Competition.pdf" target="_blank"><samp>&#10093;</samp> Dr. APJ Abdul kalam IGNITE 17 Competition : National competition  of school student's original unaided technological ideas and innovations organised by National Innovation Foundation-India (NIF)</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        }*@
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            @if (Convert.ToInt32(Session["Session"].ToString().Substring(0, 4)) < 2017)
+            {
+                <div>
+                    @if (ViewBag.SchoolType == "AFF")
+                    {<span></span>}
+                    @* <h1 style="color:#cc0000">Kindly make entry of M1 & T1 registration form on or before 23/11/2016 to avoid late fees.</h1>*@
+                    <br />&nbsp;<br />
+                    <a href="/PDF/Instructions_Regarding_Correction_Performa_2016-17.pdf" target="_blank" style="font-size:20px;padding:25px 0"><samp>&#10093;</samp> 14<sup>th</sup> Dec 2016 - Instructions Regarding Correction Performa 2016-17 <img src="/images/new.gif" alt="new" /></a>
+                    <br />&nbsp;<br />
+                    <a href="/PDF/Press-Note-25-11-2016.pdf" target="_blank" style="font-size:20px;padding:25px 0"><samp>&#10093;</samp> Press Note Regarding Examination Fee Submission for Session 2016-2017</a><br />&nbsp;<br />
+                    <a href="/PDF/Instructions_For_Generate_Examination_Forms_Session_2016_17.pdf" style="font-size:20px;padding:25px 0"><samp>&#10093;</samp> Instructions For Generate Examination Forms Session 2016-17</a>
+                    <br />&nbsp;<br />
+                    <a href="/PDF/Exam_Fees_by_Cheque_and_Cash_in_bank.pdf" target="_blank" style="font-size:20px;padding:25px 0"><samp>&#10093;</samp> Exam Fees by Cheque and Cash in bank</a><br />&nbsp;<br />
+
+                    @if ((ViewBag.OpenSchool != "") && (ViewBag.OpenSchool != null))
+                    {
+                        <a href="/PDF/Regarding_Examination_Fee_of_Open_School_Students_for_The_Session_2016-17.pdf" target="_blank" style="font-size:20px;padding:25px 0"><samp>&#10093;</samp> Regarding Examination Fee of Open School Students for The Session 2016-17</a>
+                    }
+                    @*<br />&nbsp;<br />
+                        <p style="color:#cc0000;font-size:14px;text-align:center;margin:0;padding-top:6px">ਆਨ-ਲਾਈਨ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਦੀ ਇੰਨਕੁਆਰੀ ਨੂੰ ਹੱਲ ਕਰਨ ਲਈ ਕੰਪਿਊਟਰ ਸੈੱਲ ਮਿਤੀ 12-11-2016 ਅਤੇ 13-11-2016 ਨੂੰ ਸਵੇਰੇ 10 ਤੋਂ  2 ਵਜੇ ਤੱਕ ਆਮ ਪਬਲਿਕ ਲਈ ਖੁੱਲਾ ਰਹੇਗਾ|</p>*@
+                    <br />&nbsp;<br />
+                    <marquee onmouseout="this.setAttribute('scrollamount', 6, 0);" onmouseover="this.setAttribute('scrollamount', 0, 0);" direction="left" scrollamount="4" style="padding:10px 0;cursor:pointer;background-color:#f0ad4e">
+                        After Final Submission in Registration Portal. Please generate Examination fee Challan in Examination Portal before 23-11-2016 to avoid late fee.
+                    </marquee>
+                </div>
+            }
+            else if (Session["Session"].ToString() == "2017-2018")
+            {
+                <div>
+                    <marquee onmouseout="this.setAttribute('scrollamount', 6, 0);" onmouseover="this.setAttribute('scrollamount', 0, 0);" direction="left" scrollamount="4" style="padding:10px 0;cursor:pointer;background-color:#f0ad4e">
+                        Matriculation CCE,Elective,Practical Subject Marks Entry are Unlocked Till 24th April,2018!!&nbsp;&nbsp;|&nbsp;&nbsp;
+                        Date Extended For Elective Subject Theory UPTO 11/04/2018!!&nbsp;&nbsp;|&nbsp;&nbsp;
+                        Practical Exam Marks Entry Panel is Live Now.!!&nbsp;&nbsp;|&nbsp;&nbsp;Practical Signature Chart & Confidential List is Live Now.!!&nbsp;&nbsp;|&nbsp;&nbsp;
+                        Practical Chart of Matric & Sr. Sec For Practical Exam, March 2018 is Live Now. !!&nbsp;&nbsp;|&nbsp;&nbsp;Date is extended upto 08-03-2018 to fill & final submit CCE of Senior Secondary, March 2018 !!&nbsp;&nbsp;|&nbsp;&nbsp;Important Instruction : Kindly submit the answer sheets of Environment and Computer Science subject in collection centre.!!&nbsp;&nbsp;|&nbsp;&nbsp;Matriculation Class Examination, March 2018 Exam Time is 10:00 AM to 01:15 PM!!&nbsp;&nbsp;|&nbsp;&nbsp;Senior Secondary Class Examination, March 2018 Exam Time is 02:00 PM to 05:15 PM!!&nbsp;&nbsp;|&nbsp;&nbsp;Only online submission of CCE marks is to be done by schools (Matric/SrSec).Hard copy submission of marks of CCE at Punjab School Education Board sub office is not required.Only a copy for record shall be maintained by school.!!&nbsp;&nbsp;|&nbsp;&nbsp;Admit Card of Matric Exam March-2018 is Live Now!!&nbsp;&nbsp;|&nbsp;&nbsp;Admit Card of Sr.Sec Exam Feb-2018 is Live Now!!&nbsp;&nbsp;|&nbsp;&nbsp;CCE Panel of Matric is live now under School Login->Examination Portal->CCE(Internal Assessment), Last Date to Final Submit CCE is 05 March 2018.!!&nbsp;&nbsp;|&nbsp;&nbsp;CCE Panel of Sr. Sec is live now under School Login->Examination Portal->CCE(Internal Assessment), Last Date to Final Submit CCE is 27 Feb 2018. !!&nbsp;&nbsp;|&nbsp;&nbsp;Cut List is live Now.!!&nbsp;&nbsp;|&nbsp;&nbsp;Date is extended for apply online correction including Subject/Stream correction upto 20-12-2017 without fee of 10th & 12th class. Subject/Stream Correction Performa will be live soon.!!&nbsp;&nbsp;|&nbsp;&nbsp;Correction Panel is Live Now!!
+                        @*&nbsp;&nbsp;|&nbsp;&nbsp;!! T1 Form is live now. &nbsp;&nbsp;|&nbsp;&nbsp;!! M1 Form is live now. &nbsp;&nbsp;|&nbsp;&nbsp;!! T2 Form is live now. &nbsp;&nbsp;|&nbsp;&nbsp; !! M2 Form is live now. &nbsp;&nbsp;|&nbsp;&nbsp;  !! E1 & E2 Form is live now. &nbsp;&nbsp;|&nbsp;&nbsp; !! N1,N2 & N3 Form is live now.*@
+                    </marquee>
+                    @*@Session["IsNSQF"]*@
+                    @if (Convert.ToBoolean(Session["IsNSQF"]) == true)
+                    {<a href="/pdf/Deo-Mail.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>26.04.2018</span> Not to allow Admission (s) in Science,  Commerce, Vocational and Agriculture group/Stream of class 11th under NSQF from Academic session 2018-19</a>
+                    }
+                    <br />&nbsp;<br />
+                    <a href="/pdf/CCE_Regarding_18042018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>18.04.2018</span> Regarding C.C.E Upload Matriculation and Senior Secondary March 2018.</a><br />&nbsp;<br />
+                    <a href="/pdf/Letter_Regarding_NSQF_OR_OJT.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>13.04.2018</span> Regarding Practical of NSQF Subjects & On The Job Training Subject.</a><br />&nbsp;<br />
+                    <a href="/pdf/Affiliiation_Letter_Upload.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>12.04.2018</span> Regarding Display Board Show on The Entry Gate of Your School.</a><br />&nbsp;<br />
+                    <a href="/pdf/Instructions_Regarding_Practical_Exam.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>07.04.2018</span> Instructions regarding practical exam and pratical marks entry dates schedule.</a><br />&nbsp;<br />
+                    <a href="/pdf/Letter_for_Affiliated_schools_regarding_staff.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>06.04.2018</span> Letter for Affiliated schools regarding staff.</a><br />&nbsp;<br />
+                    <a href="/pdf/Fee-Revised-2018-19.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>05.04.2018</span> Regarding Revised Registration/Continuation, Duplicate/Verification/Transcript/Correction Fee etc.</a><br />&nbsp;<br />
+                    <a href="/pdf/2018-04-05T20180405115444.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>05.04.2018</span> Mention contact no and Email id of PSEB (Affiliation and District Manager) on Display Board of School</a><br />&nbsp;<br />
+                    <a href="/pdf/LetterAffa.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>04.04.2018</span> Instruction for Affiliated/Associated/Adarsh Schools</a><br />&nbsp;<br />
+                    <a href="/pdf/bb.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>01.04.2018</span> Fresh instructions regarding 2/4/2018 date change of practical exam,now internal Examinar will conduct all practical exams,submision of online practical marks date.<img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    <a href="/pdf/aa.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>01.04.2018</span> Public notice regarding practical date.2/4/2018..changed.. practical will be held on 11/4/2018 <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    <a href="http://files-cdn.pseb.ac.in/pseb_files/datesheetpractical-2018-19-02-65.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>29.03.2018</span> Matriculation and Senior Secondary Practical Examination Date Sheet ​March 2018 (Revised)<img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    <a href="/PDF/information.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>26.03.2018</span> Instructions Regarding Practical Chart of Matric & Sr. Sec for Practical Exam, March 2018<img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    <a href="/PDF/22-03-2018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>22.03.2018</span> Regarding Sr. Sec Examination to be held on 23-03-2018 (as per previous fixed schedule)<img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    @if (Session["IsStaff"].ToString() == "0")
+                    {
+                        <a href="/PDF/Show_Cause_Notice_for_Schools.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>22.03.2018</span> Show Cause Notice for Schools<img src="/images/new.gif" alt="new" /></a><br /><br />
+                    }
+                    <a href="/PDF/Elect_Subject_for_all_schools.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>21.03.2018</span> Instruction Regarding theory Exam for Elective Subject of Matriculation Class, March 2018<img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    <a href="/PDF/Letter_Conf.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>21.03.2018</span> Regarding exam of HOT Subject of NSQF (Senior Secondary)  <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    <a href="/PDF/centre_controller_20-03-2018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>21.03.2018</span> Information Regarding 10th and 12th Practical Exam April 2018 <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    @if (ViewBag.SchoolType == "AFF" || ViewBag.SchoolType == "ASS")
+                    {
+                        <a href="/PDF/Associate_and_affiliated_School_login_id_upload.pdf" target="_blank" class="listitm">
+                            <samp>&#10093;</samp> <span>17.03.2018</span>  Purchase of 90% Books Published by Board Affiliated and Associated Schools
+                            <img src="/images/new.gif" alt="new" />
+                        </a> <br /><br />
+                    }
+                    @*<p style="color:#cc0000;font-size:26px;text-align:center;margin:0;padding-top:6px;font-weight:normal;line-height:35px">Last date to submit documents for registration number generation of other Board/States student is extended from 29<sup>th</sup> Sep 2017 to 13<sup>th</sup> Oct 2017</p>
+                        <br />&nbsp;<br />*@
+                    @if (Session["SCHL"].ToString() == "0101517" || Session["SCHL"].ToString() == "3025302" || Session["SCHL"].ToString() == " 0025953" || Session["SCHL"].ToString() == "3100402" || Session["SCHL"].ToString() == "3120119" || Session["SCHL"].ToString() == "0075266" || Session["SCHL"].ToString() == "3020143" || Session["SCHL"].ToString() == "0079982" || Session["SCHL"].ToString() == "3100410" || Session["SCHL"].ToString() == "3110120" || Session["SCHL"].ToString() == "0099543" || Session["SCHL"].ToString() == "0043913" || Session["SCHL"].ToString() == "3050119" || Session["SCHL"].ToString() == "0023856" || Session["SCHL"].ToString() == "0072187" || Session["SCHL"].ToString() == "0099123" || Session["SCHL"].ToString() == "3140116" || Session["SCHL"].ToString() == "0074182" || Session["SCHL"].ToString() == "0091536" || Session["SCHL"].ToString() == "0053016" || Session["SCHL"].ToString() == "2150143" || Session["SCHL"].ToString() == "0103172" || Session["SCHL"].ToString() == "0066833" || Session["SCHL"].ToString() == "0033595" || Session["SCHL"].ToString() == "0031192" || Session["SCHL"].ToString() == "0050395" || Session["SCHL"].ToString() == "0100831" || Session["SCHL"].ToString() == "0040611" || Session["SCHL"].ToString() == "2070188" || Session["SCHL"].ToString() == "2100248" || Session["SCHL"].ToString() == "2060328" || Session["SCHL"].ToString() == "2070256" || Session["SCHL"].ToString() == "0100632" || Session["SCHL"].ToString() == "2180108" || Session["SCHL"].ToString() == "0030395" || Session["SCHL"].ToString() == "0097191" || Session["SCHL"].ToString() == "2080305" || Session["SCHL"].ToString() == "0093417" || Session["SCHL"].ToString() == "2165189" || Session["SCHL"].ToString() == "0101786" || Session["SCHL"].ToString() == "0039632" || Session["SCHL"].ToString() == "2025116" || Session["SCHL"].ToString() == "2180102" || Session["SCHL"].ToString() == "0093875" || Session["SCHL"].ToString() == "2030122" || Session["SCHL"].ToString() == "2070179" || Session["SCHL"].ToString() == "2060161" || Session["SCHL"].ToString() == "0081943")
+                    {
+                        <a href="/PDF/20-03-2018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>20.03.2018</span> Regarding CCE of Matriculation and Senior Secondary Examination March 2018 <img src="/images/new.gif" alt="new" /></a><br /><br />
+                    }
+
+                    @if (Session["SCHL"].ToString() == "0018797" || Session["SCHL"].ToString() == "0020115" || Session["SCHL"].ToString() == "0090503" || Session["SCHL"].ToString() == "0023557" || Session["SCHL"].ToString() == "0023837" || Session["SCHL"].ToString() == "0026235" || Session["SCHL"].ToString() == "0031835" || Session["SCHL"].ToString() == "0096655" || Session["SCHL"].ToString() == "0058937" || Session["SCHL"].ToString() == "0039053" || Session["SCHL"].ToString() == "0080312" || Session["SCHL"].ToString() == "0082021" || Session["SCHL"].ToString() == "0076464")
+                    {
+                        <a href="/PDF/NSQF-Pres-Note-25-01-2018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>30.01.2018</span> Press Note Regarding NSQF Subject Corrections <img src="/images/new.gif" alt="new" /></a><br /><br />
+                    }
+
+                    @if (Session["SCHL"].ToString() == "0018797" || Session["SCHL"].ToString() == "0020115" || Session["SCHL"].ToString() == "0020573" || Session["SCHL"].ToString() == "0090503" || Session["SCHL"].ToString() == "0023557" || Session["SCHL"].ToString() == "0023837" || Session["SCHL"].ToString() == "0026235" || Session["SCHL"].ToString() == "0026407" || Session["SCHL"].ToString() == "0026547" || Session["SCHL"].ToString() == "0031835" || Session["SCHL"].ToString() == "0032072" || Session["SCHL"].ToString() == "0096655" || Session["SCHL"].ToString() == "0058937" || Session["SCHL"].ToString() == "0072874" || Session["SCHL"].ToString() == "0072982" || Session["SCHL"].ToString() == "0076464" || Session["SCHL"].ToString() == "0039053" || Session["SCHL"].ToString() == "0080312" || Session["SCHL"].ToString() == "0082021" || Session["SCHL"].ToString() == "0087503" || Session["SCHL"].ToString() == "0086407" || Session["SCHL"].ToString() == "0087007" || Session["SCHL"].ToString() == "0092963" || Session["SCHL"].ToString() == "0016477" || Session["SCHL"].ToString() == "0016591")
+                    {
+                        <a href="/PDF/NSQF-PERFOMA.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>02.01.2018</span> NSQF Correction Performa For 12th Class <img src="/images/new.gif" alt="new" /></a><br /><br />
+                    }
+                    <a href="/PDF/Letter_Regarding_Invigilator .pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>07.03.2018</span> Letter Regarding Invigilator <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+
+                    <a href="/PDF/Practical_Exam_April_2018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>06.03.2018</span> Regarding 10th and 12th Practical Exam April 2018 in self School <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+
+                    <a href="/PDF/letter_2018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>01.03.2018</span> Instructions for Centre Controller & Centre Superintendent <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+
+                    <a href="/PDF/Anti-Cheating-Oath.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>15.02.2018</span> Regarding The Anti Cheating Oath <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+
+                    <a href="/PDF/Press_Note_171017.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>17.10.2017</span> Press Note regarding Online TC generation. <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    <a href="http://files-cdn.pseb.ac.in/pseb_files/press-note-12-10-2017-2017-12-10-172.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>12.10.2017</span> Press Note Regarding Fee Schedule For Examination Form For Matriculation & Sr. Sec (Regular & Open School) For Session 2017-18 <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    <a href="/PDF/Regarding_Aadhar_Enrollment_Mandatory.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>18.09.2017</span> - Regarding Aadhar Enrollment 100% Mandatory <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                    <a href="/PDF/Revised_Fee_Schedule_2017-18.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>29.08.2017</span> Revised - Schedule of Registration/Continuation Fee</a><br />&nbsp;<br />
+                    <a href="/PDF/Press_Note.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>25.08.2017</span> Press Note Regarding Transfer Certificate </a><br />&nbsp;<br />
+                    <a href="/PDF/Fee Schedule 2017-18_Revised_190817.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>19.08.2017</span> Revised - Registration/Continuation & Fee Schedule Session 2017-18 </a><br />&nbsp;<br />
+                    <a href="/PDF/E-PunjabImport.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>19.08.2017</span> Instructions regarding import data from E-Punjab Website for 9th Class only </a><br />&nbsp;<br />
+
+                    <a href="/PDF/Painting_Competition_on_Energy_Conservation2017.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>10.08.2017</span> Painting Competition on Energy Conservation 2017 for the States of Punjab, Haryana & Chandigarh being organized by BBMB </a><br />&nbsp;<br />
+
+                    <a href="/PDF/Class_IX_X/RegistrationContinuationInstructionsClass09th-10th-2017-18.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>28.07.2017</span> Revised - Registration/Continuation instuctions of 9th &amp; 10th class for Session 2017-18 </a><br />&nbsp;<br />
+                    <a href="/PDF/Class_XI_XII/RegistrationContinuationInstructionsClass11th-12th-2017-18.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>28.07.2017</span> Revised - Registration/Continuation instuctions of 11th &amp; 12th class for Session 2017-18 </a><br />&nbsp;<br />
+
+                    <a href="/PDF/Press_Note_Regarding_Registration_Continuation_Training.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> Press Note Regarding Registration Continuation Training </a><br />&nbsp;<br />
+                    <a href="/PDF/Reg_Open_Revised_Schedule200717_New.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> Revised - Registration/Continuation & Fee Schedule for Session 2017-18 </a><br />&nbsp;<br />
+                    <a href="/PDF/Fee_Schedule_2017_18_new.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> Registration/Continuation & Fee Schedule for Session 2017-18 </a><br />&nbsp;<br />
+                    <a href="/PDF/Aadhar-Card-News.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> Regarding To Fill The Aadhar Card Number at The Time of Registration/Continution </a><br />&nbsp;<br />
+                    <a href="/School/RegistrationForTraining" class="listitm"><samp>&#10093;</samp> Register Yourself - Registration/Continuation Training for Session 2017-18</a><br />&nbsp;<br />
+                    @*<a href="/PDF/Instruction-2017-18-9th-10th.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> Revised - Registration/Continuation instuctions of 9th &amp; 10th class for Session 2017-18 <img src="/images/new.gif" alt="new" /></a><br />&nbsp;<br />
+                        <a href="/PDF/Instruction-2017-18-11th-12th.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> Revised - Registration/Continuation instuctions of 11th &amp; 12th class for Session 2017-18 <img src="/images/new.gif" alt="new" /></a>*@
+                </div>
+            }
+
+            else if (Session["Session"].ToString() == "2018-2019")
+            {
+                <div>
+                    <marquee onmouseout="this.setAttribute('scrollamount', 6, 0);" onmouseover="this.setAttribute('scrollamount', 0, 0);" direction="left" scrollamount="4" style="padding:10px 0;cursor:pointer;background-color:#f0ad4e">
+              !! You can final submit without photo and signature. &nbsp;&nbsp;|&nbsp;&nbsp; !! Last Date i.e. <b>06-09-2018</b> For Final Submission of 9th and 11th Online Registration Has Been Extended. Schedule For The Same Shall be Released Later. &nbsp;&nbsp;|&nbsp;&nbsp; !! N1,N2 & N3 Form is live Now. &nbsp;&nbsp;|&nbsp;&nbsp; !!  E1 & E2 Form is live Now. &nbsp;&nbsp;|&nbsp;&nbsp; Open School Matriculation / Sr. Secondary Admission/Registration Portal Session 2018-19 is live Now.
+                    </marquee>
+                    <br /><br />
+
+<a href="/pdf/Annual-Progressive-Report.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>12.09.2018</span> Regarding Deposited the Annual Progressive Report for the year of 2019-20 <img src="/images/new.gif" alt="new" /></a> <br />&nbsp;<br />
+
+<a href="/pdf/Annual-Subscription.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>11.09.2018</span> Regarding Annual Subscription of Pankhrian and Primary Sikhia <img src="/images/new.gif" alt="new" /></a> <br />&nbsp;<br />
+ @if ((ViewBag.OpenSchool != "") && (ViewBag.OpenSchool != null))
+                    {
+                        <a href="/PDF/open-school-letter.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>07.09.2018</span> Letter Regarding Collection of items related to open school.</a><span> <br />&nbsp;<br /></span>
+                    }
+<a href="/pdf/Revised-Schedule-06-09-18.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>06.09.2018</span> Revised schedule of Registration/Continuation (9th/11th class) for session 2018-19</a> <br />&nbsp;<br />
+ <a href="/pdf/information-performa.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>04.09.2018</span>
+Letter regarding online form of infrastructure, Exam Centre & other information performa.</a> <br />&nbsp;<br />
+
+                    @if (Session["IsAffiliation"] != null)
+                    {
+ <a href="/pdf/all-accosiate-school-login-id-upload-11-09-2018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>11.09.2018</span> Information Regarding Continuation Performa of Associated Schools  </a><span><br />&nbsp;<br /></span>
+
+
+                        <a href="/pdf/Affiliation-31-08-2018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>31.08.2018</span>  Letter regarding annual progress report for Session 2019-20 (Affiliated Schools)</a><span><br />&nbsp;<br /></span>
+                    }
+                   <a href="/pdf/Affletter1.jpg" target="_blank" class="listitm"><samp>&#10093;</samp> <span>23.08.2018</span> Letter regarding date extended to fill online form of Infrastructure & exam centre details performa upto 31-08-2018</a><br />&nbsp;<br />
+
+
+                    <a href="/pdf/InformationRegarding_InfrastructureStudents_Staff_Detail.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>27.08.2018</span> Information Regarding Infrastructure, Students and Staff Detail</a><br />&nbsp;<br />
+
+
+                    <a href="/pdf/Re sechdule 10-08-2018.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>10.08.2018</span> Press Note Regarding Date Extended for Registration and continuation online Entry</a><br />&nbsp;<br />
+
+                    <a href="/pdf/Date-Extended-For-Admission-Schedule-For-Academic-Year-2018-19.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>09.08.2018</span> Press Note Regarding Date Extended for Admission Schedule for Academic Year 2018-19</a><br />&nbsp;<br />
+
+                    <a href="/pdf/Affiliation-Letter-Upload.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>07.08.2018</span> Saksham National Cometition-2018 Eassy Writing & Quiz for school Children to promote awareness on Conservation of Petroleum Products with attractiveprizes, Inculding trip to Singapore, Laptop and Cash Prizes.</a><br />&nbsp;<br />
+
+                    <a href="/pdf/Letter-Regarding-Increased-Date-To-Fill-Information-Through-Online-Form.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>07.08.2018</span> Letter regarding increased date to fill information through online form regarding school infrastructure, Exam centre & Other Activities information.</a><br />&nbsp;<br />
+                    <a href="/pdf/Full-Page-Photo11.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>23.07.2018</span> Information Regarding Infrastructure, Students and Staff Detail</a><br />&nbsp;<br />
+
+
+                    <a href="/pdf/PressNote_SchlInfo.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>23.07.2018</span> Press Note to fill information form online regarding school infrastructure, Exam Centre & Other Activities information.</a><br />&nbsp;<br />
+
+
+                    <a href="/pdf/2018-07-20T20180720094437.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>20.07.2018</span> Letter Regarding Scholarship</a><br />&nbsp;<br />
+
+                    <a href="/pdf/Fee Detail Regarding Registration of PSEB Session 2018-2019.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>19.07.2018</span> Fee Detail Regarding Registration of PSEB Session 2018-2019</a>
+
+                </div>
+            }
+            <p style="height:150px"></p>
+        </div>
+        @*<div class="col-md-5">
+              <h1>Results</h1>
+            </div>*@
+    </div>
+</div>
+<script type="text/javascript">
+    function PopUp(hideOrshow) {
+        if (hideOrshow == '1') document.getElementById('ac-wrapper').style.display = "none";
+        else document.getElementById('ac-wrapper').removeAttribute('style');
+    }
+    window.onload = function () {
+        if ('@ViewBag.msg' != '') {
+            alert('@ViewBag.msg');
+        }
+
+        //alert('@ViewBag.popupstatus');
+        setTimeout(function () {
+            PopUp('@ViewBag.popupstatus');
+            //PopUp(2);
+        }, 0);
+    }
+</script>
+
+<script type="text/javascript">
+    function PopUp(hideOrshow) {
+        if (hideOrshow == '3') document.getElementById('ac-wrapper3').style.display = "none";
+        else document.getElementById('ac-wrapper3').removeAttribute('style');
+    }
+    window.onload = function () {
+        if ('@ViewBag.msg' != '') {
+            alert('@ViewBag.msg');
+        }
+
+        //alert('@ViewBag.popupstatus');
+        setTimeout(function () {
+            //PopUp('@ViewBag.popupstatus');
+            PopUp(3);
+        }, 0);
+    }
+</script>
+
+<script type="text/javascript">
+    function PopUp(hideOrshow) {
+        if (hideOrshow == '2') document.getElementById('ac-wrapper1').style.display = "none";
+        else document.getElementById('ac-wrapper1').removeAttribute('style');
+    }
+    window.onload = function () {
+        if ('@ViewBag.msg' != '') {
+            alert('@ViewBag.msg');
+        }
+
+        //alert('@ViewBag.popupstatus');
+        setTimeout(function () {
+            PopUp('@ViewBag.popupstatus');
+            //PopUp(2);
+        }, 0);
+    }
+</script>
+@using (Html.BeginForm("udise", "Home", FormMethod.Post))
+{
+    @Html.ValidationSummary(true);
+    <div id="dvsh">
+        <div id="ac-wrapper" style='display: none'>
+            <div id="popup">
+                <center>
+                    <table cellspacing="0" cellpadding="0" border="0">
+                        <tr style="background-color:#336dc0;color:#fff">
+                            <td colspan="2" style="font-size:28px;padding:15px 0;text-align:center">Enter Your School UDISE Code</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-size:16px;text-align:center;padding:15px 0;color:#000;font-weight:normal">(Note :  If you have no UDISE code, then contact with MIS cell, Education Department, S.A.S. Nagar)<br /><span style="color:#cc0000;">Click Here to find <a href="http://schoolreportcards.in/SRC-New/LocateSchool/LocateSchool.aspx" target="_blank" style="color:#cc0000">UDISE Code</a></span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align:center">
+                                @Html.TextBoxFor(m => m.udisecode, new { placeholder = "Enter 11 Digit UDISE Code", maxlength = "11", onkeypress = "return isNumberKey(event)", @class = "txtbox" })
+                                @Html.TextBoxFor(m => m.MATRIC, new { @id = "matric", @style = "display:none;" })
+                                @Html.TextBoxFor(m => m.NSQF_flag, new { @id = "nsqfflag", @style = "display:none;" })
+                                @Html.TextBoxFor(m => m.HUM, new { @id = "humflag", @style = "display:none;" })
+                                @Html.TextBoxFor(m => m.COMM, new { @id = "commflag", @style = "display:none;" })
+                                @Html.TextBoxFor(m => m.VOC, new { @id = "vocflag", @style = "display:none;" })
+                                @Html.TextBoxFor(m => m.AGRI, new { @id = "agriflag", @style = "display:none;" })
+                                @Html.TextBoxFor(m => m.SCI, new { @id = "sciflag", @style = "display:none;" })
+                            </td>
+                        </tr>
+                        @*<tr style="background-color:#336dc0;color:#fff">
+                                <td width="100%" colspan="2" style="font-size:16px;padding:8px 0;text-align:center">Enter Number Of Regular Students Studing in Current Session 2016-17</td>
+                            </tr>
+                            <tr id="ss1" style="background-color:#427bcc;color:#fff">
+                                <td colspan="2" style="padding:4px 0;">&nbsp; &nbsp;Sr. Secondary School
+                                </td>
+                            </tr>
+                            <tr id="ss2">
+                                <td>
+                                    &nbsp;
+                                    Number Of Humanities
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.numofhum, new { @id = "numofhum", maxlength = "4", onkeypress = "return isNumberKey1(event)" })
+
+                                </td>
+                            </tr>
+                            <tr id="ss3">
+                                <td>
+                                    &nbsp;
+                                    Number Of Commerce
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.numofcomm, new { @id = "numofcomm", maxlength = "4", onkeypress = "return isNumberKey1(event)" })
+
+                                </td>
+                            </tr>
+                            <tr id="ss4">
+                                <td>
+                                    &nbsp;
+                                    Number Of Vocational
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.numofvoc, new { @id = "numofvoc", maxlength = "4", onkeypress = "return isNumberKey1(event)" })
+
+                                </td>
+                            </tr>
+                            <tr id="ss5">
+                                <td>
+                                    &nbsp;
+                                    Number Of Agriculture
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.numofagri, new { @id = "numofagri", maxlength = "4", onkeypress = "return isNumberKey1(event)" })
+
+                                </td>
+                            </tr>
+                            <tr id="ss6">
+                                <td>
+                                    &nbsp;
+                                    Number Of SCI
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.numofsci, new { @id = "numofsci", maxlength = "4", onkeypress = "return isNumberKey1(event)" })
+
+                                </td>
+                            </tr>
+                            <tr id="md1">
+                                <td colspan="2" style="background-color:#427bcc;color:#fff; padding:4px 0;">&nbsp; &nbsp;Matriculation Students
+
+                                </td>
+                            </tr>
+                            <tr id="md2">
+                                <td width="35%">
+                                    &nbsp;
+                                    Number Of Regular
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.numofregular, new { @id = "numofregular", maxlength = "4", onkeypress = "return isNumberKey1(event)" })
+
+                                </td>
+                            </tr>
+                            <tr id="md3">
+                                <td>
+                                    &nbsp;
+                                    Number Of NSQF
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.numofnsqf, new { @id = "numofnsqf", maxlength = "4", onkeypress = "return isNumberKey1(event)" })
+                                </td>
+                            </tr>*@
+                        <tr>
+                            <td colspan="2" style="text-align:center;padding:15px 0">
+                                <input type="submit" value="Submit" class="button" id="saveme" />&nbsp;&nbsp;<a onclick="PopUp('1')" href="#"><input type="button" value="Enter Later" class="button" /></a>
+                            </td>
+                        </tr>
+                    </table>
+                </center>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+<div id="dvsh">
+    <div id="ac-wrapper1">
+        <div id="popup1">
+            <center>
+                <table cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                        <td width="10%">&nbsp;</td>
+                        <td><span class="kdsfont" style="font-size:32px;line-height:24px;padding:15px;display:block;text-align:center">ਨੋਟਿਸ</span></td>
+                        <td width="10%"><span style="float:right;padding-right:15px"><a onclick="PopUp('2')" href="#"><img alt="Close" src="http://43.224.136.120//close_button.png" title="Close" /></a></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><div class="kdsfont" style="padding:0 15px;line-height:32px">ਸਮੂਹ ਸਕੂਲਾਂ ਨੂੰ ਸੂਚਿਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ ਕਿ ਦਸਵੀਂ, ਬਾਰ੍ਹਵੀਂ ਜਮਾਤ ਦਾ ਐਮ1, ਐਮ2, ਟੀ1 ਅਤੇ ਟੀ2 ਦੇ ਫਾਰਮਾਂ ਦਾ ਸ਼ਡਿਊਲ ਵੱਖਰੇ  ਤੌਰ ਤੇ ਜਾਰੀ ਕੀਤਾ ਜਾਵੇਗਾ | ਸੋ ਸਕੂਲ ਨੌਵੀਂ ਦਾ (ਐਨ1, ਐਨ2, ਐਨ3) ਅਤੇ ਗਿਆਰਵੀਂ  ਦਾ (ਈ1 ਅਤੇ ਈ2) ਦੇ ਫਾਰਮਾਂ ਦੀ ਫਾਇਨਲ ਸਬਮਿਸ਼ਨ ਵੱਖਰੇ ਤੌਰ ਤੇ ਸ਼ਡਿਊਲ ਅਨੁਸਾਰ ਕਰ ਸਕਦੇ ਹਨ| </div></td>
+                    </tr>
+                </table>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="dvsh" style="display:none">
+    <div id="ac-wrapper1" style="display:none">
+        <div id="popup1" style="display:none">
+            <center>
+                <table cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                        <td width="10%"><span style="float:right;padding-right:15px"><a onclick="PopUp('2')" href="#"><img alt="Close" src="http://43.224.136.120//close_button.png" title="Close" /></a></span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center"><img src="/images/qwe.jpg" /></td>
+                    </tr>
+                </table>
+        </div>
+    </div>
+</div>
+
+<div id="dvsh" style="display:none">
+    <div id="ac-wrapper1" style='display: none'>
+        <div id="popup1">
+            <center>
+                <table cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                        <td width="10%">&nbsp;</td>
+                        <td><span class="kdsfont" style="font-size:32px;line-height:24px;padding:15px;display:block;text-align:center">²ÏÞÏÛ ÓÞ°ÅÙ</span></td>
+                        <td width="10%"><span style="float:right;padding-right:15px"><a onclick="PopUp('2')" href="#"><img alt="Close" src="/close_button.png" title="Close" /></a></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><span class="kdsfont fontsize">ÓÌÞÕ Ó¨ÞÐ ÌÝóªÛ¤Ù ÅÞâ ÓÞÚ°¼ ¨Û¼Ø ²ÙÂØ Õè Ú¨ ÂÓÒÛ× (M1) ¤¼ã ÉØÏÒÛ× (T1) ÇØÏÌ ÂÛ ¤è×¶ÏÛ ¨ÏÅ Ð¥Û ÓÖÚ¸¦ÞÐ ÒóªÏã ¼ïÏ ¼ã ²ØÏÛ ¨Û¼Ø ²ØÒã¬Ø¢ Ú¥Ó Ð¥Û ÉØ¨Û ÏÚÕâÂã ÇØÏÌÙ (N1, N2, N3, M2, E1, E2, T2) ÂÛ ¤ØªÏÛ ÚÌ¼Û ¼ë× ÆÚÕÐÙ ÇØ¥ÛÅÐ ÓÉÚÌÓÖÅ ¨Ï ÚÂó¼Û ²ØÒã¢ Ú¥óÁã ÂóÚÓ¤Ø ²ÙÂØ Õè Ú¨ ÓØÏÛ¤Ù ÓÖã»Û¤Ù ÂÛ Ú¥¨ó·Û ÇØ¥ÛÅÐ ÓÉÚÌÓÖÅ ¨ÏÅÙ ²ÏÞÏÛ ÅÕÛ× Õè, Ú²âÅÛ ÒÛ ¤è×¶ÏÛ ¨âÆÐÛ¶ Õë ²ÙÂÛ Õè, ¦ÝÓÂØ ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¨Û¼Ø ²Ø Ó¨ÂØ Õè¢ Ú²âÅãð ÒØÏ ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¨Û¼Ø ²ØÒã¬Ø, ¦ÝóÅãð ÕÛ Ðë¶ (Lot) É» ²Ø»¬ã ¤¼ã Ðë¶ (Lot) ¤ÅÝÓØÏ ¦ÝóÅã ÕÛ °ÐØÅ É»Å¬ã¢ °ÐØÅ ²ÌðÙ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û, ÉëÏ¸ ÒóÐë× ²ØÏÛ ÓÖÚ¸¦ÞÐ ÚÒó° ÂÏ² Éè×¨ ÚÒó° ÇÛÓ ²ÌðÙ ¨ÏÒØ¦Ý» ÂÛ ¤ØªÏÛ ÚÌ¼Û ÌÝ¼ØÉ¨ ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¨ÏÅ ÂÛ ÚÌ¼Û Âã ¤ÄØÏ ¼ã ÕëÒã¬Û, Ú¥Õ ¤ØªÏÛ ÚÌ¼Û (Challan Valid Date) ÕÏã¨ °ÐØÅ ¦ÝóÆÏ ÂÏ² ÕëÒã¬Û¢ Ú¥Ó Ð¥Û ÓÝ´Ø¤ Õè Ú¨ ²ã¨Ï ¨Ý´ ÆñÛÚª¤ØÏÁÛ¤Ù ÂÛ Ú¨Óã ¨ØÏÅ ¤è×¶ÏÛ ÆèÚ¸â¬ ÏÚÕ ¬¥Û Õè ²Ù ¨Ý´ ÆñÛÚª¤ØÏÁÛ ¤Ú²Õã ÕÅ ²ë Ú¥âÌÆëÏ¶ (Import) ¼Ù ¨Ï Ð¥ã ÕÅ, Æâñ¼Þ ¦ÝÕÅÙ Âã ¨Ý´ ÒãÏÒã ²Ù Çë¶ë ¤ØÚÂ ÅÙ Õë» ¨Ï¨ã ¤Æ¸ã¶/¨âÆÐÛ¶ ÅÕÛ× Õë¥ã ¤¼ã Ú²Ó ¨ØÏÅ ÉØ¨Û ÆñÛÚª¤ØÏÁÛ¤Ù ÂÛ ÒÛ ÇØ¥ÛÅÐ ÓÉÚÌÓÖÅ ÅÕÛ× Õë ÏÕÛ ¼Ù Ú¥ÕÅÙ ÆñÛÚª¤ØÏÁÛ¤Ù ÅÞâ ÚÐÓ¶ ÚÒó°ë× Delete/Remove ¨Ï ÚÂó¼Ø ²ØÒã¢ Delete/Remove ¨ÏÅ ¦ÝÆÏâ¼ Ú¥Õ ÆñÛÚª¤ØÏÁÛ ÒØÆÓ Rollback Õë ²Ø»¬ã ¤¼ã Ú¥ÕÅÙ ÆñÛÚª¤ØÏÁÛ¤Ù ÅÞâ ÂÝÉØÏØ ÚÇÏ ÆÚÕÐÙ ÂÛ ¼ÏðÙ ÕÛ (Roll No, Reg No, TC etc ÏØÕÛ×) Import ¨Û¼Ø ²Ø Ó¨ÂØ Õè ¤¼ã Ú¥ÕÅÙ ÅÞâ ¤¬Ðã Ðë¶ (Lot) ÚÒó° ÊãÚ²¤Ø ²Ø Ó¨ÂØ Õè¢ Ú¥Ó ¼ë× Ú¥ÐØÒÙ ÓÝ´Ø¤ Õè Ú¨ Ú²âÅðÙ ÆñÛÚª¤ØÏÁÛ¤Ù ÂÛ ÏÚ²Ó¶ñãÓÖÅ/¨â¶ÛÚÅ¦Þ¥ãÓÖÅ ÇÛÓ Ð¬»Û Õè, ¦ÝÕÅÙ ÂÛ ¤è×¶ÏÛ/ÇØ¥ÛÅÐ ÓÉÚÌÓÖÅ ÅÞâ ÆÚÕÐ ÚÂó¼Û ²ØÒã, ÉØ¨Û¤Ù ÅÞâ ÓÖÚ¸¦ÞÐ ¤ÅÝÓØÏ ¤¬Ðã ÐØ¶Ù (Lots) ÚÒó° Êã² ÚÂó¼Ø ²ØÒã¢ ÉëÏ¸ ÒóÐë× ²ØÏÛ ÓÖÚ¸¦ÞÐ ÌÝ¼ØÉ¨ ÓÌãð× ÚÓÏ ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¨Ï ÚÂó¼Ø ²ØÒã ¤¼ã ²ÅÏã¶ Õë¥ã °ÐØÅ ¼ã ÂÏ² ¤ØªÏÛ ÚÌ¼Û ¼ó¨ ÕÏ ÕØÐ¼ ÚÒó° Éè×¨ ÚÒó° ÇÛÓ ²ÌðÙ ¨ÏÒØ¦Ý»Ø Í¨ÛÅÛ É»ØÚ¥¤Ø ²ØÒã ¼Ù Ú¨ Ðã¶ ÇÛÓ ¼ë× ÉÚ°¤Ø ²Ø Ó¨ã¢ °ÐØÅ ²ÅÏã¶ Õë» ¦ÝÆÏâ¼ Éè×¨ ÚÒó° ÇÛÓ ²ÌðÙ ¨ÏÒØ¦Ý» Ð¥Û 24 ®â¶ã ÉØ¤Â ²Ø» ÂØ ÓÌðÙ ÚÂó¼Ø Ú¬¤Ø Õè, ²ã¨Ï 72 ®â¶ã (±Ýó¶Û ÒØÐã ÚÂÅ ±ó¸¨ã) ¼ó¨ ÒÛ Éè×¨ ÇÛÓ Ðè» ¼ë× ÌÅðÙ ¨ÏÂØ Õè ¼Ù ¼ÝÏâ¼ ÉëÏ¸ ÒóÐë× ÚÂó¼ã ¶ëÐ ÇÏÛ ÅâÉÏÙ ¼ã ÓâÆÏ¨ ¨Û¼Ø ²ØÒã ¤¼ã ¦ÝóÁã ²ã¨Ï ÓâÆÏ¨ ÅÕÛ× ÕÝâÂØ ¼Ù ¼ÝÏâ¼ ÌÝóª ÂÇ¼Ï ¤Ø¨ã ÏÚ²Ó¶ñãÓÖÅ ÓÖØªØ ÅØÐ ÓâÆÏ¨ ¨Û¼Ø ²ØÒã¢</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><span class="kdsfont" style="text-align:right;font-size:22px;line-height:24px;padding:15px 25px;display:block">¸ØÚ¥Ïè¨¶Ï (¨âÚÆ¦Þ¶Ï)</span></td>
+                    </tr>
+                </table>
+            </center>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    window.setInterval(function () {
+        var current = new Date();
+        var expiry = new Date("September 06, 2017 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideintm').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideintm').show();
+        }
+    }, 0);
+</script>
+<script type="text/javascript">
+    function isNumberKey(evt) {
+        var c = $(".txtbox").val();
+        if (c.length < 11) {
+            $(".txtbox").addClass("input-validation-error");
+        }
+        else {
+            $(".txtbox").removeClass("input-validation-error");
+        }
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function isNumberKey1(evt) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    $(function () {
+        var flag = 0;
+        var a1 = 0;
+        var a2 = 0;
+        var a3 = 0;
+        var a4 = 0;
+        var a5 = 0;
+        var a6 = 0;
+        var a7 = 0;
+        var a8 = 0;
+        if ($("#humflag").val() == "Y" || $("#commflag").val() == "Y" || $("#vocflag").val() == "Y" || $("#agriflag").val() == "Y" || $("#sciflag").val() == "Y") {
+            flag = 1;
+        }
+        if (flag == 0) {
+            $("#ss1").hide();
+            $("#ss2").hide();
+            $("#ss3").hide();
+            $("#ss4").hide();
+            $("#ss5").hide();
+            $("#ss6").hide();
+        }
+        if ($("#humflag").val() == "N") {
+            a1 = 1;
+            $("#ss2").hide();
+        }
+        if ($("#commflag").val() == "N") {
+            a2 = 1;
+            $("#ss3").hide();
+        }
+        if ($("#vocflag").val() == "N") {
+            a3 = 1;
+            $("#ss4").hide();
+        }
+        if ($("#agriflag").val() == "N") {
+            a4 = 1;
+            $("#ss5").hide();
+        }
+        if ($("#sciflag").val() == "N") {
+            a5 = 1;
+            $("#ss6").hide();
+        }
+        //alert($("#nsqfflag").val());
+        if ($("#matric").val() == "N") {
+            a6 = 1;
+            $("#md1").hide();
+            $("#md2").hide();
+            $("#md3").hide();
+        }
+        if ($("#nsqfflag").val() == "False") {
+            a7 = 1;
+            $("#md3").hide();
+        }
+        $("#saveme").click(function () {
+            var d1 = 0;
+            //alert(a1);
+            if (a1 == 0) {
+                if ($("#numofhum").val() == "") {
+                    $("#numofhum").addClass("input-validation-error");
+                    d1 = 1;
+                }
+            }
+            if (a2 == 0) {
+                if ($("#numofcomm").val() == "") {
+                    $("#numofcomm").addClass("input-validation-error");
+                    d1 = 1;
+                }
+            }
+            if (a3 == 0) {
+                if ($("#numofvoc").val() == "") {
+                    $("#numofvoc").addClass("input-validation-error");
+                    d1 = 1;
+                }
+            }
+            if (a4 == 0) {
+                if ($("#numofagri").val() == "") {
+                    $("#numofagri").addClass("input-validation-error");
+                    d1 = 1;
+                }
+            }
+            if (a5 == 0) {
+                if ($("#numofsci").val() == "") {
+                    $("#numofsci").addClass("input-validation-error");
+                    d1 = 1;
+                }
+            }
+            if (a6 == 0) {
+                if ($("#numofregular").val() == "") {
+                    $("#numofregular").addClass("input-validation-error");
+                    d1 = 1;
+                }
+            }
+            if (a7 == 0) {
+                if ($("#numofnsqf").val() == "") {
+                    $("#numofnsqf").addClass("input-validation-error");
+                    d1 = 1;
+                }
+            }
+
+            var c = $(".txtbox").val();
+            if (c.length < 11) {
+                $(".txtbox").addClass("input-validation-error");
+                d1 = 1;
+            }
+            if (d1 == 1) {
+                return false;
+            }
+            else {
+                return true;
+            }
+
+        });
+    });
+</script>

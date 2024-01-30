@@ -1,0 +1,413 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<script src="~/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<div class="container KDBG">
+    @using (Html.BeginForm("Pre_Private_Candidate_Introduction_Form", "PrivateCandidate", FormMethod.Post, new { id = "roll", enctype = "multipart/form-data" }))
+    {
+        <form name="myForm">
+            <div class="row text-center">
+                <h3>&nbsp;&nbsp; Pre-Confirmation Form</h3>
+            </div>
+            <div class="row">
+                <div class="clearfix"></div>
+                <div class="col-md-2">
+                    Batch Month/Year
+                    <span class="rqf">*</span>
+                </div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> batch = new List<SelectListItem>();
+                        batch.Add(new SelectListItem { Text = "---Month--- ", Value = "" });
+                        batch.Add(new SelectListItem { Text = "June", Value = "6" });
+                        batch.Add(new SelectListItem { Text = "July", Value = "7" });
+                        batch.Add(new SelectListItem { Text = "August", Value = "8" });
+                        batch.Add(new SelectListItem { Text = "September", Value = "9" });
+                        batch.Add(new SelectListItem { Text = "October", Value = "10" });
+                        batch.Add(new SelectListItem { Text = "January", Value = "1" });
+                        batch.Add(new SelectListItem { Text = "March", Value = "3" });
+                        batch.Add(new SelectListItem { Text = "November", Value = "11" });
+                    }
+                    @Html.DropDownListFor(a => a.batch, batch, new { id = "batch", @disabled = "disabled" })
+                    @Html.HiddenFor(a => a.batch)
+                </div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> batchYear = new List<SelectListItem>();
+                        batchYear.Add(new SelectListItem { Text = "2024", Value = "2024" });
+                        //batchYear.Add(new SelectListItem { Text = "2021", Value = "2021" });
+                    }
+                    @Html.DropDownListFor(a => a.batchYear, batchYear, new { id = "batchYear", @disabled = "disabled" })
+                    @Html.HiddenFor(a => a.batchYear)
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Class</div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.Class, new { id = "Class", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Exam Type</div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.Exam_Type, new { id = "Exam_Type", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Category</div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.category, new { id = "category", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Session/Year</div>
+                <div class="col-md-2">
+                    @Html.TextBoxFor(a => a.SelMonth, new { id = "SelMonth", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-2">
+                    @Html.TextBoxFor(a => a.SelYear, new { id = "SelYear", @ReadOnly = "ReadOnly" })
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Old Roll No.</div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.OROLL, new { id = "OROLL", @ReadOnly = "ReadOnly" })
+                </div>
+
+                @{
+                    var cat = "";// Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                    if (ViewBag.totcount > 0)
+                    {
+                        cat = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                    }
+                    else
+                    {
+                        Response.Redirect("~/PrivateCandidate/Private_Candidate_Examination_Form");
+                    }
+                    if (cat != "A" && cat != "SR" && cat != "SD" && cat != "SA")
+                    {
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Result</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Result, new { @ReadOnly = "ReadOnly" })</div>
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Registration No.</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.RegNo, new { @ReadOnly = "ReadOnly" })</div>
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Candidate Name</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Candi_Name, new { @ReadOnly = "ReadOnly" })</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Pname, new { @ReadOnly = "ReadOnly", @class = "kdsfont" })</div>
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Father's Name</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Father_Name, new { @ReadOnly = "ReadOnly" })</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.PFname, new { @ReadOnly = "ReadOnly", @class = "kdsfont" })</div>
+
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Mother's Name</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Mother_Name, new { @ReadOnly = "ReadOnly" })</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.PMname, new { @ReadOnly = "ReadOnly", @class = "kdsfont" })</div>
+
+                        if (ViewBag.totcount > 0)
+                        {
+                            if (Model.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "12")
+                            { }
+                            else
+                            {
+                                <div class="clearfix"></div>
+                                <div class="col-md-2">Date Of Birth</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.DOB, new { @ReadOnly = "ReadOnly" })</div>
+                            }
+                        }
+
+
+
+                    }
+                    else
+                    {
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Result</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Result)</div>
+
+                        @*<div class="clearfix"></div>
+                            <div class="col-md-2">Result</div>
+                            <div class="col-md-4">@Html.TextBoxFor(a => a.Result)</div>*@
+
+
+
+                        <div class="col-md-4" style="display:none;">@Html.TextBoxFor(a => a.RegNo)</div>
+
+                        @*<div class="clearfix"></div>
+                            <div class="col-md-2">Registration No.</div>
+                            <div class="col-md-4">@Html.TextBoxFor(a => a.RegNo)</div>*@
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Candidate Name</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Candi_Name)</div>
+                        <div class="col-md-4 kdsfont">
+                            @Html.TextBoxFor(a => a.Pname, new
+                            {
+                                id = "Pname",
+                                @class = "keyboardInput",
+                                onKeyPress = "javascript:convertThis(event)",
+                                onpaste = "return false;",
+                                oncopy = "return false;",
+                                oncut = "return false;",
+                                onclick = "toggleKBMode1(event)",
+                                lang = "pa"
+                            })
+                        </div>
+
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Father's Name</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Father_Name)</div>
+                        <div class="col-md-4 kdsfont">
+                            @Html.TextBoxFor(a => a.PFname, new
+                            {
+                                id = "PFname",
+                                @class = "keyboardInput",
+                                onKeyPress = "javascript:convertThis(event)",
+                                onpaste = "return false;",
+                                oncopy = "return false;",
+                                oncut = "return false;",
+                                onclick = "toggleKBMode1(event)",
+                                lang = "pa"
+                            })
+                        </div>
+
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Mother's Name</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Mother_Name)</div>
+                        <div class="col-md-4 kdsfont">
+                            @Html.TextBoxFor(a => a.PMname, new
+                            {
+                                id = "PMname",
+                                @class = "keyboardInput",
+                                onKeyPress = "javascript:convertThis(event)",
+                                onpaste = "return false;",
+                                oncopy = "return false;",
+                                oncut = "return false;",
+                                onclick = "toggleKBMode1(event)",
+                                lang = "pa"
+                            })
+                        </div>
+
+                        if (ViewBag.totcount > 0)
+                        {
+                            if (Model.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "12")
+                            { }
+                            else
+                            {
+                                <div class="clearfix"></div>
+                                <div class="col-md-2">Date Of Birth</div>
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(a => a.DOB, new
+                                    {
+                                        id = "DOB",
+                                        @readonly = "readonly",
+                                        @maxlength = "10",
+                                        //onkeypress = "javascript: return false;",
+                                        onpaste = "return false;",
+                                        oncopy = "return false;",
+                                        oncut = "return false;",
+                                        //onkeydown = "return false;"
+                                    })
+                                </div>
+                            }
+                        }
+
+                    }
+
+                }
+
+
+                <div class="clearfix"></div>
+                <div class="col-md-2">Email ID</div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.emailID, new { id = "emailID", @ReadOnly = "ReadOnly" })</div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-2">Mobile No.</div>
+                <div class="col-md-4">@Html.TextBoxFor(a => a.mobileNo, new { id = "mobileNo", @ReadOnly = "ReadOnly" })</div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-4 text-center tdp">
+                    <input value="Save & Next" type="submit" onclick="return valForm();" />
+
+                    <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                    <input value="Home" type="button" onclick="return valHome();" />
+                </div>
+            </div>
+        </form>
+    }
+
+    @{
+
+        if (ViewData["Status"] != null)
+        {
+            var result = ViewData["Status"].ToString();
+
+            if (result == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    document.location.href = '@Url.Action("PrivateCandidateConfirmation", "PrivateCandidate")';
+                </script>
+            }
+
+            if (result == "2")
+            {
+
+                <script type="text/javascript" language="javascript">
+                    alert("Refrence No. Already Generated. Kindly Check your Email and Mobile No. : ");
+                    document.location.href = '@Url.Action("PrivateCandidateConfirmation/"+ ViewData["roll"], "PrivateCandidate")';
+                </script>
+            }
+            if (result == "0")
+            {
+
+                <script type="text/javascript" language="javascript">
+
+                    alert("Refrence No. Not Generated. Retry Again ");
+                    document.location.href = '@Url.Action("Private_Candidate_Examination_Form", "PrivateCandidate")';
+                </script>
+            }
+        }
+
+    }
+
+    <script type="text/javascript">
+
+        function valForm() {
+
+            var txtResult = document.getElementById('Result').value;
+            if (txtResult == '') {
+                alert("Enter Result");
+                document.getElementById('Result').focus();
+                return false;
+            }
+            //var txtRegNo = document.getElementById('RegNo').value;
+            //if (txtRegNo == '') {
+            //    alert("Enter RegNo");
+            //    document.getElementById('RegNo').focus();
+            //    return false;
+            //}
+            var txtCandi_Name = document.getElementById('Candi_Name').value;
+            if (txtCandi_Name == '') {
+                alert("Enter Candidate Name");
+                document.getElementById('Candi_Name').focus();
+                return false;
+            }
+            var txtFather_Name = document.getElementById('Father_Name').value;
+
+            if (txtFather_Name == '') {
+                alert("Enter Father Name");
+                document.getElementById('Father_Name').focus();
+                return false;
+            }
+            var txtMother_Name = document.getElementById('Mother_Name').value;
+            if (txtMother_Name == '') {
+                alert("Enter Mother Name");
+                document.getElementById('Mother_Name').focus();
+                return false;
+            }
+
+            if (document.getElementById("DOB").value == '' || document.getElementById("DOB").value == null
+                && (document.getElementById('category').value == 'Additional subject' || document.getElementById('category').value == 'Golden Chance Re-Appear'
+                 || document.getElementById('category').value == 'Golden Chance Improvement' || document.getElementById('category').value == 'Golden Chance Additional')) {
+                alert('Enter DOB Date.');
+                document.getElementById("DOB").focus();
+                return false;
+            }
+
+
+
+
+        }
+
+        function valBack() {
+            history.go(-1);
+        }
+        function valHome() {
+            document.location.href = 'https://registration2023.pseb.ac.in/PrivateCandidate/Private_Candidate_Examination_Form';
+        }
+
+        $(document).ready(function () {
+            var vcat = document.getElementById('category').value;
+            if (vcat == "Additional Subject" || vcat == "Golden Chance Re-Appear" || vcat == "Golden Chance Improvement" || vcat == "Golden Chance Additional") {
+                $("#DOB").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10yr',
+                    //maxDate: '10/08/2016',
+                    yearRange: "1930:2022"
+
+                });
+            }
+
+
+            $('#Candi_Name').change(function () {
+                var selectedText = { text: $("#Candi_Name").val() };
+                var cname = document.getElementById('Candi_Name').value;
+                var cnameP = document.getElementById('Pname').value;
+                if (cnameP == "") {
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                            //  alert("Candidate Name: " + result);
+                            $('#Pname').val(result);
+                        }
+                    });
+                }
+            });
+
+            $('#Father_Name').change(function () {
+                var selectedText = { text: $("#Father_Name").val() };
+                var Father_Name_P = { text1: $("#PFname").val() };
+                var fname = document.getElementById('Father_Name').value;
+                var fnameP = document.getElementById('PFname').value;
+                if (fnameP == "") {
+
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                            //  alert("Father Name: " + result);
+                            $('#PFname').val(result);
+                        }
+                    });
+                }
+            });
+
+            $('#Mother_Name').change(function () {
+                var selectedText = { text: $("#Mother_Name").val() };
+                var mname = document.getElementById('Mother_Name').value;
+                var mnameP = document.getElementById('PMname').value;
+                if (mnameP == "") {
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                            //  alert("Mother Name: " + result);
+                            $('#PMname').val(result);
+                        }
+                    });
+                }
+            });
+
+
+        })
+    </script>
+

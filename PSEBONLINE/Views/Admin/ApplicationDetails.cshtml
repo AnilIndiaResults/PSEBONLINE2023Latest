@@ -1,0 +1,630 @@
+﻿
+@{
+    ViewBag.Title = "Application Details";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>Application Details</h1>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+@using (Html.BeginForm("ApplicationDetails", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total Students <label>@ViewBag.TotalCount1</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-2">
+                        Search Class:  @Html.DropDownList("SelForm", new SelectList(ViewBag.FormType, "Value", "Text", ViewBag.SelectedForm), "--All---", new { @class = "", id = "SelectForm" })
+                    </div>
+                    <div class="col-md-3">
+                        Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+                    </div>
+                    <div class="col-md-3">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" name="SearchString" value="@((ViewBag.SearchString != null) ? ViewBag.SearchString : string.Empty)" />
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <input type="submit" value="Search" />
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            @{
+                if (ViewBag.TotalCount > 0)
+                {
+                    var tot_login = Model.StoreAllData.Tables[2].Rows[0]["login"].ToString();
+                    var tot_registration = Model.StoreAllData.Tables[3].Rows[0]["registration"].ToString();
+                    var tot_subjects = Model.StoreAllData.Tables[4].Rows[0]["subjects"].ToString();
+                    var tot_challan = Model.StoreAllData.Tables[5].Rows[0]["challan"].ToString();
+                    var tot_school = Model.StoreAllData.Tables[6].Rows[0]["school"].ToString();
+                    <table class="table table-bordered">
+                        <tr class="active-tr">
+                            <th>Total Login</th>
+                            <th>Total Registration</th>
+                            <th>Total Subjects</th>
+                            <th>Total Challan</th>
+                            <th>Total School</th>
+                        </tr>
+                        <tr>
+                            <td>@tot_login</td>
+                            <td>@tot_registration</td>
+                            <td>@tot_subjects</td>
+                            <td>@tot_challan</td>
+                            <td>@tot_school</td>
+                        </tr>
+                    </table>
+                }
+            }
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>Id</th>
+                    <th>AppNo</th>
+                    <th>PWD</th>
+                    <th>REGNO</th>
+                    <th>Candidate's Name</th>
+                    <th>Father's Name</th>
+                    <th>Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Mobile</th>
+                    <th>CATEGORY</th>
+                    <th>Fee Status</th>
+                    <th>Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var id = Model.StoreAllData.Tables[0].Rows[i]["Id"].ToString();
+                            var APPNO = Model.StoreAllData.Tables[0].Rows[i]["APPNO"].ToString();
+                            var REGNO = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                            var NAME = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                            var Fname = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var Mname = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var MOBILENO = Model.StoreAllData.Tables[0].Rows[i]["MOBILENO"].ToString();
+                            var CATEGORY = Model.StoreAllData.Tables[0].Rows[i]["CATEGORY"].ToString();
+                            var step1 = Model.StoreAllData.Tables[0].Rows[i]["ISSTEP1"].ToString();
+                            var step2 = Model.StoreAllData.Tables[0].Rows[i]["ISSTEP2"].ToString();
+                            var subject = Model.StoreAllData.Tables[0].Rows[i]["ISSUBJECT"].ToString();
+                            var challan = Model.StoreAllData.Tables[0].Rows[i]["CHALLANFLA"].ToString();
+                            var school = Model.StoreAllData.Tables[0].Rows[i]["ISSCHLCHOO"].ToString();
+                            var complete = Model.StoreAllData.Tables[0].Rows[i]["ISCOMPLETE"].ToString();
+                            var pwd = Model.StoreAllData.Tables[0].Rows[i]["PWD"].ToString();
+                            var IsCancel = Model.StoreAllData.Tables[0].Rows[i]["IsCancel"].ToString();
+                            var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                            var VERIFIED = Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString();
+                            //var STEPSTATUS = Model.StoreAllData.Tables[0].Rows[i]["STEPSTATUS"].ToString();
+                            //var Verified = Model.StoreAllData.Tables[0].Rows[i]["Verified"].ToString();
+                            var ExpireVDate = Model.StoreAllData.Tables[0].Rows[i]["ExpireVDate"].ToString();
+                            //var ExpireVDate = "1";
+                            //1 : Expire , 0-Not expire
+                            var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                            var BCODE = Model.StoreAllData.Tables[0].Rows[i]["BCODE"].ToString();
+                            Count = Count + 1;
+                            <tr>
+                                <td>
+                                    @id
+                                </td>
+                                <td>
+                                    @APPNO
+                                </td>
+                                <td style="text-transform:none !important">
+                                    @pwd
+                                </td>
+                                <td>
+                                    @REGNO
+                                </td>
+                                <td>
+                                    @NAME
+                                </td>
+                                <td>
+                                    @Fname
+                                </td>
+                                <td>
+                                    @Mname
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @MOBILENO
+                                </td>
+                                <td>
+                                    @CATEGORY
+                                </td>
+                                <td>
+                                    @Status
+                                    @if (IsCancel == "1")
+                                    {
+                                        <br><span class="rqf">CANCELLED</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+                                                <li>
+                                                    <a href="~/Admin/ViewRegistration/@APPNO">View Form</a>
+                                                    @if (challanid != "" && BCODE == "203")
+                                                    {
+                                                        <a href='@Url.Action("GenerateChallaan", "Open", new { Id = @challanid })' class="btn">Print Challan</a><br />
+
+                                                    }
+                                                </li>
+
+                                                @if (IsCancel == "0")
+                                                {
+                                                    <li style="@(ViewBag.IsModiFy == 1 ? " display:block" : "display:none" )">
+                                                        @Html.ActionLink("Modify Data", "EditRegistration", new { id = APPNO })
+
+                                                    </li>
+
+                                                }
+                                                <li>
+                                                    @if (VERIFIED == "1")
+                                                    {
+                                                        @Html.ActionLink("Download Form", "AdmissionForm", new { id = APPNO })
+                                                    }
+                                                </li>
+                                                <li>
+                                                    <a data-toggle="modal" data-target="#myModal1-@APPNO">View Status</a>
+                                                </li>
+
+                                                <li>
+                                                    @if (@Model.StoreAllData.Tables[0].Rows[i]["IsAllowForChallanGenerate"].ToString() == "1")
+                                                    {                                                        
+                                                        <a data-toggle="modal" data-target="#myModal2-@APPNO">GENERATE CHALLAN</a>
+                                                    }
+                                                </li>
+
+                                                @{
+                                                    if (IsCancel == "0")
+                                                    {
+                                                        <li style="@(ViewBag.IsModiFy == 1 ? " display:block" : "display:none" )">
+                                                            <a data-toggle="modal" data-target="#myModal3-@APPNO">CANCEL APPLICATION</a>
+                                                        </li>
+                                                    }
+                                                }
+
+
+
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="container">
+                                        <div class="modal fade" id="myModal1-@APPNO" role="dialog">
+                                            <div class="modal-dialog">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">
+                                                            Application Status - @APPNO
+                                                            <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div>
+                                                            <table width="100%" id="subjects-@APPNO">
+                                                                <tr>
+                                                                    <th>Login</th>
+                                                                    <th>Registration</th>
+                                                                    <th>Subjects</th>
+                                                                    <th>Challan</th>
+                                                                    <th>Study Centers</th>
+                                                                    @*<th>Completed</th>*@
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Completed</td>
+                                                                    <td>@((step2.ToString().ToLower() == "true") ? "Completed" : (step1.ToString().ToLower() == "true") ? "In process" : "Pending")</td>
+                                                                    <td>@((subject.ToString().ToLower() == "true") ? "Completed" : (step2.ToString().ToLower() == "true") ? "In process" : "Pending")</td>
+                                                                    <td>@((challan.ToString().ToLower() == "true") ? "Completed" : (subject.ToString().ToLower() == "true") ? "In process" : "Pending")</td>
+                                                                    <td>@((school.ToString().ToLower() == "true") ? "Completed" : (challan.ToString().ToLower() == "true") ? "In process" : "Pending")</td>
+                                                                    @*<td>@((complete.ToString().ToLower() == "true") ? "Completed" : (challan.ToString().ToLower() == "true") ? "In process" : "Pending")</td>*@
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal fade" id="myModal2-@APPNO" role="dialog">
+                                            <div class="modal-dialog">
+
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>GENERATE Challan Details</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Bank <label>PSEB HOD</label><br />
+                                                        Generate Date: <input type="text" id="challandate-@APPNO" name="challandate" class="challandate" onkeypress="return false;" />
+                                                        Valid Date: <input type="text" id="challandateV-@APPNO" name="challandateV" class="challandate" onkeypress="return false;" />
+                                                        Lumsum Fine: <input type="text" id="lumsumfine-@APPNO" name="lumsumfine" maxlength="7" onkeypress="return isNumberKey(event)" />
+                                                        Lumsum Remarks: <br /><textarea id="lumsumremarks-@APPNO" name="lumsumremarks"></textarea>    <br />
+                                                        <input type="button" class="btn" value="Submit" id="btnsubmitRegenate" onclick="generateChln(@APPNO)" />
+                                                        <div id="loading1"></div>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="modal fade" id="myModal3-@APPNO" role="dialog">
+                                            <div class="modal-dialog">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Cancel APPLICATION of @APPNO </h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Challan Status : @if (VERIFIED == "1" || VERIFIED == "TRUE")
+                                                        {
+                                                            <span class="rqf">Challan Verified</span>
+                                                        }
+                                                        else if (challan == "1" || challan == "TRUE")
+                                                        {
+                                                            <span class="rqf">Challan Generated, But Not Verified</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-primary">Challan Not Generated</span>
+                                                        }
+                                                        <br />
+                                                        Cancel Remarks <textarea id="cancelremarks-@APPNO" name="cancelremarks"></textarea>
+                                                        <input type="button" class="btn" value="Submit" id="btnsubmitCancel" onclick="cancelMe(@APPNO)" />
+                                                        <div id="loading3"></div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td></td>
+
+                            </tr>
+
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                        Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {@:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp = ViewBag.pagesize + 1;
+                                                <a href="~/Admin/ApplicationDetails?id=@ViewBag.cid&page=@dp">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/Admin/ApplicationDetails?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var dp = ViewBag.pagesize - 1;
+                                            <a href="~/Admin/ApplicationDetails?id=@ViewBag.cid&page=1"><<</a>
+                                            @Html.Raw("&nbsp;");
+                                            <a href="~/Admin/ApplicationDetails?id=@ViewBag.cid&page=@dp">< Prev</a>
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp1 = ViewBag.pagesize + 1;
+                                                <a href="~/Admin/ApplicationDetails?id=@ViewBag.cid&page=@dp1">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/Admin/ApplicationDetails?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    //Cancel
+    function cancelMe(k) {
+         //alert(k);
+        // alert($("#cancelremarks-" + k).val());
+        var flag = 0;
+        if ($("#cancelremarks-" + k).val() == "") {
+            $("#cancelremarks-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            //  url: "../Admin/jqGenerateChlnOpenAdmin", // this for calling the web method function in cs code.
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Admin/jqCancelApplication", // this for calling the web method function in cs code.
+                data: '{cancelremarks: "' + $("#cancelremarks-" + k).val() + '",appno: "' + k + '" }',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "Yes") {
+                       alert("Application Cancel Successfully");
+                       $('#myModal3-' + Id).modal('hide');
+                       $('#loading3').empty();
+                    }
+                    else if (response.sn == "NO") {
+                        //  alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        alert("Application Failure...");
+                        $('#myModal3-' + Id).modal('hide');
+                        $('#loading3').empty();
+                    }
+                    else {
+                        $('#loading3').empty();
+                        alert("Application Not Found.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+         }
+    }
+
+
+    // Re-Generate
+        function generateChln(appno) {
+           // alert("appno: "+ appno);
+        var flag = 0;
+        if ($("#challandate-" + appno).val() == "") {
+            $("#challandate-" + appno).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#challandateV-" + appno).val() == "") {
+            $("#challandateV-" + appno).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#lumsumfine-" + appno).val()=="")
+        {
+            $("#lumsumfine-" + appno).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#lumsumremarks-" + appno).val() == "") {
+            $("#lumsumremarks-" + appno).addClass("input-validation-error");
+            flag = 1;
+        }
+        if(flag==1)
+        {
+            return false;
+        }
+        else
+        {
+            //alert('start');
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Admin/jqGenerateChlnOpenAdmin", // this for calling the web method function in cs code.
+                data: '{lumsumfine: "' + $("#lumsumfine-" + appno).val() + '",lumsumremarks: "' + $("#lumsumremarks-" + appno).val() + '",BankCode: "203",appno: "' + appno + '",gdate:"' + $("#challandate-" + appno).val() + '",vdate:"' + $("#challandateV-" + appno).val() + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn=="Yes" )
+                    {
+                        alert("Challan Regenerated Successfully & Your Challan ID is " + response.chid);
+                        $('#myModal2-' + appno).modal('hide');
+                        $('#loading1').empty();
+                        window.open("/Home/GenerateChallaan?ChallanId=" + response.chid, "_blank");
+                    }
+                    else if (response.sn == "date")
+                    {
+                        $('#loading1').empty();
+                        alert("Please Select Valid Date Must be Greater than Generate Date");
+                    }
+                    else
+                    {
+                        $('#loading1').empty();
+                        alert("Challan Not Found/Expired.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+    $(function () {
+        //var deedate1 = '@ViewBag.date';
+      //alert(deedate1);
+
+        $(".challandate").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+           yearRange: '1900:' + (new Date().getFullYear())
+
+
+        });
+        //$("#btnsubmitRegenate").click(function () {
+        //    return false;
+        //});
+
+    });
+</script>
+
+
+<script>
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+        if (value == 5) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 2 || value == 3 || value == 4) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+    var form = $("#searchform").serialize();
+    $("#btnNext").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Next',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#btnPrevious").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Previous',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#SelectItem").change(function () {
+        var value = document.getElementById('SelectItem').value;
+        $('#SearchString').val('');
+        if (value == 5) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 2 || value == 3 || value == 4) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+
+    });
+
+</script>

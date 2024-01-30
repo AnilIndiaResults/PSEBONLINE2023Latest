@@ -1,0 +1,102 @@
+﻿@model PSEBONLINE.Models.BankModels
+@{
+    ViewBag.Title = "DownloadChallan";
+    Layout = "~/Views/Shared/_BankLayout.cshtml";
+}
+<h1>Download Challan</h1>
+
+<div class="row">
+     <div class="col-md-6" style="font-size:16px">Current Downloaded Lot : @ViewBag.CurrentDownloadedLot &nbsp;|&nbsp; Total Count : @ViewBag.TotalCount </div>
+    <div class="col-md-6 text-right"> @if (ViewBag.TotalCount > 0)
+            {
+             @*<input type="submit" name="btnExportLicensing" style="width: 140px;"  value="ExportToExcel" id="exportLicensing" class="button" />*@
+                <input type="button" value="Export To Excel" onclick="javascript:document.location.href='@Url.Action("ExportData", "Bank", new { File = "Excel" })'" />
+                <input type="button" value="Export To CSV" onclick="javascript:document.location.href='@Url.Action("ExportData", "Bank", new { File = "CSV" })'" />
+                <input type="button" value="Export To Text" onclick="javascript:document.location.href='@Url.Action("ExportData", "Bank", new { File = "Txt" })'" />
+                <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Welcome", "Bank", new { File = "Back" })    '" />
+            }</div>
+    </div>
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>ChallanId</th>
+                    <th>Chlndate</th>
+                    <th>Chlnvdate</th>
+                    <th>FeeMode</th>
+                    <th>FeeCode</th>
+                    <th>FeeCat</th>
+                    <th>BCODE</th>
+                    @*<th>Bank</th>*@
+                    <th>Acno</th>
+                    <th>Fee</th>
+                    <th>Bankchrg</th>
+                    <th>Totfee</th>
+                    <th>Schlregid</th>
+                    <th>Dist</th>
+                    @*<th>Distnm</th>
+                    <th>Schlcandnm</th>*@
+                    <th>Type</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.BankMasterData.Tables[0].Rows.Count; i++)
+                        {
+                            var ChallanId = Model.BankMasterData.Tables[0].Rows[i]["ChallanId"].ToString();
+                            var Chlndate = Model.BankMasterData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                            var Chlnvdate = Model.BankMasterData.Tables[0].Rows[i]["CHLNVDATE"].ToString(); //challanVdateNew
+                            var FeeMode = Model.BankMasterData.Tables[0].Rows[i]["FeeMode"].ToString();
+                            var FeeCode = Model.BankMasterData.Tables[0].Rows[i]["FeeCode"].ToString();
+                            var FeeCat = Model.BankMasterData.Tables[0].Rows[i]["FeeCat"].ToString();
+                            var BCODE = Model.BankMasterData.Tables[0].Rows[i]["BCODE"].ToString();
+                            var Bank = Model.BankMasterData.Tables[0].Rows[i]["Bank"].ToString();
+                            var Acno = Model.BankMasterData.Tables[0].Rows[i]["Acno"].ToString();
+                            var Fee = Model.BankMasterData.Tables[0].Rows[i]["Fee"].ToString();
+                            var Bankchrg = Model.BankMasterData.Tables[0].Rows[i]["Bankchrg"].ToString();
+                            var Totfee = Model.BankMasterData.Tables[0].Rows[i]["Totfee"].ToString();
+                            var Schlregid = Model.BankMasterData.Tables[0].Rows[i]["Schlregid"].ToString();
+                            var Dist = Model.BankMasterData.Tables[0].Rows[i]["Dist"].ToString();
+                            var Distnm = Model.BankMasterData.Tables[0].Rows[i]["Distnm"].ToString();
+                            var Schlcandnm = Model.BankMasterData.Tables[0].Rows[i]["Schlcandnm"].ToString();
+                            var Type = Model.BankMasterData.Tables[0].Rows[i]["Type"].ToString();
+                            int Count = i + 1;
+                            <tr>                               
+                                <td>@Count</td>
+                                <td>@ChallanId</td>
+                                <td>@Chlndate</td>
+                                <td>@Chlnvdate</td>
+                                <td>@FeeMode</td>
+                                <td>@FeeCode</td>
+                                <td>@FeeCat</td>
+                                <td>@BCODE</td>
+                                @*<td>@Bank</td>*@
+                                <td>@Acno</td>
+                                <td>@Fee</td>
+                                <td>@Bankchrg</td>
+                                <td>@Totfee</td>
+                                <td>@Schlregid</td>
+                                <td>@Dist</td>
+                                @*<td>@Distnm</td>
+                                <td>@Schlcandnm</td>*@
+                                <td>@Type</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>

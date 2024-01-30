@@ -1,0 +1,130 @@
+﻿@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+
+}
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+    $("#btnPrint").live("click", function () {
+        var divContents = $("#dvContainer").html();
+        var printWindow = window.open('', '', 'height=400,width=800');
+        printWindow.document.write('<html><head><title>DIV Contents</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    });
+</script>
+<h1>9th & 11th Result Reports</h1>
+@using (Html.BeginForm("NinthEleventhResultReport", "Report", FormMethod.Post, new { id = "searchform" }))
+{
+    <input type="button" value="Print" id="btnPrint" />
+    <div id="dvContainer">
+        <table class="table table-bordered" id="tsummary" border="1" style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif">
+            <tr>
+                <td colspan="7" style="background-color:#ffffff">
+                    <table width="100%" border="0">
+                        <tr>
+                            <td width="25%"><img src="~/Images/Printlogo.jpg" alt="PSEB" /></td>
+                            <td width="50%" colspan="2" style="font-size:22px;text-align:center;line-height:32px;vertical-align:top;">
+                                <span style="font-size:32px">Punjab School Education Board</span><br />
+                                9th & 11th Class Result Status
+                            </td>
+                            @if (ViewBag.TotalCount > 0)
+                            {
+                                //var Printdt = Model.StoreAllData.Tables[0].Rows[0]["Printdt"].ToString();
+                            <td width="25%" align="right">Print Date / Time :  @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")</td>
+                            }
+                        </tr>
+                    </table>
+                </td>
+
+            </tr>
+            <tr class="active-tr">
+                <th rowspan="2" align="left">&nbsp;School Category</th>
+                <th colspan="3">9<sup>th</sup> Class</th>
+                <th colspan="3">11<sup>th</sup> Class</th>
+            </tr>
+            <tr class="active-tr">
+                <th>Total School</th>
+                <th>Pending</th>
+                <th>Final Submit</th>
+                <th>Total School</th>
+                <th>Pending</th>
+                <th>Final Submit</th>
+            </tr>
+            @{
+                int ntotNumberof9thSchools = 0;
+                int ntotNumberof9thEntryStart = 0;
+                int ntotNumberof9thFinalSubmit = 0;
+				int ntotNumberof9thPending = 0;
+
+                int ntotNumberof11thSchools = 0;
+                int ntotNumberof11thEntryStart = 0;
+                int ntotNumberof11thFinalSubmit = 0;
+				int ntotNumberof11thPending = 0;
+
+                if (ViewBag.TotalCount > 0)
+                {
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        var SchoolType = Model.StoreAllData.Tables[0].Rows[i]["UserType"].ToString();
+                        var Numberof9thSchools = Model.StoreAllData.Tables[0].Rows[i]["TotalSchoolof9th"].ToString();
+                        var Numberof9thEntryStart = Model.StoreAllData.Tables[0].Rows[i]["NthEntryStart"].ToString();
+                        var Numberof9thFinalSubmit = Model.StoreAllData.Tables[0].Rows[i]["NthFinalSubmit"].ToString();
+                        var NthPending = Model.StoreAllData.Tables[0].Rows[i]["NthPending"].ToString();
+
+                        var Numberof11thSchools = Model.StoreAllData.Tables[0].Rows[i]["TotalSchoolof11th"].ToString();
+                        var Numberof11thEntryStart = Model.StoreAllData.Tables[0].Rows[i]["EthEntryStart"].ToString();
+                        var Numberof11thFinalSubmit = Model.StoreAllData.Tables[0].Rows[i]["EthFinalSubmit"].ToString();
+var EthPending = Model.StoreAllData.Tables[0].Rows[i]["EthPending"].ToString();
+
+                        int Count = i + 1;
+
+                        ntotNumberof9thSchools = ntotNumberof9thSchools + Convert.ToInt32(Numberof9thSchools);
+                        ntotNumberof9thEntryStart = ntotNumberof9thEntryStart + Convert.ToInt32(Numberof9thEntryStart);
+                        ntotNumberof9thFinalSubmit = ntotNumberof9thFinalSubmit + Convert.ToInt32(Numberof9thFinalSubmit);
+ntotNumberof9thPending= ntotNumberof9thPending + Convert.ToInt32(NthPending);
+
+                        ntotNumberof11thSchools = ntotNumberof11thSchools + Convert.ToInt32(Numberof11thSchools);
+                        ntotNumberof11thEntryStart = ntotNumberof11thEntryStart + Convert.ToInt32(Numberof11thEntryStart);
+                        ntotNumberof11thFinalSubmit = ntotNumberof11thFinalSubmit + Convert.ToInt32(Numberof11thFinalSubmit);
+ntotNumberof11thPending= ntotNumberof11thPending + Convert.ToInt32(EthPending);
+                        <tr>
+                            <td>&nbsp;@SchoolType</td>
+                            <td align="right">@Numberof9thSchools &nbsp;</td>
+                            <td align="right">@NthPending &nbsp;</td>
+                            <td align="right">@Numberof9thFinalSubmit &nbsp;</td>
+                            <td align="right">@Numberof11thSchools &nbsp;</td>
+                            <td align="right">@EthPending &nbsp;</td>
+                            <td align="right">@Numberof11thFinalSubmit &nbsp;</td>
+                        </tr>
+                    }
+
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                }
+
+            }
+            <tfoot>
+                <tr style="font-size:16px;font-weight:bold">
+                    <td>&nbsp;TOTAL</td>
+                    <td align="right">@ntotNumberof9thSchools &nbsp;</td>
+                    <td align="right">@ntotNumberof9thPending &nbsp;</td>
+                    <td align="right">@ntotNumberof9thFinalSubmit &nbsp;</td>
+                    <td align="right">@ntotNumberof11thSchools &nbsp;</td>
+                    <td align="right">@ntotNumberof11thPending &nbsp;</td>
+                    <td align="right">@ntotNumberof11thFinalSubmit &nbsp;</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}
+

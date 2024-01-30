@@ -1,0 +1,254 @@
+﻿@model PSEBONLINE.Models.PrinterModel
+@{
+    ViewBag.Title = "ViewSupplyofBooks";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<h2>View and Receieve Supply Of Books </h2>
+@{
+    if (ViewBag.Supplylot == 0)
+    {
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="15%">Printer Name</th>
+                    <th width="15%">Supply Lot</th>
+                    <th width="20%">Supply Date</th>
+                    <th width="15%">Total</th>
+                    <th width="15%">No. Of Supplied Books</th>
+                    <th width="40%">View</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var PrinterId = Model.StoreAllData.Tables[0].Rows[i]["PrinterId"].ToString();
+                            var PrinterName = Model.StoreAllData.Tables[0].Rows[i]["PrinterName"].ToString();
+                            var SupplyLot = Model.StoreAllData.Tables[0].Rows[i]["SupplyLot"].ToString();
+                            var NOSB = Model.StoreAllData.Tables[0].Rows[i]["NOSB"].ToString();
+                            var Total = Model.StoreAllData.Tables[0].Rows[i]["Total"].ToString();
+                            var SupplyFinalDT = Model.StoreAllData.Tables[0].Rows[i]["SupplyFinalDT"].ToString();
+                            int Count = i + 1;
+                            <tr>
+                                <td>
+                                    <span> @PrinterName</span>
+                                </td>
+                                <td>
+                                    <span> @SupplyLot</span>
+                                </td>
+                                <td>
+                                    @SupplyFinalDT
+                                </td>
+                                <td>
+                                    @Total
+                                </td>
+                                <td>
+                                    @NOSB
+                                </td>
+
+                                <td>
+                                    <a href="/DM/ViewSupplyofBooks/@SupplyLot" class="btn">View Details</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <p class="rqf">Data Not Found</p>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+
+    }
+
+    else if (ViewBag.Supplylot > 0)
+    {
+        <a href="/DM/ViewSupplyofBooks" class="btn">Back</a>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="15%">Printer Name</th>
+                    <th width="6%">Trans Id</th>
+                    <th width="25%">Book Name</th>
+                    <th width="10%">Supply Lot</th>
+                    <th width="10%">Supply Date</th>
+                    <th width="15%">No. Of Supplied Books</th>
+                    <th width="10%">Supply Type</th>
+                    <th width="10%">Depot Status</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var SupplyId = Model.StoreAllData.Tables[0].Rows[i]["SupplyId"].ToString();
+                            var DepotUserId = Model.StoreAllData.Tables[0].Rows[i]["DepotUserId"].ToString();
+                            var TransId = Model.StoreAllData.Tables[0].Rows[i]["TransId"].ToString();
+                            var PrinterName = Model.StoreAllData.Tables[0].Rows[i]["PrinterName"].ToString();
+                            var BookName = Model.StoreAllData.Tables[0].Rows[i]["BookName"].ToString();
+                            var SupplyLot = Model.StoreAllData.Tables[0].Rows[i]["SupplyLot"].ToString();
+                            var SupplyFinalDT = Model.StoreAllData.Tables[0].Rows[i]["SupplyFinalDT"].ToString().Split(' ')[0];
+                            var NumberofSuppliedbooks = Model.StoreAllData.Tables[0].Rows[i]["NumberofSuppliedbooks"].ToString();
+                            var DateStamp = Model.StoreAllData.Tables[0].Rows[i]["DateStamp"].ToString();
+                            var Remarks = Model.StoreAllData.Tables[0].Rows[i]["Remarks"].ToString();
+                            var TypeName = Model.StoreAllData.Tables[0].Rows[i]["TypeName"].ToString();
+                            var CreatedDate = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString().Split(' ')[0];
+                            var IsDepotReceived = Model.StoreAllData.Tables[0].Rows[i]["IsDepotReceived"].ToString();
+                            var DepotReceivedDT = Model.StoreAllData.Tables[0].Rows[i]["DepotReceivedDT"].ToString().Split(' ')[0];
+                            var DepotRemarks = Model.StoreAllData.Tables[0].Rows[i]["DepotRemarks"].ToString();
+                            var NumberofReceivedbooks = Model.StoreAllData.Tables[0].Rows[i]["NumberofReceivedbooks"].ToString();
+
+                            int Count = i + 1;
+                            <tr>
+                                <td>
+                                    @PrinterName
+                                </td>
+                                <td>
+                                    @TransId
+                                </td>
+                                <td>
+                                    @BookName
+                                </td>
+                                <td>
+                                    @SupplyLot
+                                </td>
+                                <td>
+                                    @SupplyFinalDT
+                                </td>
+                                <td>
+                                    @NumberofSuppliedbooks
+                                </td>
+                                <td>
+                                    @TypeName
+                                </td>
+                                <td>
+                                    @if (IsDepotReceived == "1")
+                                    {
+                                        <span title="@DepotRemarks">Book Receieved: @NumberofReceivedbooks</span><br />
+                                        <span>Received DT : @DepotReceivedDT</span><br />
+                                    }
+                                    else
+                                    {
+                                        <a data-toggle="modal" data-target="#myModal-@SupplyId">Receive Details </a>
+                                        <div class="modal fade" id="myModal-@SupplyId" role="dialog">
+                                            <div class="modal-dialog">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Receive Books of SupplyLot: @SupplyLot </h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        NumberofReceivedbooks
+                                                        <input type="text" id="NORB-@SupplyLot" name="NORB" maxlength="8" onkeypress="return isNumberKey(event)" />
+                                                        Enter Remarks <textarea id="remarks-@SupplyLot" name="remarks"></textarea>
+                                                        <input type="button" class="btn" value="Submit" id="btnReceive" onclick="receiveMe(@SupplyLot)" />
+                                                        <div id="loading1"></div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <p class="rqf">Data Not Found</p>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+
+    }
+
+}
+
+<script type="text/javascript">
+    function isNumberKey(evt) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+   
+</script>
+
+<script>
+    //Cancel
+    function receiveMe(k) {
+        var flag = 0;
+        if ($("#NORB-" + k).val() == "" || $("#NORB-" + k).val() == "0") {
+            $("#NORB-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#remarks-" + k).val() == "") {
+            $("#remarks-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                //url: "../Challan/ChallanDetailsCancel", // this for calling the web method function in cs code.
+                url: "../ReceiveSupplyBookDetails", // this for calling the web method function in cs code.
+                data: '{remarks: "' + $("#remarks-" + k).val() + '",NORB: "' + $("#NORB-" + k).val() + '",SupplyId: "' + k + '", "Type": "1"}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        //  alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        alert("Received  Successfully");
+                        $('#myModal-' + k).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else if (response.sn == "2") {                        
+                        alert("Book Receieved Cann't be greater than Book Supplied ");                       
+                        $('#loading1').empty();
+                    }
+                    else {
+                        $('#loading1').empty();
+                        alert("Received Failure.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+
+</script>
+

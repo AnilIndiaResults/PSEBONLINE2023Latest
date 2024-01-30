@@ -1,0 +1,147 @@
+﻿@model PSEBONLINE.Models.DMModel
+@{
+    ViewBag.Title = "View All Challan Details";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<div id="loading1"></div>
+<div class="container">
+    <h1>View All Challan Details</h1>
+    <div class="row" id="divMain1">
+        <div class="col-md-4">Total :  @ViewBag.TotalCount</div>
+        <div class="col-md-8 text-right">
+            <a href="~/DM/CompleteChallanDetails" class="btn">Back</a>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+
+            <div class="table-responsive">
+               @{
+
+                   if (ViewBag.DairyNo =="0")
+                   {                      
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th>Challan No</th>
+                        <th>Challan Date</th>
+                        <th>Total</th>   
+                        <th>View Complete Details</th>  
+                        @*<th>Delete</th>*@                               
+                    </tr>
+                    @{
+                       
+
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    var DairyNo = Model.StoreAllData.Tables[0].Rows[i]["DairyNo"].ToString();
+                                    var DairyDate = Model.StoreAllData.Tables[0].Rows[i]["DairyDate"].ToString();
+                                    var Tcnt = Model.StoreAllData.Tables[0].Rows[i]["Tcnt"].ToString();
+                                    int Count = i + 1;
+                                <tr>
+                                    <td align="center">@Html.ActionLink(@DairyNo, "Challaan", new { id = @DairyNo })</td>
+                                    <td align="center">@DairyDate</td>
+                                    <td align="center">@Tcnt</td>        
+                                    <td align="center">@Html.ActionLink("Complete Details", "CompleteChallanDetails", new { id = @DairyNo })</td>   
+                                    @*<td align="center"><input type="button" class="btn" value="Delete Challan" id="btnDelete" onclick="DeleteChallan('@DairyNo')" /></td>*@
+                                </tr>
+                                }
+                            }
+                            else
+                            {
+                            <tr>
+                                <td colspan="8">
+                                    @Html.Raw("Record Not Found")
+                                </td>
+                            </tr>
+                            }                      
+                       
+                    }
+                </table>
+
+                        }
+                        else
+                        {
+                            <table class="table table-bordered" id="t01">
+                                <tr class="active-tr">
+                                    <th align="center">School Code</th>
+                                    <th align="center">School Name</th>
+                                    <th align="center">Receiving Number</th>
+                                    <th align="center">Receiving Date</th>
+                                    <th align="center">Remarks</th>
+                                </tr>
+                                @{
+
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            var schl = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
+                                            var FullSchoolNameE = Model.StoreAllData.Tables[0].Rows[i]["FullSchoolNameE"].ToString();
+                                            var Rno = Model.StoreAllData.Tables[0].Rows[i]["Rno"].ToString();
+                                            var Rdate = Model.StoreAllData.Tables[0].Rows[i]["Rdate"].ToString();
+                                            var Remarks = Model.StoreAllData.Tables[0].Rows[i]["Remarks"].ToString();
+                                            int Count = i + 1;
+                                            <tr>
+                                                <td align="center">@schl</td>
+                                                <td align="center">@FullSchoolNameE</td>
+                                                <td align="center">@Rno</td>
+                                                <td align="center">@Rdate</td>
+                                                <td align="center">@Remarks</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="8">
+                                                @Html.Raw("Record Not Found")
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+
+                                    }
+
+            }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function DeleteChallan(k) {
+      //  alert(k);
+        var DairyNo = k;
+        if (DairyNo == "") {
+            alert("Invalid Challan");
+        }
+        else {
+          //  alert('start')
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/DM/DeleteChallan", { "DairyNo": k },
+                      function (data) {
+                          $('#loading1').empty();
+                         // alert('data.status  = ' + data.status);
+                          if (data.status == "0") {
+                              alert("Challan Not Deleted ");
+                          }
+                          else if (data.status == "-2") {
+                              alert("Something Wrong.. Please Check Challan !!");
+                          }
+                          else if (data.status == "1") {
+                              alert("Challan Deleted Successfully : " + k);
+                              window.location.href = '/DM/CompleteChallanDetails';
+                          }
+                          else {
+                              alert("Try Again");
+
+                          }
+                      });
+        }
+    }
+
+</script>
+

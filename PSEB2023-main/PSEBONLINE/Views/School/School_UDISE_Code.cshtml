@@ -1,0 +1,141 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<style>
+    .input-validation-error{
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+.popup {padding-top:5%;padding-bottom:12%;text-align:center}
+.popup table{
+    background: #fff none repeat scroll 0 0;
+    border-radius: 0 0 25px 25px;
+    max-width: 500px;
+    min-width: 320px; 
+}
+</style>
+@if (Session["SCHL"] != null)
+{@*@Session["SchlE"].ToString()*@}
+else
+{
+    Response.Redirect("~/Login");
+}
+@*<div style="color:green;">@ViewBag.msg</div>
+<div style="color:red;">@ViewBag.err</div>*@
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true);
+
+<div class="popup">
+<center>
+<table cellspacing="0" cellpadding="0" border="0">
+    <tbody>
+        <tr style="background-color:#336dc0;color:#fff">
+            <td style="font-size:28px;padding:15px 0;text-align:center">Update Your School UDISE Code</td>
+        </tr>
+
+        @if (ViewBag.msg != null)
+        {
+ <tr>
+                <td style="font-size:16px;text-align:center;padding:15px 0;color:#000;font-weight:normal">(Note :  If you have no UDISE code, then contact with MIS cell, Education Department, S.A.S. Nagar)<br />
+<span style="color:#cc0000">Click Here to find <a href="https://schoolreportcards.in/SRC-New/LocateSchool/LocateSchool.aspx" style="color:#cc0000">UDISE Code</a></span>
+                </td>
+            </tr>
+        <tr>
+            <td style="font-size:16px;text-align:center;padding:15px 0;color:#000;font-weight:bold;color:#3f7f00">
+UDISE Code (@ViewBag.Udise) Updated Successfully.<br />
+<span style="visibility:hidden">@ViewBag.msg </span> </td>
+        </tr>
+<tr>
+  <td style="text-align:center;padding:15px 0"><a class="btn" href="/Home/Index">Back</a></td>
+
+</tr>
+
+}
+        else if (ViewBag.err != null)
+        {
+ <tr>
+                <td style="font-size:16px;text-align:center;padding:15px 0;color:#000;font-weight:normal">(Note :  If you have no UDISE code, then contact with MIS cell, Education Department, S.A.S. Nagar)<br /><span style="color:#cc0000">Click Here to find <a href="https://schoolreportcards.in/SRC-New/LocateSchool/LocateSchool.aspx" style="color:#cc0000">UDISE Code</a></span></td>
+            </tr>
+            <tr>
+                <td style="font-size:16px;text-align:center;padding:15px 0;color:#000;font-weight:bold;color:#d90505">@ViewBag.err</td>
+            </tr>
+            <tr>
+                <td style="text-align:center">
+                    <div style="padding:0 15px">
+ <label>@Html.DisplayFor(a => a.udisecode, new { })</label>
+                    @*    @Html.TextBoxFor(m => m.udisecode, new { placeholder = "Enter 11 Digit UDISE Code", maxlength = "11", onkeypress = "return isNumberKey(event)", @class = "txtbox", Value = ViewBag.Udise })*@
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:center;padding:15px 0">
+                    <input type="submit" value="Update" class="button" id="saveme" /> <a class="btn" href="/Home/Index">Back</a>
+                </td>
+            </tr>
+
+        }
+        else
+        {
+            <tr>
+                <td style="font-size:16px;text-align:center;padding:15px 0;color:#000;font-weight:normal">(Note :  If you have no UDISE code, then contact with MIS cell, Education Department, S.A.S. Nagar)<br /><span style="color:#cc0000">Click Here to find <a href="https://schoolreportcards.in/SRC-New/LocateSchool/LocateSchool.aspx" style="color:#cc0000">UDISE Code</a></span></td>
+            </tr>
+            <tr>
+                <td style="text-align:center">
+                    <div style="padding:0 15px">
+<label>
+                        @Html.TextBoxFor(m => m.udisecode, new { placeholder = "Enter 11 Digit UDISE Code", maxlength = "11", onkeypress = "return isNumberKey(event)", @class = "txtbox", Value = ViewBag.Udise })
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:center;padding:15px 0">@*
+                    <input type="submit" value="Update" class="button" id="saveme" />*@ <a class="btn" href="/Home/Index">Back</a>
+                </td>
+            </tr>
+        }
+        
+    </tbody>
+</table>
+</center>
+</div>
+
+
+}
+<script type="text/javascript">
+    function isNumberKey(evt) {
+        var c = $(".txtbox").val();
+        if (c.length < 11)
+        {
+            $(".txtbox").addClass("input-validation-error");
+        }
+        else
+        {
+            $(".txtbox").removeClass("input-validation-error");
+        }
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    $(function () {
+        $("#saveme").click(function () {
+            var c = $(".txtbox").val();
+            if (c.length < 11) {
+                $(".txtbox").addClass("input-validation-error");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        });
+    });
+</script>

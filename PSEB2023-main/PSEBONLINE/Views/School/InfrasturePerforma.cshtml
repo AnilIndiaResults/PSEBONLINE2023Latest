@@ -1,0 +1,381 @@
+﻿@model PSEBONLINE.Models.InfrasturePerformas
+@{
+    ViewBag.Title = "Infrasture Performa";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+<h1 style="float:left;">
+    Infrastructure Performa - Session @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+else { Response.Redirect("~/Login"); }
+</h1>
+<p style="float:right; padding-top:10px;">
+    Last Date : @ViewData["lastDate"].ToString()
+</p>
+<div style="clear:both;"></div>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link href="http://fonts.googleapis.com/css?family=Merienda+One" rel="stylesheet" type="text/css" />
+<link href="/Content/css/font-awesome.min.css" rel="stylesheet" />
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+
+    h1 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        font-family: 'Merienda One', cursive;
+        font-family: 'Merienda One', cursive;
+        padding-bottom: 6px;
+    }
+</style>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Alert",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+    });
+</script>
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Infrastructure Performa updated sucessfully.</span>
+            </div>
+        }
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">There is some error during updation of Infrastructure Performa. Please try after sometimes.</span>
+            </div>
+        }
+        else
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">@ViewData["result"].ToString()</span>
+            </div>
+        }
+    }
+}
+@{
+    if (ViewData["lastDateOver"] != null)
+    {
+        if (ViewData["lastDateOver"].ToString() == "0")
+        {
+            using (Html.BeginForm("InfrasturePerforma", "School", FormMethod.Post))
+            {
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        @*<p class="kdsfont">
+                                Import ¨Û¼ã ²Ù ÅÒÛ× ¤è×¶ÏÛ ÒØÐã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û Âãª» Ð¥Û Ú¥Ó ÚÐâ¨ ¼ã ¨ÚÐó¨ ¨Û¼Ø ²ØÒã¢ Ú¥Ó ¤ÄÛÅ ÆñÛÚª¤ØÏÁÛ Âã ÒãÏÒã Modify ²Ù Delete ¨Û¼ã ²Ø Ó¨Âã ÕÅ¢ Ú¥Ó ¼ë× Ú¥ÐØÒØ Rough Report or Student Verification Form ÂãªÛ ¤¼ã ÚÆâñ¶ ¨Û¼Û ²Ø Ó¨ÂÛ Õè¢
+                            </p>*@
+                    </div>
+
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            @Html.HiddenFor(a => a.SCHL)
+                            <div>
+                                <span id="lblStatus"></span>
+                                <div id="loading1"></div>
+                            </div>
+                            <table class="table table-bordered" id="">
+
+                                <tr>
+                                    <th colspan="6"><h4>School Infrastructure Details</h4></th>
+                                </tr>
+
+                                @*Name of the nearest bank with address, IFSC Code and SOL id of the branch. (Preference be given to HDFC or Punjab & Sind Bank)
+                                    1.Differentiate the Name and IFSC  code of Bank with capacity of Column 100 characters (Alphanumeric Value)
+                                    2.SOL ID - numeric value Only Capacity of Column 40 characters*@
+                                <tr>
+
+                                    <th>No. of Floors (including ground floor) *</th>
+                                    <td>@Html.TextBoxFor(a => a.Col1, new { @required = "required" })</td>
+                                    <th>Total Classrooms on ground floor *</th>
+                                    <td>@Html.TextBoxFor(a => a.Col2, new { @required = "required" })</td>
+                                    <th>Seating capacity on ground floor (no of candidates)</th>
+                                    <td>@Html.TextBoxFor(a => a.Col3)</td>
+                                </tr>
+                                <tr>
+                                    <th>Total Classrooms on first floor, if any</th>
+                                    <td>@Html.TextBoxFor(a => a.Col4)</td>
+                                    <th>Seating capacity on first floor (no of candidates)</th>
+                                    <td>@Html.TextBoxFor(a => a.Col5)</td>
+                                    <th>Total Classrooms on second floor, if any</th>
+                                    <td>@Html.TextBoxFor(a => a.Col6)</td>
+                                </tr>
+                                <tr>
+                                    <th>Seating capacity on second floor (no of candidates)</th>
+                                    <td>@Html.TextBoxFor(a => a.Col7)</td>
+                                    <th>Total Classrooms on third floor, if any</th>
+                                    <td>@Html.TextBoxFor(a => a.Col8)</td>
+                                    <th>Seating capacity on third floor (no of candidates)</th>
+                                    <td>@Html.TextBoxFor(a => a.Col9)</td>
+
+                                </tr>
+
+
+                                <tr>
+                                    <th>Floor on which the examination centre is created in the school? (Exam Centre should preferably on Ground Floor/First Floor)</th>
+                                    @*<td>@Html.TextBoxFor(a => a.Col10)</td>*@
+                                    <td>
+                                        @{
+                                            List<SelectListItem> floor = new List<SelectListItem>();
+
+                                            floor.Add(new SelectListItem { Text = "Ground Floor", Value = "Ground Floor" });
+                                            floor.Add(new SelectListItem { Text = "First Floor", Value = "First Floor" });
+                                            floor.Add(new SelectListItem { Text = "Second Floor", Value = "Second Floor" });
+                                            floor.Add(new SelectListItem { Text = "Third Floor", Value = "Third Floor" });
+
+                                        }
+                                        @Html.DropDownListFor(a => a.Col10, floor)
+
+                                    </td>
+                                    <th>Total seating capacity of candidates in Exam centre</th>
+                                    <td>@Html.TextBoxFor(a => a.Col11, new { @type = "number" })</td>
+                                    <th>Number of rooms provided for examination centre [Minimum capacity is 30 candidates per room (Single bench single candidate)]</th>
+                                    <td>@Html.TextBoxFor(a => a.Col12)</td>
+
+                                </tr>
+                                <tr>
+                                    <th>Total No. of Single Benches *</th>
+                                    <td>@Html.TextBoxFor(a => a.Col13, new { @type = "number", @required = "required" })</td>
+                                    <th>Total No. of Double Benches *</th>
+                                    <td>@Html.TextBoxFor(a => a.Col14, new { @type = "number", @required = "required" })</td>
+                                    <th>Are CCTV cameras installed in the school campus?</th>
+                                    <td>
+                                        @{
+                                            List<SelectListItem> yesno = new List<SelectListItem>();
+
+                                            yesno.Add(new SelectListItem { Text = "Yes", Value = "Yes" });
+                                            yesno.Add(new SelectListItem { Text = "No", Value = "No" });
+
+                                        }
+                                        @Html.DropDownListFor(a => a.Col15, yesno)
+
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>How many rooms (used for examination centre) have CCTV cameras?</th>
+                                    <td>@Html.TextBoxFor(a => a.Col16)</td>
+                                    <th>Capacity for Physics Lab (no of candidates)</th>
+                                    <td>@Html.TextBoxFor(a => a.Col17)</td>
+                                    <th>Capacity for Chemistry Lab (no of candidates)</th>
+                                    <td>@Html.TextBoxFor(a => a.Col18)</td>
+                                </tr>
+                                <tr>
+                                    <th>Capacity for Biology Lab (no of candidates)</th>
+                                    <td>@Html.TextBoxFor(a => a.Col19)</td>
+                                    <th>Total no. of Computers in computer lab</th>
+                                    <td>@Html.TextBoxFor(a => a.Col20)</td>
+                                    <th>Capacity of Computer Lab (no of candidates)</th>
+                                    <td>@Html.TextBoxFor(a => a.Col21)</td>
+                                </tr>
+                                <tr>
+                                    <th>Is internet Facility available in Computer lab?</th>
+                                    <td>@Html.DropDownListFor(a => a.Col22, yesno)</td>
+                                    <th></th>
+
+                                    <!-- <th>Size and capacity of lab (no of candidates) Specify the purpose of its usage</th> -->
+                                    <!-- <td>@Html.TextBoxFor(a => a.Col23)</td> -->
+                                    <td></td>
+                                    <th>Gated boundary or not?</th>
+                                    <td>@Html.DropDownListFor(a => a.Col22, yesno)</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="6">
+                                        <h4>
+                                            Is drinking water facility available in school? If yes, then total number of:-
+                                        </h4>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>R.O's</th>
+                                    <td>@Html.DropDownListFor(a => a.Col25A, yesno)</td>
+                                    <th>Water coolers</th>
+                                    <td>@Html.DropDownListFor(a => a.Col25B, yesno)</td>
+                                    <th>Are there separate toilets for boys & girls?</th>
+                                    <td>@Html.DropDownListFor(a => a.Col29, yesno)</td>
+
+                                    <!-- <th>Any other source</th> -->
+                                    <!-- <td>@Html.DropDownListFor(a => a.Col25B, yesno)</td> -->
+                                </tr>
+                                <tr>
+                                    <th colspan="6"><h4>School Bank Account Details</h4></th>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" style="padding:0">
+                                        <table class="table-bordered" width="100%">
+                                            <tr>
+
+                                                @{
+                                                    List<SelectListItem> banklist = new List<SelectListItem>();
+
+                                                    banklist.Add(new SelectListItem { Text = "HDFC BANK", Value = "HDFC BANK" });
+                                                    banklist.Add(new SelectListItem { Text = "PUNJAB AND SIND BANK", Value = "PUNJAB AND SIND BANK" });
+
+                                                }
+
+                                                <td width="10%">Bank Name</td>
+                                                <td width="14%">@Html.DropDownListFor(a => a.Bank1, banklist)</td>
+                                                <td width="10%">IFSC Code 1</td>
+                                                <td width="12%">@Html.TextBoxFor(a => a.IFSC1, new { id = "IFSC1", @maxlength = "20", @onchange = "IFSCCodeAvailability('1')", @required = "required" })</td>
+
+                                                <td width="16%">Branch Name & Address</td>
+                                                <td width="38%">@Html.TextBoxFor(a => a.BankBranch1, new { @required = "required" })</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Bank Name</td>
+                                                <td>@Html.DropDownListFor(a => a.Bank2, banklist)</td>
+                                                <td>IFSC Code 2</td>
+                                                <td>@Html.TextBoxFor(a => a.IFSC2, new { id = "IFSC2", @maxlength = "20", @onchange = "IFSCCodeAvailability('2')" })</td>
+
+                                                <td>Branch Name & Address</td>
+                                                <td>@Html.TextBoxFor(a => a.BankBranch2)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Bank Name</td>
+                                                <td>@Html.DropDownListFor(a => a.Bank3, banklist)</td>
+                                                <td>IFSC Code 3</td>
+                                                <td>@Html.TextBoxFor(a => a.IFSC3, new { id = "IFSC3", @maxlength = "20", @onchange = "IFSCCodeAvailability('3')" })</td>
+
+                                                <td>Branch Name & Address</td>
+                                                <td>@Html.TextBoxFor(a => a.BankBranch3)</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" style="text-align:center">
+                                        @if (Model.FinalSubmitStatus == 0)
+                                        {
+                                            <input id="btnSubmit" type="submit" name="cmd" value="Save" class="btn" />
+                                            <input id="btnFinal" type="submit" name="cmd" value="Final Submit" class="btn" />
+                                            <a class="btn" href='@Url.Action("ViewInfrasturePerforma", "School")'>Rough Print</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn" href='@Url.Action("ViewInfrasturePerforma", "School")'>Final Print</a>
+                                        }
+                                        @*<input id="btnPrint" type="submit" name="btnPrint" value="Print" class="btn" />*@
+
+
+
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p class="kdsfont" style="color:red; float:left;">
+                        Last Date is over for fill this form. Kindly contact with Conduct branch, Head Office, PSEB, Mohali
+                    </p>
+                    <p style="float:right">Last Date : <span>@ViewData["lastDate"].ToString()</span></p>
+                    <p style="clear:both;"></p>
+                </div>
+
+            </div>
+            <div class="clearfix"></div>
+        }
+    }
+
+}
+
+
+
+<script type="text/javascript">
+    var Bank;
+    var BankBranch;
+    function IFSCCodeAvailability(id) { //This function call on text change.
+
+        IFSC = "IFSC" + id;
+        Bank = "Bank" + id;
+        BankBranch = "BankBranch" + id;
+
+        $('#loading1').html("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+        $.ajax({
+            type: "POST",
+            url: "../SchoolProfile/GetBankDetailsByIFSC", // this for calling the web method function in cs code.
+            data: '{IFSC: "' + $("#" + IFSC).val() + '" }',// user name or email value
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccess,
+            failure: function (response) {
+                // alert(response);
+            }
+        });
+    }
+    function OnSuccess(response, id) {
+
+        $('#loading1').empty();
+        switch (response.oid) {
+            case "0":
+                alert("IFSC Code not found.");
+                $("#" + BankBranch).val('');
+                $("#" + IFSC).val('');
+                break;
+            case "1":
+                $("#" + BankBranch).val("Bank: " + response.bank + " ,Branch: " + response.br + " ,Dist: " + response.dist);
+                if ($("#" + Bank).val() != response.bank) {
+                    alert("IFSC is not related to selected Bank");
+                    $("#" + BankBranch).val('');
+                    $("#" + IFSC).val('');
+                }
+                break;
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }</script>

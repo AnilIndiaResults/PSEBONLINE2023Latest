@@ -1,0 +1,854 @@
+﻿@model PSEBONLINE.Models.Challan
+@{
+    ViewBag.Title = "ChallanDetails";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+@using (Html.BeginForm("ChallanDetails", "Challan", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    int j = 0;
+    <h1>
+        View All Challan Details
+    </h1>
+    <input type="text" id="chkme" style="display:none;" value="@ViewBag.dee" name="chkme" />
+
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Select Bank
+                    @Html.DropDownList("BankName", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+                </div>
+                <div class="col-md-3">
+                    Select Fee Category
+                    @Html.DropDownList("feecat1", new SelectList(ViewBag.feecat, "Value", "Text", ViewBag.feecatselect), "--All---")
+                </div>
+                <div class="col-md-2">
+                    Select Action
+                    @Html.DropDownList("srhfld", new SelectList(ViewBag.MySch1, "Value", "Text", ViewBag.srhfld), "--All---")
+                </div>
+                <div class="col-md-3">
+                    <br />
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" />
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="Submit" value="Search" name="cmd" /> <input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" />
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-md-12">Grid Total:  @ViewBag.TotalCount1</div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    
+                        <tr class="active-tr">
+                            <th>S.No</th>
+                            <th>BANK</th>
+                            <th>CHALLAN ID</th>
+                            <th>CHLNDATE</th>
+                            <th>FEECAT</th>
+                            <th>Appno/RefNo</th>
+                            <th>SCHLREGID</th>
+                            <th>(FEE+L.Fee+LS.Fine)=Tot</th>
+                            <th>Download</th>
+                            <th>VERIFY</th>
+                            <th>Refund Details</th>
+                            <th>ACTIONS</th>
+
+                        </tr>
+                   
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 20 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                j = d;
+                                var IsCancel = Model.StoreAllData.Tables[0].Rows[i]["IsCancel"].ToString();
+                                var bcode = Model.StoreAllData.Tables[0].Rows[i]["bcode"].ToString();
+                                var bank = Model.StoreAllData.Tables[0].Rows[i]["Bank"].ToString();
+                                var appno = Model.StoreAllData.Tables[0].Rows[i]["appno"].ToString();
+                                var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                                var CHLNDATE = Model.StoreAllData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                                var FEECAT = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                                var FEECODE = Model.StoreAllData.Tables[0].Rows[i]["FEECODE"].ToString();
+                                var SCHLREGID = Model.StoreAllData.Tables[0].Rows[i]["SCHLREGID"].ToString();
+                                var FEE = Model.StoreAllData.Tables[0].Rows[i]["FEE"].ToString();
+                                var LateFee = Model.StoreAllData.Tables[0].Rows[i]["LateFee"].ToString();
+                                var LumsumFine = Model.StoreAllData.Tables[0].Rows[i]["LumsumFine"].ToString();
+                                var TotFee = Model.StoreAllData.Tables[0].Rows[i]["TotFee"].ToString();
+                                var DOWNLDFLG = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDFLG"].ToString();
+                                var DOWNLDDATE = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDDATE"].ToString();
+                                var VERIFIED = Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString();
+
+                                if (VERIFIED == "1")
+                                {
+                                    VERIFIED = "Verified";
+                                }
+                                else
+                                {
+                                    VERIFIED = "Not Verified";
+                                }
+                                if (DOWNLDFLG == "1")
+                                {
+                                    DOWNLDFLG = "DOWNLOADED ";
+                                }
+                                else
+                                {
+                                    DOWNLDFLG = "Not Downloaded";
+                                }
+
+                                var SettlementDate = Model.StoreAllData.Tables[0].Rows[i]["SettlementDate"].ToString();
+                                var RefundStatus = Model.StoreAllData.Tables[0].Rows[i]["RefundStatus"].ToString();
+                                var RefundRefno = Model.StoreAllData.Tables[0].Rows[i]["RefundRefno"].ToString();
+                                var RefundDate = Model.StoreAllData.Tables[0].Rows[i]["RefundDate"].ToString();
+                                var ReChallanFlag = Model.StoreAllData.Tables[0].Rows[i]["ReChallanFlag"].ToString();
+                                var ActionRemarks = Model.StoreAllData.Tables[0].Rows[i]["ActionRemarks"].ToString();
+
+
+                                Count = Count + 1;
+                                <tr>
+                                    <td>@Count</td>
+                                    <td>@bank</td>
+                                    <td>
+                                        <span style="@(ViewBag.IsPrint > 0 ? "display:block" : "display:none")">
+                                            @if (IsCancel == "0")
+                                            {
+                                                <a href="~/Home/GenerateChallaan?ChallanId=@challanid" title="Click Here to Print Challan" target="_blank">@challanid</a>
+                                            }
+                                            else
+                                            { @challanid}
+                                        </span>
+
+
+                                    </td>
+                                    <td>@CHLNDATE</td>
+                                    <td>@FEECAT</td>
+                                    <td>@appno</td>
+                                    <td>@SCHLREGID</td>
+                                    <td>(@FEE+@LateFee+@LumsumFine)=@TotFee</td>
+                                    <td>
+                                        @DOWNLDDATE
+                                        @if (RefundStatus == "1")
+                                        {
+                                            <span class="rqf">REFUNDED<br />@RefundRefno [@RefundDate]</span>
+                                        }
+                                        else if (ReChallanFlag == "1")
+                                        {
+                                            <span class="rqf">Re-Generated</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @VERIFIED
+                                        @if (IsCancel == "1")
+                                        {
+                                            <span class="rqf">CANCELLED.</span>
+                                        }
+                                        @if (@Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "0" && FEECODE == "20" && FEE == "0" && IsCancel != "1")
+                                        {
+                                            <br /> <a data-toggle="modal" data-target="#myModal3-@d">CANCEL CHALLAN (M1 & T1) </a>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "2" && !string.IsNullOrEmpty(RefundStatus))
+                                        {
+                                            <span class="rqf">@RefundRefno<br />@RefundDate</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="cart">
+                                            Choose Action <span class="caret"></span>
+                                            <div id="sidebar">
+                                                @if (Session["AdminType"].ToString().ToUpper() == "CALLCENTER")
+                                                {
+                                                    <ul>
+                                                        <li style="@(ViewBag.IsView > 0 ? "display:block" : "display:none")">
+                                                            <a data-toggle="modal" data-target="#myModal-@d">VIEW DETAILS</a>
+                                                        </li>
+
+                                                    </ul>
+
+                                                }
+                                                else
+                                                {
+                                                    <ul>
+                                                        <li style="@(ViewBag.IsView > 0 ? "display:block" : "display:none")">
+                                                            <a data-toggle="modal" data-target="#myModal-@d">VIEW DETAILS</a>
+                                                            @if (@Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "0" && IsCancel == "0")
+                                                            {
+                                                                @Html.ActionLink("Enter Fee Deposit Details", "FeeDepositDetails", "Home", new { id = @challanid }, "")
+                                                            }
+                                                        </li>
+                                                        <li style="@(ViewBag.IsRegenerate > 0 ? "display:block" : "display:none")">
+                                                            @if (@Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "0" && IsCancel == "0")
+                                                            {
+                                                                if (FEECODE != "40")
+                                                                {
+                                                                    <a data-toggle="modal" data-target="#myModal1-@d">RE-GENERATE CHALLAN</a>
+                                                                }
+                                                            }
+                                                        </li>
+                                                        <li style="@(ViewBag.IsCancel > 0 ? "display:block" : "display:none")">
+                                                            @if (@Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "0" && IsCancel == "0")
+                                                            {
+                                                                <a data-toggle="modal" data-target="#myModal2-@d">CANCEL CHALLAN</a>
+                                                            }
+                                                        </li>
+                                                        @if (bcode == "301" || bcode == "302")
+                                                        {
+                                                            if (@Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "1" && IsCancel == "0")
+                                                            {
+                                                                <a data-toggle="modal" data-target="#myModalRefund-@d">REFUND CHALLAN</a>
+                                                            }
+                                                            else if (@Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "0" && IsCancel == "1" && ReChallanFlag == "0")
+                                                            {
+                                                                if (FEECODE != "40")
+                                                                {
+                                                                    <a data-toggle="modal" data-target="#myModal1-@d">RE-GENERATE CHALLAN</a>
+                                                                }
+
+
+                                                            }
+                                                        }
+
+                                                    </ul>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="11">
+
+                                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                                            &nbsp;
+
+                                            @if (ViewBag.pagesize == 1)
+
+                                            {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "ChallanDetails", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "ChallanDetails", new { page = ViewBag.pn })
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (TempData["search"] != null)
+                                                {
+                                                    string str1 = TempData.Peek("search").ToString();
+                                                    string str2 = TempData.Peek("SelList").ToString();
+                                                    string str3 = TempData.Peek("SearchString").ToString();
+                                                    TempData["search"] = str1;
+                                                    TempData["SelList"] = str2;
+                                                    TempData["SearchString"] = str3;
+                                                }
+                                                @Html.ActionLink("<<", "ChallanDetails", new { page = 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink("< Prev", "ChallanDetails", new { page = ViewBag.pagesize - 1 })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "ChallanDetails", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "ChallanDetails", new { page = ViewBag.pn })
+                                                }
+
+                                            }
+
+
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="11">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </table>
+                <p>Total Records(Filtered): @ViewBag.TotalCount1</p>
+            </div>
+        </div>
+    </div>
+
+    if (Model != null && ViewBag.TotalCount > 0)
+    {
+        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+        {
+            var mobile = Model.StoreAllData.Tables[0].Rows[i]["mobile"].ToString();
+            var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+            var SCHLREGID = Model.StoreAllData.Tables[0].Rows[i]["SCHLREGID"].ToString();
+            var J_REF_NO = Model.StoreAllData.Tables[0].Rows[i]["J_REF_NO"].ToString();
+            var APPNO = Model.StoreAllData.Tables[0].Rows[i]["APPNO"].ToString();
+            var SCHLCANDNM = Model.StoreAllData.Tables[0].Rows[i]["SCHLCANDNM"].ToString();
+            var CHLNDATE = Model.StoreAllData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+            var CHLNVDATE = Model.StoreAllData.Tables[0].Rows[i]["CHLNVDATE"].ToString();
+            var type = Model.StoreAllData.Tables[0].Rows[i]["type"].ToString();
+            var BANK = Model.StoreAllData.Tables[0].Rows[i]["BANK"].ToString();
+            var ACNO = Model.StoreAllData.Tables[0].Rows[i]["ACNO"].ToString();
+            var FEE = Model.StoreAllData.Tables[0].Rows[i]["FEE"].ToString();
+            var LATEFEE = Model.StoreAllData.Tables[0].Rows[i]["latefee"].ToString();
+            var TOTFEE = Model.StoreAllData.Tables[0].Rows[i]["TOTFEE"].ToString();
+            var BRANCH = Model.StoreAllData.Tables[0].Rows[i]["BRANCH"].ToString();
+            var DEPOSITDT = Model.StoreAllData.Tables[0].Rows[i]["DEPOSITDT"].ToString();
+            var DOWNLDFLG = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDFLG"].ToString();
+            var DOWNLDFLOT = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDFLOT"].ToString();
+            var DOWNLDDATE = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDDATE"].ToString();
+            var LOT = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+            var VERIFIED = Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString();
+            var VERIFYDATE = Model.StoreAllData.Tables[0].Rows[i]["VERIFYDATE"].ToString();
+
+            var FEECODE = Model.StoreAllData.Tables[0].Rows[i]["FEECODE"].ToString();
+            var FEECAT = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+            var OpenExamFee = Model.StoreAllData.Tables[0].Rows[i]["OpenExamFee"].ToString();
+            var OpenLateFee = Model.StoreAllData.Tables[0].Rows[i]["OpenLateFee"].ToString();
+            var OpenTotalFee = Model.StoreAllData.Tables[0].Rows[i]["OpenTotalFee"].ToString();
+
+            var ActionRemarks = Model.StoreAllData.Tables[0].Rows[i]["ActionRemarks"].ToString();
+            var LumsumFine = Model.StoreAllData.Tables[0].Rows[i]["LumsumFine"].ToString();
+            var LSFRemarks = Model.StoreAllData.Tables[0].Rows[i]["LSFRemarks"].ToString();
+
+
+            if (VERIFIED == "1")
+            {
+                VERIFIED = "Challan Verified-" + VERIFYDATE + " in " + BRANCH;
+            }
+            else
+            {
+                VERIFIED = "Not Yet";
+            }
+            if (DOWNLDFLG == "1")
+            {
+                DOWNLDFLG = "Challan Downloaded-" + DOWNLDDATE + " in LOT " + DOWNLDFLOT;
+            }
+            else
+            {
+                DOWNLDFLG = "Not Yet";
+            }
+
+            var RefundStatus = Model.StoreAllData.Tables[0].Rows[i]["RefundStatus"].ToString();
+            var RefundRefno = Model.StoreAllData.Tables[0].Rows[i]["RefundRefno"].ToString();
+            var RefundDate = Model.StoreAllData.Tables[0].Rows[i]["RefundDate"].ToString();
+            var VerifyRemarks = Model.StoreAllData.Tables[0].Rows[i]["VerifyRemarks"].ToString();
+            var CancelRemarks = Model.StoreAllData.Tables[0].Rows[i]["CancelRemarks"].ToString();
+
+            int k = i + 1;
+            <div class="container">
+                <!-- Trigger the modal with a button -->
+                <!-- Modal -->
+                <div class="modal fade" id="myModal-@k" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3>Challan Details of @challanid</h3>
+                            </div>
+                            <div class="modal-body">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="30%"><b class="rqf">Challan ID</b></td>
+                                        <td>@challanid</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("SchlRegId")</td>
+                                        <td>@SCHLREGID</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("App No/Ref No")</td>
+                                        <td>@APPNO</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("SCHL/Candidate Name")</td>
+                                        <td>@SCHLCANDNM</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Fee code & Fee Cat")</td>
+                                        <td>@FEECODE , @FEECAT</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Mobile")</td>
+                                        <td>@mobile</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Challan Date")</td>
+                                        <td>@CHLNDATE</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Challan Valid Date")</td>
+                                        <td>@CHLNVDATE</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Fee Type")</td>
+                                        <td>@type</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Bank")</td>
+                                        <td>@BANK@Html.Raw("(Acc No.")@ACNO</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Fee")</td>
+                                        <td>@FEE</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Late Fee")</td>
+                                        <td>@LATEFEE</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b class="text-danger">@Html.Raw("Lumsum Fine")</b></td>
+                                        <td>@LumsumFine</td>
+                                    </tr>
+                                    @if (FEECODE == "40")
+                                    {
+                                        <tr>
+                                            <td><b class="rqf">@Html.Raw("Open Exam + Late = Total Fee")</b></td>
+                                            <td>@OpenExamFee @Html.Raw(" + ") @OpenLateFee  @Html.Raw(" = ") @OpenTotalFee</td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td><b class="rqf">@Html.Raw("Total Fee")</b></td>
+                                        <td>@TOTFEE</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Journal No.")</td>
+                                        <td>@J_REF_NO</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Branch")</td>
+                                        <td>@BRANCH</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Challan Deposit Date")</td>
+                                        <td>@DEPOSITDT</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Challan Download Status")</td>
+                                        <td>@DOWNLDFLG</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b class="rqf">@Html.Raw("Challan Verify Status")</b></td>
+                                        <td>@VERIFIED</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Raw("Remarks")</td>
+                                        <td>@ActionRemarks @Html.Raw(" ") @LSFRemarks</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b class="rqf">Verified Remarks</b></td>
+                                        <td>@VerifyRemarks</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b class="rqf">Cancel Remarks</b></td>
+                                        <td>@CancelRemarks</td>
+                                    </tr>
+                                    @if (RefundStatus == "1")
+                                    {
+                                        <tr>
+                                            <td><b class="rqf">Refund Details</b></td>
+                                            <td>@RefundRefno @Html.Raw("[") @RefundDate  @Html.Raw("]") </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal fade" id="myModal1-@k" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3>Regenearate Challan Details</h3>
+                            </div>
+                            <div class="modal-body">
+                                Bank <label>PSEB HOD</label><br />
+                                Generate Date: <input type="text" id="challandate-@k" name="challandate" class="challandate" onkeypress="return false;" />
+                                Valid Date: <input type="text" id="challandateV-@k" name="challandateV" class="challandate" onkeypress="return false;" />
+                                Lumsum Fine: <input type="text" id="lumsumfine-@k" name="lumsumfine" maxlength="7" onkeypress="return isNumberKey(event)" />
+                                Lumsum Remarks: <br /><textarea id="lumsumremarks-@k" name="lumsumremarks"></textarea>    <br />
+                                <input type="button" class="btn" value="Submit" id="btnsubmitRegenate" onclick="regenerateMe(@k,@challanid,@FEE,'@SCHLREGID')" />
+                                <div id="loading1"></div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal fade" id="myModal2-@k" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3>Cancel Challan of @challanid </h3>
+                            </div>
+                            <div class="modal-body">
+                                Cancel Remarks <textarea id="cancelremarks-@k" name="cancelremarks"></textarea>
+                                <input type="button" class="btn" value="Submit" id="btnsubmitCancel" onclick="cancelMe(@k,@challanid)" />
+                                <div id="loading1"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal fade" id="myModal3-@k" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3>Cancel Challan of (M1 & T1) :  @challanid </h3>
+                            </div>
+                            <div class="modal-body">
+                                Cancel Remarks <textarea id="cancelremarksM1-@k" name="cancelremarksM1"></textarea>
+                                <input type="button" class="btn" value="Submit" id="btnsubmitCancel" onclick="cancelMeM1(@k,@challanid)" />
+                                <div id="loading1"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="myModalRefund-@k" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3>Refund  of Challan : @challanid </h3>
+                            </div>
+                            <div class="modal-body">
+                                Refund Ref No. <input type="text" id="RefundRefno-@k" name="RefundRefno" />
+                                Refund Date <input type="text" id="RefundDate-@k" class="challandate" onkeypress="return false;" name="RefundDate" />
+                                Refund Remarks <textarea id="RefundRemarks-@k" name="RefundRemarks"></textarea>
+                                <input type="button" class="btn" value="Submit" id="btnsubmitRefund" onclick="RefundMe(@k,@challanid)" />
+                                <div id="loading1"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+
+<script type="text/javascript">
+    function isNumberKey(evt) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function valForm() {
+        alert("Will be Available Soon..");
+        return false;
+    }
+</script>
+<script type="text/javascript">
+    //cancelMeM1
+    function cancelMeM1(k, challanid) {
+        var flag = 0;
+        if ($("#cancelremarksM1-" + k).val() == "") {
+            $("#cancelremarksM1-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Challan/ChallanDetailsCancel", // this for calling the web method function in cs code.
+                data: '{cancelremarks: "' + $("#cancelremarks-" + k).val() + '",challanid: "' + challanid + '", "Type": 2}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        //  alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        alert("Challan Cancel Successfully of M1 and T1");
+                        $('#myModal3-' + Id).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else if (response.sn == "2") {
+                        //  alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        alert("Challan Failure...Student exists in Examination Form");
+                        $('#myModal3-' + Id).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else {
+                        $('#loading1').empty();
+                        alert("Challan Not Found/Expired.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+
+    //Cancel
+    function cancelMe(k, challanid) {
+       // alert(challanid);
+       // alert($("#cancelremarks-" + k).val());
+        var flag = 0;
+        if ($("#cancelremarks-" + k).val() == "") {
+            $("#cancelremarks-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Challan/ChallanDetailsCancel", // this for calling the web method function in cs code.
+                data: '{cancelremarks: "' + $("#cancelremarks-" + k).val() + '",challanid: "' + challanid + '", "Type": 1}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        //  alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        alert("Challan Cancel Successfully");
+                        $('#myModal2-' + Id).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else if (response.sn == "2") {
+                        //  alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        alert("Challan Failure...Student exists in Examination Form");
+                        $('#myModal2-' + Id).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else {
+                        $('#loading1').empty();
+                        alert("Challan Not Found/Expired.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+
+    //Cancel
+    function RefundMe(k, challanid) {
+        // alert(challanid);
+        // alert($("#cancelremarks-" + k).val());
+        var flag = 0;
+        if ($("#RefundRefno-" + k).val() == "") {
+            $("#RefundRefno-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#RefundDate-" + k).val() == "") {
+            $("#RefundDate-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#RefundRemarks-" + k).val() == "") {
+            $("#RefundRemarks-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Challan/ChallanDetailsRefund", // this for calling the web method function in cs code.
+                data: '{RefundRefno: "' + $("#RefundRefno-" + k).val() + '",RefundDate: "' + $("#RefundDate-" + k).val() + '",RefundRemarks: "' + $("#RefundRemarks-" + k).val() + '",challanid: "' + challanid + '", "Type": 1}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        alert("Refund  Successfully");
+                        $('#myModalRefund-' + Id).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else if (response.sn == "2") {
+                        alert("Refund Failure...Student exists in Examination Form");
+                        $('#myModalRefund-' + Id).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else {
+                        $('#loading1').empty();
+                        alert("Refund Failure");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+
+
+
+    // Re-Generate
+    function regenerateMe(k,challanid,fee,schl) {
+       // alert(challanid);
+    //alert($("#challandate-" + k).val());
+        //alert($("#lumsumremarks-" + k).val());
+        var flag = 0;
+        if ($("#challandate-" + k).val() == "") {
+            $("#challandate-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#challandateV-" + k).val() == "") {
+            $("#challandateV-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if($("#lumsumfine-" + k).val()=="")
+        {
+            $("#lumsumfine-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#lumsumremarks-" + k).val() == "") {
+            $("#lumsumremarks-" + k).addClass("input-validation-error");
+            flag = 1;
+        }
+        if(flag==1)
+        {
+            return false;
+        }
+        else
+        {
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "../Challan/ChallanDetailsRegerate", // this for calling the web method function in cs code.
+                data: '{lumsumfine: "' + $("#lumsumfine-" + k).val() + '",lumsumremarks: "' + $("#lumsumremarks-" + k).val() + '",challanid: "' + challanid + '",gdate:"' + $("#challandate-" + k).val() + '",schl:"' + schl + '",vdate:"' + $("#challandateV-" + k).val() + '"}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn=="Yes" )
+                    {
+                        alert("Challan Regenerated Successfully & Your Challan ID is " + response.chid);
+                        window.location.href = "/Challan/ChallanDetails";
+                        $(".modal").hide();
+                        $('#loading1').empty();
+                         window.open("/Home/GenerateChallaan?ChallanId=" + response.chid, "_blank");
+                    }
+                    else if (response.sn == "date")
+                    {
+                        $('#loading1').empty();
+                        alert("Please Select Valid Date Must be Greater than Generate Date");
+                    }
+                    else
+                    {
+                        $('#loading1').empty();
+                        alert("Challan Not Found/Expired.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+    $(function () {
+        //var deedate1 = '@ViewBag.date';
+      //alert(deedate1);
+
+        $(".challandate").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2016:' + (new Date().getFullYear())
+
+        });
+        //$("#btnsubmitRegenate").click(function () {
+        //    return false;
+        //});
+
+    });
+</script>
+
+

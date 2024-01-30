@@ -1,0 +1,498 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "CutList";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4LC.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<h1 class="noprint">Cut List Print Report</h1>
+@*@if (Session["Schl"] != null)
+    { }
+    else
+    {
+        Response.Redirect("~/Login");
+    }*@
+<style type="text/css">
+    body {
+        font-size: 9px;
+    }
+
+    td {
+        font-weight: normal !important;
+        font-size: 9px;
+        line-height: 15px
+    }
+</style>
+
+<div class="row">
+    @using (Html.BeginForm("CutList_Schl_Admin", "School", FormMethod.Post, new { id = "searchform" }))
+    {
+        <div class="col-md-12 noprint">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-1">
+                    Total Count
+                    <label>@ViewBag.TotalCount</label>
+                    @Html.Hidden("hdnFlag", null, new { @id = "hdnFlag" })
+                </div>
+                <div class="col-md-1">
+                    Select Set
+                    @Html.DropDownList("SelSet", new SelectList(ViewBag.MySelSet, "Value", "Text"), "--Select---", new { @class = "" })
+                </div>
+                <div class="col-md-2">
+                    Select Group
+                    @{
+                        List<SelectListItem> EXAM = new List<SelectListItem>();
+                        if (ViewBag.CutlistClass == "M" || ViewBag.CutlistClass == "ME")
+                        {
+                            EXAM.Add(new SelectListItem { Text = "Select", Value = "0" });
+                            EXAM.Add(new SelectListItem { Text = "GENERAL", Value = "G" });
+                            EXAM.Add(new SelectListItem { Text = "NSQF", Value = "V" });
+                        }
+                        else if (ViewBag.CutlistClass == "MO" || ViewBag.CutlistClass == "MOE")
+                        {
+                            EXAM.Add(new SelectListItem { Text = "Select", Value = "0" });
+                            EXAM.Add(new SelectListItem { Text = "GENERAL", Value = "G" });
+                        }
+                        else if (ViewBag.CutlistClass == "S" || ViewBag.CutlistClass == "SE")
+                        {
+                            EXAM.Add(new SelectListItem { Text = "Select", Value = "0" });
+                            EXAM.Add(new SelectListItem { Text = "AGRICULTURE", Value = "A" });
+                            EXAM.Add(new SelectListItem { Text = "COMMERCE", Value = "C" });
+                            EXAM.Add(new SelectListItem { Text = "HUMANITIES", Value = "H" });
+                            EXAM.Add(new SelectListItem { Text = "SCIENCE", Value = "S" });
+                            EXAM.Add(new SelectListItem { Text = "TECHNICAL", Value = "T" });
+                            EXAM.Add(new SelectListItem { Text = "VOCATIONAL", Value = "V" });
+                        }
+                        else if (ViewBag.CutlistClass == "SO" || ViewBag.CutlistClass == "SOE")
+                        {
+                            EXAM.Add(new SelectListItem { Text = "Select", Value = "0" });
+                            EXAM.Add(new SelectListItem { Text = "HUMANITIES", Value = "H" });
+                            EXAM.Add(new SelectListItem { Text = "COMMERCE", Value = "C" });
+                            EXAM.Add(new SelectListItem { Text = "SCIENCE", Value = "S" });
+                            EXAM.Add(new SelectListItem { Text = "MIX GROUP", Value = "IG" });
+                        }
+                    }
+                    @Html.DropDownList("EXAM", EXAM, new { id = "EXAM" })
+                </div>
+                <div class="col-md-2">
+                    Enter School Code. &nbsp;
+                    @Html.TextBoxFor(m => m.SCHL, new { id = "SCHL", @maxlength = "7", })
+                </div>
+                <div class="col-md-2">
+                    Select Centre
+                    @Html.DropDownList("ExamCent", new SelectList(ViewBag.Ecent, "Value", "Text"), "--Select Centre---", new { @class = "" })
+                </div>
+                <div class="col-md-2">
+                    Select Search By String
+                    @{
+                        List<SelectListItem> SelList = new List<SelectListItem>();
+                        SelList.Add(new SelectListItem { Text = "---- ALL ---", Value = "0" });
+                        SelList.Add(new SelectListItem { Text = "std_id", Value = "1" });
+                        SelList.Add(new SelectListItem { Text = "Candi_Name", Value = "2" });
+                        SelList.Add(new SelectListItem { Text = "Father_Name", Value = "3" });
+                        SelList.Add(new SelectListItem { Text = "Mother_Name", Value = "4" });
+                        SelList.Add(new SelectListItem { Text = "Registration_Num", Value = "5" });
+                    }
+                    @Html.DropDownList("SelList", SelList, new { id = "SelList" })
+                </div>
+                <div class="col-md-2">
+                    Enter Search Text. &nbsp;
+                    @Html.TextBoxFor(m => m.SearchByString, new { id = "SearchByString", @maxlength = "30", })
+                </div>
+                <div class="col-md-1">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm1();" title="Search Record" /></div>
+                <div class="clearfix"></div>
+                <div class="col-md-12"><span class="rqf" style="color:firebrick">Note : For More Search Kindly Enter Search String . </span></div>
+            </fieldset>
+
+        </div>
+    }
+    <div class="col-md-12 text-right noprint">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        @*  <input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+        <a href="/school/SchoolCutListAdmin" class="btn">Back</a>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <table width="100%" border="1">
+            @{
+                if (ViewBag.TotalCount > 0)
+                {
+                    var SCHLE = Model.StoreAllData.Tables[0].Rows[0]["SCHLE"].ToString();
+                    var SCHLP = Model.StoreAllData.Tables[0].Rows[0]["SCHLP"].ToString();
+                    var SCHL = Model.StoreAllData.Tables[0].Rows[0]["SCHL"].ToString();
+                    var SET1 = ""; //Model.StoreAllData.Tables[0].Rows[0]["SET"].ToString();
+                    var dist = Model.StoreAllData.Tables[0].Rows[0]["dist"].ToString();
+                    var distnm = Model.StoreAllData.Tables[0].Rows[0]["distnm"].ToString();
+                    var SCHLTYPE = Model.StoreAllData.Tables[0].Rows[0]["SCHLTYPE"].ToString();
+                    var Group_Name1 = ""; //Model.StoreAllData.Tables[0].Rows[0]["Group_Name"].ToString();
+                    var form_name1 = "";// Model.StoreAllData.Tables[0].Rows[0]["form_name"].ToString();
+                    var Class1 = "";// Model.StoreAllData.Tables[0].Rows[0]["class"].ToString();
+                    var Cent1 = "";// Model.StoreAllData.Tables[0].Rows[0]["Cent"].ToString();
+                    var centE1 = "";// Model.StoreAllData.Tables[0].Rows[0]["centE"].ToString();
+                    var centP1 = "";// Model.StoreAllData.Tables[0].Rows[0]["centP"].ToString();
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        //var id = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                        var candphoto = "https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/upload2018/" + Model.StoreAllData.Tables[0].Rows[i]["candphoto"].ToString();
+                        var candsign = "https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/upload2018/" + Model.StoreAllData.Tables[0].Rows[i]["candsign"].ToString();
+                        if (candphoto.Contains("OPEN"))
+                        {
+                            candphoto = candphoto.Replace("/upload2017", "");
+                        }
+                        else if (Model.StoreAllData.Tables[0].Rows[i]["candphoto"].ToString().Contains("Correction1718"))
+                        {
+                            candphoto = "https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/" + Model.StoreAllData.Tables[0].Rows[i]["candphoto"].ToString();
+                        }
+                        if (candsign.Contains("OPEN"))
+                        {
+                            candsign = candsign.Replace("/upload2017", "");
+                        }
+                        else if (Model.StoreAllData.Tables[0].Rows[i]["candsign"].ToString().Contains("Correction1718"))
+                        {
+                            candsign = "https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/" + Model.StoreAllData.Tables[0].Rows[i]["candsign"].ToString();
+                        }
+                        var std_id = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                        var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                        var form_Name = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                        var regno = Model.StoreAllData.Tables[0].Rows[i]["regno"].ToString();
+                        var formno = Model.StoreAllData.Tables[0].Rows[i]["formno"].ToString();
+                        var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                        var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                        var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                        var Candi_Name_P = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name_P"].ToString();
+                        var Father_Name_P = Model.StoreAllData.Tables[0].Rows[i]["Father_Name_P"].ToString();
+                        var Mother_Name_P = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name_P"].ToString();
+                        var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                        var Category = Model.StoreAllData.Tables[0].Rows[i]["Category"].ToString();
+                        var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                        var Caste = Model.StoreAllData.Tables[0].Rows[i]["Caste"].ToString();
+                        var Differently_Abled = Model.StoreAllData.Tables[0].Rows[i]["Differently_Abled"].ToString();
+                        var wantwriter = Model.StoreAllData.Tables[0].Rows[i]["wantwriter"].ToString();
+                        var Religion = Model.StoreAllData.Tables[0].Rows[i]["Religion"].ToString();
+
+                        var Month = Model.StoreAllData.Tables[0].Rows[i]["month"].ToString();
+                        var Year = Model.StoreAllData.Tables[0].Rows[i]["year"].ToString();
+                        var Aadhar_num = Model.StoreAllData.Tables[0].Rows[i]["Aadhar_num"].ToString();
+                        var E_punjab_Std_id = Model.StoreAllData.Tables[0].Rows[i]["E_punjab_Std_id"].ToString();
+                        var Belongs_BPL = Model.StoreAllData.Tables[0].Rows[i]["Belongs_BPL"].ToString();
+                        var aashirwardnumber = Model.StoreAllData.Tables[0].Rows[i]["aashirwardnumber"].ToString();
+
+                        var SET = Model.StoreAllData.Tables[0].Rows[0]["SET"].ToString();
+                        //var SCHLP = Model.StoreAllData.Tables[0].Rows[i]["SCHLP"].ToString();
+                        //var SCHLE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                        var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                        var DISTP = Model.StoreAllData.Tables[0].Rows[i]["DISTP"].ToString();
+                        var Group_Name = Model.StoreAllData.Tables[0].Rows[i]["Group_Name"].ToString();
+                        var SubjectList = Model.StoreAllData.Tables[0].Rows[i]["SubjectList"].ToString();
+                        var add_sub_count = Model.StoreAllData.Tables[0].Rows[i]["add_sub_count"].ToString();
+                        var prac_sub_count = Model.StoreAllData.Tables[0].Rows[i]["prac_sub_count"].ToString();
+
+                        var OBOARD = Model.StoreAllData.Tables[0].Rows[i]["OBOARD"].ToString();
+                        var OROLL = Model.StoreAllData.Tables[0].Rows[i]["OROLL"].ToString();
+
+
+                        var Prev_School_Name = Model.StoreAllData.Tables[0].Rows[i]["Prev_School_Name"].ToString();
+                        var MatricBoard = Model.StoreAllData.Tables[0].Rows[i]["MatricBoard"].ToString();
+                        var MetricRollNum = Model.StoreAllData.Tables[0].Rows[i]["MetricRollNum"].ToString();
+                        var MetricMonth = Model.StoreAllData.Tables[0].Rows[i]["MetricMonth"].ToString();
+                        var MetricYear = Model.StoreAllData.Tables[0].Rows[i]["MetricYear"].ToString();
+                        var MatricResult = Model.StoreAllData.Tables[0].Rows[i]["MatricResult"].ToString();
+                        var Section = Model.StoreAllData.Tables[0].Rows[i]["section"].ToString();
+                        var Class_Roll_Num_Section = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+
+
+                        var BANK = Model.StoreAllData.Tables[0].Rows[i]["BANK"].ToString();
+                        var BRANCH = Model.StoreAllData.Tables[0].Rows[i]["BRANCH"].ToString();
+                        var Challanid = Model.StoreAllData.Tables[0].Rows[i]["Challanid"].ToString();
+                        var TotFee = Model.StoreAllData.Tables[0].Rows[i]["TotFee"].ToString();
+                        var J_REF_NO = Model.StoreAllData.Tables[0].Rows[i]["J_REF_NO"].ToString();
+                        var DEPOSITDT = Model.StoreAllData.Tables[0].Rows[i]["DEPOSITDT"].ToString();
+                        var FEE = Model.StoreAllData.Tables[0].Rows[i]["FEE"].ToString();
+
+                        var NSQF_SUB = Model.StoreAllData.Tables[0].Rows[i]["NSQF_SUB"].ToString();
+                        var IsNSQF = Model.StoreAllData.Tables[0].Rows[i]["IsNSQF"].ToString();
+                        var CandStudyMedium = Model.StoreAllData.Tables[0].Rows[i]["CandStudyMedium"].ToString();
+                        var FeeExmpt = Model.StoreAllData.Tables[0].Rows[i]["FeeExmpt"].ToString();
+                        var Admission_Date = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                        var Cent = Model.StoreAllData.Tables[0].Rows[i]["Cent"].ToString();
+                        var centE = Model.StoreAllData.Tables[0].Rows[i]["centE"].ToString();
+                        var centP = Model.StoreAllData.Tables[0].Rows[i]["centP"].ToString();
+                        var Class = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+
+                        var ERRCode = Model.StoreAllData.Tables[0].Rows[i]["ERRCode"].ToString();
+                        var EStatus = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                        var ErrDetails = Model.StoreAllData.Tables[0].Rows[i]["ErrDetails"].ToString();
+
+                        if (Group_Name1 != Group_Name || SET1 != SET)
+                        {
+                            SET1 = SET; Group_Name1 = Group_Name; Class1 = Class; Cent1 = Cent; centE1 = centE; centP1 = centP;
+            <thead>
+                <tr>
+                    <td colspan="12" align="center" class="kdsfont" style="border-left:0 !important;border-right:0 !important;font-size:18px;line-height:16px">
+                        @{
+                            if (Class1 == "2")
+                            {
+
+                                <span style="font-size:22px">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span><br /><span>¨ó¶ ÚÐÓ¶  ÌèÚ¶ñ¨ ÆñÛÚª¤Ø, ÓèÓÖÅ - 2018</span>
+                            }
+                            else
+                            {
+                                <span style="font-size:22px">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span><br /><span>¨ó¶ ÚÐÓ¶ ÓÛÅÛ¤Ï Óè¨â¸ÏÛ ÆñÛÚª¤Ø, ÓèÓÖÅ - 2018</span>
+                            }
+                        }
+                    </td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td colspan="5" style="font-size:14px;">&nbsp;<span class="kdsfont">Ú²Ðãð ÂØ ¨ë¸ ¤¼ã ÅÙ</span> : (@dist) @distnm</td>
+                    <td colspan="3">&nbsp;<span class="kdsfont">¨è¶Ø¬ÏÛ</span> : @SCHLTYPE</td>
+                    <td colspan="3">&nbsp;<span class="kdsfont">¬ÏÝóÆ</span> : @Group_Name1</td>
+                    <td>&nbsp;<span class="kdsfont">Óè¶ Åâ</span> : @SET1</td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td colspan="12" style="line-height:11px;">
+                        &nbsp;<span class="kdsfont">Ó¨ÞÐ ÂØ ¨ë¸ ¤¼ã ÅÙ</span> :  (@SCHL) <span class="kdsfont">@SCHLP</span> / @SCHLE<br />
+                        &nbsp;<span class="kdsfont">ÆñÛÚª¤Ø ¨ã×ÂÏ ÂØ ¨ë¸ ¤¼ã ÅÙ</span> : (@Cent1) <span class="kdsfont">@centP1</span> / @centE1
+                    </td>
+                </tr>
+                @if (ViewBag.CutlistClass.Contains("E")==false)
+                { 
+                <tr style="background-color:#dfdfdf !important">
+                    <td>&nbsp;Std. ID</td>
+                    <td>&nbsp;Roll No.</td>
+                    <td>&nbsp;Form No.</td>
+                    <td>&nbsp;Registration No.</td>
+                    <td>&nbsp;DOB</td>
+                    <td>&nbsp;Category</td>
+                    <td>&nbsp;Caste</td>
+                    <td>&nbsp;Religion</td>
+                    <td>&nbsp;Gender</td>
+                    <td>&nbsp;Differently abled/Writer</td>
+                    <td>&nbsp;BPL</td>
+                    <td rowspan="6">Photo  Sign</td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td colspan="4" rowspan="5">Name/FatherName/MotherName</td>
+                    <td>EP Id</td>
+                    <td colspan="6">Previous Class Board/Session/Roll/School</td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td colspan="5">Subjects</td>
+                    <td colspan="2">Add Sub | Pr Sub</td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td colspan="3">Fee Details : Bank / Challanid / Bank Branch</td>
+                    <td colspan="2">Bank Refno</td>
+                    <td>Fee - Total Amt</td>
+                    <td>Deposit Date</td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td>NSQF Sub</td>
+                    <td>Medium</td>
+                    <td>Fee Exempt</td>
+                    <td colspan="4">Class Roll / Section / Adm Date</td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td>Matric Class Board</td>
+                    <td colspan="4">Matric Roll / Session</td>
+                    <td colspan="2">Matric Result</td>
+                </tr>}
+            </thead>
+                        }
+
+                        if (ViewBag.CutlistClass.Contains("E"))
+                        {
+                            <table class="table table-bordered" id="t01">
+                                <tr class="active-tr">
+                                    <td>&nbsp;Std. ID</td>
+                                    <td>&nbsp;Roll No.</td>
+                                    <td>&nbsp;Form No.</td>
+                                    <td>&nbsp;Registration No.</td>
+                                    <td>&nbsp;DOB</td>
+                                    <td>&nbsp;Category</td>
+                                    <td>&nbsp;Caste</td>
+                                    <td>&nbsp;Religion</td>
+                                    <td>&nbsp;Gender</td>
+                                    <td>&nbsp;Differently abled/Writer</td>
+                                    <td>&nbsp;BPL</td>
+                                    <td>Err Code</td>
+                                <tr>
+                                    <td>&nbsp;@std_id</td>
+                                    <td>&nbsp;@ROLL</td>
+                                    <td>&nbsp;@formno</td>
+                                    <td>&nbsp;@regno</td>
+                                    <td>&nbsp;@DOB</td>
+                                    <td>&nbsp;@Category</td>
+                                    <td>&nbsp;@Caste</td>
+                                    <td>&nbsp;@Religion</td>
+                                    <td>&nbsp;@Gender</td>
+                                    <td>&nbsp;@Differently_Abled / @wantwriter</td>
+                                    <td>&nbsp;@Belongs_BPL</td>
+                                    <td>
+                                        @ERRCode,
+                                    @EStatus,
+                                    @ErrDetails
+                                </td>
+                            </tr>
+                        </table>
+
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>&nbsp;@std_id</td>
+                            <td>&nbsp;@ROLL</td>
+                            <td>&nbsp;@formno</td>
+                            <td>&nbsp;@regno</td>
+                            <td>&nbsp;@DOB</td>
+                            <td>&nbsp;@Category</td>
+                            <td>&nbsp;@Caste</td>
+                            <td>&nbsp;@Religion</td>
+                            <td>&nbsp;@Gender</td>
+                            <td>&nbsp;@Differently_Abled / @wantwriter</td>
+                            <td>&nbsp;@Belongs_BPL</td>
+                            <td rowspan="4" style="text-align:center"><img src="@candphoto" alt="Photo" id="imgPhoto" style="height:68px;width:72px" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" rowspan="5">
+                                @Candi_Name / @Father_Name / @Mother_Name <br />
+                                <span class="kdsfont">@Candi_Name_P</span> / <span class="kdsfont">@Father_Name_P</span> / <span class="kdsfont">@Mother_Name_P</span>
+                            </td>
+                            <td>&nbsp;@E_punjab_Std_id</td>
+                            <td colspan="6">&nbsp;@OBOARD | @Month-@Year | @OROLL | <span style="font-size:8px">@Prev_School_Name</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6">&nbsp;@SubjectList</td>
+                            <td>&nbsp;@add_sub_count | @prac_sub_count</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">&nbsp;@BANK : @Challanid : @BRANCH</td>
+                            <td colspan="2">&nbsp;@J_REF_NO</td>
+                            <td>&nbsp;@TotFee/-  - @FEE.00</td>
+                            <td>&nbsp;@DEPOSITDT</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;@NSQF_SUB</td>
+                            <td>&nbsp;@CandStudyMedium</td>
+                            <td>&nbsp;@FeeExmpt</td>
+                            <td colspan="4">&nbsp;@Class_Roll_Num_Section : @Section : @Admission_Date</td>
+                            <td rowspan="2" style="text-align:center"><img src="@candsign" alt="Sign" id="imgSign" style="height:28px;width:72px" /></td>
+                        </tr>
+
+                        if (Class1 == "2" || Class1 == "10")
+                        {
+                            <tr>
+                                <td colspan="7">&nbsp;</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>&nbsp;@MatricBoard</td>
+                                <td colspan="4">&nbsp;@MetricRollNum : @Month-@Year</td>
+                                <td colspan="2">&nbsp;@MatricResult</td>
+                            </tr>
+                        }
+
+
+                    }
+                }
+            }}
+        </table>
+        <!--RPT-->
+        @*<table width="100%" border="1">
+            <tr>
+                <td>Summary</td>
+                <td colspan="11">
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            for (int j = 0; j < Model.StoreAllData.Tables[1].Rows.Count; j++)
+                            {
+                                var col2 = Model.StoreAllData.Tables[1].Rows[j]["col2"].ToString();
+                                var cnt = Model.StoreAllData.Tables[1].Rows[j]["cnt"].ToString();
+                                <span>@col2 - @cnt &nbsp;&nbsp;</span>
+                            }
+                        }
+                    }
+                </td>
+            </tr>
+        </table>*@
+    </div>
+
+</div>
+
+<script>
+    function valForm1() {
+
+        var cent = document.getElementById("ExamCent");
+        // alert(1);
+        var SelSet = document.getElementById('SelSet').value;
+        // alert('SelSet');
+        var exam = document.getElementById('EXAM').value;
+        // alert('EXAM');
+        var schl = document.getElementById('SCHL').value;
+        // alert('SCHL');
+
+        if (SelSet == '' || SelSet == '0') {
+            alert("Select Set");
+            document.getElementById('SelSet').focus();
+            return false;
+        }
+        if (exam == '' || exam == '0') {
+            alert("Select Group");
+            document.getElementById('exam').focus();
+            return false;
+        }
+        if (exam != '' || exam != '0') {
+            if (cent.value == "") {
+                alert("Please Select 'Select Centre' ");
+                return false;
+            }
+        }
+        if (schl == '' || schl == '0') {
+            alert("Enter School Code");
+            document.getElementById('schl').focus();
+            return false;
+        }
+        return true;
+    }
+</script>
+<script>
+    $(document).ready(function () {
+
+        $('#SCHL').change(function () {
+            var selectedText = { SCHL: $("#SCHL").val() };
+            var selclass = { cls: $("#hdnFlag").val() };
+            // alert(SCHL);
+            // alert(cls);
+            $.ajax({
+                url: '@Url.Action("GetCentreList", "School")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                //data: JSON.stringify(selectedText),
+                //data: "SCHL:" + $("#SCHL").val() + "&cls:" + @ViewBag.CutlistClass,
+                //data: '{"SCHL":' + $("#SCHL").val() + "&cls:" + @ViewBag.CutlistClass'}',
+                data: JSON.stringify({ SCHL: $("#SCHL").val(), cls: $("#hdnFlag").val() }),
+                success: function (result) {
+                    $.each(result, function (i, SecList) {
+                        $("#ExamCent").append('<option value="'
+                           + SecList.Value + '">'
+                           + SecList.Text + '</option>');
+                    });
+                    if (SecList.success) {
+
+                        //document.getElementById("MName").value = data.result;
+                        // $("#TextBoxID").val(data.result.MName);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+
+        });
+    });
+
+</script>

@@ -1,0 +1,788 @@
+﻿@model PSEBONLINE.Models.EAffiliationModel
+
+@{
+    ViewBag.Title = "EAffiliation Registration";
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<style>
+    .row sup {
+        top: 5px;
+        left: 5px;
+    }
+    /*.keyboardInput
+    {
+        color:red !important;
+    }*/
+</style>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="/Scripts/jquery-1.10.2.js"></script>
+<script src="/Scripts/jquery-1.12.4.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="/Scripts/common.js"></script>
+<script src="/Scripts/punjabi.js"></script>
+<script src="/Scripts/keyboard.js"></script>
+<script src="/Scripts/bootstrap.js"></script>
+<script src="/Scripts/respond.js"></script>
+<style type="text/css">
+
+    .btnback {
+        background-color: orangered;
+        -moz-user-select: none;
+        background-image: none;
+        border: 1px solid orangered;
+        border-radius: 4px;
+        color: #fff !important;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857;
+        margin-bottom: 0;
+        padding: 3px 12px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .btngo {
+        background-color: green !important;
+        -moz-user-select: none;
+        background-image: none;
+        border: 1px solid green !important;
+        border-radius: 4px;
+        color: #fff !important;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857;
+        margin-bottom: 0;
+        padding: 3px 12px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    #loading1 {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: 9999;
+        background: url("https://www.creditmutuel.fr/cmne/fr/banques/webservices/nswr/images/loading.gif") no-repeat center center rgba(255,255,255,0.6)
+    }
+
+
+    .tip {
+        display: inline;
+        position: relative
+    }
+
+        .tip:hover:after {
+            background: #333;
+            background: rgba(248,148,5,.9);
+            border-radius: 5px;
+            bottom: 26px;
+            color: #000;
+            content: attr(rel);
+            left: 20%;
+            padding: 5px 15px;
+            position: absolute;
+            white-space: pre-wrap;
+            z-index: 98;
+            font-family: Arial;
+            font-size: 12px;
+            text-align: justify;
+            width: 320px
+        }
+</style>
+
+<script type="text/javascript">
+
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Error Details",
+            width: 450,
+            height: 250,
+            buttons: {
+                Close: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+</script>
+<h1>Registration Form</h1>
+@*<div id="loading1"></div>*@
+<div class="row" style="display:none">
+    <div class="col-md-12">
+        <h2>Registration has been Closed for Session 2023-24</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        @{
+            if (ViewBag.APPNO != null && ViewData["result"] != null)
+            {
+                if (ViewBag.APPNO.ToString().Length > 5 && ViewData["result"].ToString() == "1")
+                {
+                    <script type="text/javascript" language="javascript">
+                        alert("SuccessFully Saved. Your Application Number is " +@ViewBag.APPNO);
+                        window.location.href = '@Url.Action("Dashboard", "EAffiliation", new { id = @ViewBag.APPNO })';
+                //window.location.href = '@Url.Action("SchoolProfile", "EAffiliation", new { id = @ViewBag.APPNO })';
+
+                    </script>
+                }
+                else if (ViewBag.error != null)
+                {
+                    if (ViewBag.error.ToString() != string.Empty && ViewData["result"].ToString() != "1")
+                    {
+                        <div id="dPending" style="display: none;padding:30px 10px" align="center" class="kdsfont">
+                            <span class="rqf">@ViewBag.error</span>
+                            @if (ViewBag.flag == 3)
+                            {
+                                <span class="text-primary">Application No: @ViewBag.errorAppNo</span><br />
+                                <span>School Name: @ViewBag.errorName</span><br />
+                            }
+                        </div>
+                    }
+                }
+            }
+            //
+            else
+            {
+                using (Html.BeginForm("Registration", "EAffiliation", FormMethod.Post, new { @id = "login_form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <div class="form-horizontal">
+
+                        <h4>E-Affiliation Registration Portal  </h4>
+
+                        @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
+
+                        <div class="row">
+                            <div class="col-md-2">Select Class<sup style="color:red;font-size:15px;">*</sup></div>
+                            <div class="col-md-4">
+                                @Html.DropDownListFor(model => model.EAffClass, new SelectList(ViewBag.ClassList, "ClassValue", "ClassText"), "--Select Class---", new { required = "required", id = "EAffClass" })
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">Select Category<sup style="color:red;font-size:15px;">*</sup></div>
+                            <div class="col-md-4">
+                                @Html.DropDownListFor(model => model.EAffType, (List<SelectListItem>)ViewBag.EAffTypeList, "--Select EAffiliation--", new { required = "required", id = "EAffType" })
+                                @Html.ValidationMessageFor(model => model.EAffType, "", new { @class = "text-danger" })
+
+                                <span id="lblEAffType"></span>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div id="dvUdise">
+                                <div class="col-md-2">Enter UDISE Code<sup style="color:red;font-size:15px;"> (Optional)</sup></div>
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(model => model.UDISECODE, new { id = "UDISECODE", @maxlength = "11", onkeypress = "return isNumberKey(event);", onchange = "UdiseCodeAvailability()", placeholder = "Enter Valid UDISE Code" })
+                                    @*@Html.TextBoxFor(model => model.SCHL, new { id = "SCHL", @maxlength = "7", onkeypress = "return isNumberKey(event);", placeholder = "Enter Valid School Code" })*@
+                                    @*@Html.ValidationMessageFor(model => model.UDISECODE, "", new { @class = "text-danger" })*@
+
+                                    <span id="lblStatusUdise"></span>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div id="dvSchl">
+                                <div class="col-md-2">Enter School Code<sup style="color:red;font-size:15px;">*</sup></div>
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(model => model.SCHL, new { id = "SCHL", @maxlength = "7", onkeypress = "return isNumberKey(event);", onchange = "SchoolCodeAvailability()", placeholder = "Enter Valid School Code" })
+                                    @*@Html.TextBoxFor(model => model.SCHL, new { id = "SCHL", @maxlength = "7", onkeypress = "return isNumberKey(event);", placeholder = "Enter Valid School Code" })*@
+                                    @Html.ValidationMessageFor(model => model.SCHL, "", new { @class = "text-danger" })
+
+                                    <span id="lblStatus"></span>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">School Name<sup style="color:red;font-size:15px;">*</sup></div>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(model => model.SCHLNAME, new { onpaste = "return false;", oncopy = "return false;", oncut = "return false;", @maxlength = "70", onkeypress = "return ValidateAlpha(event);" })
+                                @Html.ValidationMessageFor(model => model.SCHLNAME, "", new { @class = "text-danger" })
+
+                            </div>
+
+
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">School Name (Punjabi)<sup style="color:red;font-size:15px;">*</sup></div>
+                            <div class="col-md-8">
+                                <div class="">
+
+
+                                    @Html.TextBoxFor(a => a.SCHLNMP, new
+                                   {
+                                       @required = "required",
+                                       id = "SCHLNMP",
+                                       @class = "keyboardInput",
+                                       onkeydown = "javascript:preventInput(event);",
+                                       onKeyPress = "javascript:convertThis(event)",
+                                       onpaste = "return false;",
+                                       oncopy = "return false;",
+                                       oncut = "return false;",
+                                       onclick = "toggleKBMode1(event)",
+                                       lang = "pa",
+                                       @maxlength = "100",
+                                       @readonly = "readonly"
+                                   })
+                                    <br />
+                                    <span style="color:red;font-size:12px;"> Use only Virtual Keyboard -></span>
+                                </div>
+
+                                <span style="color:red;">"School Name ਵਾਲੇ ਕਾਲਮ ਵਿੱਚ ਸਿਰਫ ਸਕੂਲ ਦਾ ਨਾਮ ਹੀ ਲਿਖਿਆ ਜਾਵੇ, ਇਸਦੇ ਨਾਲ ਪਿੰਡ/ਗਲੀ ਨੰ/ਰੋਡ,ਵਾਰਡ ਆਦਿ ਦਾ ਨਾਮ ਨਾ ਲਿਖਿਆ ਜਾਵੇ (Example : "ABC PUBLIC SCHOOL")</span>
+                            </div>
+
+                            @*New field*@
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">Village/Locality/Station Name  (Optional) </div>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(model => model.STATIONE, new { onpaste = "return false;", oncopy = "return false;", oncut = "return false;", @maxlength = "50", })
+
+
+                            </div>
+                            <div class="clearfix"></div>
+
+
+
+
+                            <div class="col-md-2">
+                                Village/Locality/Station Name (Punjabi)
+                            </div>
+                            <div class="col-md-8">
+                                <div class="">
+                                    @Html.TextBoxFor(model => model.STATIONP, new
+                               {
+                                   id = "STATIONP",
+                                   @class = "keyboardInput",
+                                   onkeydown = "javascript:preventInput(event);",
+                                   onKeyPress = "javascript:convertThis(event)",
+                                   onpaste = "return false;",
+                                   oncopy = "return false;",
+                                   oncut = "return false;",
+                                   onclick = "toggleKBMode1(event)",
+                                   lang = "pa",
+                                   @maxlength = "50",
+                                   @readonly = "readonly"
+                               })
+                                    <br />
+                                    <span style="color:red;font-size:12px;"> Use only Virtual Keyboard -></span>
+                                </div>
+                                <span style="color:red;">"ਇਸ ਕਾਲਮ ਵਿੱਚ ਸਕੂਲ ਦੇ ਪਿੰਡ/ਗਲੀ ਨੰ/ਰੋਡ,ਵਾਰਡ ਆਦਿ ਦਾ ਨਾਮ ਲਿਖਿਆ ਜਾਵੇ ਅਤੇ ਜੇਕਰ ਨਾ ਹੋਵੇ ਤਾਂ ਕਾਲਮ ਖਾਲੀ ਛੱਡ ਦਿੱਤਾ ਜਾਵੇ"</span>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">Select School District<sup style="color:red;font-size:15px;">*</sup></div>
+                            <div class="col-md-4">
+                                @Html.DropDownListFor(model => model.DIST, (List<SelectListItem>)ViewBag.DistEList, "--Select District--", new { required = "required", id = "DIST" })
+                            </div>
+
+
+
+
+
+
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">Email ID<sup style="color:red;font-size:15px;">*</sup></div>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(model => model.SCHLEMAIL, new { title = "Enter Valid Email ID", onpaste = "return false;", oncopy = "return false;", oncut = "return false;", required = "required", id = "SCHLEMAIL", type = "email", @maxlength = "70" })
+                                @Html.ValidationMessageFor(model => model.SCHLEMAIL, "", new { @class = "text-danger" })
+
+
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">Mobile Number<sup style="color:red;font-size:15px;">*</sup></div>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(model => model.SCHLMOBILE, new { required = "required", id = "SCHLMOBILE", @maxlength = "10", onkeypress = "return isNumberKey(event);", onpaste = "return false;", oncopy = "return false;", oncut = "return false;" })
+                                @Html.ValidationMessageFor(model => model.SCHLMOBILE, "", new { @class = "text-danger" })
+
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">
+                                Password<sup style="color:red;font-size:15px;">*</sup>
+                            </div>
+                            <div class="col-md-4">
+                                @if (ViewData["result"] == null)
+                                {
+                                    @*@Html.TextBoxFor(model => model.PWD, new { required = "required", id = "PWD", @maxlength = "20" })*@
+                                    @Html.TextBoxFor(model => model.PWD, new { htmlAttributes = new { @class = "form-control", @maxlength = "20" } })
+                                    @Html.ValidationMessageFor(model => model.PWD, "", new { @class = "text-danger" })
+
+                                }
+
+                            </div> <div class="clearfix"></div>
+                            <div class="col-md-2">
+                                Confirm Password<sup style="color:red;font-size:15px;">*</sup>
+                            </div>
+                            <div class="col-md-4">
+                                @Html.PasswordFor(model => model.RepeatPassword, new { htmlAttributes = new { @class = "form-control", @maxlength = "20" } })
+                                @Html.ValidationMessageFor(model => model.RepeatPassword, "", new { @class = "text-danger" })
+
+                                @*<input type="password" name="cnfrm_pass" id="cnfrm_pass" required maxlength="20" onpaste="return false;" oncopy="return false;" oncut="return false;" />*@
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-2">
+                                Enter the contents of the image<sup style="color:red;font-size:15px;">*</sup>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-md-6"><img id="capt" src="@ViewBag.captchaImg.ToString()" style="width:100%" /></div><div class="col-md-1" style="padding:0"><img id="rcaptcha" src="~/Images/refresh.png" style="width:80%;cursor:pointer"></div>
+                                    <div class="col-md-5"><input type="text" name="captcha" id="captcha" required onpaste="return false;" oncopy="return false;" oncut="return false;" style="text-transform:none;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;" /></div>
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4 text-center ptb">
+                                @*<button type="submit" class="btn btn-success" id="addorg">Submit</button>*@
+
+                                <input type="submit" value="Submit" class="btngo" onclick="return valForm();" />
+                                <a href="/EAffiliation/Index" class="btnback">Home</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+            }
+        }
+
+
+
+
+
+
+    </div>
+</div>
+<style type="text/css">
+    .ui-datepicker {
+        background: #ffffff;
+        border: 0px solid #555;
+        color: #336DC0;
+    }
+</style>
+
+<script>
+
+    $(function () {
+        $("#txtDOB").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date('1 January 1990'),
+            yearRange:'1900:'+(new Date().getFullYear() - 13)
+        });
+    });
+
+    function getParameterByName(name, url) {
+        if (!url) {
+            url = window.location.href;
+        }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    document.getElementById('login_form').onsubmit = function () {
+        //alert('hit');
+        var pass = getElementById('pwd');
+        var pass1 = getElementById('cnfrm_pass');
+        //alert('pass = ' + pass + ' pass1 = ' + pass1);
+        if(pass.value!=pass1.value)
+        {
+            alert("Passwords doesn't match");
+            pass.value="";
+            pass1.value="";
+            pass.focus();
+            return false;
+        }
+
+    }
+
+
+    $(document).ready(function () {
+
+        $("#rcaptcha").click(function(){
+            $.ajax({
+                url:'@Url.Action("Recaptcha", "EAffiliation")',
+                type:'Post',
+                contentType:'application/json',
+                datatype:'json',
+                success:function(captcha){
+                    $("#capt").attr("src",captcha.captchaImg);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function valForm() {
+        var EAffClass = document.getElementById("EAffClass");
+        if (EAffClass.value == "" || EAffClass.value == "0") {
+            alert("Select Class");
+            EAffClass.focus();
+            return false;
+        }
+
+        var selectedEAffType = $("#EAffType").val();
+        if (selectedEAffType == "NEW") {
+            $("#dvSchl").hide();
+            $("#dvUdise").show();
+
+        }
+        else { $("#dvSchl").show(); $("#dvUdise").hide(); }
+
+        var EAffType = document.getElementById("EAffType");
+        if (EAffType.value == "" || EAffType.value == "0") {
+            alert("Select EAffiliation");
+            EAffType.focus();
+            return false;
+        }
+        else {
+            if (selectedEAffType == "RENEW") {
+                var SCHL = document.getElementById("SCHL");
+                if (SCHL.value == "" || SCHL.value.length != "7") {
+                    alert("Enter School Code");
+                    SCHL.focus();
+                    return false;
+                }
+                else {
+                    var lblStatus = $('#lblStatus').text();
+                    if (lblStatus == "Invalid School Code") {
+                        alert("Enter Valid School Code");
+                        SCHL.focus();
+                        return false;
+                    }
+                }
+
+            }
+            else if (selectedEAffType == "NEW") {
+                var UDISECODE = document.getElementById("UDISECODE");
+                if (UDISECODE.value == "" || UDISECODE.value.length != "11") {
+                    //alert("Enter UDISE Code");
+                    //SCHL.focus();
+                    //return false;
+                }
+                else {
+                    var lblStatusUdise = $('#lblStatusUdise').text();
+                    if (lblStatusUdise == "Invalid UDISE Code") {
+                        alert("Enter Valid UDISE Code");
+                        UDISECODE.focus();
+                        return false;
+                    }
+                }
+
+            }
+        }
+
+        var txtNAME = document.getElementById("SCHLNAME");
+        if (txtNAME.value == "") {
+            alert("Enter School Name");
+            txtNAME.focus();
+            return false;
+        }
+
+        //var txtSTATIONE = document.getElementById("STATIONE");
+        //if (txtSTATIONE.value == "") {
+        //    alert("Enter Station Name");
+        //    txtSTATIONE.focus();
+        //    return false;
+        //}
+
+        var ddlDIST = document.getElementById("DIST");
+        if (ddlDIST.value == "" || ddlDIST.value == "0") {
+            alert("Select School District");
+            ddlDIST.focus();
+            return false;
+        }
+
+
+
+        var txtEMAILID = document.getElementById("SCHLEMAIL");
+        if (txtEMAILID.value == "") {
+            alert("Enter EMAILID");
+            txtEMAILID.focus();
+            return false;
+        }
+
+        if (document.getElementById("SCHLMOBILE").value == "") {
+            alert("Please Enter Mobile Number");
+            document.getElementById("SCHLMOBILE").focus();
+            return false;
+        }
+
+        var txtMobile = document.getElementById("SCHLMOBILE");
+        if (txtMobile.value == "") {
+            alert("Please Enter Mobile Number");
+            txtMobile.focus();
+            return false;
+        }
+
+        if (txtMobile.value != "") {
+            if (txtMobile.value.length != 10) {
+
+                alert("Please Enter 10 digits Mobile Number");
+                txtMobile.focus();
+                return false;
+            }
+            else {
+                var Number = document.getElementById('txtMobile').value;
+                //var IndNum = /^[0]?[789]\d{9}$/;
+                var IndNum = /^[0]?[6-9]\d{9}$/;
+                //^[6-9]\d{9}$
+
+                if (!IndNum.test(Number)) {
+                    alert("invalid Number");
+                    txtMobile.focus();
+                    return false;
+                }
+
+            }
+        }
+
+        var txtPassword = document.getElementById("PWD");
+        if (txtPassword.value == "") {
+            alert("Please Enter Password");
+            txtPassword.focus();
+            return false;
+        }
+
+        return true;
+    }
+
+    function clear() {
+        $("#SCHLNAME").val('');
+        $("#SCHLNMP").val('');
+        $("#STATIONP").val('');
+        $("#SCHLEMAIL").val('');
+        $("#SCHLMOBILE").val('');
+        $("#DIST").val('');
+        $("#STATIONE").val('');
+        $('#lblStatus').text('');
+        $('#lblStatusUdise').text('');
+        $("#SCHLNAME,#STATIONE,#DIST,#SCHLNMP,#STATIONP").prop("readonly", false);
+        document.getElementById("DIST").disabled = false;
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#dvSchl").hide();
+        $("#dvUdise").hide();
+        $("#EAffType").prop("disabled", true);
+
+        $("#EAffClass").change(function () {
+            var selectedCategory = { SelClass: $("#EAffClass").val() };
+            $("#EAffType").prop("disabled", false);
+                            $.ajax({
+                                url: '@Url.Action("GetEAffTypeListByClass", "EAffiliation")',
+                                type: 'Post',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(selectedCategory),
+                                success: function (States) {
+                                    $("#EAffType").empty();
+                                    $("#EAffType").append('<option value="">--Select EAffiliation--</option>');
+                                    $.each(States, function (i, Streams) {
+                                        $("#EAffType").append('<option value="'
+                                           + Streams.Value + '">'
+                                           + Streams.Text + '</option>');
+                                    });
+                                    if (Streams.success) {
+                                    }
+                                    else {
+                                        alert('invalid ID' + data.success);
+                                    }
+                                }
+                            });
+                        });
+
+
+
+        $("#EAffType").change(function () {
+            var selectedEAffType = $("#EAffType").val();
+            if (selectedEAffType == "NEW") {
+                $("#dvSchl").hide();
+                $("#dvUdise").show();
+                $('#lblEAffType').css("slidedown", "slow");
+                $('#lblEAffType').css("color", "red");
+                $('#lblEAffType').text("In the case ,If school never affiliated in past with PSEB");
+                clear();
+            }
+            else {
+                $("#SCHL").val('');
+                clear();
+                $("#dvSchl").show();
+                $("#dvUdise").hide();
+                $('#lblEAffType').css("slidedown", "slow");
+                $('#lblEAffType').css("color", "red");
+                $('#lblEAffType').text("In the case of school affiliated with PSEB for anyone class and now want affiliation for another class");
+            }
+        });
+    });
+</script>
+
+
+<script type="text/javascript">
+
+
+    function SchoolCodeAvailability() { //This function call on text change.
+
+        var selectedID = $("#SCHL").val();
+        $.ajax({
+            type: "POST",
+            url: "../EAffiliation/CheckSchoolCode", // this for calling the web method function in cs code.
+            data: '{schoolcode: "' + $("#SCHL").val() + '" }',// user name or email value
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccess,
+            failure: function (response) {
+                // alert(response);
+            }
+
+        });
+    }
+
+    // function OnSuccess
+    function OnSuccess(response) {
+
+        var msg = $('#lblStatus');
+        msg.text("");
+        switch (response.oid) {
+            case "0":
+                clear();
+                msg.css("slidedown", "slow");
+                msg.css("color", "red");
+                msg.text("Invalid School Code");
+                $("#tr1").hide();
+                break;
+            case "5":
+                clear();
+                msg.css("slidedown", "slow");
+                msg.css("color", "red");
+                msg.text("School Code Already Exists");
+                $("#tr1").hide();
+                break;
+            case "1":
+                msg.css("slidedown", "slow");
+                msg.css("color", "green");
+                //  msg.text("Valid School Code");
+                console.log(response);
+
+                $("#SCHLNMP").val(response.sm.SCHLP);
+                $("#SCHLNAME").val(response.sm.SCHLE);
+                $("#SCHLEMAIL").val(response.sm.EMAILID);
+                $("#SCHLMOBILE").val(response.sm.MOBILE);
+                $("#DIST").val(response.sm.dist);
+                $("#STATIONE").val(response.sm.STATIONE);
+                $("#STATIONP").val(response.sm.STATIONP);
+                document.getElementById("DIST").disabled = true;
+
+                $("#SCHLNAME,#STATIONE,#DIST,#SCHLNMP,#STATIONP").prop("readonly", true);
+                msg.text("Valid School Code , UDISE CODE: " + response.sm.udisecode + "");
+
+                $("#tr1").show();
+                break;
+        }
+    }
+
+
+
+</script>
+<script type="text/javascript">
+
+    function UdiseCodeAvailability() { //This function call on text change.
+
+        var udiseVal = $("#UDISECODE").val();
+        if (udiseVal != "") {
+
+            $.ajax({
+                type: "POST",
+                url: "/EAffiliation/GetEAffNewSchlCheckByUdise", // this for calling the web method function in cs code.
+                data: '{udisecode: "' + $("#UDISECODE").val() + '" }',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccessUDISE,
+                failure: function (response) {
+                    // alert(response);
+                }
+            });
+        }
+    }
+
+    // function OnSuccess
+    function OnSuccessUDISE(response) {
+        var msg1 = $('#lblStatusUdise');
+        msg1.text("");
+        switch (response.oid) {
+            case "0":
+                clear();
+                msg1.css("slidedown", "slow");
+                msg1.css("color", "red");
+                msg1.text("UDISE Code not found.");
+                break;
+            case "1":
+                msg1.css("slidedown", "slow");
+                msg1.css("color", "green");
+                console.log(response);
+                $("#SCHLNMP").val(response.model.SCHLP);
+                $("#SCHLNAME").val(response.model.SCHLE);
+                $("#SCHLEMAIL").val(response.model.SCHLEMAIL);
+                $("#SCHLMOBILE").val(response.model.SCHLMOBILE);
+                $("#DIST").val(response.model.DIST);
+                $("#STATIONE").val(response.sm.STATIONE);
+                $("#STATIONP").val(response.sm.STATIONP);
+                document.getElementById("DIST").disabled = false;
+                $("#SCHLNAME,#STATIONE,#DIST,#SCHLNMP,#STATIONP").prop("readonly", false);
+                msg1.text("schlnme: " + response.schle + " ,Principal: " + response.principal + " ,Dist: " + response.distnme);
+                break;
+        }
+    }
+
+
+
+</script>
+
+

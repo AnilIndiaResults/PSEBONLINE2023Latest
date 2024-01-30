@@ -1,0 +1,383 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    ViewBag.Title = "Final Print Private Matric Admit Card Search";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprint.css" />
+<style type="text/css">
+    body {
+        font-size: 11px
+    }
+</style>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<div id="HPL">
+    @{
+        if (ViewData["result"].ToString() == "0")
+        {
+            <h1>
+                Admit Card For August-2022 Examination
+                @*Check Applied Form Status of (Reap/ Compartment/ Additional Subject) July - 2019*@
+            </h1>
+            <div class="row">
+                <div class="col-md-12" style="padding-top:25px;padding-bottom:400px">
+				         <input type="button" value="Admit Card of  Middle - 2022" onclick="javascript:document.location.href='@Url.Action("AdmitCardPrivateSearch/Middle", "PrivateCandidate", new { })'" /> <img src="/images/new.gif" alt="new" />
+                    <input type="button" value="Admit Card of  Primaryr - 2022" onclick="javascript:document.location.href='@Url.Action("AdmitCardPrivateSearch/Primary", "PrivateCandidate", new { })'" /> <img src="/images/new.gif" alt="new" />
+				
+                    <!-- <input type="button" value="Admit Card of  Matric November - 2021" onclick="javascript:document.location.href='@Url.Action("AdmitCardPrivateSearch/Matric", "PrivateCandidate", new { })'" /> <img src="/images/new.gif" alt="new" /> -->
+                    <!-- <input type="button" value="Admit Card of  Senior November - 2021" onclick="javascript:document.location.href='@Url.Action("AdmitCardPrivateSearch/Senior", "PrivateCandidate", new { })'" /> <img src="/images/new.gif" alt="new" /> -->
+
+                    @*<input type="button" value="Form Status of  Matric (Reap/Compartment/Additional Subject) July - 2019" onclick="javascript:document.location.href='@Url.Action("AdmitCardPrivateSearch/Matric", "PrivateCandidate", new { })'" /> <img src="/images/new.gif" alt="new" />*@
+                    @*<input type="button" value="Form Status of  Senior Secondary (Reap/Compartment/Additional Subject) July - 2019" onclick="javascript:document.location.href='@Url.Action("AdmitCardPrivateSearch/Senior", "PrivateCandidate", new { })'" /> <img src="/images/new.gif" alt="new" />*@
+
+                </div>
+            </div>
+        }
+        else
+        {
+
+            using (Html.BeginForm("AdmitCardPrivateSearch", "PrivateCandidate", FormMethod.Post, new { id = "searchform" }))
+            {
+                <h1 class="noprint" style="font-size:22px;padding:10px 0;background-color:#336dc0;color:#fff;margin-top:10px;margin-bottom:5px">&nbsp;@ViewBag.ClassName @*Admit Card of Compartment/Re-Appear of @ViewBag.ClassName Examination June 2017*@</h1>
+                {<div class="row">
+                        <div class="col-md-12">
+                            <fieldset style="margin-bottom:15px;overflow:hidden">
+                                <legend>Search</legend>
+                                <div class="col-md-1">
+                                    TotalCount
+                                    <label>@ViewBag.TotalCount</label>
+                                </div>
+                                <div class="col-md-2" id="drpdwn_select">
+                                    Batch/Year
+                                    <select id="dropdown_choice_batch" required>
+                                        <option value="0">--Select Batch--</option>
+                                        @*                        <option value="01">January 2021</option> *@
+                                        @*<option value="03">March 2021</option> *@
+                                        @*<option value="11">November 2021</option>*@
+                                        <option value="7">August 2022</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2" id="drpdwn_select">
+                                    Select
+                                    <select id="dropdown_choice" required>
+                                        <option value="0">--Select Search Option--</option>
+                                        <option value="1">Ref. No</option>
+                                        <option value="2">Candidate Name/Father Name</option>
+                                        <option value="3">All Old Roll</option>
+                                        <option value="4">New Roll No.</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3" id="txt_refNo">
+                                    Enter Ref. No. &nbsp;
+                                    @Html.TextBoxFor(m => m.refNo, new { id = "refNo", @maxlength = "15", onkeypress = "return isNumberKey(event);", placeholder = "Ref. No." })
+                                </div>
+                                <div class="col-md-2" id="txt_Candi_Name">
+                                    Enter Candidate Name &nbsp;
+                                    @Html.TextBoxFor(m => m.Candi_Name, new { id = "Candi_Name", @maxlength = "20", placeholder = "Candidate Name" })
+                                </div>
+                                <div class="col-md-2" id="txt_Father_Name">
+                                    Enter Father Name &nbsp;
+                                    @Html.TextBoxFor(m => m.Father_Name, new { id = "Father_Name", @maxlength = "20", placeholder = "Father Name" })
+                                </div>
+                                <div class="col-md-3" id="txt_OROLL">
+                                    Old Roll No. &nbsp;
+                                    @Html.TextBoxFor(m => m.OROLL, new { id = "OROLL", @maxlength = "12", placeholder = "All Old Roll" })
+                                </div>
+                                <div class="col-md-3" id="txt_EXAMROLL">
+                                    New Roll No. &nbsp;
+                                    @Html.TextBoxFor(m => m.EXAMROLL, new { id = "EXAMROLL", @maxlength = "12", placeholder = "New Roll No.ssss" })
+                                </div>
+                                <div class="col-md-1">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm2();" title="Search Record" /></div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-12"><span class="rqf" style="color:firebrick">Note : For Search Kindly Enter Reference Number Or Enter Minimum 3 Starting Characters of Candidate Name and Father Name or Old Roll No </span></div>
+                            </fieldset>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="t01">
+                                    <tr class="active-tr">
+                                        <th width="5%">Sl.No.</th>
+                                        <th width="5%">BATCH/YEAR</th>
+                                        <th width="5%">CLASS</th>
+                                        <th width="10%">REF.NO.</th>
+                                        <th width="10%">OLD ROLL</th>
+                                        <th width="10%">NEW ROLL</th>
+                                        <th width="10%">REG. NO.</th>
+                                        <th width="10%">Candidate Name</th>
+                                        <th width="10%">Father Name</th>
+                                        <th width="10%">Mother Name</th>
+                                        <th width="15%">Form Status</th>
+                                    </tr>
+                                    @{
+                                        if (ViewBag.TotalCount > 0)
+                                        {
+                                            int d = 0;
+                                            int Count = 0;
+                                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                            {
+                                                d = d + 1;
+                                                var Utype = Model.StoreAllData.Tables[0].Rows[i]["Utype"].ToString();
+
+                                                var batch = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+                                                var batchYear = Model.StoreAllData.Tables[0].Rows[i]["batchYear"].ToString();
+                                                var Class = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+
+                                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                                var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                                                var OROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                                var EXAMROLL = Model.StoreAllData.Tables[0].Rows[i]["EXAMROLL"].ToString();
+
+                                                var regno = Model.StoreAllData.Tables[0].Rows[i]["regno"].ToString();
+
+                                                var examRoll = Model.StoreAllData.Tables[0].Rows[i]["examRoll"].ToString();
+                                                var examcent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                                                var challanverify = Model.StoreAllData.Tables[0].Rows[i]["challanverify"].ToString();
+                                                var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                                                var formstatus = Model.StoreAllData.Tables[0].Rows[i]["formstatus"].ToString();
+
+                                                var feecat = Model.StoreAllData.Tables[0].Rows[i]["feecat"].ToString();
+                                                var exam = Model.StoreAllData.Tables[0].Rows[i]["exam"].ToString();
+                                                var rp = Model.StoreAllData.Tables[0].Rows[i]["rp"].ToString();
+
+                                                var ErrStatus = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                                var ErrDtl = Model.StoreAllData.Tables[0].Rows[i]["ErrDtl"].ToString();
+
+                                                var exammonth = Model.StoreAllData.Tables[0].Rows[i]["exammonth"].ToString();
+
+                                                Count = Count + 1;
+                                                <tr>
+                                                    <td>
+                                                        @Count
+                                                    </td>
+                                                    <td>
+                                                        @batch/@batchYear
+                                                    </td>
+                                                    <td>
+                                                        @Class
+                                                    </td>
+                                                    <td>
+                                                        @refno
+                                                    </td>
+                                                    <td>
+                                                        @OROLL
+                                                    </td>
+                                                    <td>
+                                                        @EXAMROLL
+                                                    </td>
+                                                    <td>
+                                                        @regno
+                                                    </td>
+                                                    <td>
+                                                        @Candi_Name
+                                                    </td>
+                                                    <td>
+                                                        @Father_Name
+                                                    </td>
+                                                    <td>
+                                                        @Mother_Name
+                                                    </td>
+                                                    <td>
+                                                        @if (ErrStatus == "1")
+                                                        {<span class="rqf">INCOMPLETE FORM </span>}
+                                                        else if (ErrStatus == "2")
+                                                        {<span class="rqf">FEE NOT VERIFIED </span><br /><span style="font-size:7px;">(If fee paid, then submit challan copy at PSEB HOD)</span>}
+                                                        @*else if (ErrStatus == "3" || ErrStatus == "5")
+                                                            {<span class="rqf">FEE VERIFIED </span><br /><span style="font-size:7px;">(Admit card not available yet, wait for date sheet.)</span>}*@
+                                                        @*<span class="rqf">Roll No/ Centre Not Alloted </span><br /><span style="font-size:7px;">@ErrDtl</span>*@
+                                                        else if (ErrStatus == "4")
+                                                        {<span class="rqf">Roll No Not Released due to </span><br /><span style="font-size:7px;">@ErrDtl</span>}
+
+                                                    else if ((ErrStatus == "3" || ErrStatus == "4" || ErrStatus == "5") && exammonth.ToUpper() == "082022")
+                                                    {@Html.ActionLink("Print & View AdmitCard", "AdmitCardPrivate", new { id = @ViewBag.cid, refno = encrypt.QueryStringModule.Encrypt(@refno) }, new { Class = "btn", title = "Print Admit Card", target = "_blank" })
+                                                }
+                                                else if (ErrStatus == "6")
+                                                {<span class="" title="tt">NOT ELIGIBLE </span><br />
+                                                    <span style="font-size:7px;">(You had already availed all the chances of Examination of Reapear /Compartment)</span>
+                                                }
+
+                                                @*@if (formstatus == "1")
+                                                    {<span class="rqf">INCOMPLETE FORM</span>
+                                                    }
+                                                    @if (formstatus == "2" && challanid == "")
+                                                    {<span class="rqf">CHALLAN NOT GENERATED</span>
+                                                    }
+                                                    @if (formstatus == "2" && challanid != "")
+                                                    {<span class="rqf">FEE NOT VERIFIED</span><br />
+                                                    <span style="font-size:7px;">(If fee paid, then submit challan copy at PSEB HOD)</span>
+                                                    }
+                                                    @if (formstatus == "3" && (challanverify.ToUpper() == "TRUE" || challanverify=="1"))
+                                                    {
+                                                        @Html.ActionLink("Print & View AdmitCard", "AdmitCardPrivate", new { id = @ViewBag.cid, refno = encrypt.QueryStringModule.Encrypt(@refno) }, new { Class = "", title = "Print Admit Card" })
+                                                    }
+                                                    @if (formstatus == "4")
+                                                    {<span class="" title="tt">NOT ELIGIBLE</span><br />
+                                                    <span style="font-size:7px;">(You had already availed all the chances of Examination of Reapear /Compartment)</span>
+                                                    }*@
+                                                @*@if (examRoll == "" || examcent == "")
+                                                    {
+                                                    <span class="rqf">Centre Not Alloted</span>
+                                                    }
+                                                    else if (challanverify.ToUpper() == "FALSE" || challanverify.ToUpper() == "")
+                                                    {  <span class="rqf">Fees Not Verified</span> }
+                                                    else
+                                                    {
+                                                    @Html.ActionLink("Print & View AdmitCard", "AdmitCardPrivate", new { id = @ViewBag.cid, refno = encrypt.QueryStringModule.Encrypt(@refno) }, new { Class = "", title = "Print Admit Card" })
+                                                    }*@
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="11">
+                                                    @ViewBag.Message
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-12 text-center" style="padding:10px 0;display:none">
+                            @*<input type="submit" value="Back" formaction="FinalPrintPrivateAdmitCardSearch" title="Go for Home Page" />*@
+                            @*<a href="/PrivateCandidate/FinalPrintPrivateAdmitCardSearch" class="btn">Back</a>*@
+                            @*<input type="button" value="Back" class="btn" onclick="goBack()" />*@
+                        </div>
+                    </div>
+                }
+            }
+        }
+    }
+</div>
+<script>
+
+
+    $(document).ready(function () {
+        $("#refNo").val("");
+        $("#OROLL").val("");
+        $("#Candi_Name").val("");
+        $("#Father_Name").val("");
+        $("#txt_Candi_Name").hide();
+        $("#txt_Father_Name").hide();
+        $("#txt_OROLL").hide();
+        $("#txt_refNo").hide();
+        $("#txt_EXAMROLL").hide();
+        $("#dropdown_choice").change(function () {
+            var sel_value = 0;
+            sel_value = $("#dropdown_choice").val();
+            switch (sel_value) {
+                case "1": $("#txt_refNo").show();
+                    $("#txt_refNo").attr('required', true);
+                    $("#txt").hide();
+                    $("#txt_Candi_Name").hide();
+                    $("#txt_Father_Name").hide();
+                    $("#txt_OROLL").hide();
+                    $("#txt_EXAMROLL").hide();
+                    break;
+
+                case "2": $("#txt_refNo").hide();
+                    $("#txt").hide();
+                    $("#txt_Candi_Name").show();
+                    $("#txt_Father_Name").show();
+                    $("#txt_EXAMROLL").hide();
+                    $("#txt_OROLL").hide();
+                    $("#txt_Candi_Name").attr('required', true);
+                    break;
+
+                case "3": $("#txt_refNo").hide();
+                    $("#txt").hide();
+                    $("#txt_Candi_Name").hide();
+                    $("#txt_Father_Name").hide();
+                    $("#txt_EXAMROLL").hide();
+                    $("#txt_OROLL").show();
+                    $("#txt_OROLL").attr('required', true);
+                    break;
+                case "4": $("#txt_refNo").hide();
+                    $("#txt").hide();
+                    $("#txt_Candi_Name").hide();
+                    $("#txt_Father_Name").hide();
+                    $("#txt_OROLL").hide();
+                    $("#txt_EXAMROLL").show();
+                    $("#txt_EXAMROLL").attr('required', true);
+                    break;
+
+            }
+        });
+    });
+</script>
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function valForm2() {
+        var sel_value1 = 0;
+        sel_value1 = $("#dropdown_choice").val();
+        // alert(sel_value1);
+        var txt_refNo = $("#refNo").val();
+        var txt_OROLL = $("#OROLL").val();
+        var txt_Candi_Name = $("#Candi_Name").val();
+        var txt_Father_Name = $("#Father_Name").val();
+        var txt_EXAMROLL = $("#EXAMROLL").val();
+        //alert("ref :" + txt_refNo);
+        //alert("OROLL :" + txt_OROLL);
+        //alert("Candi_Name :" + txt_Candi_Name);
+        //alert("Father_Name :" + txt_Father_Name);
+        if (sel_value1 == "" || sel_value1 == "0") {
+            alert("Please Select Search Option");
+            document.getElementById("dropdown_choice").focus();
+            return false;
+        }
+        else {
+            if (txt_refNo == "" && txt_OROLL == "" && txt_Candi_Name == "" && txt_Father_Name == "" && txt_EXAMROLL == "") {
+                alert("Please Enter Text");
+                return false;
+            }
+
+        }
+    }
+
+    function valForm1() {
+        var category = document.getElementById('category').value;
+        var refNo = document.getElementById('refNo').value;
+        var Candi_Name = document.getElementById('Candi_Name').value;
+        var Father_Name = document.getElementById('Father_Name').value;
+        var OROLL = document.getElementById('OROLL').value;
+
+
+        if ((refNo == "" || refNo.length == 0) && (Candi_Name.length < 3 || Father_Name.length < 3) && (OROLL == "" || OROLL.length == 0)) {
+            if (refNo.length == 0 && Candi_Name.length > 2 && Father_Name.length < 3) {
+                alert("Enter Candidate and Father Name");
+                document.getElementById("Father_Name").focus();
+                return false;
+            }
+            if (refNo.length == 0 && Candi_Name.length < 3 && Father_Name.length > 2) {
+                alert("Enter Candidate and Father Name");
+                document.getElementById("Candi_Name").focus();
+                return false;
+            }
+            alert("Enter RefNo or Candidate and Father Name  or Old Roll No.");
+            document.getElementById("refNo").focus();
+            return false;
+        }
+
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+</script>

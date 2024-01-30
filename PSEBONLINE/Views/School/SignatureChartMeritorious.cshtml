@@ -1,0 +1,189 @@
+﻿
+@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Signature Chart Meritorious";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+<link rel="stylesheet" href="/Content/print-4PS.css" />
+@*<link rel="stylesheet" href="~/barcode.css" type="text/css" charset="utf-8" />*@
+<style type="text/css">
+    .brack {
+        page-break-after: always;
+    }
+</style>
+@using (Html.BeginForm("SignatureChartMeritorious", "School", FormMethod.Post, new { id = "searchform" }))
+{
+    @Html.Hidden("cid", (string)ViewBag.cid)
+    <div class="row noprint">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>                
+                <div class="col-md-5">
+                    Select Exam Centre Block
+                    @Html.DropDownList("ExamCent", new SelectList(ViewBag.MySchCode, "Value", "Text"), "---Select Block--", new { @class = "ddlCentcode" })
+                </div>
+               
+                <div class="col-md-2">
+                    Matriculation Board/School Roll No.
+                    @Html.TextBoxFor(m => m.ExamRoll, new { id = "ExamRoll", @maxlength = "10", onkeypress = "return isNumberKey(event);", placeholder = "Board/School Roll No." })
+                </div>
+                <div class="col-md-2">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm();" title="Search Record" /></div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        <input type="button" value="Print" dowload class="btn" onclick="window.print()" />
+                        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <table border="1" style="width:100%;" align="center">
+	<thead>
+                    <tr>
+                        <th colspan="7" style="text-align:center;font-size:16px">
+                            Society For Promotion of Qualitiy Education For Poor & Meritorious Students Of Punjab <br />
+						  Meritorious Entrance Exam, Sessoion - @Session["Session"].ToString()<br />Signature Chart
+                        </th>
+                    </tr>
+					</thead>
+        @{
+            int columns = 2;
+            var clsH = "";
+            if (ViewBag.TotalCount > 0)
+            {
+                int d = 1;
+                int pageCnt = 0;
+
+                for (int j = 0; j < Model.StoreAllData.Tables[1].Rows.Count; j++)
+                {
+
+                    var cls = Model.StoreAllData.Tables[1].Rows[j]["class"].ToString();
+                    var name = Model.StoreAllData.Tables[1].Rows[j]["name"].ToString();
+                    var fname = Model.StoreAllData.Tables[1].Rows[j]["fname"].ToString();
+                    var mname = Model.StoreAllData.Tables[1].Rows[j]["mname"].ToString();
+                    var roll = Model.StoreAllData.Tables[1].Rows[j]["roll"].ToString();
+                    var reg = Model.StoreAllData.Tables[1].Rows[j]["reg"].ToString();
+                    var stream = Model.StoreAllData.Tables[1].Rows[j]["stream"].ToString();
+                    var phy_chal = Model.StoreAllData.Tables[1].Rows[j]["phy_chal"].ToString();
+
+                    var elot = Model.StoreAllData.Tables[1].Rows[0]["elot"].ToString();
+                    var photo = Model.StoreAllData.Tables[1].Rows[j]["photo"].ToString();   
+                    var edate = Model.StoreAllData.Tables[1].Rows[j]["edate"].ToString();
+                    //T1
+                    var dist = Model.StoreAllData.Tables[0].Rows[0]["dist"].ToString();
+                    var distnmp = Model.StoreAllData.Tables[0].Rows[0]["distnmp"].ToString();
+                    var cent = Model.StoreAllData.Tables[0].Rows[0]["cent"].ToString();
+                    var centP = Model.StoreAllData.Tables[0].Rows[0]["centP"].ToString();
+                    var pdate = Model.StoreAllData.Tables[0].Rows[0]["PrintDate"].ToString();
+					var distnm = Model.StoreAllData.Tables[0].Rows[0]["distnm"].ToString();
+                    var centE = Model.StoreAllData.Tables[0].Rows[0]["centE"].ToString();
+                    <!-- if (cls != clsH) -->
+                    <!-- { -->
+                        <!-- clsH = cls; -->
+
+                <tbody> 					
+					<tr>
+    <td colspan="2">Exam Date :  @edate</td>
+    <td colspan="3">Lot : @elot</td>
+    <td colspan="2">Print Date : @pdate</td>
+  </tr>
+  <tr>
+    <td colspan="2">District Code & Name</td>
+    <td colspan="5">@dist&nbsp;@distnm</td>
+  </tr>
+  <tr>
+    <td colspan="2">Centre Code & Name</td>
+    <td colspan="5" style="font-size:8px">@cent&nbsp;@centE</td>
+  </tr>
+  
+                    <!-- } -->
+                    <!-- d = d + 1; -->
+                    <!-- //-----Header -->
+					<!-- int col = j % columns; -->
+                    <!-- // left -->
+          
+<tr style="background-color:#c4c4c4;">
+    <td>Reg. No.</td>
+    <td>Roll No.</td>
+    <td rowspan="3">Question Booklet Code</td>
+    <td rowspan="3">Booklet Code</td>
+    <td rowspan="3">OMR Answer Sheet No</td>
+    <td rowspan="3">Candidate's Signature</td>
+    <td rowspan="3" style="text-align:center">Photo</td>
+  </tr>
+  <tr style="background-color:#c4c4c4;">
+    <td>Class</td>
+    <td>Stream</td>
+  </tr>
+  <tr style="background-color:#c4c4c4;">
+    <td colspan="2">Name / Father Name</td>
+  </tr>
+  <tr>
+    <td>@reg</td>
+    <td>@roll</td>
+    <td rowspan="3">&nbsp;</td>
+    <td rowspan="3">&nbsp;</td>
+    <td rowspan="3">&nbsp;</td>
+    <td rowspan="3"></td>
+    <td rowspan="3" style="text-align:center">@if(photo!="")
+			{
+			<img src="@photo" style="height:50px;width:50px" alt="Photo" id="Photo" />
+			}</td>
+  </tr>
+  <tr>
+    <td>@cls</td>
+    <td>@stream</td>
+  </tr>
+  <tr>
+    <td colspan="2">@name / @fname</td>
+  </tr>
+    </tbody>	
+                }
+				<tfoot>
+				<tr>
+				<td colspan="7" style="text-align:center">Note : Roll No. ABSENT (Please mark the absentee in RED ink)</td>
+				</tr>
+				<tr>
+				<td colspan="4" style="height:50px" vertical-align="top">Signature & Seal of Centre Supdt.</td>
+				<td colspan="3" vertical-align="top">Signature of Invigilator</td>
+				</tr>
+				</tfoot>
+				
+            }
+            else
+            {
+                <p>@ViewBag.Message</p>
+
+            }
+        }
+
+    </table>
+
+}
+<script type="text/javascript">
+    function valForm() {
+        var schoolcode = document.getElementById("ExamCent").value;
+        if (schoolcode == "" || document.getElementById("ExamCent").value == null) {
+            alert("Select Block");
+            document.getElementById("ExamCent").focus();
+            return false;
+        }
+    }
+</script>
+
+
+
+
+

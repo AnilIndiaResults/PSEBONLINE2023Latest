@@ -1,0 +1,288 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+<link rel="stylesheet" href="/Content/print.css" />
+
+@* <h1>Centre List Report</h1><p>
+        Welcome: @if (Session["NAME"] != null)
+        {@Session["NAME"].ToString()}
+        else { Response.Redirect("~/DeoPortal/Index"); }
+    </p>*@
+<h1>Centre List Report</h1>
+@using (Html.BeginForm("CentreReport", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <span style="display:none"><input type="button" value="Click Here to Download & Print" dowload class="btn" onclick="window.print()" /></span>
+            <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            <a href="/DeoPortal/CentreReportPrint" class="btn">Click Here to Download & Print</a>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <thead style="border:0">
+                        <tr>
+                            <td colspan="10" style="border:0;text-align:center;padding:20px 0 10px 0">
+                                <span style="font-size:32px">Punjab School Education Board</span><br />
+                                                                                                 <span style="font-size:18px">District wise Examination Centres List for @Session["DeoSessionMonthYear"].ToString()</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" style="text-align:left;border:0">
+                                &nbsp;
+                                District Name: (@Session["Dist"].ToString()) @if (Session["NAME"] != null)
+                            {
+
+                                @Session["DISTNM"].ToString();
+                            }
+                            else { Response.Redirect("~/DeoPortal/Index"); }
+                            </td>
+                            <td colspan="5" style="text-align:right;border:0">Date :@ViewBag.Date &nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="10" style="border:0"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="active-tr">
+                            <th>Sr</th>
+                            <th>Cent</th>
+                            <th>Cent Schl</th>
+                            <th>Centre Name</th>
+                            <th>Building Name</th>
+                            <th>Mat.Reg.</th>
+                            <th>Mat.Opn.</th>
+                            <th>SrSec.Reg</th>
+                            <th>SrSec.Opn.</th>
+                            <th>Ccode</th>
+                            @*<th>Action</th>*@
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int TotMatricReg = 0;
+                                int TotMatricOpen = 0;
+                                int TotSrSecReg = 0;
+                                int TotSrSecOpen = 0;
+
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 10 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var Center = Model.StoreAllData.Tables[0].Rows[i]["CENT"].ToString();
+                                    var CentSCHL = Model.StoreAllData.Tables[0].Rows[i]["CSCHL"].ToString();
+                                    var CenterName = Model.StoreAllData.Tables[0].Rows[i]["ECENTRE"].ToString();
+                                    var Buildingname = Model.StoreAllData.Tables[0].Rows[i]["SCHOOLE"].ToString() + "" + Model.StoreAllData.Tables[0].Rows[i]["Blocke"].ToString();
+                                    var District = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                                    var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+                                    //int RMatric = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["matreg"].ToString());
+                                    //int OMatric = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["matopn"].ToString());
+                                    //int RSEC = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["ssreg"].ToString());
+                                    //int OSEC = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["ssopn"].ToString());
+
+                                    int RMatric = Model.StoreAllData.Tables[0].Rows[i]["matreg"].ToString() == "" ? 0 : Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["matreg"].ToString());
+                                    int OMatric = Model.StoreAllData.Tables[0].Rows[i]["matopn"].ToString() == "" ? 0 : Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["matopn"].ToString());
+                                    int RSEC = Model.StoreAllData.Tables[0].Rows[i]["ssreg"].ToString() == "" ? 0 : Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["ssreg"].ToString());
+                                    int OSEC = Model.StoreAllData.Tables[0].Rows[i]["ssopn"].ToString() == "" ? 0 : Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["ssopn"].ToString());
+
+                                    // var TotSrSEC = RSEC + OSEC;
+                                    TotMatricReg = TotMatricReg + RMatric;
+                                    TotMatricOpen = TotMatricOpen + OMatric;
+                                    TotSrSecReg = TotSrSecReg + RSEC;
+                                    TotSrSecOpen = TotSrSecOpen + OSEC;
+
+                                    Count = Count + 1;
+                        <tr>
+                            <td>@Count</td>
+                            <td>@Center</td>
+                            <td>@CentSCHL</td>
+                            <td>@CenterName</td>
+                            <td>@Buildingname</td>
+                            @*<td>@District</td>*@
+                            <td>@RMatric</td>
+                            <td>@OMatric</td>
+                            <td>@RSEC</td>
+                            <td>@OSEC</td>
+                            <td>@CCODE</td>
+                            @*<td>
+                                <button type="button" class="" data-toggle="modal" data-target="#myModal-@d">View Details</button>
+
+                            </td>*@
+                        </tr>
+
+                                    if (d == ViewBag.TotalCount)
+                                    {
+                        <tr style="background-color:#c1c1c1">
+                            <td colspan="5" align="right">
+                                Total Count:
+                            </td>
+                            <td>
+                                @TotMatricReg
+
+                            </td>
+                            <td>
+                                @TotMatricOpen
+                            </td>
+                            <td>
+                                @TotSrSecReg
+                            </td>
+                            <td>
+                                @TotSrSecOpen
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr class="noprint">
+                            <td colspan="6">
+                                Page @ViewBag.pagesize of @ViewBag.pn
+                                &nbsp;
+                                @if (ViewBag.pagesize == 1)
+
+                                                {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                @Html.ActionLink("Next >", "CentreReport", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "CentreReport", new { page = ViewBag.pn })
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (TempData["CenterListSelDist"] != null)
+                                                    {
+                                                        string str1 = TempData.Peek("CenterListSelDist").ToString();
+                                                        string str2 = TempData.Peek("CenterListSelectList").ToString();
+                                                        string str3 = TempData.Peek("CenterListSearchString").ToString();
+                                                        //string str4 = TempData.Peek("ImportData10thClassSession").ToString();
+                                                        TempData["CenterListSelDist"] = str1;
+                                                        TempData["CenterListSelectList"] = str2;
+                                                        TempData["CenterListSearchString"] = str3;
+                                                        // TempData["ImportData10thClassSession"] = str4;
+                                                    }
+                                                @Html.ActionLink("<<", "CentreReport", new { page = 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink("< Prev", "CentreReport", new { page = ViewBag.pagesize - 1 })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                @Html.ActionLink("Next >", "CentreReport", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "CentreReport", new { page = ViewBag.pn })
+                                                    }
+
+                                                }
+
+
+                            </td>
+                            <td colspan="4" style="text-align:right" class="rqf">Total Records(Filtered): @ViewBag.TotalCount1</td>
+                        </tr>
+
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                        <tr class="noprint">
+                            <td colspan="12">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+
+
+                            }
+
+            <script>
+
+                function dee() {
+
+                    if ($("#SelDist").val() == "") {
+
+                        $("#reqsession").slideDown("slow");
+                        return false;
+                    }
+                    if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+
+                        $("#reqsellist").slideDown("slow");
+                        return false;
+                    }
+
+                        //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+                        //    $("#reqsellist").slideUp("slow");
+                        //    $("#reqsstring").slideDown("slow");
+                        //    return false;
+                        //}
+                    else
+                        return true;
+
+                }
+                $(document).ready(function () {
+
+                    $("#SelDist").change(function () {
+                        if ($("#SelDist").val() == "") {
+                            // $("#SearchString").focus(function () { $("#reqsellist").slideUp("slow"); });
+                            $("#reqsession").slideDown("slow");
+                        }
+                        else {
+                            $("#reqsession").slideUp("slow");
+                        }
+
+                    });
+
+                });
+
+
+                var form = $("#searchform").serialize();
+                $("#btnNext").click(function () {
+                    $.ajax({
+                        url: 'DeoPortal/Next',
+                        data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                        success: function (response) {
+                            $("body").html(response);
+                        }
+                    });
+                });
+
+                $("#btnPrevious").click(function () {
+                    $.ajax({
+                        url: 'DeoPortal/Previous',
+                        data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                        success: function (response) {
+                            $("body").html(response);
+                        }
+                    });
+                });
+
+
+
+            </script>

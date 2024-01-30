@@ -1,0 +1,303 @@
+﻿@model PSEBONLINE.Models.RegistrationSearchModelList
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<!-- #endregion -->
+<h1>List of Inserted Records of <span class="rqf">N3 Form </span> , Session 2023-2024</h1>
+
+@if (Model.RegistrationSearchModel != null)
+{
+
+    <p>Total Students : @Model.RegistrationSearchModel.Count()</p>
+    <div class="table-responsive">
+        <table id="example" class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr class="active-tr">
+                    <th>Unique Id</th>
+                    <th>Admission Date</th>
+                    <th>Candidate Name</th>
+                    <th>Father's Name</th>
+                    <th>Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Lot</th>
+                    <th>Insert Date</th>
+                    <th>Modify Date</th>
+                    <th>Update Detail</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.RegistrationSearchModel)
+                {
+                    <tr>
+                        <td>
+                            @obj.Std_id
+                            @* Modal Start*@
+                            <div class="container">
+                                <div class="modal fade" id="myModal1-@obj.Std_id" role="dialog">
+                                    <div class="modal-dialog">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h3 class="modal-title">Student Details</h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td>Canidate Name</td>
+                                                        <td><label>@obj.Candi_Name</label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Father Name</td>
+                                                        <td><label>@obj.Father_Name</label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Name</td>
+                                                        <td><label>@obj.Mother_Name</label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="28%">Student ID</td>
+                                                        <td><label>@obj.Std_id</label></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td width="28%">Aadhar / Enrollment No.</td>
+                                                        <td>
+                                                            <input type="text" id="Aadharnum-@obj.Std_id" name="Aadharnum" onpaste="return false;" class="aadhar" value="@obj.aadhar_num" onkeypress="return isNumberKey(event);" />
+                                                            <br />
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td><input type="button" class="btn" value="Update Aadhar / Enrollment No." id="btnSave" onclick="SubMarks('@obj.Std_id','@obj.aadhar_num','@obj.schl')" /></td>
+                                                    </tr>
+
+
+                                                </table>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                @*Switvhform*@
+
+                                <div class="modal fade" id="myModal2-@obj.Std_id" role="dialog">
+                                    <div class="modal-dialog">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Student Details : @obj.Std_id</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td width="28%">Student ID</td>
+                                                        <td>@Html.Raw("")@obj.Std_id@Html.Raw("") </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Reg No.</td>
+                                                        <td>@Html.Raw("")@obj.REGNO@Html.Raw("")</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Name/F.Name/M.Name</td>
+                                                        <td>@obj.Candi_Name @Html.Raw("")@obj.Father_Name@Html.Raw("")@obj.Mother_Name</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Enter Old PSEB Reg. No.<span class="rqf">*</span></td>
+                                                        <td>
+                                                            <input type="text" id="txtOldRegNoSwitch-@obj.Std_id" name="OldRegNoSwitch" maxlength="50" value="" />
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Remarks<span class="rqf">*</span></td>
+                                                        <td>
+                                                            <textarea rows="0" cols="50" id="RemarksSwitch-@obj.Std_id" name="RemarksSwitch" maxlength="500" class="rmrks" value=""></textarea>
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td><br /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><div id="loading2-@obj.Std_id"></div><br /></td>
+                                                        <td><input type="button" class="btn" value="Shift Form" id="btnSwitch" onclick="SwitchForm(@obj.Std_id)" /></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                @*UnlockForm*@
+                                <div class="modal fade" id="myModalUnlockSTD-@obj.Std_id" role="dialog">
+                                    <div class="modal-dialog">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h3 class="modal-title">Unlock Form Student Details : <span style="color:red;">@obj.Std_id</span> </h3>
+
+                                            </div>
+                                            <div class="modal-body">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td>Canidate Name</td>
+                                                        <td><label>@obj.Candi_Name</label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Father Name</td>
+                                                        <td><label>@obj.Father_Name</label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Name</td>
+                                                        <td><label>@obj.Mother_Name</label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="28%">Student ID</td>
+                                                        <td><label>@obj.Std_id</label></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td width="28%">Teacher ID.</td>
+                                                        <td>
+                                                            <input type="text" id="TeacherId-@obj.Std_id" placeholder="Enter Valid Teacher Id" name="TeacherId" maxlength="20" onpaste="return false;" />
+                                                            <br />
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="28%">Teacher Mobile Number</td>
+                                                        <td>
+                                                            <input type="text" id="TeacherMobile-@obj.Std_id" placeholder="Enter Valid Teacher Mobile Number" name="TeacherMobile" maxlength="10" onkeypress="return isNumberKey(event);" />
+                                                            <br />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="28%">Unlock Reason</td>
+                                                        <td>
+                                                            <input type="text" id="unlockReason-@obj.Std_id" placeholder="Enter Valid Unlock Reason " name="unlockReason" maxlength="200" />
+                                                            <br />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>
+                                                            <input type="button" class="btn" value="Unlock Form" id="btnUnlock" onclick="unlockStdForm(@obj.Std_id)" />
+                                                            &nbsp;&nbsp;&nbsp;&nbsp; <a href="~/PDF/#" target="_blank" class="btn">Help</a>
+                                                        </td>
+
+                                                    </tr>
+                                                </table>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            @* Modal End*@
+                        </td>
+                        <td>@obj.Admission_Date </td>
+                        <td>@obj.Candi_Name </td>
+                        <td>@obj.Father_Name </td>
+                        <td>@obj.Mother_Name </td>
+                        <td>@obj.DOB</td>
+                        <td>@obj.LOT</td>
+                        <td>@obj.CreatedDate</td>
+                        <td>@obj.UPDT</td>
+                        <td>
+                            <div class="cart">
+                                Choose Action <span class="caret"></span>
+                                <div id="sidebar">
+                                    <ul>
+                                        @*<li>@Html.ActionLink("View", "N3formview", new { id = encrypt.QueryStringModule.Encrypt(@obj.Std_id.ToString()) })</li>*@
+                                        <li> @Html.ActionLink("View", "CommanFormView", new { id = encrypt.QueryStringModule.Encrypt(@obj.Std_id.ToString()), formNM = "N3" })</li>
+                                        @if (obj.LOT.ToString() == "0")
+                                        {
+                                            <li>@Html.ActionLink("Modify", "N3FormModify", new { id = encrypt.QueryStringModule.Encrypt(@obj.Std_id.ToString()) })</li>
+                                            <li>@Html.ActionLink("Delete", "N3FormDelete", new { id = @obj.Std_id.ToString() }, new { onclick = "return confirm('Are you sure to delete this record?');" })</li>
+                                            @*<li><a href="" data-toggle="modal" data-target="#myModalUnlockSTD-@obj.Std_id">Unlock Student</a></li>*@
+                                        }
+
+                                        @*<li><a href="" data-toggle="modal" data-target="#myModal1-@obj.Std_id.ToString()">Modify Aadhar No.</a></li>*@
+                                    </ul>
+
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 text-center" style="padding:15px 0">
+        @*<input type="button" value="Add New Records" onclick="javascript:document.location.href='@Url.Action("N3Form", "RegistrationPortal")'" />*@
+        <input type="button" value="Rough Report" onclick="javascript:document.location.href='@Url.Action("RoughReport", "RegistrationPortal", new { Form = "N3" })'" />
+        <input type="button" value="Student Verification Form" onclick="javascript:document.location.href='@Url.Action("StudentVerificationForm", "RegistrationPortal", new { Form = "N3" })'">
+        <input type="button" value="Import Student Data" onclick="javascript:document.location.href='@Url.Action("N3master", "RegistrationPortal")'" />
+        <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("N3master", "RegistrationPortal" )'" />
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 25,
+            "order": [[0, 'desc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By UniqueID, Candidate Name, Father's Name, Mother's Name, DOB.." },
+        })
+    });
+</script>
+
+
+
+<script type="text/javascript">
+    function SubMarks(stdid, aadharEnroll, schl) {
+        var aa = $("#Aadharnum-" + stdid).val();
+        if (aa.length != 12 && aa.length != 28) {          
+            alert('Enter Aadhar / Enrollment No , Aadhar No Should be 12 Digit and Enrollment No should be 28 digit');
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/RegistrationPortal/UpdateAadharEnrollNo", // this for calling the web method function in cs code.
+            data: '{std_id: "' + stdid + '",aadhar_num: "' + aa + '",SCHL:"' + schl + '"}',// user name or email value
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response.sn == "Yes") {
+                    alert("Aadhar Number Updated Successfully");
+                    window.location.href = "/RegistrationPortal/N3formgrid";
+                    $(".modal").hide();
+                }
+                else {
+                    alert("Aadhar Number not Updated.");
+                }
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    }
+</script>
+
+

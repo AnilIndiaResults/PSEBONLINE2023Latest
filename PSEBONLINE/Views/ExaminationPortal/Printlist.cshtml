@@ -1,0 +1,847 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    ViewBag.Title = "Examformcalfee";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+
+}
+
+<div class="container">
+    <div id="loading1"></div>
+
+    <div class="row" id="divMain1">
+        <div class="col-md-12">
+            @*<div class="rqf" style="padding:12px 0;font-size:18px;font-weight:normal">NOTE : WITHOUT REGISTRATION NO. / REGISTRATION NO. HAVING ERROR, CANDIDATES ARE NOT ALLOWED TO GENERATE EXAMINATION FORM</div>*@
+        </div>
+        <div class="clearfix"></div><div>
+            <p>
+                @{
+                    if (@ViewBag.Id != null)
+                    {
+                        if (ViewBag.Id == "M")
+                        {
+                            <h1>Matriculation Regular Examination Form Session : @Session["Session"].ToString()</h1>
+                        }
+                        else if (@ViewBag.Id == "S")
+                        {
+                            <h1>Senior Secondary Regular Examination Form Session : @Session["Session"].ToString()</h1>
+                        }
+                        @*if (@ViewBag.Id == "MO")
+                            {
+                                <h1>Matriculation Open Examination</h1>
+                            }
+                            if (@ViewBag.Id == "SO")
+                            {
+                                <h1>Senior Secondary Open Examination</h1>
+                            }*@
+                    }
+                }
+
+            </p>
+
+        </div>
+
+        <form action="/ExaminationPortal/Printlist?id=@ViewBag.id" id="form1" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-12">
+                    <fieldset style="margin-bottom:15px">
+                        <legend>Search</legend>
+                        <div class="col-md-3">
+                            Search By Student Unique Id : <label>Student Unique Id</label>
+                        </div>
+                        <div class="col-md-3">
+                            &nbsp;<br><input id="SearchString" name="SearchString" value="@ViewBag.Searchstring" placeholder="Enter Unique Id/Candidate Id" type="text">
+                        </div>
+                        <div class="col-md-3">
+                            <br>
+                            <input type="submit" value="Search" name="cmd" onclick="return formVal();" />
+                            <input value="Reset" type="submit">
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-12 rqf">Note : Kindly select search criteria &amp; then click search button to show records.</div>
+
+                    </fieldset>
+                </div>
+            </div>
+        </form>
+
+
+
+
+
+        <div class="col-md-4">Grid Total:  @ViewBag.TotalCount1</div>
+        <div class="col-md-8 text-right">
+            <input type="submit" value="Add Student For Generate Examination Form" id="btnsubmit" />
+            <a href="~/ExaminationPortal/ImportedPrintList?id=@ViewBag.id" class="btn">View Selected Students</a>
+            <a href="~/RegistrationPortal/ExaminationPortal" class="btn">Back</a>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th width="5%">Sr No</th>
+                        <th width="9%">Form Name</th>
+                        <th width="9%">UniqueId	</th>
+                        <th width="12%">Registration No.</th>
+                        <th width="20%">Name/Father's/Mother's Name</th>
+                        <th width="10%">Admission Date</th>
+                        <th width="5%">Caste</th>
+                        <th width="20%">
+                            Want self center?
+                            <input type="checkbox" id="selectallC" />
+                            <br />
+                            D.A., Percent
+                        </th>
+                        <th width="10%">Select All <input type="checkbox" id="selectall" /></th>
+
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 20 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                var form_Name = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                var StudentUniqueId = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                var Registration_num = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                var Admission_Date = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                                var Caste = Model.StoreAllData.Tables[0].Rows[i]["Caste"].ToString();
+                                var challanVerify = Model.StoreAllData.Tables[0].Rows[i]["challanVerify"].ToString();
+                                var BBPL = Model.StoreAllData.Tables[0].Rows[i]["Belongs_BPL"].ToString();
+                                var HID_UTYPE = Model.StoreAllData.Tables[0].Rows[i]["HID_UTYPE"].ToString();
+                                var dtype = Model.StoreAllData.Tables[0].Rows[i]["dtype"].ToString();
+                                var msg = Model.StoreAllData.Tables[0].Rows[i]["msg"].ToString();
+                                var Disabilitypercent = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["Disabilitypercent"].ToString());
+                                string differently_abled = Model.StoreAllData.Tables[0].Rows[i]["differently_abled"].ToString();
+                                Count = Count + 1;
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>
+                                                @form_Name
+                                            </td>
+                                            <td>
+                                                @StudentUniqueId
+                                            </td>
+                                            <td>@Registration_num</td>
+                                            <td>@Candi_Name/@Father_Name/@Mother_Name</td>
+                                            <td>@Admission_Date</td>
+                                            <td>@Caste</td>
+                                            @{
+                                                string[] conditions = {
+                                           //"ACID ATTACK VICTIM",
+                                           //"AUTISM SPECTRUM DISORDER",
+                                           //"BLINDNESS",
+                                           //"CEREBRAL PALSY",
+                                           //"CHRONIC NEUROLOGICAL CONDITIONS",
+                                           //"DWARFISM",
+                                           //"HEARING IMPARMENT (DEAF AND HARD OF HEARING)",
+                                           //"HEMOPHILIA",
+                                           //"INTELLECTUAL DISABILITY",
+                                           //"LEPROSY CURED PERSON",
+                                           //"LOCOMOTOR DISABILITY",
+                                           //"LOW-VISION",
+                                           //"MENTAL ILLNESS",
+                                           //"MULTIPLE DISABILITIES INCLUDING DEAFBLINDNESS",
+                                           //"MULTIPLE SCLEROSIS",
+                                           //"MUSCULAR DYSTROPHY",
+                                           //"PARKINSONS DISEASE",
+                                           //"SICKLE CELL DISEASE",
+                                           //"SPECIFIC LEARNING DISABILITIES",
+                                           //"SPEECH AND LANGUAGE DISABILITY",
+                                           //"THALASSEMIA"
+                                           "ACID ATTACK VICTIM",
+                                           "DWARFISM",
+                                           "HEMOPHILIA",
+                                           "LEPROSY CURED PERSON",
+                                           "LOCOMOTOR DISABILITY",
+                                           "MULTIPLE SCLEROSIS",
+                                           "MUSCULAR DYSTROPHY",
+                                           "SICKLE CELL DISEASE",
+                                           "SPEECH AND LANGUAGE DISABILITY",
+                                           "THALASSEMIA"
+                                            };
+                                                string[] condition1 ={
+                                            "AUTISM SPECTRUM DISORDER",
+"BLINDNESS",
+"CEREBRAL PALSY",
+"CHRONIC NEUROLOGICAL CONDITIONS",
+"HEARING IMPARMENT (DEAF AND HARD OF HEARING)",
+"INTELLECTUAL DISABILITY",
+"LOW-VISION",
+"MENTAL ILLNESS",
+"MULTIPLE DISABILITIES INCLUDING DEAFBLINDNESS",
+"PARKINSONS DISEASE",
+"SPECIFIC LEARNING DISABILITIES"};
+                                                bool containsConditionOrDisability = conditions.Any(x => differently_abled.ToUpper().Contains(x.ToUpper()));
+                                                bool containsConditionOrDisability1 = condition1.Any(x => differently_abled.ToUpper().Contains(x.ToUpper()));
+
+                                                if (containsConditionOrDisability && Disabilitypercent >= 40)
+                                                {
+
+                                                    <td>
+                                                                                                    <div id="feedis-@stdid">
+                                                                                                        <input type="checkbox" id="cbfd-@stdid" class="fdcheckbox" name="AllChkId" />WANT SELF CENTER?
+                                                                                                        <br />
+                                                                                                        @differently_abled, @Disabilitypercent
+                                                                                                        @*<input type="text" maxlength="15" id="as-@stdid" style="max-width:50px;" readonly />*@
+                                                                                                    </div>
+                                                    </td>
+                                                }
+                                                else if (containsConditionOrDisability1 && Disabilitypercent >= 40)
+                                                {
+                                                    <td>
+                                                        <div id="feedis-@stdid">
+                                                            <input type="checkbox" id="cbfd-@stdid" class="fdcheckbox" name="AllChkId" checked disabled />WANT SELF CENTER?
+                                                            <br />
+                                                            @differently_abled, @Disabilitypercent
+                                                            @*<input type="text" maxlength="15" id="as-@stdid" style="max-width:50px;" readonly />*@
+                                                        </div>
+                                                    </td>
+                                                
+                                            }
+                                            else
+                                            {
+                                            <td>
+                                                @differently_abled, @Disabilitypercent
+                                            </td>
+                                            }
+                                            }
+
+
+                                            <td>
+                                                <input type="checkbox" class="checkbox" id="cb-@stdid-@BBPL-@HID_UTYPE-@form_Name-@dtype)@Caste" value="@Caste" />
+
+                                            </td>
+                                        </tr>
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="11">
+
+                                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                                            &nbsp;
+
+                                            @if (ViewBag.pagesize == 1)
+
+                                            {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp = ViewBag.pagesize + 1;
+                                                    <a href="~/examinationportal/Printlist?id=@ViewBag.id&page=@dp">Next ></a>
+                                                    //@Html.ActionLink("Next >", "Printlist", new {id= ViewBag.id, page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/examinationportal/Printlist?id=@ViewBag.id&page=@ViewBag.pn">>></a>
+                                                    //@Html.ActionLink(">>", "Printlist", new { id = ViewBag.id, page = ViewBag.pn })
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var dp = ViewBag.pagesize - 1;
+                                                <a href="~/examinationportal/Printlist?id=@ViewBag.id&page=1"><<</a>
+                                                //@Html.ActionLink("<<", "Printlist", new { id = ViewBag.id, page = 1 })
+
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/examinationportal/Printlist?id=@ViewBag.id&page=@dp">< Prev</a>
+                                                //@Html.ActionLink("< Prev", "Printlist", new { id = ViewBag.id, page = ViewBag.pagesize - 1 })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp1 = ViewBag.pagesize + 1;
+                                                    <a href="~/examinationportal/Printlist?id=@ViewBag.id&page=@dp1">Next ></a>
+                                                    //@Html.ActionLink("Next >", "Printlist", new { id = ViewBag.id, page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/examinationportal/Printlist?id=@ViewBag.id&page=@ViewBag.pn">>></a>
+                                                    //@Html.ActionLink(">>", "Printlist", new { id = ViewBag.id, page = ViewBag.pn })
+                                                }
+
+                                            }
+
+
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="10">
+                                    <span class="rqf">@ViewBag.Message</span>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+
+                </table>
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+
+<script type="text/javascript">
+
+    function formVal() {
+        if (document.getElementById("SearchString").value == "" || document.getElementById("SearchString").value == "0") {
+            alert("Enter Unique Id");
+            document.getElementById("SearchString").focus();
+            return false;
+        }
+
+    }
+
+    $(document).ready(function ()
+    {
+
+        $("#selectallC").change(function () {
+            var status = this.checked; // "select all" checked status
+
+            var j = 0
+            $('.fdcheckbox').each(function () {
+                $("input[name='AllChkId']")[j].checked = status;
+                j++;
+            });
+        });
+
+
+        $('input[type^="text"]').change(function () {
+           // alert('1');
+            var $current = $(this);
+            var flag = 0;
+            $('input[type^="text"]').each(function () {
+                if (flag == 0) {
+                    if ($(this).val() == $current.val() && $(this).attr('id') != $current.attr('id')) {
+                        flag = 1;
+                        $current.val("");
+                        alert('Duplicate Number!');
+                    }
+                }
+            });
+        });
+
+            $("#selectall").change(function () {
+                //"select all" change
+                var status = this.checked; // "select all" checked status
+                var arr = [];
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                    //alert(id);
+                    this.checked = status; //change ".checkbox" checked status
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var bbpl = "";
+                    var arrcast = "";
+                    var usertype = "";
+                    var formname = "";
+                    var dtype = "";
+                    var j = 0;
+                    var k = 0;
+                    for (var i = 3; i < arr.length; i++) {
+                        if (arr[i] == ')') {
+                            break;
+                        }
+                        if (arr[i] == '-')
+                        {
+                            k++;
+                            continue;
+                        }
+                        if (k == 0)
+                        {
+                            arrid += arr[i];
+                        }
+                        else if (k == 1) {
+                            bbpl += arr[i];
+                        }
+                        else if (k == 2) {
+                            usertype += arr[i];
+                        }
+                        else if (k == 3) {
+                            formname += arr[i];
+                        }
+                        else if (k == 4) {
+                            dtype += arr[i];
+                        }
+
+                        j++;
+
+                    }
+                    //alert(dtype);
+
+                    for (var k = 3 + j + 5; k < arr.length; k++) {
+                        arrcast += arr[k];
+                    }
+                    //alert(bbpl);
+                    //alert(usertype);
+
+                    if (formname == "M1" || formname == "M2") {
+                        //  if ((arrcast.startsWith("SC") || arrcast == "BC" || arrcast == "ST") && bbpl == "YES" && usertype == "GOVERNMENT SCHOOL") {
+                        // Change by Gulab Sir on 14Oct
+                        if ((arrcast.startsWith("SC") == true || arrcast == "BC" || arrcast == "OBC") && (bbpl == "" || bbpl == "YES" || bbpl == "NO") && (usertype == "MRS" || usertype == "GOV" || usertype == "R&A")) {
+                        //if ((arrcast.startsWith("SC") == true || arrcast == "BC" || arrcast == "OBC") && (bbpl == "" || bbpl == "YES" || bbpl == "NO") && (usertype == "GOV" || usertype == "R&A")) {
+                            if (this.checked) {
+                                //alert("Jay Ho");
+                                $("#feedis-" + arrid).fadeIn("slow");
+                            }
+                            else {
+                                $("#feedis-" + arrid).fadeOut("slow");
+                            }
+                        }
+                    }
+                    else if (formname == "T1" || formname == "T2") {
+                        //  if ((arrcast.startsWith("SC") || arrcast == "ST") && bbpl == "YES" && usertype == "GOVERNMENT SCHOOL") {
+                        // Change by Gulab Sir on 14Oct
+                       // alert(usertype);
+                       // alert(dtype);
+                        if (arrcast.startsWith("SC") == true && (bbpl == "" || bbpl == "YES" || bbpl == "NO") && (dtype == "MRS" || dtype == "GOV" || dtype == "R&A")) {
+                        //if (arrcast.startsWith("SC") == true && (bbpl == "" || bbpl == "YES" || bbpl == "NO") && (dtype == "GOV" || dtype == "R&A")) {
+                            if (this.checked) {
+                                //alert("Jay Ho");
+                                $("#feedis-" + arrid).fadeIn("slow");
+                            }
+                            else {
+                                $("#feedis-" + arrid).fadeOut("slow");
+                            }
+                        }
+                    }
+                });
+            });
+
+
+            //uncheck "select all", if one of the listed checkbox item is unchecked
+            $('.checkbox').change(function () { //".checkbox" change
+
+                //alert($(this).val());
+                if (this.checked == false) { //if this item is unchecked
+                    $("#selectall")[0].checked = false; //change "select all" checked status to false
+
+                }
+            });
+            $('.checkbox').click(function () { //".checkbox" change
+                var id = this.id;
+                //alert(id);
+
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                var bbpl = "";
+                var arrcast = "";
+                var usertype = "";
+                var formname = "";
+                var dtype = "";
+                var j = 0;
+                var k = 0;
+                for (var i = 3; i < arr.length; i++) {
+                    if (arr[i] == ')') {
+                        break;
+                    }
+                    if (arr[i] == '-') {
+                        k++;
+                        continue;
+                    }
+                    if (k == 0) {
+                        arrid += arr[i];
+                    }
+                    else if (k == 1) {
+                        bbpl += arr[i];
+                    }
+                    else if (k == 2) {
+                        usertype += arr[i];
+                    }
+                    else if (k == 3) {
+                        formname += arr[i];
+                    }
+                    else if (k == 4) {
+                        dtype += arr[i];
+                    }
+
+                    j++;
+
+                }
+                //alert("dtype="+dtype);
+                //alert(arrid);
+                //alert("bbpl="+bbpl);
+               //alert("usertype="+usertype);
+               //alert("formname="+formname);
+              // alert(j);
+                for (var k = 3 + j + 5; k < arr.length; k++) {
+                    arrcast += arr[k];
+                }
+              //alert("cast="+arrcast);
+                if (formname == "M1" || formname == "M2")
+                    {
+                   // if ((arrcast.startsWith("SC") || arrcast == "BC" || arrcast == "ST") && bbpl == "YES" && usertype == "GOVERNMENT SCHOOL") {
+                    if ((arrcast.startsWith("SC")==true || arrcast == "BC" || arrcast == "OBC") && (bbpl == "" || bbpl == "YES" || bbpl == "NO") && (usertype == "MRS" || usertype == "GOV" || usertype == "R&A")) {
+                    //if ((arrcast.startsWith("SC") == true || arrcast == "BC" || arrcast == "OBC") && (bbpl == "" || bbpl == "YES" || bbpl == "NO") && (usertype == "GOV" || usertype == "R&A")) {
+
+                        if (this.checked) {
+                            //alert("Jay Ho");
+                            $("#feedis-" + arrid).fadeIn("slow");
+                        }
+                        else
+                        {
+                            $("#feedis-" + arrid).fadeOut("slow");
+                        }
+                    }
+                }
+                else if (formname == "T1" || formname == "T2") {
+                        //  if ((arrcast.startsWith("SC") || arrcast == "ST") && bbpl == "YES" && usertype == "GOVERNMENT SCHOOL") {
+                        // Change by Gulab Sir on 14Oct
+                    if (arrcast.startsWith("SC") == true && (bbpl == "" || bbpl == "YES" || bbpl == "NO") && (usertype == "MRS" || usertype == "GOV" || usertype == "R&A") && (dtype == "MRS" || dtype == "GOV" || dtype == "R&A")) {
+                    //if (arrcast.startsWith("SC") == true && (bbpl == "" || bbpl == "YES" || bbpl == "NO") && (usertype == "MRS" || usertype == "GOV" || usertype == "R&A") && (dtype == "GOV" || dtype == "R&A")) {
+                        if (this.checked) {
+                           // alert("Jay Ho");
+                            $("#feedis-" + arrid).fadeIn("slow");
+                        }
+                        else {
+                            $("#feedis-" + arrid).fadeOut("slow");
+                        }
+                    }
+                }
+
+
+                    //alert(arrid);
+                    //alert(arrcast);
+                    //alert(j);
+
+                    //alert(i);
+                    //alert($(this).val());
+
+            });
+
+            $('.fdcheckbox').click(function () { //".checkbox" change
+                var id = this.id;
+                //alert(id);
+
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                for (var i = 5; i < arr.length; i++) {
+                    arrid += arr[i];
+
+                }
+                    if (this.checked) {
+                        //alert("Jay");
+                        $("#as-" + arrid).attr("readonly", false);
+                        //$("#feedis-" + arrid).fadeIn("slow");
+                    }
+                    else {
+                        $("#as-" + arrid).attr("readonly", true);
+                        //$("#feedis-" + arrid).fadeOut("slow");
+                    }
+                //}
+
+                //alert(arrid);
+                //alert(arrcast);
+                //alert(j);
+
+                //alert(i);
+                //alert($(this).val());
+
+            });
+
+
+            $("#btnsubmit").click(function () {
+                //alert("Dee");
+
+                var chkdee = "";
+                var storeid = "";
+                var storechkid = "";
+                var storescid = "";
+                var storeaashirwardno = "";
+                if ($('.checkbox:checked').length == 0) {
+                    alert("Please Check Atleast One Check box");
+                    return false;
+                }
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                   //alert(id);
+
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var arrcast = "";
+                    var j = 0;
+                    for (var i = 3; i < arr.length; i++) {
+                        if (arr[i] == '-') {
+                            break;
+                        }
+                        arrid += arr[i];
+                        //j++;
+
+                    }
+                    //alert(arrid);
+                    var k = 0;
+                    var formname = "";
+                    for (var i = 3; i < arr.length; i++) {
+
+
+                        if (arr[i] == ')') {
+                            break;
+                        }
+                        if (k == 3 && arr[i] != '-') {
+                            formname += arr[i];
+                        }
+                        if (arr[i] == '-') {
+                            k++;
+                        }
+                        j++;
+
+                    }
+                    //alert(j);
+                    for (var k = 3 + j+1; k < arr.length; k++) {
+                        arrcast += arr[k];
+                    }
+                    //alert(arrcast);
+                     if (this.checked) {
+                        storeid += arrid + ",";
+                       //alert(storeid);
+                        //alert(formname);
+                        if (formname == "M1" || formname == "M2") {
+
+                                //alert(arrid);
+                                if ($("#cbfd-" + arrid).is(':checked')) {
+                                    if ($("#as-" + arrid).val() == "") {
+                                       // $("#as-" + arrid).addClass("input-validation-error");
+                                       // chkdee = "No";
+                                 storescid += arrid + ",";
+                                    }
+                                    else {
+                                        storescid += arrid + ",";
+                                        storeaashirwardno += $("#as-" + arrid).val() + ",";
+                                        $("#as-" + arrid).removeClass("input-validation-error");
+                                    }
+
+                                }
+                                else {
+                                    $("#as-" + arrid).removeClass("input-validation-error");
+                                }
+
+
+                        }
+                        else if (formname == "T1" || formname == "T2") {
+                                if ($("#cbfd-" + arrid).is(':checked')) {
+                                    if ($("#as-" + arrid).val() == "") {
+                                        $("#as-" + arrid).addClass("input-validation-error");
+                                        chkdee = "No";
+                                    }
+                                    else {
+                                        storescid += arrid + ",";
+                                        storeaashirwardno += $("#as-" + arrid).val() + ",";
+                                        $("#as-" + arrid).removeClass("input-validation-error");
+                                    }
+
+                                }
+                                else {
+                                    $("#as-" + arrid).removeClass("input-validation-error");
+                                }
+                        }
+                    }
+                });
+
+                if(chkdee=="No")
+                {
+
+                }
+                else if (storeid!="")
+                {
+                    if (storeaashirwardno != "")
+                    {
+                        //// Duplicate removed by rohit under supervison of Gulab sir/Manvinder Singh
+                        //alert('1');
+                        //$('#divMain1').hide();
+                        //$('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                        //$.ajax({
+                        //    type: "POST",
+                        //    url: "../ExaminationPortal/JqCheckDuplicateAashirwardNumber", // this for calling the web method function in cs code.
+                        //    data: '{storeaashirwardno:"' + storeaashirwardno + '",storeid:"' + storescid + '" }',// user name or email value
+
+                        //    contentType: "application/json; charset=utf-8",
+                        //    dataType: "json",
+                        //    success: OnSuccessDuplicacy,
+                        //    failure: function (response) {
+                        //        // alert(response);
+                        //        alert('2');
+                        //    }
+                        //});
+
+                        $('#divMain1').hide();
+                        $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                        $.ajax({
+                            type: "POST",
+                            url: "../ExaminationPortal/JqPrintlist", // this for calling the web method function in cs code.
+                            data: '{storeid: "' + storeid + '",storescid:"' + storescid + '",storeaashirwardno:"' + storeaashirwardno + '" }',// user name or email value
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: OnSuccess,
+                            failure: function (response) {
+                                alert(response);
+                                $('#divMain1').show();
+                                $('div#loading1').empty();
+                            }
+                        });
+                    }
+                    else
+                    {
+                        $('#divMain1').hide();
+                        $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                        $.ajax({
+                            type: "POST",
+                            url: "../ExaminationPortal/JqPrintlist", // this for calling the web method function in cs code.
+                            data: '{storeid: "' + storeid + '",storescid:"' + storescid + '",storeaashirwardno:"' + storeaashirwardno + '" }',// user name or email value
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: OnSuccess,
+                            failure: function (response) {
+                                alert(response);
+                                $('#divMain1').show();
+                                $('div#loading1').empty();
+                            }
+                        });
+                    }
+
+                    function OnSuccess(response) {
+                        if (response.dee == "")
+                            {
+                            alert("Something Went Wrong,Try Again.");
+                        $('#divMain1').show();
+                        $('div#loading1').empty();
+                        }
+                        else
+                        {
+                           // window.location.href = '/ExaminationPortal/ImportedPrintList';
+                            window.location.href = '/ExaminationPortal/PrintList?id=@ViewBag.id';
+                            alert("Records Imported Successfully");
+                            $('#divMain1').show();
+                            $('div#loading1').empty();
+
+                        }
+
+                    }
+                    function OnSuccessDuplicacy(response) {
+                       // alert('1');
+                        if (response.dee != "")
+                        {
+                           // alert('Duplicate');
+                            //alert("Duplicate Aashirward number like "+response.dee+ "Try Again.");
+                            //alert(response.dee);
+                            //alert(response.dee1);
+                            var arr = [];
+                            arr = response.dee1;
+                            var arrid = "";
+                            for(var i=0;i<arr.length;i++)
+                            {
+                                arrid += arr[i];
+                                if (arr[i] == ',' || i == arr.length-1) {
+                                    alert(arrid);
+                                    $("#as-" + arrid).addClass("input-validation-error");
+                                    //chkdee = "No";
+                                    continue;
+                                }
+
+                            }
+                            $('#divMain1').show();
+                            $('div#loading1').empty();
+                        }
+                        else if (response.dee == "No") {
+                            alert("Something Went Wrong,Try Again.");
+                            $('#divMain1').show();
+                            $('div#loading1').empty();
+                            //alert(response.dee);
+                        }
+
+                        else
+                        {
+                          alert("Allowed.");
+                           // alert(storeid);
+                           // alert(storescid);
+                            //alert(storeaashirwardno);
+                            $.ajax({
+                                type: "POST",
+                                url: "../ExaminationPortal/JqPrintlist", // this for calling the web method function in cs code.
+                                data: '{storeid: "' + storeid + '",storescid:"' + storescid + '",storeaashirwardno:"' + storeaashirwardno + '" }',// user name or email value
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: OnSuccess,
+                                failure: function (response) {
+                                    alert(response);
+                                }
+                            });
+                        }
+                            //alert("Well Done.");
+                        // msg.text("School Code is Wrong.");
+                        //var msg = $('#lblStatus');
+                        //alert(response.oid);
+
+                        //switch (response.oid) {
+                        //    case "0":
+                        //        msg.css("slidedown", "slow");
+                        //        msg.css("color", "red");
+                        //        msg.text("School Code is Wrong.");
+                        //        break;
+                        //    case "1":
+                        //        msg.css("slidedown", "slow");
+
+                        //        if (response.vl == "No") {
+                        //            msg.css("color", "pink");
+                        //            msg.text("School Code is Correct,But Unable for login.");
+                        //            $("#disticid").val(response.dn);
+                        //            $("#schid").val(response.sn);
+                        //        }
+                        //        else {
+                        //            msg.css("color", "green");
+                        //            msg.text("School Code is Correct and Able for login.");
+                        //            $("#disticid").val(response.dn);
+                        //            $("#schid").val(response.sn);
+                        //        }
+                        //        break;
+                        //}
+                    }
+
+                }
+
+            });
+    });
+</script>
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>

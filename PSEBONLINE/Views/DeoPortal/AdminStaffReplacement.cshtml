@@ -1,0 +1,444 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+
+<style type="text/css">
+    input[type="checkbox"]:focus {
+        box-shadow: 0 0 1px 2px #cc0000;
+        border: 2px solid #cc0000;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<h1>Admin Staff Replacement</h1>
+@using (Html.BeginForm("AdminStaffReplacement", "DeoPortal", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                @*<div class="col-md-2"> <label>Total : @ViewBag.TotalCount1</label></div>*@                                         
+                 <div class="col-md-2" id="staffDetails">
+                        @{
+                            List<SelectListItem> SelectStaffList = new List<SelectListItem>();
+                            SelectStaffList.Add(new SelectListItem { Text = "ePunjabId", Value = "9" });
+                        }
+                        @Html.DropDownList("StaffList", SelectStaffList, new { id = "StaffList" })
+
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                        <span id="reqsellist" style="color:red;display:none;">Enter ePunjabId Here</span>
+                    </div>
+                    <div class="col-md-3"><input type="Submit" value="Search" name="cmd" onclick="return dee()" />
+                      @*&nbsp;&nbsp;  <input type="submit" value="Staff Replace Report" id="btnReplaceReport" name="cmd" />*@
+                        
+                </div>
+</fieldset>
+        </div>
+    </div>
+
+        <div class="row"style="font-size:11px;">
+            <div class="table-responsive">              
+                <div class="col-md-12">
+                    <div> SEARCH RESULT</div>
+                    <table id="t01" class="table table-bordered">
+                        <tr class="active-tr">
+                          
+                            <th>Block Code </th>
+                            <th>centre</th>
+                            <th>ePunjab ID </th>                          
+                            <th>School Name</th>   
+                            <th>DISTNM</th>                        
+                            <th>Teacher Name</th>
+                            <th>Father's Name</th>
+                            <th>Cadre</th>
+                            <th>Mobile</th>     
+                            <th>Gender</th>        
+                            <th>UDISE</th>                                
+                            <th>Type Of Duty</th>                            
+                        </tr>
+                        <tr>
+                            @{
+                                if (@ViewBag.message == "1")
+                                {
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            //CCODE, TeacherName, FatherName, Designation, TypeOfDuty, Mobile                                           
+                                            var SLNO = Model.StoreAllData.Tables[0].Rows[i]["SLNO"].ToString();
+                                            var epunjabid = Model.StoreAllData.Tables[0].Rows[i]["epunjabid"].ToString();
+                                            var staffid = Model.StoreAllData.Tables[0].Rows[i]["staffid"].ToString();
+                                            var cadre = Model.StoreAllData.Tables[0].Rows[i]["cadre"].ToString();
+                                            var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+                                            var TeacherName = Model.StoreAllData.Tables[0].Rows[i]["name"].ToString();
+                                            var gender = Model.StoreAllData.Tables[0].Rows[i]["gender"].ToString();
+                                            var udise = Model.StoreAllData.Tables[0].Rows[i]["udise"].ToString();
+                                            var FatherName = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                                            var VDesignation = Model.StoreAllData.Tables[0].Rows[i]["subject"].ToString();
+                                            var TypeOfDuty = Model.StoreAllData.Tables[0].Rows[i]["dutytype"].ToString();
+                                            var lot = Model.StoreAllData.Tables[0].Rows[i]["lot"].ToString();
+                                            var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                            var aadhar = Model.StoreAllData.Tables[0].Rows[i]["adharno"].ToString();
+                                            var DIST = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                                            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                            var SCHLNM = Model.StoreAllData.Tables[0].Rows[i]["SCHLNM"].ToString();
+                                            var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                                            var cent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                                        <tr>
+                                            <td>@CCODE</td>
+                                            <td>@cent</td>
+                                            <td>@epunjabid </td>                                           
+                                            <td>@SCHLNM </td>        
+                                            <td>@DISTNM </td>                                        
+                                            <td>@TeacherName</td>
+                                            <td>@FatherName</td>
+                                            <td>@cadre</td>
+                                            <td>@Mobile</td>
+                                            <td>@gender</td>
+                                            <td>@udise</td>
+                                            <td>@TypeOfDuty</td>   
+                                        </tr>
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7">
+                                            @ViewBag.Message
+                                        </td>
+                                    </tr>
+                                }
+
+                            }
+       
+                        </table>
+                    </div>
+               @{
+                   if (@ViewBag.message == "1")
+                   {
+                <div class="col-md-12">
+                    <div class="col-md-10"> AVAILABLE STAFF  </div>
+                    <div class="col-md-2 right">                   
+                        @*<input type="submit" value="Staff Replace" id="btnsave" name="cmd" />*@
+                        @*<input type="submit" value="Staff Replace" id="btnReplace" name="cmd" />*@                        
+                        <a href="" id="btnReplace" class="btn" data-toggle="modal" data-target="#myModal2">Click to Staff Replace</a>
+                    </div>
+                   
+
+                    <table id="t01" class="table table-bordered">
+                        <tr class="active-tr">  <th>Block Code </th>
+                            <th>centre</th>
+                            <th>ePunjab ID </th>                           
+                            <th>School Name</th>
+                            <th>DISTNM</th>
+                            <th>Teacher Name</th>
+                            <th>Father's Name</th>
+                            <th>Cadre</th>
+                            <th>Mobile</th>
+                            <th>Gender</th>
+                            <th>UDISE</th>
+                            <th>Type Of Duty</th>
+                            <th>Select</th>
+                        </tr>
+                        <tr>
+                            @{
+                                if (@ViewBag.message == "1")
+                                {
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                                        {
+                                            //CCODE, TeacherName, FatherName, Designation, TypeOfDuty, Mobile                                         
+                                            var SLNO = Model.StoreAllData.Tables[2].Rows[i]["SLNO"].ToString();
+                                            var epunjabid = Model.StoreAllData.Tables[2].Rows[i]["epunjabid"].ToString();
+                                            var staffid = Model.StoreAllData.Tables[2].Rows[i]["staffid"].ToString();
+                                            var cadre = Model.StoreAllData.Tables[2].Rows[i]["cadre"].ToString();
+                                            var CCODE = Model.StoreAllData.Tables[2].Rows[i]["CCODE"].ToString();
+                                            var TeacherName = Model.StoreAllData.Tables[2].Rows[i]["name"].ToString();
+                                            var gender = Model.StoreAllData.Tables[2].Rows[i]["gender"].ToString();
+                                            var udise = Model.StoreAllData.Tables[2].Rows[i]["udise"].ToString();
+                                            var FatherName = Model.StoreAllData.Tables[2].Rows[i]["fname"].ToString();
+                                            var VDesignation = Model.StoreAllData.Tables[2].Rows[i]["subject"].ToString();
+                                            var TypeOfDuty = Model.StoreAllData.Tables[2].Rows[i]["dutytype"].ToString();
+                                            var lot = Model.StoreAllData.Tables[2].Rows[i]["lot"].ToString();
+                                            var Mobile = Model.StoreAllData.Tables[2].Rows[i]["Mobile"].ToString();
+                                            var aadhar = Model.StoreAllData.Tables[2].Rows[i]["adharno"].ToString();
+                                            var DIST = Model.StoreAllData.Tables[2].Rows[i]["dist"].ToString();
+                                            var SCHL = Model.StoreAllData.Tables[2].Rows[i]["SCHL"].ToString();
+                                            var SCHLNM = Model.StoreAllData.Tables[2].Rows[i]["SCHLNM"].ToString();
+                                            var DISTNM = Model.StoreAllData.Tables[2].Rows[i]["DISTNM"].ToString();
+                                            var cent = Model.StoreAllData.Tables[2].Rows[i]["cent"].ToString();
+                                            <tr>
+                                                <td>@CCODE</td>
+                                                <td>@cent</td>
+                                                <td>@epunjabid </td>                                       
+                                                <td>@SCHLNM </td>
+                                                <td>@DISTNM </td>
+                                                <td>@TeacherName</td>
+                                                <td>@FatherName</td>
+                                                <td>@cadre</td>
+                                                <td>@Mobile</td>
+                                                <td>@gender</td>
+                                                <td>@udise</td>                                              
+                                                <td>@TypeOfDuty</td>
+                                                <td>
+                                                    <input type="checkbox" value="@epunjabid" class="checkboxN" name="AllChkId" id="cbn-@epunjabid" />                                                    
+                                                </td>
+                                            </tr>
+
+                                            
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="7">
+                                                @ViewBag.Message
+                                            </td>
+                                        </tr>
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    <td colspan="10">@ViewBag.message </td>
+                                }
+
+                            }                           
+                        </table>
+                    </div>
+                                }
+                }
+                </div>
+            </div>
+
+                                if (@ViewBag.message == "1")
+                                {
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            var cent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                                            var epunjabid = Model.StoreAllData.Tables[0].Rows[i]["epunjabid"].ToString();
+                                            var staffid = Model.StoreAllData.Tables[0].Rows[i]["staffid"].ToString();
+                                            <div class="modal fade" id="myModal2" role="dialog">
+                                                <div class="modal-dialog">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3 center>Staff Replace Details</h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                <tr>
+                                                                    @*<td colspan="2">Center Code @Html.DropDownList("cent", new SelectList(cent, "Value", "Text"), "--Select Centre---", new { @class = "" })</td>*@
+                                                                    <td>Centre Code</td>
+                                                                    <td>   @{
+                                                                        List<SelectListItem> centlist = new List<SelectListItem>();
+                                                                        {
+                                                                            centlist.Add(new SelectListItem { Text = "Select Centre", Value = "" });
+                                                                            centlist.Add(new SelectListItem { Text = cent, Value = cent });
+                                                                        }
+                                                                            @Html.DropDownList("centlist", centlist, new { @class = "", id = "centlist" })
+                                                                       }                                                               
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Replace Status</td>
+                                                                    <td>
+                                                                        @{                                                                            
+                                                                            List<SelectListItem> resultlist = new List<SelectListItem>();
+                                                                            {                                                                                
+                                                                                resultlist.Add(new SelectListItem { Text = "TEMPORARY", Value = "1" });
+                                                                                resultlist.Add(new SelectListItem { Text = "PERMANENT", Value = "2" });
+                                                                            }
+                                                                            @Html.DropDownList("resultlist", resultlist, new { @class = "", id = "resultlist" })
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Remarks</td>
+                                                                    <td><input type="text" id="remarks" name="remarks" maxlength="100"></td>
+                                                                </tr>
+                                                               
+                                                                <tr>
+                                                                    <td colspan="1"></td>
+                                                                    <td colspan="3" align="center">
+                                                                        @*<input type="button" class="btn" value="Submit" id="btnsubmitRegenate" onclick="ReceiveFinalSubmit('@ViewBag.schlCode')" />*@
+                                                                        <input type="submit" value="Staff Replace" id="btnReplaceUpdate" name="cmd" />
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            }
+                                        }
+                                    }
+
+                                }
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('Staff Replace successfully.');
+               // window.location.href = 'Url.Action("Welcome", "Bank")';
+            </script>
+        }
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {       
+        //Start Save Data
+        $("#btnReplace").click(function () {
+            var isvalid = true;
+            if (isvalid == true) {
+                var chkdee = "";                
+                var pageid = "";                                
+                $('.checkboxN').each(function () {
+                    var id = this.id;
+                    // alert("Page= " + id);
+                    var val = this.value;
+                    //alert("Page value= " + rval);
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var arrcast = "";
+                    var j = 0;
+                    if (this.checked) {
+                       {
+                            pageid += val + ",";                            
+                        }
+                    }
+                });
+
+                if (pageid == "") {
+                        alert("Please Select Atleast 1 staff for Replace.");
+                        return false;
+                }
+                else if (pageid != "") {
+                    var noc = pageid.split(",");
+                   
+                    if (noc.length > 2) {
+                        alert("Please Select Only 1 staff for Replace.");
+                        return false;
+                    }                  
+                } 
+            }
+        });
+        //End  Save Data
+    });
+
+</script>
+
+<script type="text/javascript">
+    function UpdateCentStaff(staffid, Cent) {
+        var cvalue = $("#cent-" +staffid).val();
+        //alert("cent" + staffid);
+        //alert(cvalue);    
+                    $.ajax({
+                        type: "POST",
+                        url: "../DeoPortal/UpdateCentStaff", // this for calling the web method function in cs code.
+                        data: '{staffid: "' + (staffid) + '",cent: "' + cvalue + '"}',// user name or email value
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.sn=="Yes")
+                            {
+                                alert("Cent Updated Successfully");
+                                window.location.href = "/DeoPortal/ADMINVIEWSTAFF";
+                                $(".modal").hide();
+                            }
+                            else
+                            {
+                                alert("Update Failed.");
+                            }
+                        },
+                        failure: function (response) {
+                            alert(response);
+                        }
+                    });
+
+
+                }
+
+</script>
+
+<script>
+
+function dee() {
+
+                        if ($("#SelDist").val() == "") {
+
+                            $("#reqsession").slideDown("slow");
+                            return false;
+                        }
+                        
+                        if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+                            
+                            $("#reqsellist").slideDown("slow");
+                            return false;
+                        }
+
+                            //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+                            //    $("#reqsellist").slideUp("slow");
+                            //    $("#reqsstring").slideDown("slow");
+                            //    return false;
+                            //}
+                        else
+                            return true;
+
+                    }
+$(document).ready(function () {
+
+                        $("#SelDist").change(function () {
+                            if ($("#SelDist").val() == "") {
+                                // $("#SearchString").focus(function () { $("#reqsellist").slideUp("slow"); });
+                                $("#reqsession").slideDown("slow");
+                            }
+                            else {
+                                $("#reqsession").slideUp("slow");
+                            }
+
+                        });
+                        $("#Category").change(function () {
+                            var X=$("#Category").val();
+                            if ($("#Category").val() != "" || $("#Category").val() != "0") {
+                                //alert(X);
+                                $('#StaffList').hide();
+                            }
+                            if ($("#Category").val() == "0") {
+                                $('#StaffList').show();
+                            }
+
+                        });
+
+                        $("#StaffList").change(function () {
+                            var X = $("#StaffList").val();
+                            if ($("#StaffList").val() != "" || $("#StaffList").val() != "0") {
+                                //alert(X);
+                                $('#Category').hide();
+                            }
+                            if ($("#StaffList").val() == "0") {
+                                $('#Category').show();
+                            }
+
+                        });
+
+                    });
+var form = $("#searchform").serialize();
+</script>

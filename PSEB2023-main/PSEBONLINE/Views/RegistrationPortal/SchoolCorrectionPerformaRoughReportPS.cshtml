@@ -1,0 +1,374 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/print.css" />
+<link rel="stylesheet" href="~/barcode.css" type="text/css" charset="utf-8" />
+<style type="text/css">
+    .breakhere {
+        page-break-after: always;
+    }
+
+    .border {
+        border: 1px solid #000;
+    }
+
+    .header_outer {
+        display: none;
+    }
+
+    .bs-docs-footer {
+        display: none;
+    }
+
+    body {
+        font-size: 11px;
+    }
+
+    .box {
+        width: 12px;
+        height: 12px;
+        border: 1px solid #000;
+        display: inline-block;
+    }
+
+    .brcode {
+        font-family: 'idautomationhc39mregular';
+        font-size: 8px;
+    }
+</style>
+<h1 class="noprint">
+    Rough Print Correction Performa - Session @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+    else { Response.Redirect("~/Login"); }
+</h1>
+@using (Html.BeginForm("SchoolCorrectionPerformaRoughReportPS", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Print" class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>
+    </table>
+                <table width="100%" border="1">
+                    <thead style="border:0">
+                        <tr>
+                            <td colspan="8" style="border:0;">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="10%" style="text-align:center;vertical-align:top;padding-top:4px"><img src="~/Images/Slogo.jpg" /></td>
+                                        <td width="80%" style="font-size:22px;text-align:center;line-height:28px;">
+                                            Punjab School Education Board<br />
+                                            @*@{
+                if (Model.CorrectionLot.Substring(2, 1) == "1")
+                {
+                    <span style="font-size:16px">Subject</span>
+                }
+                else if (Model.CorrectionLot.Substring(2, 1) == "2")
+                {
+                    <span style="font-size:16px">Particular</span>
+                }
+            }*@
+                                            <span style="font-size:16px">Correction Performa Session @Session["Session"].ToString()</span> (Rough Print)<br />
+                                            <span style="font-size:13px;padding:0 20px">Print Date: @DateTime.Now.ToString("dd/MM/yyyy")</span><br />
+                                                @*<span style="font-size:13px;font-style:italic">Note : For Correction fee, contact with concern Branch.</span>        <br />
+                <span class="kdsfont" style="font-size:13px;line-height:18px">
+                    ÕÂØÚ¥¼Ù: Ú¥Õ ¨ëÏè¨ÓÖÅ ÆñëÇØÏÌØ ÓÉâÄ¼ ÆñÛÚª¤Ø ÓÖØªØ ÚÒó° ²ÌðÙ ¨ÏÒØÚ¥¤Ø ²ØÒã ²Û¢ ÓëÄÙ ÂÛ É»ÂÛ ÇÛÓ ÓÉâÄ¼ ÆñÛÚª¤Ø ÓÖØªØ ÒóÐë× ¨ëÏè¨ÓÖÅ ÆñëÇØÏÌØ/ Final Print ÂÛ ¨ØÆÛ °èó¨ ¨ÏÅ ¦ÝÆÏâ¼ ÂóÓÛ ²ØÒã¬Û ¤¼ã Ú¥Õ ÇÛÓ ¨èÓÖÛ¤Ï, ÌÝóª ÂÇ¼Ï ¨ëÐ ²ÌðÙ ÕëÒã¬Û¢
+                </span>*@
+                                        </td>
+                                        <td width="10%"></td>
+                                            @*<td width="10%" style="vertical-align:top">
+                                           &nbsp;<br />
+                                            Correction Final Date: @Html.DisplayFor(a => a.CorrectionFinalSubmitDt)
+                                            <br />
+                                            Page No.(for office use only)
+                                        </td>*@
+                                    </tr>                                    
+                                </table>
+                                <table width="100%" style="border-top:1px solid #000;border-bottom:1px solid #000">
+                                    <tr style="display:none">
+                                        <td colspan="4" style="text-align:left;font-size:16px;vertical-align:top;line-height:28px">
+                                            &nbsp;Class :&nbsp;@Html.DisplayFor(a => a.Class)
+                                        </td>
+                                        <td style="height:40px;vertical-align:middle;text-align:center" class="brcode">
+                                           <span style="display:none"> *@Html.DisplayFor(a => a.CorrectionLot)*</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="18%">
+                                            &nbsp;School Code :&nbsp;@Html.DisplayFor(a => a.SCHL)
+                                        </td>
+                                       
+                                        @{
+                                            if (ViewBag.TotalCountaddedRecord > 0)
+                                            {
+                                                //for (int i = 0; i < Model.Correctiondatafinal.Tables[0].Rows.Count; i++)
+                                                //{
+                                                var distcode = Model.Correctiondatafinal.Tables[0].Rows[0]["DIST"].ToString();
+
+                                                <td width="18%">District Code :&nbsp;@distcode</td>
+
+                                                var classType = Model.Correctiondatafinal.Tables[0].Rows[0]["Class"].ToString();
+                                                var CorrectionBranch = "";
+                                                if (classType == "Matriculation Regular"|| classType == "Matriculation Open" || classType == "9th Class")
+                                                { CorrectionBranch = "Examination Matriculation"; }
+                                                if (classType == "Sr.Secondary Regular"|| classType == "Sr.Secondary Open" || classType == "11th Class")
+                                                { CorrectionBranch = "Examination Senior Secondary"; }                                                
+                                                <td width="22%">Branch : @CorrectionBranch</td>                                                
+
+                                                @*if (classType == "Matriculation Regular" || classType == "9th Class")
+                                                {
+                                                    var CorrectionBranch = Model.Correctiondatafinal.Tables[0].Rows[0]["MSET"].ToString();
+                                                    var CorrectionSet = Model.Correctiondatafinal.Tables[0].Rows[0]["MSET"].ToString();
+                                                    if (CorrectionBranch != "")
+                                                    {
+                                                        var fChar = CorrectionBranch.Substring(0, 1);
+                                                        switch (fChar)
+                                                        {
+                                                            case "A": CorrectionBranch = "01"; break;
+                                                            case "B": CorrectionBranch = "02"; break;
+                                                            case "C": CorrectionBranch = "03"; break;
+                                                        }
+                                                    }
+
+                                                    <td width="22%">Branch : Exam-@CorrectionBranch</td>
+                                                                        <td width="14%">SET : @CorrectionSet</td>
+                                                }
+                                                if (classType == "Matriculation Open")
+                                                {
+                                                    var CorrectionBranch = Model.Correctiondatafinal.Tables[0].Rows[0]["MOSET"].ToString();
+                                                    var CorrectionSet = Model.Correctiondatafinal.Tables[0].Rows[0]["MOSET"].ToString();
+                                                    if (CorrectionBranch != "")
+                                                    {
+                                                        var fChar = CorrectionBranch.Substring(0, 1);
+                                                        switch (fChar)
+                                                        {
+                                                            case "A": CorrectionBranch = "01"; break;
+                                                            case "B": CorrectionBranch = "02"; break;
+                                                            case "C": CorrectionBranch = "03"; break;
+                                                        }
+                                                    }
+                                                    <td width="22%">Branch : Exam-@CorrectionBranch</td>
+                                                                    <td width="14%">SET : @CorrectionSet</td>
+                                                }
+                                                if (classType == "Sr.Secondary Regular" || classType == "11th Class")
+                                                {
+                                                    var CorrectionBranch = Model.Correctiondatafinal.Tables[0].Rows[0]["SSET"].ToString();
+                                                    var CorrectionSet = Model.Correctiondatafinal.Tables[0].Rows[0]["SSET"].ToString();
+                                                    if (CorrectionBranch != "")
+                                                    {
+                                                        var fChar = CorrectionBranch.Substring(0, 1);
+                                                        switch (fChar)
+                                                        {
+                                                            case "A": CorrectionBranch = "01"; break;
+                                                            case "B": CorrectionBranch = "02"; break;
+                                                            case "C": CorrectionBranch = "03"; break;
+                                                        }
+                                                    }
+                                                    <td width="22%">Branch : Exam-@CorrectionBranch</td>
+                                                                    <td width="14%">SET : @CorrectionSet</td>
+                                                }
+                                                if (classType == "Sr.Secondary Open")
+                                                {
+                                                    var CorrectionBranch = Model.Correctiondatafinal.Tables[0].Rows[0]["SOSET"].ToString();
+                                                    var CorrectionSet = Model.Correctiondatafinal.Tables[0].Rows[0]["SOSET"].ToString();
+                                                    if (CorrectionBranch != "")
+                                                    {
+                                                        var fChar = CorrectionBranch.Substring(0, 1);
+                                                        switch (fChar)
+                                                        {
+                                                            case "A": CorrectionBranch = "01"; break;
+                                                            case "B": CorrectionBranch = "02"; break;
+                                                            case "C": CorrectionBranch = "03"; break;
+                                                        }
+                                                    }
+                                                    <td width="22%">Branch : Exam-@CorrectionBranch</td>
+                                                                    <td width="14%">SET : @CorrectionSet</td>
+                                                }*@
+                                                //}
+                                            }
+                                        }
+                                        @*<td width="20%">Branch :</td>
+                                            <td width="14%">SET :</td>*@
+                                        @*<td width="28%">LOT No. :&nbsp;@Html.DisplayFor(a => a.CorrectionLot)</td>*@
+
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="5">
+                                            &nbsp;School Name :&nbsp;@Html.DisplayFor(a => a.schlCorNameE)
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5">
+                                            &nbsp;Contact Details :&nbsp;@Html.DisplayFor(a => a.schlCorConDetails)
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="5" style="height:10px"></td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+                        <tr style="color:#fff;background-color:#000;text-align:left">
+                            <td width="5%">&nbsp;Sr. No</td>
+                            <td width="10%">&nbsp;Student ID</td>
+                            <td width="10%">&nbsp;Correction ID</td>
+                            <td width="10%">&nbsp;Class</td>
+                            <td width="15%">&nbsp;Correction Type</td>
+                            <td width="25%">&nbsp;Before Correction</td>
+                            <td width="25%">&nbsp;After Correction</td>
+                          
+                            @*<td width="10%">&nbsp;CRC</td>*@
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCountaddedRecord > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                int NextPage = 1;
+                                //int PageNo = 0;
+                                for (int i = 0; i < Model.Correctiondatafinal.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var CorrectionId = Model.Correctiondatafinal.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                    var stdid = Model.Correctiondatafinal.Tables[0].Rows[i]["std_id"].ToString();
+                                    var Class = Model.Correctiondatafinal.Tables[0].Rows[i]["Class"].ToString();
+                                    var CorrectionType = Model.Correctiondatafinal.Tables[0].Rows[i]["CorrectionFieldDisplayName"].ToString();
+                                    var OldValue = Model.Correctiondatafinal.Tables[0].Rows[i]["OldValue"].ToString();
+                                    var NewValue = Model.Correctiondatafinal.Tables[0].Rows[i]["NewValue"].ToString();
+                                    var Lot = Model.Correctiondatafinal.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                                    var Remark = Model.Correctiondatafinal.Tables[0].Rows[i]["Remark"].ToString();
+                                    var OldSubjlist = Model.Correctiondatafinal.Tables[0].Rows[i]["OlDsubjectList"].ToString();
+                                    var NewSubjectList = Model.Correctiondatafinal.Tables[0].Rows[i]["NewSubjectList"].ToString();
+                                    //var CRC = Model.Correctiondatafinal.Tables[0].Rows[i]["CRC"].ToString();
+                                    var cls = Model.Correctiondatafinal.Tables[0].Rows[i]["Class"].ToString();
+                                    Count = Count + 1;
+
+                                    if (cls == "Matriculation Open" || cls == "Sr.Secondary Open")
+                                    {
+                                        OldValue = Model.Correctiondatafinal.Tables[0].Rows[i]["OldValue"].ToString();
+                                    }
+                                    else
+                                    {
+                                        OldValue = "https://registration2022.pseb.ac.in/upload/upload2019/" + Model.Correctiondatafinal.Tables[0].Rows[i]["OldValue"].ToString();
+                                    }
+                                    NewValue = "https://registration2022.pseb.ac.in" + Model.Correctiondatafinal.Tables[0].Rows[i]["NewValue"].ToString(); ;
+
+                                    NextPage = NextPage + 1;
+                                    <tr>
+                                        <td>
+                                            &nbsp;@Count
+                                        </td>
+                                        <td>
+                                            &nbsp;@stdid
+                                        </td>
+                                        <td>
+                                            &nbsp;@CorrectionId
+                                        </td>
+                                        <td>
+                                                &nbsp;@Class
+                                            </td>
+                                        <td>
+                                            &nbsp;@CorrectionType
+                                        </td>
+                                        <td>
+                                            &nbsp;<span class="kdsfont"><img src="@OldValue" class="" style="max-width:25%" alt="image" id="imgPhotoO" /></span>
+                                        </td>
+                                        <td>
+                                            &nbsp;<span class="kdsfont"><img src="@NewValue" class="" style="max-width:25%" alt="image" id="imgPhotoN" /></span>
+                                        </td>
+                                        <td style="display:none">
+                                            &nbsp;Yes <div class="box"></div>&nbsp;&nbsp;&nbsp;&nbsp;No <div class="box"></div>	@Remark
+                                        </td>
+                                        @if (OldSubjlist != "")
+                                        {
+                                        <tr>
+                                            <td colspan="2">Old Subject List</td>
+                                            <td colspan="5">&nbsp;@OldSubjlist</td>
+                                        </tr>
+                                                                                                                <tr>
+                                                                                                                    <td colspan="2">New Subject List</td>
+                                                                                                                    <td colspan="5">&nbsp;@NewSubjectList</td>
+                                                                                                                </tr>}
+
+                                        </tr>
+                                    if (NextPage == 21)
+                                    {
+                                        //PageNo = PageNo + 1;
+                                        @*<tr class="breakhere text-center"><td colspan="7">@PageNo</td></tr>*@
+                                        <tr class="breakhere"><td></td></tr>
+                                        NextPage = 1;
+
+                                    }
+                                }
+                            }
+                        }
+
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="8" style="border:0">
+                                <table width="100%" border="0">
+                                    <tr>
+                                        <td style="padding:10px 0;font-weight:normal" colspan="3">
+                                            <div style="text-align:left;padding:3px">&nbsp;<b>Important Note</b><br />@*&nbsp;*<b>R</b> - Regular Subject, <b>G</b> - Grading Subject, <b>A</b> - Additional Subject, <b>C</b> - Credit Carry Subject (CRC)*@
+                                                &nbsp;&nbsp;<br />This is Rough print only for school checking purpose. Kindly do not send this copy to PSEB Head Office, Send only Final Print Copy to PSEB Head Office.
+                                            </div>
+                                        </td>
+                                    </tr>
+                                 @*   <tr>
+                                        <td style="padding:10px 0" class="kdsfont" colspan="3">
+                                            <div style="text-align:left;padding:3px">
+                                                ¼ÓÂÛ¨ ¨Û¼Ø ²ÙÂØ Õè Ú¨ ¦Ý¨¼ ÂÏ² ÆñÛÚª¤ØÏÁÛ¤Ù
+                                                ÂÛ ¦ÝÆÏë¨¼ ¼ë× Ú¥ÐØÒÙ Ú¨Óã Ú¨ÓÌ ÂÛ ÕëÏ
+                                                ÓëÄ ÉØ¨Û ÅÕÜ Õè ¤¼ã Ú¥Õ ÒãÏÒã ÂØªÐØ ªØÏ²
+                                                ÏÚ²Ó¶Ï ÌÝ¼ØÉ¨ ÓÕÜ ÕÅ¢
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:right" colspan="3"><br /><br />Signature of School Head (With Stamp)&nbsp;</td>
+                                    </tr>*@
+                                    @*<tr>
+                                        <td style="text-align:center" colspan="3"><u>For Office Use Only (Checked &amp; verified By)</u></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="33%">&nbsp;No of Correction Given by School :@ViewBag.TotalCountaddedRecord</td>
+                                        <td width="34%"></td>
+                                        <td width="33%">&nbsp;No of Correction Approved by Set :</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;Receipt No. :</td>
+                                        <td>&nbsp;Date :</td>
+                                        <td>&nbsp;Amount :</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;Senior Assistant/Clerk</td>
+                                        <td></td>
+                                        <td style="text-align:right">Superintendent&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>*@
+                                </table>
+                            </td>
+                        </tr>
+                    </tfoot>
+
+                </table>@*
+                                            <div class="footer"><span class="pagenum"></span> of <span class="pagenum"></span></div>*@
+                            }

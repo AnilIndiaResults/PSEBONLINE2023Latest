@@ -1,0 +1,132 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Practical Cent Update Master";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h2>Practical Cent Update Master</h2>
+
+<div class="row" id="divR">
+    <div class="col-md-6">
+        <fieldset> 
+            <legend>Practical Cent Update Master</legend>
+            @using (Html.BeginForm("PracticalCentUpdateMaster", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("Filevalue", "CENT")
+                <div class="row" style="padding-bottom:100px">
+                    <div class="col-md-6">
+                        Select Exam Type @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem1", required = "required" })
+                    </div>
+                    <div class="col-md-6">
+                        Select Class @Html.DropDownList("SelClass", new SelectList(ViewBag.Mycls, "Value", "Text", ViewBag.Selectedcls), "--Select---", new { @class = "", id = "SelClass", required = "required" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        Upload Excel File @Html.TextBoxFor(m => m.file, new { id = "STDIDMIS", type = "file", required = "required" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        <br />
+                        <input type="submit" name="submit" value="Update Data" onclick="return valForm();" />
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-6">
+                        <br />
+                        <a download="" href="~/PDF/PracticalCentUpdateMasterSample2019.xls" class="btn">Click Here to Download Regular/Open Sample File</a>
+						 <br /> <br /> 
+						 <a download="" href="~/PDF/PracticalCentPvtSample.xls" class="btn">Click Here to Download Private Sample File</a>
+                    </div>
+                    <div class="clearfix"></div>
+<div class="col-md-12">
+    <h1>Important Instructions:</h1>
+    <p style="padding-left:15px">
+        1) All Fields are same as sample file.<br />   
+    </p>
+</div>
+                </div>
+            }
+        </fieldset>
+    </div>
+
+
+    @if (Session["AdminType"].ToString().ToUpper() == "ADMIN")
+    {
+    <div class="col-md-6">
+        <fieldset>
+            <legend>For Special Candidate Only</legend>
+            @using (Html.BeginForm("PracticalCentUpdateMaster", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("Filevalue", "STD")
+                <div class="row" style="padding-bottom:100px">
+                    <div class="col-md-6">
+                        Upload Excel File of Special Students @Html.TextBoxFor(m => m.file, new { id = "STDMIS", type = "file", required = "required" })
+                    </div>
+                    <div class="col-md-6">
+                        <br />
+                        <input type="submit" name="submit" value="Upload" onclick="return valForm();" />
+                    </div>                  
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        <br />
+                        <a download="" href="~/PDF/PracticalCentUpdateMasterStd.xls" class="btn">Click Here to Download Special Candidate Sample File</a>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        <h1>Important Instructions:</h1>
+                        <p style="padding-left:15px">
+                            1) All Fields are compulsory.<br />
+                            2) CANDID is required <br />
+                            3) PCENT is required.<br />                           
+                        </p>
+                    </div>
+                </div>
+            }
+        </fieldset>
+    </div>
+    }
+</div>
+
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+               // window.location.href = 'Url.Action("Welcome", "Bank")';
+            </script>}
+        else if (ViewData["Result"].ToString() == "5")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('Failure, ' + '@ViewBag.Message');
+            </script>}
+        else
+        {
+            <script type="text/javascript" language="javascript">
+               alert('@ViewBag.Message');
+            </script>}
+
+    }
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+               $(document).ready(function () {
+                   $('input[type=file]').change(function () {
+                       var val = $(this).val().toLowerCase();
+                       var regex = new RegExp("(.*?)\.(xls|xls)$");
+                       if (!(regex.test(val))) {
+                           $(this).val('');
+                           alert('Please select only .xls file format');
+                       }
+                   });
+               });
+
+
+</script>
+
+
+

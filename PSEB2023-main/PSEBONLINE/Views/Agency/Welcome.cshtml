@@ -1,0 +1,159 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    ViewBag.Title = "Welcome";
+    Layout = "~/Views/Shared/_AgencyLayout.cshtml";
+}
+<style type="text/css">
+    .ullist {
+        padding-bottom: 100px
+    }
+</style>
+
+@{
+    if (Session["AgencyLoginSession"] != null)
+    {
+        PSEBONLINE.Models.AgencyLoginSession AgencyLoginSession = (PSEBONLINE.Models.AgencyLoginSession)Session["AgencyLoginSession"];
+        <h1>Welcome to Punjab School Education Board Online Registration - Session :<span class="rqf">@AgencyLoginSession.CurrentSession</span></h1>
+        if (AgencyLoginSession.UserType.ToUpper() == "Admin".ToUpper())
+        {
+            <h1>Assessment Data For March @AgencyLoginSession.CurrentSession.Split('-')[1]</h1>
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="/Agency/NSQFAssesmentDataFormat/10" class="btn">Assessment Data Matric </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="/Agency/NSQFAssesmentDataFormat/12" class="btn">Assessment Data Senior </a>
+                </div>
+            </div>
+			
+			 <div class="row">
+                <div class="col-md-12"><br><br><br><br>
+                    <a href="/Agency/NSQFPracExamMarksPendingSchoolList" class="btn">Click here to Download Pending School List</a>
+                </div>                
+            </div>
+        }
+        <div class="row">
+            <div class="col-md-9">
+                <h1>Instructions</h1>
+
+                <div>
+                    @if (ViewBag.TotalCircular > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 15 * (ViewBag.pagesize - 1);
+                        }
+                        DateTime sDate = DateTime.Today;
+                        if (ViewBag.MarqueCount > 0)
+                        {
+                            <marquee onmouseout="this.setAttribute('scrollamount', 6, 0);" onmouseover="this.setAttribute('scrollamount', 0, 0);" direction="left" scrollamount="4" style="padding:10px 0;cursor:pointer;border-bottom:1px solid #8cb7d2;border-radius:10px">
+                                @for (int i = 0; i < Model.dsMarque.Rows.Count; i++)
+                                {
+                                    var Title = Model.dsMarque.Rows[i]["Title"].ToString();
+                                    var ExpiryDate = Model.dsMarque.Rows[i]["ExpiryDateDD"].ToString().Split(' ')[0];
+                                    DateTime eDate = DateTime.ParseExact(ExpiryDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+                                    if (Model.dsMarque.Rows[i]["IsMarque"].ToString() == "1" && (sDate <= eDate))
+                                    {
+                                        <span>  !!@Title &nbsp; &nbsp;| &nbsp; &nbsp;</span>
+                                    }
+                                }
+                            </marquee>
+                        }
+
+                        if (ViewBag.CircularCount > 0)
+                        {
+                            for (int i = 0; i < Model.dsCircular.Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var Title = Model.dsCircular.Rows[i]["Title"].ToString();
+                                var UploadDate = Model.dsCircular.Rows[i]["UploadDateDD"].ToString().Split(' ')[0];
+                                var ExpiryDate = Model.dsCircular.Rows[i]["ExpiryDateDD"].ToString().Split(' ')[0];
+                                var NewFlag = Model.dsCircular.Rows[i]["NewFlag"].ToString();
+                                var Attachment = Model.dsCircular.Rows[i]["Attachment"].ToString();
+                                var UrlLink = Model.dsCircular.Rows[i]["UrlLink"].ToString();
+                                // Count = Count + 1;
+                                DateTime eDate = DateTime.ParseExact(ExpiryDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+                                if (Model.dsCircular.Rows[i]["IsMarque"].ToString() != "1" && (sDate <= eDate))
+                                {
+                                    <br>
+                                    if (!string.IsNullOrEmpty(UrlLink))
+                                    {<a href='@UrlLink' class="listitm" style="padding: 10px 0" target="_blank" title="click here to open link">
+                                            <samp>&#10093;</samp> <span style="color:#ff0000">@UploadDate</span> @Title
+                                            @if (NewFlag == "1")
+                                            {<img src="/images/new.gif" alt="new" />}
+                                        </a>
+                                    }
+                                    else if (!string.IsNullOrEmpty(Attachment))
+                                    {
+                                        <a href="/@Attachment" target="_blank" class="listitm">
+                                            <samp>&#10093;</samp> <span style="color:#ff0000">@UploadDate</span>
+                                            @Title
+                                            @if (NewFlag == "1")
+                                            {<img src="/images/new.gif" alt="new" />}
+                                        </a>
+                                    }
+                                }
+
+                                //paging
+                                if (d == ViewBag.CircularCount)
+                                {
+
+                                    <div style="font-size:medium;padding: 10px;line-height: 1;vertical-align: top;">
+
+                                        Page @ViewBag.pagesize of @ViewBag.pn
+                                        &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {
+                                            @:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "Welcome", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "Welcome", new { page = ViewBag.pn })
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("<<", "Welcome", new { page = 1 })
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @Html.ActionLink("< Prev", "Welcome", new { page = ViewBag.pagesize - 1 })
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "Welcome", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "Welcome", new { page = ViewBag.pn })
+                                            }
+
+                                        }
+                                    </div>
+                                }
+                            }
+                        }
+                    }
+
+                </div>
+
+            </div>
+        </div>
+    }
+
+}
+

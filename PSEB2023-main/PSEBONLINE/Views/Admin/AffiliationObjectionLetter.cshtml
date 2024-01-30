@@ -1,0 +1,415 @@
+﻿@model PSEBONLINE.Models.AffObjectionLettersViewModel
+
+@{
+    ViewBag.Title = "Affiliation ObjectionLetter";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css"> -->
+<style type="text/css">
+    .bootstrap-select.btn-group .dropdown-menu li {
+        margin-left: 20px
+    }
+
+    .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a span.check-mark {
+        left: 0;
+        right: inherit !important
+    }
+</style>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/cardprintr.css" />
+<h1>
+    View Objections of Application No. : <span class="rqf">@Model.AffObjectionLetters.AppNo</span>of
+    @{
+        if (Model.AffObjectionLetters.AppType == "AFF")
+        { <span class="rqf">E-Affiliation</span>
+        }
+        else if (Model.AffObjectionLetters.AppType == "AS")
+        { <span class="rqf">Addition Section</span>
+        }
+        else if (Model.AffObjectionLetters.AppType == "AC")
+        { <span class="rqf">Affiliation Continuation</span>
+        }
+
+    }
+</h1>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        @using (Html.BeginForm("AffiliationObjectionLetter", "Admin", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+        {
+
+            <div class="row">
+                <div class="col-md-3">
+                    Select Objection<span style="color:red"> (Multiple) *</span>
+                </div>
+                <div class="col-md-9">
+                    @*@Html.DropDownListFor(m => m.AffObjectionLetters.ObjCode, new SelectList(Model.affObjectionListMastersList, "objcode", "objection"), "--Select Document--", new { @required = "required" })*@
+                    @Html.ListBoxFor(m => m.selObjCode, new SelectList(Model.affObjectionListMastersList, "objcode", "objection"), new { @required = "required", @id = "selObjCode", @class = "selectObjection show-tick selectpicker form-control input-md" })
+
+                </div>
+                <div class="clearfix"></div>
+                <div id="dvOtherDoc">
+                    <div class="col-md-3">Enter Other Objection Name</div>
+                    <div class="col-md-9 kds-nu">
+                        <textarea id="OtherDocumentName" placeholder="Enter Objection Details" name="OtherDocumentName" maxlength="500" cols="60" rows="8"></textarea>
+
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <div class="col-md-3">
+                        Upload Objection File<span style="color:red">*</span>
+                    </div>
+                    <div class="col-md-9">
+                        @Html.TextBoxFor(a => Model.ObjectionFile, null, new { id = "ObjectionFile", type = "file", @onchange = "CheckDocFile(this)" })
+                        @Html.HiddenFor(a => Model.AffObjectionLetters.ObjectionFile)<span class="rqf">(Upload only single PDF , Size limit upto 1MB)</span>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 text-center">
+                    @Html.HiddenFor(a => a.AffObjectionLetters.AppNo)
+                    @Html.HiddenFor(a => a.AffObjectionLetters.AppType)
+                    <input type="submit" value="Submit" name="cmd" onclick="return valForm()" />
+                    @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+                    <a class="btn" href="/Admin/InboxEAffiliation">Back</a>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table id="t01" class="table table-bordered">
+                            <tr>
+                                <td colspan="4">
+                                    <table width="100%" id="view">
+                                        <tr class="active-tr">
+                                            @*<th>AppType</th>*@
+                                            <th width="7">AppNo</th>
+                                            <th width="6">Obj Id</th>
+                                            <th width="34">Obj Details</th>
+                                            <td width="10">Status</td>
+                                            <th width="25">Response Details</th>
+                                            <th width="20">Action</th>
+                                        </tr>
+                                        @{
+
+                                            if (ViewBag.TotalCount > 0)
+                                            {
+                                                for (int h = 0; h < Model.StoreAllData.Tables[0].Rows.Count; h++)
+                                                {
+                                                    var OLID = Model.StoreAllData.Tables[0].Rows[h]["OLID"].ToString();
+                                                    var AppType = Model.StoreAllData.Tables[0].Rows[h]["AppType"].ToString();
+                                                    var AppNo = Model.StoreAllData.Tables[0].Rows[h]["AppNo"].ToString();
+                                                    var ObjCode = Model.StoreAllData.Tables[0].Rows[h]["ObjCode"].ToString();
+                                                    var Objection = Model.StoreAllData.Tables[0].Rows[h]["Objection"].ToString();
+                                                    var ObjectionFile = Model.StoreAllData.Tables[0].Rows[h]["ObjectionFile"].ToString();
+                                                    var ObjDate = Model.StoreAllData.Tables[0].Rows[h]["ObjDate"].ToString();
+                                                    var ObjStatus = Model.StoreAllData.Tables[0].Rows[h]["ObjStatus"].ToString();
+
+                                                    var SubmitBy = Model.StoreAllData.Tables[0].Rows[h]["SubmitBy"].ToString();
+                                                    var ClearDate = Model.StoreAllData.Tables[0].Rows[h]["ClearDate"].ToString();
+                                                    var Attachment = Model.StoreAllData.Tables[0].Rows[h]["Attachment"].ToString();
+
+
+                                                    var SchoolReply = Model.StoreAllData.Tables[0].Rows[h]["SchoolReply"].ToString();
+                                                    var SchoolReplyOn = Model.StoreAllData.Tables[0].Rows[h]["SchoolReplyOn"].ToString();
+                                                    var ObjName = Model.StoreAllData.Tables[0].Rows[h]["ObjName"].ToString();
+
+                                                    var ApprovalStatus = Model.StoreAllData.Tables[0].Rows[h]["ApprovalStatus"].ToString();
+                                                    var ApprovalOn = Model.StoreAllData.Tables[0].Rows[h]["ApprovalOn"].ToString();
+                                                    var ApprovalRemarks = Model.StoreAllData.Tables[0].Rows[h]["ApprovalRemarks"].ToString();
+
+
+                                                    var SchoolReplyDone = "";
+                                                    if (!string.IsNullOrEmpty(SchoolReply))
+                                                    {
+                                                        SchoolReplyDone = "YES";
+                                                    }
+                                                   
+
+
+                                                    <tr id="trs">
+                                                        @*<td>@AppType</td>*@
+                                                        <td>
+                                                            @AppNo
+                                                            <div class="container">
+                                                                <div class="modal" id="myModalStatus-@OLID" role="dialog">
+                                                                    <div class="modal-dialog">
+                                                                        <!-- Modal content-->
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                                                <h3>Application Number : @AppNo <br />Objection @ObjCode </h3>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <table width="100%">
+                                                                                    <tr>
+                                                                                        <td>Select your Response </td>
+                                                                                        <td>@Html.DropDownList("AppStatus", new SelectList(ViewBag.MyApprovalStatusList, "Value", "Text"), "--Select--", new { id = "AppStatus-" + OLID, @class = "" })</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Remarks </td>
+                                                                                        <td><input id="eSTATUSREMARKS-@OLID" value="" type="text" /></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td colspan="2">
+                                                                                            <input type="button" class="btn" value="Submit" id="btnUpdateObjectionApprovalStatus" onclick="updateObjectionApprovalStatus('@AppNo','@OLID','@SchoolReplyDone')" />
+
+                                                                                            <div id="loading1"></div>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </table>
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </td>
+
+                                                        <td>@OLID</td>
+                                                        <td>
+                                                            <span class="text-success">
+                                                                [@ObjCode]
+                                                            </span><br />
+                                                            @ObjName<br />
+                                                            <span class="rqf">Dated: @ObjDate</span><br />
+                                                            @if (!string.IsNullOrEmpty(ObjectionFile))
+                                                            {
+                                                                <a class="btn" target="_blank" href="/Upload/@ObjectionFile">View Objection File</a>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <span class="@(ObjStatus.ToUpper() == "STATUS UPDATED" ? "text-success" : "text-danger")"><b>@ObjStatus</b></span>
+                                                        </td>
+                                                        <td>
+                                                            @if (string.IsNullOrEmpty(Attachment))
+                                                            {@SchoolReply}
+                                                        else
+                                                        {
+                                                            @SchoolReply<br />
+                                                            <span class="rqf">Dated: @SchoolReplyOn</span><br />
+
+                                                            <a class="btn" target="_blank" href="/Upload/Upload2023/@Attachment">View File</a>
+                                                        }
+                                                        </td>
+                                                        <td>
+                                                            <span>
+                                                                <a class="btn" href="" data-toggle="modal" data-target="#myModalStatus-@OLID">Update Response</a><br />
+                                                                @if (!string.IsNullOrEmpty(SchoolReply) && !string.IsNullOrEmpty(ApprovalStatus))
+                                                                {
+                                                                    @ApprovalStatus <span class="text-primary">: @ApprovalRemarks</span>
+                                                                    <br /><span class="rqf">Dated: @ApprovalOn</span><br />
+                                                                }
+                                                            </span>
+
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </table>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully");
+                    window.location.href = '@Url.Action("AffiliationObjectionLetter", "Admin", new { id = Model.AffObjectionLetters.AppNo.ToString(), AppType = Model.AffObjectionLetters.AppType.ToString() })';
+                </script>
+            }
+            else if (ViewData["result"].ToString() == "DUP")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Already Exist");
+                </script>
+            }
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                </script>
+            }
+
+        }
+    }
+}
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+
+
+<script type="text/javascript">
+    function CheckDocFile(input) {
+        if (typeof ($("#DocFile")[0].files) != "undefined") {
+
+            var ext = $('#DocFile').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#DocFile').val('');
+                return false;
+            }
+            var size = parseFloat($("#DocFile")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#DocFile').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#DocFile').val('');
+                }
+            }
+        }
+
+    }
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#dvOtherDoc").hide();
+        $("#selObjCode").change(function () {
+            var selectedDocID = $("#selObjCode").val();
+            // alert(selectedDocID);
+            if (selectedDocID.includes("aff_999")) {
+                $("#dvOtherDoc").show();
+            }
+            else {
+                $("#dvOtherDoc").hide();
+            }
+        });
+    });
+
+    function valForm() {
+    
+        var selectedDocID = $("#selObjCode").val();
+        if (selectedDocID == "" || selectedDocID == "0") {
+            alert("Select Objections");           
+            return false;
+        }
+        else {
+            var OtherDocumentName = document.getElementById("OtherDocumentName");
+            if (selectedDocID.includes("aff_999")) {
+                if (OtherDocumentName.value == "") {
+                    alert("Please Enter Other Objection Name");
+                    OtherDocumentName.focus();
+                    return false;
+                }
+            }
+
+        }
+    }
+
+
+
+    $(document).ready(function () {
+        // Enable Live Search.
+        $('#ObjCode').attr('data-live-search', true);
+        //// Enable multiple select.
+        $('#ObjCode').attr('multiple', true);
+        $('#ObjCode').attr('data-selected-text-format', 'count');
+
+        $('.selectObjection').selectpicker(
+            {
+                width: '100%',
+                title: '--Select Objection--',
+                style: 'btn-warning',
+                size: 6,
+                iconBase: 'fa',
+                tickIcon: 'fa-check'
+            });
+    });
+
+</script>
+
+<script type="text/javascript">
+
+    //updateStatusStudentSchoolMigration
+    function updateObjectionApprovalStatus(AppNo, OLID, SchoolReply) {
+
+        var flag = 0;
+        if ($("#AppStatus-" + OLID).val() == "" || $("#AppStatus-" + OLID).val() == "0") {
+            $("#AppStatus-" + OLID).addClass("input-validation-error");
+            flag = 1;
+        }
+
+        if ($("#eSTATUSREMARKS-" + OLID).val() == "") {
+            $("#eSTATUSREMARKS-" + OLID).addClass("input-validation-error");
+            flag = 1;
+        }
+
+        var appstatus = $("#AppStatus-" + OLID).val();
+        if (appstatus!="C" && SchoolReply == "") {
+            alert('You Cannot Approve/Reject until School Reply.');
+            flag = 1;
+        }
+
+        if (flag == 1) {
+            return false;
+        }
+        else {
+
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Master/UpdateObjectionApprovalStatus", // this for calling the web method function in cs code.
+                data: '{remarks: "' + $("#eSTATUSREMARKS-" + OLID).val() + '",AppNo: "' + AppNo + '",OLID: "' + OLID + '", status: "' + $("#AppStatus-" + OLID).val() + '", "Type": 2}',// 2 for SCHL
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        alert("Status Updated Successfully");
+                        $('#myModalStatus-' + OLID).modal('hide');
+                        $('#loading1').empty();
+                        window.location.href = '@Url.Action("AffiliationObjectionLetter", "Admin", new { id = Model.AffObjectionLetters.AppNo.ToString(), AppType = Model.AffObjectionLetters.AppType.ToString() })';
+
+                    }
+                    else {
+                        $('#loading1').empty();
+                        alert("Status Updated Failure");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+
+        }
+    }
+
+
+
+</script>

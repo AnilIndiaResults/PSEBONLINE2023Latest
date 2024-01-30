@@ -1,0 +1,187 @@
+﻿@model PSEBONLINE.Models.OnDemandCertificateModelList
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<!-- #endregion -->
+<h1>Applied For On Demand Certificate Session @Session["Session"].ToString()</h1>
+@if (Model.OnDemandCertificateSearchModel != null)
+{
+
+<div class="row" id="divMain1">
+    <div class="col-md-4">Total Students : @Model.OnDemandCertificateSearchModel.Count()</div>
+    <div class="col-md-4"> <a href="/OnDemandCertificate/OnDemandCertificateCalculateFee" class="btn">Calculate Fee and Generate Challan</a></div>
+    <div class="col-md-4 text-right">
+        @if (Model.OnDemandCertificateSearchModel.Count() > 0)
+        {
+
+            <input type="button" value="Remove Records" id="btnsave" name="cmd" />
+           
+
+
+        }
+        <a href="/OnDemandCertificate/ViewStudentList/@ViewBag.id" class="btn">Back</a>
+
+
+
+    </div>
+</div>
+    <div id="loading1"></div>
+    <div class="table-responsive">
+        <table id="example" class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr class="active-tr">
+                    <th>Unique Id</th>
+                    <th>Roll</th>
+                    <th>Reg NO</th>
+                    <th>Admission Date</th>
+                    <th>Candidate Name</th>
+                    <th>Father's Name</th>
+                    <th>Mother's Name</th>
+                    <th>DOB</th>
+                    <th width="10%"><input type="checkbox" id="selectall" /></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.OnDemandCertificateSearchModel)
+                {
+                    <tr>
+                        <td>@obj.Std_id</td>
+                        <td>@obj.Roll</td>
+                        <td>@obj.regno</td>
+                        <td>@obj.AdmDate </td>
+                        <td>@obj.name </td>
+                        <td>@obj.fname </td>
+                        <td>@obj.mname </td>
+                        <td>@obj.DOB</td>
+                        <td>
+                            @if (obj.IsExistsInOnDemandCertificates == 1 && obj.DemandId > 0 && obj.IsChallanCancel == 0)
+                            {
+                                <span class="hideint123"><input type="checkbox" id="cb-@obj.DemandId" class="checkbox" name="AllChkId" value="@obj.DemandId" /></span>
+                            }   
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#example').DataTable({
+                "responsive": true,
+                "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+                "processing": true,
+                "pageLength": 50,
+                "order": [[0, 'desc']],
+                language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By UniqueID, Candidate Name, Father's Name, Mother's Name, DOB.." },
+            })
+        });
+</script>
+
+
+
+
+<script type="text/javascript">
+
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if ((charCode >= 48 && charCode <= 57)) {
+                return true;
+            }
+            else {
+                alert("Invalid character...Enter Only Number!!");
+                return false;
+            }
+        }
+</script>
+
+<script type="text/javascript">
+
+        $(document).ready(function () {
+            $('.checkbox').change(function () { //".checkbox" change
+                var chkid = this.id
+                var stdid = this.id.split('-')[1];
+                if (this.checked == false) { //if this item is unchecked
+                    $("#selectall")[0].checked = false; //change "select all" checked status to false
+
+                }
+            });
+
+            $("#selectall").change(function () {
+                var status = this.checked; // "select all" checked status
+                var j = 0
+                $('.checkbox').each(function () {
+                    $("input[name='AllChkId']")[j].checked = status;
+                    var stdid = $("input[name='AllChkId']")[j].id.split('-')[1];
+                    j++;
+                });
+            });
+
+
+            //Start Save Data
+            $("#btnsave").click(function () {
+                var isvalid = true;
+                if (isvalid == true) {
+                    var chkdee = "";
+                    var storeid = "";
+                    var pageid = "";
+                    var storeid1 = "";
+                    var storechkid = "";
+                    var storescid = "";
+                    $('.checkbox').each(function () {
+                        var id = this.id;
+                        var val = this.value;
+                        var arr = [];
+                        arr = id;
+                        var arrid = "";
+                        var arrcast = "";
+                        var j = 0;
+                        if (this.checked) {
+                            storeid += val + ",";
+                        }
+                    });
+
+                    if (storeid == "") {
+                        alert("Please Select Atleast 1 Record .");
+                    }
+
+                    else {
+                       // alert("Save Now");
+                        $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                        $.post("/OnDemandCertificate/JqRemoveOnDemandCertificateApplyStudents", { "demandIdList": storeid, "cls": '@ViewBag.cls' },
+                            function (data) {                                   
+                                 $('#loading1').empty();
+                                if (data.Result > 0) {
+                                    alert("Records Removed successfully for Demand Certificate");
+                                    window.location.href = "/OnDemandCertificate/OnDemandCertificateAppliedStudentList/@ViewBag.id";
+                                }
+                                else {
+                                    alert("Records Removed Failure, Please Try Again");
+                                }
+                            });
+
+                    }
+
+                }// if true close
+            });
+
+            //End  Save Data
+
+        });
+
+</script>
+
+
+
+

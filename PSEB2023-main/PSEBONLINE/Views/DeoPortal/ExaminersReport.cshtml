@@ -1,0 +1,219 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/print.css" />
+<style type="text/css">
+    .header_outer {
+        display: none;
+    }
+
+    .bs-docs-footer {
+        display: none;
+    }
+
+    body {
+        font-size: 11px;
+    }
+
+    td {
+        padding: 0 7px;
+    }
+</style>
+@* <h1>Centre List Report</h1><p>
+        Welcome: @if (Session["NAME"] != null)
+        {@Session["NAME"].ToString()}
+        else { Response.Redirect("~/DeoPortal/Index"); }
+    </p>*@
+
+@using (Html.BeginForm("ExaminersReport", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Click Here to Print" dowload class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" border="1">
+        <thead style="border:0">
+            <tr>
+                <td colspan="10" style="border:0;text-align:center;padding:15px 0 5px 0">
+                    <span style="font-size:32px">Punjab School Education Board</span><br />
+                    <span style="font-size:18px">Class and Subject wise list of Examiners for March 2019</span>
+                </td>
+            </tr>
+            </thead>
+       
+        @{
+            <tbody>
+
+                @if (ViewBag.TotalCount > 0)
+                {
+                    int d = 0;
+
+                    for (int k = 0; k < Model.StoreAllData.Tables[2].Rows.Count; k++)
+                    {
+                        var cls = Model.StoreAllData.Tables[2].Rows[k]["Class"].ToString();
+                        var Dis = Model.StoreAllData.Tables[2].Rows[k]["Dist"].ToString();
+
+                        <tr>
+                            <td colspan="5" style="text-align:left;border:0">Class : @cls</td>
+                            @*<td colspan="5">Page No. : </td>*@
+                        </tr>
+                        <tr>
+                            <td colspan="5" style="text-align:left;border:0">
+                                District Code/Name:( @Dis )                
+                                @if (Session["NAME"] != null)
+                                {
+                                   @Session["DISTNM"].ToString();
+                                }
+                                else { Response.Redirect("~/DeoPortal/Index"); }
+                            </td>
+                            <td colspan="6" style="text-align:right;border:0">Date: @ViewBag.Date</td>
+                        </tr>
+                    <thead>
+                        <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                            <td width="4%">Reg ID</td>
+                            <th width="4%">Sr</th>
+                            <th width="28%">Name/ Father's Name(Cadre, Designation/Subject)</th>
+                            <th width="26%">School</th>
+                            <th width="20%">Addres</th>
+                            <th width="5%">Mobile No.</th>
+                            <th width="6%">Tech : Eval</th>
+                            <th width="6%">Date Of Retirement</th>
+                            <th width="2%">lot</th>
+                            <th width="6%">Remarks</th>
+                        </tr>
+                    </thead>
+
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var Scode = Model.StoreAllData.Tables[0].Rows[i]["subcode"].ToString();
+                            var SubjectList = Model.StoreAllData.Tables[0].Rows[i]["SubjectList"].ToString();
+                            var Clas = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            if (@cls == Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString())
+                            {
+                                <tr>
+                                    <td colspan="9">Subject Code / Name :@Scode &nbsp;&nbsp;&nbsp;&nbsp;@SubjectList</td>
+                                </tr>
+                                for (int j = 0; j < Model.StoreAllData.Tables[1].Rows.Count; j++)
+                                {
+                                    if ((@Scode == Model.StoreAllData.Tables[1].Rows[j]["subcode"].ToString()) && (@Clas == Model.StoreAllData.Tables[1].Rows[j]["Class"].ToString()))
+                                    // if (@Scode == Model.StoreAllData.Tables[1].Rows[j]["subcode"].ToString())
+                                    {
+                                        d = d + 1;
+                                        <tr>
+                                            <td>@Model.StoreAllData.Tables[1].Rows[j]["Examinerid"].ToString()</td>
+                                            <td>@d</td>
+                                            <td>@Model.StoreAllData.Tables[1].Rows[j]["Name"].ToString() / @Model.StoreAllData.Tables[1].Rows[j]["fname"].ToString() (@Model.StoreAllData.Tables[1].Rows[j]["cadre"].ToString() ,@Model.StoreAllData.Tables[1].Rows[j]["Designation"].ToString() )</td>
+                                            <td>@Model.StoreAllData.Tables[1].Rows[j]["SchoolCode"].ToString()</td>
+                                            <td>@Model.StoreAllData.Tables[1].Rows[j]["HomeAddress"].ToString()</td>
+                                            <td>@Model.StoreAllData.Tables[1].Rows[j]["Mobile"].ToString()</td>
+                                            <td align="center">@Model.StoreAllData.Tables[1].Rows[j]["Teachingexp"].ToString() : @Model.StoreAllData.Tables[1].Rows[j]["Evaexp"].ToString()</td>
+                                            <td>@Model.StoreAllData.Tables[1].Rows[j]["DOR"].ToString()</td>
+                                            <td>@Model.StoreAllData.Tables[1].Rows[j]["lot"].ToString()</td>
+                                            <td>@Model.StoreAllData.Tables[1].Rows[j]["Remarks"].ToString()</td>
+
+                                        </tr>
+                                    }
+                                }
+                            }
+
+                            {
+                                d = 0;
+                            }
+                        @*<tr>
+                            <td colspan="8">Subject Code / Name :@Scode &nbsp;&nbsp;&nbsp;&nbsp;@SubjectList</td>
+                        </tr>*@
+
+
+                        }
+                    }
+                }
+
+                else
+                {
+                    <tr class="noprint">
+                        <td colspan="9">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                }
+
+
+            </tbody>
+        }
+    </table>
+
+    @* <input type="Submit" value="Click Here to Download & Print" />*@
+
+
+            }
+
+<script>
+
+                        function dee() {
+
+                            if ($("#SelDist").val() == "") {
+
+                                $("#reqsession").slideDown("slow");
+                                return false;
+                            }
+                            if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+
+                                $("#reqsellist").slideDown("slow");
+                                return false;
+                            }
+
+                                //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+                                //    $("#reqsellist").slideUp("slow");
+                                //    $("#reqsstring").slideDown("slow");
+                                //    return false;
+                                //}
+                            else
+                                return true;
+
+                        }
+                        $(document).ready(function () {
+
+                            $("#SelDist").change(function () {
+                                if ($("#SelDist").val() == "") {
+                                    // $("#SearchString").focus(function () { $("#reqsellist").slideUp("slow"); });
+                                    $("#reqsession").slideDown("slow");
+                                }
+                                else {
+                                    $("#reqsession").slideUp("slow");
+                                }
+
+                            });
+
+                        });
+
+
+                        var form = $("#searchform").serialize();
+                        $("#btnNext").click(function () {
+                            $.ajax({
+                                url: 'DeoPortal/Next',
+                                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                                success: function (response) {
+                                    $("body").html(response);
+                                }
+                            });
+                        });
+
+                        $("#btnPrevious").click(function () {
+                            $.ajax({
+                                url: 'DeoPortal/Previous',
+                                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                                success: function (response) {
+                                    $("body").html(response);
+                                }
+                            });
+                        });
+
+
+
+</script>

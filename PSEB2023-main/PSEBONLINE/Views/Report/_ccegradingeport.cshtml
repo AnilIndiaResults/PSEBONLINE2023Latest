@@ -1,0 +1,96 @@
+﻿@model PSEBONLINE.Models.ReportModel
+<h1 style="text-align:center">CCE-Grading Report</h1>
+<p style="text-align:right"><input type="button" value="Print" id="btnPrint" /></p>
+
+
+<div id="dvContainer">
+    <table class="table table-bordered" id="tsummary" border="1" style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:13px">
+        <tr>
+            <td colspan="7">
+                <table width="100%" border="0">
+                    <tr>
+                        <td width="25%"><img src="~/Images/Printlogo.jpg" alt="PSEB" /></td>
+                        <td width="50%" colspan="2" style="font-size:22px;text-align:center;line-height:32px;vertical-align:top;">
+                            <span style="font-size:32px">Punjab School Education Board</span><br />
+                           @{
+                               var pName = "";
+                               if (ViewBag.tab == "1")
+                               {
+                                <span class="has-success" style="text-align:center">C.C.E SENIOR SUMMARY REPORT</span>
+                                   pName = "DOWNLOAD SET WISE C.C.E SENIOR SUMMARY REPORT";
+
+                               }
+                               else if (ViewBag.tab == "2")
+                               {
+                               <span class="has-success" style="text-align:center">C.C.E PRIMARY SUMMARY REPORT</span>
+                                   pName = "DOWNLOAD SET WISE C.C.E PRIMARY SUMMARY REPORT";
+                               }
+                               else if (ViewBag.tab == "3")
+                               {
+                                <span class="has-success" style="text-align:center">C.C.E MATRIC  SUMMARY REPORT</span>
+                                   pName = "DOWNLOAD SET WISE C.C.E MATRIC  SUMMARY REPORT";
+
+                               }
+                               else if (ViewBag.tab == "4")
+                               {
+                                <span class="has-success" style="text-align:center">C.C.E MIDDLE SUMMARY REPORT</span>
+                                   pName = "DOWNLOAD SET WISE C.C.E MIDDLE SUMMARY REPORT";
+                               }
+                        }
+                        </td>
+                        <td align="right">Print Date / Time : @DateTime.Now.ToString("dd/MM/yyyy hh:mmtt") &nbsp;</td>
+                        </tr>
+                    </table>
+            </td>
+        </tr>
+        <tr class="active-tr">
+            <th align="left" width="30%">&nbsp;School Category</th>
+            <th width="11%">Number of Schools</th>
+            <th width="12%">Number of School Entry</th>
+			<th width="11%">Number of Students</th>
+            <th width="12%">Number of Student Entry</th>
+            <th width="11%">Pending Students</th>
+            <th width="12%">Final Submited Schools</th>
+            <th width="12%">Final Submited Students</th>
+        </tr>
+        @{
+            if (ViewBag.TotalCount > 0)
+            {
+                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                {
+                    var SchoolType = Model.StoreAllData.Tables[0].Rows[i]["SchoolType"].ToString();
+                    var NumberofSchools = Model.StoreAllData.Tables[0].Rows[i]["NumberofSchools"].ToString();
+					var NumberofStudents = Model.StoreAllData.Tables[0].Rows[i]["NumberofStudents"].ToString();
+                    var NumberofSchoolEntry = Model.StoreAllData.Tables[0].Rows[i]["NumberofSchoolEntry"].ToString();
+                    var NumberofStudentEntry = Model.StoreAllData.Tables[0].Rows[i]["NumberofStudentEntry"].ToString();
+                    var PendingStudents = Model.StoreAllData.Tables[0].Rows[i]["PendingStudents"].ToString();
+                    var FinalSubmitedSchools = Model.StoreAllData.Tables[0].Rows[i]["FinalSubmitedSchools"].ToString();
+                    var FinalSubmitedStudents = Model.StoreAllData.Tables[0].Rows[i]["FinalSubmitedStudents"].ToString();
+                    int Count = i + 1;
+                    <tr>
+                        <td align="left" style="text-transform:uppercase">&nbsp;@SchoolType</td>
+                        <td align="right">@NumberofSchools &nbsp;</td>
+                        <td align="right">@NumberofSchoolEntry &nbsp;</td>
+                        <td align="right">@NumberofStudents &nbsp;</td>
+                        <td align="right">@NumberofStudentEntry &nbsp;</td>
+                        <td align="right">@PendingStudents &nbsp;</td>
+                        <td align="right">@FinalSubmitedSchools &nbsp;</td>
+                        <td align="right">@FinalSubmitedStudents &nbsp;</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7">
+                        @ViewBag.Message
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+    </div>
+    <div class="clearfix"></div>
+    <div>
+        <center> <input type="button" value="@pName" onclick="javascript:document.location.href='@Url.Action("DownloadCCEGradingReport", "Admin", new { File = ViewBag.tab })'" /></center>
+    </div>

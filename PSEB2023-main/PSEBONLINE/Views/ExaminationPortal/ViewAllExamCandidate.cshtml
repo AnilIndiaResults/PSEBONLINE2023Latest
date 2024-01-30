@@ -1,0 +1,227 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    ViewBag.Title = "View All Candidates List Which Examination Form Has Been Generated";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+@if (Session["SCHL"] != null)
+{ }
+else { Response.Redirect("~/Login"); }
+<div class="container">
+    <h1>View All Candidates List Which Examination Form Has Been Generated</h1>
+    <div id="update-message" style="color:green"></div>
+@using (Html.BeginForm("ViewAllExamCandidate", "ExaminationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Total Students <label>@ViewBag.TotalCount1</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-3">
+                        @{
+                            List<SelectListItem> catgilist = new List<SelectListItem>();
+                            catgilist.Add(new SelectListItem { Text = "--ALL--", Value = "0" });
+                            catgilist.Add(new SelectListItem { Text = "Unique Id / Appno", Value = "1" });
+                            catgilist.Add(new SelectListItem { Text = "Name", Value = "2" });
+                            catgilist.Add(new SelectListItem { Text = "OPEN/Matric", Value = "3" });
+                            catgilist.Add(new SelectListItem { Text = "REG/Matric", Value = "4" });
+                            catgilist.Add(new SelectListItem { Text = "OPEN/Senior", Value = "5" });
+                            catgilist.Add(new SelectListItem { Text = "REG/Senior", Value = "6" });
+                            catgilist.Add(new SelectListItem { Text = "Print Lot", Value = "7" });
+                        }
+                        Search By:@Html.DropDownList("Category", catgilist, new {id= "DDLCategory" })
+                    </div>
+                    <div class="col-md-3">
+                        &nbsp;<br /><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" placeholder="Enter Unique Id / Appno Or name " />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" onclick="return myFunction();" /> <input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" />
+                        <a href="/RegistrationPortal/ExaminationPortal" class="btn">Back</a>
+                        @*<input type="button" name="Reset" id="Reset" value="Reset" />*@
+
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12 rqf">Note : Kindly select search criteria & then click search button to show records.</div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+    <div class="clearfix"></div>
+
+    <div class="row">
+        <div class="col-md-4">Grid Total:  @ViewBag.TotalCount1</div>       
+    </div>
+    <div class="clearfix"></div>
+
+    <div id="loading"></div>
+    <div id="divMain">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="t01" class="table table-bordered">
+                        <tr class="active-tr">
+                            <th>SL.NO.</th>
+                            <th>ID</th>
+                            <th>Class name</th>
+                            <th>Candidate / Father / Mother Name</th>
+                            <th>ChallanID</th>
+                            <th>Challan Status</th>
+                            <th>Print Lot</th>
+                           <th>Inserted Date</th>                             
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 20 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var ID = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                                    var ClassName = Model.StoreAllData.Tables[0].Rows[i]["ClassName"].ToString();
+                                    var FullName = Model.StoreAllData.Tables[0].Rows[i]["FullName"].ToString();
+                                    var ChallanID = Model.StoreAllData.Tables[0].Rows[i]["ChallanID"].ToString();
+                                    var Status = Model.StoreAllData.Tables[0].Rows[i]["ChallanStatus"].ToString();
+                                    var lot = Model.StoreAllData.Tables[0].Rows[i]["printlotnew"].ToString();
+		       var insdate = Model.StoreAllData.Tables[0].Rows[i]["InsDate"].ToString();
+                                    Count = Count + 1;
+                                    <tr>
+                                        <td>@Count</td>
+                                        <td>@ID</td>
+                                        <td>@ClassName</td>
+                                        <td>@FullName</td>
+                                        <td>@ChallanID</td>
+                                        <td>@Status</td>
+                                        <td>@lot</td>
+                                       <td>@insdate</td>
+                                    </tr>
+                                    if (d == ViewBag.TotalCount)
+                                    {
+                                        <tr>
+                                            <td colspan="8">
+
+                                                Page @ViewBag.pagesize of @ViewBag.pn
+                                                &nbsp;
+
+                                                @if (ViewBag.pagesize == 1)
+
+                                                {
+                                                    @:<<
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @:< Prev
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        @Html.ActionLink("Next >", "ViewAllExamCandidate", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @Html.ActionLink(">>", "ViewAllExamCandidate", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                                    }
+                                                }
+                                                else
+                                                {
+
+                                                    @Html.ActionLink("<<", "ViewAllExamCandidate", new { page = 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink("< Prev", "ViewAllExamCandidate", new { page = ViewBag.pagesize - 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        @Html.ActionLink("Next >", "ViewAllExamCandidate", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @Html.ActionLink(">>", "ViewAllExamCandidate", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                                    }
+
+                                                }
+
+
+                                            </td>
+                                        </tr>
+            }
+        }
+    }
+    else
+    {
+                                <tr>
+                                    <td colspan="10">
+                                        <span class="rqf">@ViewBag.Message</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<script type="text/javascript">
+    var ss = document.getElementById("SearchString");
+    var cat = document.getElementById("Category");
+    $("#Category").change(function () {
+       // alert("aaa");
+        if (cat.value == "0") {
+            $("#ss").prop('disabled', false);
+            ss.value = "";
+            return false;
+        }
+        if (cat.value == "3");
+        {
+            ss.value = "";
+        }
+    });
+</script>*@
+<script type="text/javascript">
+    function myFunction() {
+        //alert("OK");
+        var ss = document.getElementById("SearchString");
+        var cat = document.getElementById("DDLCategory");
+        var item1 = cat.options[cat.selectedIndex].value;
+        //alert($("#DDLCategory").val());
+        //alert(item1);
+
+        if ((item1 == 1 && ss.value == "") || (item1 == 2 && ss.value == "") || (item1 == 7 && ss.value == "")) {
+            alert("Please Enter value");
+            ss.focus();
+            return false;
+        }
+        //if (item == 3 || item == 4 || item == 5 || item == 6) {
+        //    ss.value = "";  
+        //}        
+          
+        //if (cat.value == "2" && ss.value == "");
+        //{
+        //    alert("2");               
+        //    alert("Please Enter value");
+        //    ss.focus();
+        //    return false;
+        //}
+            
+         return true;
+    }
+
+</script>
+
+
+
+

@@ -1,0 +1,364 @@
+﻿@model PSEBONLINE.Models.TCModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>List Of School Candidate's</h1>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+@using (Html.BeginForm("TCRequest", "TC", FormMethod.Post, new { id = "SchlDetail", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend class="text-center">List Of School Candidate's (Session <b>@Session["session"].ToString()</b>)</legend>
+                <div class="col-md-2">
+                    Total Student<label>@ViewBag.TotalCount</label>
+                </div>
+                <div class="col-md-2">
+                    School Code <label>@ViewBag.schlCode</label>
+                    @*@Html.HiddenFor(a => a.SchlCode, new { id = "SchlCode", @ReadOnly = "ReadOnly" })*@
+                    @Html.HiddenFor(a => a.SchlCode)
+                </div>
+                <div class="col-md-2">
+                    School ID <label>@ViewBag.schlID</label>
+                </div>
+                <div class="col-md-6">
+                    School Name <label>@ViewBag.schlName</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-2">
+                        @{
+                            List<SelectListItem> SelYear = new List<SelectListItem>();
+                            SelYear.Add(new SelectListItem { Text = "Select", Value = "" });
+                            SelYear.Add(new SelectListItem { Text = "2020", Value = "2020" });
+                            SelYear.Add(new SelectListItem { Text = "2019", Value = "2019" });
+                            SelYear.Add(new SelectListItem { Text = "2018", Value = "2018" });
+                            SelYear.Add(new SelectListItem { Text = "2017", Value = "2017" });
+                            SelYear.Add(new SelectListItem { Text = "2016", Value = "2016" });
+                            SelYear.Add(new SelectListItem { Text = "2015", Value = "2015" });
+                            SelYear.Add(new SelectListItem { Text = "2014", Value = "2014" });
+                        }
+                        Select Year <span class="rqf">*</span> @Html.DropDownList("SelYear", SelYear, new { id = "SelYear" })
+                    </div>
+                        <div class="col-md-2">
+                            Select Form:  @Html.DropDownList("SelForm", new SelectList(ViewBag.MyForm, "Value", "Text"), "--All---", new { @class = "" })
+
+                        </div>
+                        <div class="col-md-2">
+                            Select Lot No:  @Html.DropDownList("SelLot", new SelectList(ViewBag.MyLot, "Value", "Text"), "--All---", new { @class = "" })
+
+                        </div>
+                        <div class="col-md-2">
+                            Filter By:  @Html.DropDownList("SelFilter", new SelectList(ViewBag.MyFilter, "Value", "Text"), "Select", new { @class = "" })
+
+                        </div>
+                        <div class="col-md-2">
+                            &nbsp;<br />
+                            <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                        </div>
+                        <div class="col-md-2">
+                            <br />
+                            <input type="submit" value="Search" onclick="return formVal();" />
+                            @*<input type="button" name="Back" value="Back" formaction="CancelForm" formmethod="post" />*@
+                            <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a>
+                        </div>
+</form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>ID</th>
+                    <th>S.No.</th>
+                    <th>Form</th>
+                    <th>Reg.No.</th>
+                    @*<th>Stream/Group</th>*@
+                    <th>Name/Father's Name/Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Gender</th>
+                    @*<th>RegDate</th>*@
+                    <th>Adm Date</th>
+                    @*<th>Fee</th>*@
+                    <th>Lot</th>
+                    <th>TC Ref No</th>
+                    <th>ACTIONS</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            @Html.HiddenFor(a => a.SelYear) ;
+                            var year = Model.SelYear.ToString();
+                            var idno = Model.StoreAllData.Tables[0].Rows[i]["Std_ID"].ToString();
+                            var Sno = Model.StoreAllData.Tables[0].Rows[i]["SRL"].ToString();
+                            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                            var FormName = Model.StoreAllData.Tables[0].Rows[i]["FORM"].ToString();
+                            //var Std_Sub = Model.StoreAllData.Tables[0].Rows[i]["StdSub"].ToString();
+                            var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                            var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                            var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                            //var RegDate = Model.StoreAllData.Tables[0].Rows[i]["REGDATE"].ToString();
+                            var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["ADMDATE"].ToString();
+                            //var Fee = Model.StoreAllData.Tables[0].Rows[i]["Addfee"].ToString();
+                            var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                            var TCrefno = Model.StoreAllData.Tables[0].Rows[i]["TCrefno"].ToString();
+                            var Tcstatus = Model.StoreAllData.Tables[0].Rows[i]["Tcstatus"].ToString();
+                            var importflag = Model.StoreAllData.Tables[0].Rows[i]["importflag"].ToString();
+
+                            var challanverify = Model.StoreAllData.Tables[0].Rows[i]["challanverify"].ToString();
+                            var result = Model.StoreAllData.Tables[0].Rows[i]["result"].ToString();
+                            var reclock = Model.StoreAllData.Tables[0].Rows[i]["reclock"].ToString();
+
+                            <tr>
+                                <td>
+                                    @idno
+                                </td>
+                                <td>
+                                    @Sno
+                                </td>
+                                <td>
+                                    @FormName
+                                </td>
+                                <td>
+                                    @RegNo
+                                </td>
+                                @*<td>
+                                    @Std_Sub
+                                </td>*@
+                                <td>
+                                    @FullName
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @Gender
+                                </td>
+                                @*<td>
+                                        @RegDate
+                                    </td>*@
+                                <td>
+                                    @AdmDate
+                                </td>
+                                @*<td>
+                                    @Fee
+                                  </td>*@                               
+                                <td>
+                                    @Lot
+                                </td>
+                                <td>
+                                    @TCrefno
+                                </td>
+
+                                <td>
+                                    <div>
+                                        @{
+                                            
+                                            if (@Tcstatus == "2" && @TCrefno !="" && @importflag == "1")
+                                            {
+                                                <span> Done</span>
+                                                <span> | </span>
+                                                @Html.ActionLink("Print", "TCPrint", new { id = encrypt.QueryStringModule.Encrypt(idno), year = encrypt.QueryStringModule.Encrypt(year) }, new { Class = "", title = "TCPrint" })
+                                                <span> | </span>
+                                                <span>Imported</span>
+                                            }
+                                            else if (@importflag == "1")
+                                            {
+                                                <span>Imported</span>
+                                            }
+                                            else if (@Tcstatus == "2" && @TCrefno != "" && @importflag != "1")
+                                            {
+                                                <span> Done</span>
+                                                <span> | </span>
+                                                @Html.ActionLink("Print", "TCPrint", new { id = encrypt.QueryStringModule.Encrypt(idno), year = encrypt.QueryStringModule.Encrypt(year) }, new { Class = "", title = "TCPrint" })
+                                                <span> | </span>
+                                                @Html.ActionLink("Cancel", "TCCancel", new { id = encrypt.QueryStringModule.Encrypt(idno), year = encrypt.QueryStringModule.Encrypt(year) }, new { onclick = "return confirm('Are you sure want to Cancel TC ?');" })
+                                            }
+                                            else if (@reclock != "1")
+                                            {
+                                                <span>Result Not Lock</span>                                                
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("TC", "TCRequestDone", new { id = encrypt.QueryStringModule.Encrypt(idno),year = encrypt.QueryStringModule.Encrypt(year) }, new { Class = "", title = "Click for TC Generate" })
+
+                                                @*<button type="button" class="" data-toggle="modal" data-target="#myModal-@idno">View Details</button>*@
+                                                @*<span> | </span>
+                                                @Html.ActionLink("Print", "TCPrint", new { id = idno }, new { Class = "", title = "TCPrint" })*@
+                                            }
+                                        }
+                                        
+                                        
+
+                                    </div>
+                                   
+                                </td>
+
+                            </tr>
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+@{
+    if (ViewData["ComResult"] != null)
+    {
+        if (ViewData["ComResult"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("This School not submmitted Final Result");
+                history.go(-1);
+            </script>
+        }
+    }
+
+}
+
+
+<script>
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelFilter').value;
+
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelFilter").change(function () {
+            var value = document.getElementById('SelFilter').value;
+            $('#SearchString').val('');
+            if (value == 6) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10Y',
+
+                });
+
+            }
+            else if (value == 3 || value == 4 || value == 5) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+        function formVal() {
+            if (document.getElementById('SelYear').value == "") {
+                alert('Select Year');
+                document.getElementById('SelYear').focus();
+                return false;
+            }            
+        }
+
+</script>
+
+
+
+

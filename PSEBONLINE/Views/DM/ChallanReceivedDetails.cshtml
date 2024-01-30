@@ -1,0 +1,289 @@
+﻿@model PSEBONLINE.Models.DMModel
+@{
+    ViewBag.Title = "ChallanReceivedDetails";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/cardprintc.css" />
+<script type="text/javascript">
+    $("#btnPrint").live("click", function () {
+        var divContents = $("#dvContainer").html();
+        var printWindow = window.open('', '', 'height=800,width=1000px');
+        printWindow.document.write('<html><head><title>Challan Received Details</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    });
+</script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>Challan Received Details</h1>
+<div class="row">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+
+            @using (Html.BeginForm("ChallanReceivedDetails", "DM", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-2">Select Fee Category @Html.DropDownList("feecat", ViewBag.feecat as SelectList, "--All--", new { @class = "", @required = "required" })</div>
+                <div class="col-md-2">
+                    From Date
+                    <input type="text" onkeypress="return false" id="FromDate" name="FromDate" class="date" value="@Request["FromDate"]" />
+                </div>
+                <div class="col-md-2">
+                    To Date
+                    <input type="text" onkeypress="return false" id="ToDate" name="ToDate" class="date" value="@Request["ToDate"]" />
+                </div>
+                <div class="col-md-2">
+                    From Receiving No.
+                    <input type="text" id="FromReceiving" name="FromReceiving" value="@Request["FromReceiving"]" onkeypress="return isNumberKey(event)" />
+                </div>
+                <div class="col-md-2">
+                    To Receiving No.
+                    <input type="text" id="ToReceiving" name="ToReceiving" value="@Request["ToReceiving"]" onkeypress="return isNumberKey(event)" />
+                </div>
+                <div class="col-md-2">
+                    &nbsp;
+                    <br />
+                    <input type="submit"  value="Search" />
+                    <input type="submit" name="submit" value="Reset" />
+                </div>
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-6 noprint">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="col-md-6 noprint" style="text-align:right">
+        <input type="button" class="btn" value="Print" id="btnPrint" />
+        @if (ViewBag.TotalCount > 0)
+        {
+<input type="button" value="Download Data" onclick="javascript:document.location.href='@Url.Action("DownloadChallanReceivedData", "DM", new { File = "P" })'" />
+        }
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12" id="dvContainer">
+        <table width="100%" border="1" style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px">
+            <thead>
+                <tr>
+                    <td colspan="2" style="border-right:0 !important">
+                        <div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div>
+                    </td>
+                    <td colspan="5" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                        <span style="font-size:28px">Punjab School Education Board</span><br />
+                        <span>District/Code:@ViewBag.DISTNM1/@ViewBag.DIST1</span>
+                        <br />
+                        <span>Challan Received Details</span>
+                    <td colspan="2" align="right" style="border-left:0 !important">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2">&nbsp;Fee Category/Code</td>
+                    <td colspan="7">&nbsp;@ViewBag.FEECAT1/@ViewBag.FEECODE1</td>
+                </tr>
+                <tr class="active-tr">
+                    <th width="9%">Receive No.</th>
+                    <th width="10%">Receive Date</th>
+                    <th width="15%">SCHL Reg. ID</th>
+                    <th width="11%">Challan ID</th>
+                    <th width="12%">Ref.No. / App.No.</th>
+                    @*<th width="11%">Fee Category</th>*@
+                    <th width="15%">School/Candidate Name</th>
+                    <th width="10%">District</th>
+                    <th width="10%">Fee Deposit Date</th>
+                    <th width="8%">Lot / Print Lot</th>
+                    @*<th>Mobile</th>*@
+                </tr>
+            </thead>
+            @{
+                if (ViewBag.TotalCount > 0)
+                {
+                    int d = 0;
+                    int Count = 0;
+                    if (ViewBag.pagesize == 1)
+                    {
+                        Count = 0;
+                    }
+                    else
+                    {
+                        Count = 20 * (ViewBag.pagesize - 1);
+                    }
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        d = d + 1;
+                        var ChallanID = Model.StoreAllData.Tables[0].Rows[i]["ChallanID"].ToString();
+                        var AppNo = Model.StoreAllData.Tables[0].Rows[i]["AppNo"].ToString();
+                        var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHLREGID"].ToString();
+                        var schlcandnm = Model.StoreAllData.Tables[0].Rows[i]["SCHLCANDNM"].ToString();
+                        var FeeCat = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                        var DIST = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();
+                        var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                        var VERIFYDATE = Model.StoreAllData.Tables[0].Rows[i]["VERIFYDATE"].ToString();
+                        var Lot = Model.StoreAllData.Tables[0].Rows[i]["Lot"].ToString();
+                        var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                        var DMReceiveNo = Model.StoreAllData.Tables[0].Rows[i]["DMReceiveNo"].ToString();
+                        var DMReceiveDate = Model.StoreAllData.Tables[0].Rows[i]["DMReceiveDate"].ToString();
+                        <tr>
+                            <td>
+                                &nbsp;
+                                @DMReceiveNo
+                            </td>
+                            <td>
+                                &nbsp;
+                                @DMReceiveDate.Substring(0, 10)
+                            </td>
+                            <td>
+                                &nbsp;
+                                @SCHL
+                            </td>
+                            <td>
+                                &nbsp;
+                                @ChallanID
+                            </td>
+                            <td>
+                                &nbsp;
+                                @AppNo
+                            </td>
+                            @*<td>
+                                    &nbsp;
+
+                                </td>*@
+                            <td>
+                                &nbsp;
+                                @schlcandnm
+                            </td>
+                            <td>
+                                &nbsp;
+                                @DISTNM
+                            </td>
+
+                            <td>
+                                &nbsp;
+                                @VERIFYDATE
+                            </td>
+                            <td>
+                                &nbsp;
+                                @Lot
+                            </td>
+                            @*<td>
+                                    @Mobile
+                                </td>*@
+
+
+                        </tr>
+
+                            @*if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="10">
+                                            Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                            @if (ViewBag.pagesize == 1)
+                                                {   @:<<
+                                @Html.Raw("&nbsp;");
+                                @:< Prev
+                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        var dp = ViewBag.pagesize + 1;
+                                <a href="~/DM/ChallanReceivedDetails?page=@dp">Next ></a>
+                                @Html.Raw("&nbsp;");
+                                <a href="~/DM/ChallanReceivedDetails?page=@ViewBag.pn">>></a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    var dp = ViewBag.pagesize - 1;
+                                <a href="~/DM/ChallanReceivedDetails?page=1"><<</a>
+                                @Html.Raw("&nbsp;");
+                                <a href="~/DM/ChallanReceivedDetails?page=@dp">< Prev</a>
+                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        var dp1 = ViewBag.pagesize + 1;
+                                <a href="~/DM/ChallanReceivedDetails?page=@dp1">Next ></a>
+                                @Html.Raw("&nbsp;");
+                                <a href="~/DM/ChallanReceivedDetails?page=@ViewBag.pn">>></a>
+                                                    }
+                                                }
+                                        </td>
+                                    </tr>
+                                }*@
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="10">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>
+
+
+
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+
+    $(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+           yearRange: '2016:' + (new Date().getFullYear()),
+            maxDate: 0
+            // defaultDate: "+1w",
+            // setDate: new Date()
+
+        });
+    });
+
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        var form = $("#searchform").serialize();
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            if (value == 1 || value == 3 || value == 5) {
+                $("#searchform").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        // alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    };
+                });
+            } else {
+                $("#searchform").off('keypress');
+            }
+
+        });
+    });
+</script>

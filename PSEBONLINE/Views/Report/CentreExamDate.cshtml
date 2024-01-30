@@ -1,0 +1,135 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<link rel="stylesheet" href="/Content/print-4PS.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+@*<h1>Centre Exam Date Report @ViewBag.ClassName (Session <b>@Session["Session"].ToString()</b>) </h1>*@
+<h1>Teacher / Staff Attendance List</h1>
+@using (Html.BeginForm("CentreExamDate", "Report", FormMethod.Post))
+{
+    <fieldset style="margin-bottom:15px">
+        <legend>Search</legend>
+        <form id="myForm">
+            <div class="clearefix"></div>
+            <div class="row">
+                <div class="col-md-2">
+                    Select Class
+                    @{
+                        List<SelectListItem> SelectList = new List<SelectListItem>();
+                        SelectList.Add(new SelectListItem { Text = "--Select Class--", Value = "" });
+                        SelectList.Add(new SelectListItem { Text = "Middle Class", Value = "8" });
+                        SelectList.Add(new SelectListItem { Text = "Matriculation", Value = "2" });
+                        SelectList.Add(new SelectListItem { Text = "Senior Secondary", Value = "4" });
+                    }
+                    @Html.DropDownList("Class", SelectList, new { id = "Class" })
+                </div>
+                <div class="col-md-2">
+                    Select Exam Date
+                    <input id="examDate" name="examDate" type="text" value='@ViewBag.ExamDate' />
+
+                </div>
+                <div class="col-md-2">
+                    Center
+                    <input id="Center" name="Center" type="text" value='@ViewBag.Center' />
+
+                </div>
+                <div class="col-md-2">
+                    &nbsp;<br /><input type="submit" value="Search" name="cmd" title="Search Record" />
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </form>
+    </fieldset>
+
+    <div id="loading1"></div>
+    <div class="clearfix"></div>
+    <div class="row" id="divMain1">
+        <div class="col-md-4">Grid Total:  @ViewBag.TotalCount</div>
+        <div class="col-md-8 text-right">
+
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            @*@for (int i = 0; i < Model.StoreAllData.Tables[1].Rows.Count; i++)
+            {
+                var Status = Model.StoreAllData.Tables[1].Rows[0]["Status"].ToString();
+               // var ExamDate = Model.StoreAllData.Tables[1].Rows[0]["Schoole"].ToString();
+                var StaffCount = Model.StoreAllData.Tables[1].Rows[0]["StaffCount"].ToString();
+                //var Ecentre = Model.StoreAllData.Tables[1].Rows[0]["Mobile"].ToString();
+                
+            }*@
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th width="5%">S.No.</th>
+                        <th width="5%">Class</th>
+                        <th width="10%">Exam Date</th>
+                        <th width="10%">cschl</th>
+                        <th width="20%">Ecentre</th>
+                        <th width="20%">Schoole</th>
+                        <th width="10%">Mobile No.</th>
+                        <th width="10%">Attendance (Staff Count)</th>
+                        <th width="10%">Status</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+
+                                var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                var ExamDate = Model.StoreAllData.Tables[0].Rows[i]["ExamDate"].ToString();
+                                var cschl = Model.StoreAllData.Tables[0].Rows[i]["cschl"].ToString();
+                                var Ecentre = Model.StoreAllData.Tables[0].Rows[i]["Ecentre"].ToString();
+                                var Schoole = Model.StoreAllData.Tables[0].Rows[i]["School"].ToString();
+                                var Mobileno = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                var Attendance = Model.StoreAllData.Tables[0].Rows[i]["Attendance"].ToString();
+                                var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                var StaffCount = Model.StoreAllData.Tables[0].Rows[i]["StaffCount"].ToString();
+                                Count = Count + 1;
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@Class</td>
+                                            <td>@ExamDate</td>
+                                            <td>@cschl</td>
+                                            <td>@Ecentre</td>
+                                            <td>@Schoole</td>
+                                            <td>@Mobileno</td>
+                                            <td>@Attendance (@StaffCount)</td>
+                                            <td>@Status</td>
+                                        </tr>
+                            }
+                        }
+                    }
+                    </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script type="text/javascript">
+
+$(document).ready(function () {
+        var dee = '30/04/2023'; @*'@ViewBag.admdate';*@
+        $("#examDate").datepicker({
+        dateFormat: "dd/mm/yy",
+        changeMonth: true,
+        changeYear: true,
+        maxDate: dee,
+        yearRange: '2023:' + (new Date().getFullYear())
+        });
+});
+</script>

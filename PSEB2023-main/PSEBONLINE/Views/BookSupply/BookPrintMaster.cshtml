@@ -1,0 +1,300 @@
+﻿@model PSEBONLINE.Models.BookPrintMaster
+@{
+    ViewBag.Title = "BookPrintMaster";
+    Layout = "~/Views/Shared/_BookSupplyLayout.cshtml";
+}
+<h1>Book Master Details</h1>
+@using (Html.BeginForm("BookPrintMaster", "BookSupply", FormMethod.Post, new { id = "Migrate", enctype = "multipart/form-data" }))
+{
+    <div id="divMain1">
+        <div class="row">
+            <div class="col-md-4">
+                @*@Html.HiddenFor(a=>a.MenuID)*@
+                Book Id @Html.TextBoxFor(a => a.BookId, new { id = "BookId", required = "required" })
+            </div>
+            <div class="col-md-4">
+                Book Name @Html.TextBoxFor(a => a.BookName, new { id = "BookName", required = "required"})
+            </div>
+            <div class="col-md-4">
+                Color @Html.TextBoxFor(a => a.Color, new { id = "Color", required = "required" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-4">
+                Class @Html.TextBoxFor(a => a.Class, new { id = "Class", required = "required" })
+            </div>
+            <div class="col-md-4">
+                Medium @Html.TextBoxFor(a => a.Medium, new { id = "Medium", required = "required" })
+            </div>
+            <div class="col-md-4">
+                Size @Html.TextBoxFor(a => a.Size, new { id = "Size", required = "required" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-4">
+                No. of Pages in Book @Html.TextBoxFor(a => a.NOPB, new { id = "NOPB", required = "required" })
+            </div>
+            @*<div class="col-md-4">
+                RNN @Html.TextBoxFor(a => a.RNN, new { id = "RNN", required = "required" })
+            </div>*@
+            <div class="col-md-4">
+                Text Paper @Html.TextBoxFor(a => a.TextPaper, new { id = "TextPaper", required = "required" })
+            </div>
+           
+            <div class="col-md-4">
+                Cover Paper @Html.TextBoxFor(a => a.CoverPaper, new { id = "CoverPaper", required = "required" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-4">
+                Sale @Html.TextBoxFor(a => a.Sale, new { id = "Sale", required = "required" })
+            </div>
+            <div class="col-md-4">
+                SSA @Html.TextBoxFor(a => a.Ssadwo, new { id = "Ssadwo", required = "required" })
+            </div>
+            <div class="col-md-4">
+                Total No. Of Books To Be Printed @Html.TextBoxFor(a => a.Numberofbookstobeprinted, new { id = "Numberofbookstobeprinted", required = "required" })
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                @if (ViewBag.Id.ToString() == "0")
+                {
+                    <input type="submit" value="Save" id="btnsave" onclick="return valForm();" />
+                }
+                else
+                {
+                    @Html.HiddenFor(a => a.IsActive)
+                    @Html.HiddenFor(a => a.Id)
+                    <input type="submit" value="Update" id="btnUpdate" onclick="return UvalForm();" />
+                }
+
+                <a href="/BookSupply/BookPrintMaster" class="btn">Reset</a>
+
+            </div>
+        </div>
+    </div>
+}
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1" && ViewBag.Id == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data saved Successfully");
+                window.location.href = '/BookSupply/BookPrintMaster';
+            </script>}
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Already Exist");
+            </script>
+        }      
+        else if (ViewData["result"].ToString() == "1" && ViewBag.Id != "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Updated Successfully");
+                window.location.href = '/BookSupply/BookPrintMaster';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "11")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Updated.. Plz Try again");
+            </script>
+        }      
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Saved.. Plz Try again");
+            </script>
+        }
+    }
+}
+
+
+<div class="row">
+    <div class="col-md-12">Grid Total:  @ViewBag.TotalCount</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>BookId</th>
+                    <th>BookName</th>
+                    <th>Color/Class/Medium</th>
+                    <th>Sale</th>
+                    <th>SSA</th>
+                    <th>Total</th>
+                    <th>Created Date</th>
+                    <th>Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var BookId = Model.StoreAllData.Tables[0].Rows[i]["BookId"].ToString();
+                            var BookName = Model.StoreAllData.Tables[0].Rows[i]["BookName"].ToString();
+                            var Color = Model.StoreAllData.Tables[0].Rows[i]["Color"].ToString();
+                            var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            var Medium = Model.StoreAllData.Tables[0].Rows[i]["Medium"].ToString();
+                            var NOPB = Model.StoreAllData.Tables[0].Rows[i]["NOPB"].ToString();
+                            var sale = Model.StoreAllData.Tables[0].Rows[i]["sale"].ToString();
+                            var ssadwo = Model.StoreAllData.Tables[0].Rows[i]["ssadwo"].ToString();
+                            var NOBTBP = Model.StoreAllData.Tables[0].Rows[i]["Numberofbookstobeprinted"].ToString();
+
+                            var CreatedDate = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString();
+                            var STATUS = Model.StoreAllData.Tables[0].Rows[i]["IsActive"].ToString().ToUpper() == "1" ? "ENABLE" : "DISABLE";
+
+                            Count = Count + 1;
+                <tr>
+                    <td>
+                        @Count
+                    </td>
+                    <td>
+                        @BookId
+                    </td>
+                    <td>
+                        @BookName
+                    </td>
+                    <td>
+                        @Color/@Class/@Medium
+                    </td>
+                    <td>
+                        @sale
+                    </td>
+                    <td>
+                        @ssadwo
+                    </td>
+                    <td>
+                        @NOBTBP
+                    </td>
+                    <td>
+                        @CreatedDate
+                    </td>
+                    <td>
+
+                        <a href='@Url.Action("UpdateMenuStatus", "BookSupply", new { id = BookId  })' onclick="return confirm('You are sure to change this?');">
+                            <img title="Enable/Disable" src="@(STATUS.ToUpper() == "ENABLE" ? "/Images/enable.gif" : "/Images/disable.gif"  )" />
+                        </a>
+                        &nbsp; &nbsp;
+                        <a href='@Url.Action("BookPrintMaster", "BookSupply", new { id = BookId  })' onclick="return confirm('You are sure to modify this?');">
+                            <img src="/Images/Edit_Icon.png" width="25" title="Modify" />
+                        </a>
+                    </td>
+                </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @Html.Raw("Record Not Found")
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+    function valForm() {
+        var txtName = document.getElementById("txtName");
+        if (txtName.value == "") {
+            alert("Please Enter Title");
+            txtName.focus();
+            return false;
+        }
+
+
+        var txtUrl = document.getElementById("txtUrl");
+        if (txtUrl.value == "") {
+            alert("Please Enter Valid Url or  Enter / for Menu Role ");
+            txtUrl.focus();
+            return false;
+        }
+
+
+        var ddlParent = document.getElementById("ddlParent");
+
+        if (ddlParent.value == "0" || ddlParent.value == "") {
+            alert("Please Select Menu/Sub-Menu/Action");
+            ddlParent.focus();
+            return false;
+        }
+        else {
+            //alert("Parent Value" + ddlParent.value);
+        }
+
+        var ddlSession = document.getElementById("ddlSession");
+        if (ddlSession.value == "0" || ddlSession.value == "") {
+            alert("Select Atleast One Session");
+            ddlSession.focus();
+            return false;
+        }
+
+        if (ddlParent.value != 1) {
+            var ddlMenu = document.getElementById("ddlMenu");
+            if (ddlMenu.value == "0" || ddlMenu.value == "") {
+                alert("Select Parent");
+                ddlMenu.focus();
+                return false;
+            }
+        }
+        else {
+            alert("You Selected Menu..No need to select Parent");
+            ddlMenu.value = 0;
+
+        }
+
+
+
+        return true;
+    }
+
+    function UvalForm() {
+        //  alert(1);
+        var txtName = document.getElementById("txtName");
+        if (txtName.value == "") {
+            alert("Please Enter Title");
+            txtName.focus();
+            return false;
+        }
+        var txtUrl = document.getElementById("txtUrl");
+        if (txtUrl.value == "") {
+            alert("Please Enter Valid Url");
+            txtUrl.focus();
+            return false;
+        }
+
+        var ddlMenu = document.getElementById("ddlMenu");
+        if (txtUrl.value != "/") {
+            if (ddlMenu.value == "0" || ddlMenu.value == "") {
+                alert("Select Parent");
+                ddlMenu.focus();
+                return false;
+            }
+        }
+
+        var ddlSession = document.getElementById("ddlSession");
+        if (ddlSession.value == "0" || ddlSession.value == "") {
+            alert("Select Atleast One Session");
+            ddlSession.focus();
+            return false;
+        }
+
+        return true;
+    }
+</script>
+

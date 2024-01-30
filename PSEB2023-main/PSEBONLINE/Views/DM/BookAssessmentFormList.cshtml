@@ -1,0 +1,226 @@
+﻿@model PSEBONLINE.Models.DMModel
+@{
+    ViewBag.Title = "BookAssessmentFormList";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>View BookAssessment Form List</h1>
+<div class="row">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("BookAssessmentFormList", "DM", FormMethod.Post, new { id = "searchform" }))
+            {
+                 <div class="col-md-2">Select District:@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District--", new { @class = "" })</div>
+                <div class="col-md-2">Search By:@Html.DropDownList("SelBy", new SelectList(ViewBag.MySearchBy, "Value", "Text", ViewBag.SelectedSearchBy), "--All--", new { @class = "" })</div>
+                <div class="col-md-2">Enter Text: <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2">&nbsp;<br /><input type="submit" name="submit" value="Search" />&nbsp;&nbsp; <input type="submit" name="submit" value="Reset" /> </div>
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-6 noprint">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="col-md-6 noprint" style="text-align:right">
+        @if (ViewBag.TotalCount > 0)
+        {
+            if (ViewBag.SelectedDist != null)
+            {
+                <a class="btn" target="_blank" href="/DM/ViewBookAssessmentFormList?Dist=@ViewBag.SelectedDist&&Schl=">Click Here to Print District </a>
+            }
+        }
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th>SCHL</th>
+                    <th>SCHL NAME</th>
+                    <th>DISTNM</th>
+                    <th>No. Of Books</th>
+                    <th>No. Of Students</th>
+                    @*<th>Printed On</th>*@
+                    <th>Print</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+
+                            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var SCHLNME = Model.StoreAllData.Tables[0].Rows[i]["SCHLNME"].ToString();                       
+                            var DIST = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();
+                            var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                            var NOC = Model.StoreAllData.Tables[0].Rows[i]["NOC"].ToString();
+                            var NOB = Model.StoreAllData.Tables[0].Rows[i]["NOB"].ToString();
+
+                <tr>
+                    <td>
+                        @SCHL 
+                    </td>
+                    <td>
+                        @SCHLNME
+                    </td>
+                    <td>
+                        @DIST / @DISTNM
+                    </td>
+                    <td>
+                        @NOB
+                    </td>
+                    <td>
+                        @NOC
+                    </td>
+                    <td><a class="btn" target="_blank" href="/DM/ViewBookAssessmentFormList?Dist=@DIST&&Schl=@SCHL">Click Here to Print </a></td>
+                </tr>
+
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                        Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {@:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp = ViewBag.pagesize + 1;
+                                                <a href="~/DM/BookAssessmentFormList?page=@dp">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/DM/BookAssessmentFormList?page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var dp = ViewBag.pagesize - 1;
+                                            <a href="~/DM/BookAssessmentFormList?page=1"><<</a>
+                                            @Html.Raw("&nbsp;");
+                                            <a href="~/DM/BookAssessmentFormList?page=@dp">< Prev</a>
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp1 = ViewBag.pagesize + 1;
+                                                <a href="~/DM/BookAssessmentFormList?page=@dp1">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/DM/BookAssessmentFormList?page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="11">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+@*@{
+    if (ViewData["CancelReceiveNo"] != null)
+    {
+        if (ViewData["CancelReceiveNo"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Receiving Cancelled Successfully");
+            </script>
+        }
+        else if (ViewData["CancelReceiveNo"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Receiving Not Found");
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Receiving Cancelled Failure");
+            </script>
+        }
+    }
+
+}*@
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        var form = $("#searchform").serialize();
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            if (value == 1 || value == 3 || value == 5) {
+                $("#searchform").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        // alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    };
+                });
+            } else {
+                $("#searchform").off('keypress');
+            }
+
+        });
+    });
+</script>
+

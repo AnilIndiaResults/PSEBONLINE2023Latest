@@ -1,0 +1,519 @@
+﻿@model PSEBONLINE.Models.RegistrationSearchStudentPreviousYearMarksModelList
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style>
+    input:read-only {
+        background-color: #dddddd;
+        border: 1px solid #ccc;
+        cursor: not-allowed;
+        pointer-events: all !important;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<script type="text/javascript">
+    window.setInterval(function () {
+        var current = new Date();
+        var expiry = new Date("July 12, 2021 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideint').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideint').show();
+        }
+    }, 0);
+</script>
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<!-- #endregion -->
+<h1>Previous Year Marks Panel</h1>
+@if (Model.RegistrationSearchModel != null)
+{
+
+    <div class="row">
+        <div class="col-md-12" style="text-align:right;"><h3>Last Date : 12-July-2021</h3></div>
+        <div class="clearfix"></div>
+        <div class="col-md-12"><a href="/PDF/Instruction_PreviousYearMarks.pdf" style="color:#cc0000;font-size:20px;" target="_blank"><samp>&#10093;</samp> Instructions Regarding Filling of Previous Years Marks Entry.</a></div>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="clearfix"></div>
+		if (Model.RegistrationSearchModel.Count() > 0)
+            {
+    <div class="row" id="divMain1" >
+        <div class="col-md-4"><br />	
+            <a href="StudentPreviousYearMarksReport" class="btn" target="_blank">View Report</a>
+			
+		</div>
+        <div class="col-md-12 text-right">
+            @if (Model.RegistrationSearchModel.Where(s => s.IsFinalLock == false && s.PYID == 0).Count() > 0)
+            {
+                <h3 class="rqf"> Final Submission Status : Pending</h3>
+            }
+            else if (Model.RegistrationSearchModel.Where(s => s.IsFinalLock == false && s.PYID > 0).Count() == Model.RegistrationSearchModel.Count())
+            {
+                <div class="rqf"><span class="hideint">@Html.ActionLink("Click here to Final Submission", "ActionStudentPreviousYearMarks", new { id = Session["schl"].ToString(), act = "SCHLFNL" }, new { @class = "btn", @OnClick = "return confirm('You are sure to Final Submit the data,after that you cant be able to change it?');" })</span> </div>
+
+            }
+            else if (Model.RegistrationSearchModel.Where(s => s.IsFinalLock == true && s.PYID > 0).Count() == Model.RegistrationSearchModel.Count())
+            {
+                <h3 class="rqf"> Final Submission Status : Submitted</h3>
+            }
+        </div>
+    </div>
+	}
+    <div class="clearfix"></div>
+    <div class="row" id="divMain1">
+        <div class="col-md-4"><br /><span style="font-size:20px;color:black;">Total Students : @Model.RegistrationSearchModel.Count()</span></div>
+        <div class="col-md-4"><br /><span style="font-size:20px;color:green;">Marks Filled : @Model.RegistrationSearchModel.Where(s => s.PYID > 0).Count()</span></div>
+        <div class="col-md-4"><br /><span style="font-size:20px;color:blue;">Pending : @Model.RegistrationSearchModel.Where(s => s.PYID == 0).Count()</span></div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="table-responsive">
+        <table id="example" class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr class="active-tr">
+                    <th>Roll</th>
+                    <th>Unique Id</th>
+                    <th>Form</th>
+                    <th>Admission Date</th>
+                    <th>Candidate Name</th>
+                    <th>Father's Name</th>
+                    <th>Mother's Name</th>
+                    <th>DOB</th>                    
+                    <th>Insert Date</th>                    
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.RegistrationSearchModel)
+                {
+                    <tr>
+                        <td>@obj.Roll</td>
+                        <td>
+                            @obj.Std_id
+                            @* Modal Start*@
+                            <div class="container">
+                                <div class="modal fade" id="myModal1-@obj.Std_id" role="dialog">
+                                    <div class="modal-dialog" style="width : 80%">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h3 class="modal-title">Student Details</h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td width="28%">Student ID</td>
+                                                        <td><label>@obj.Std_id</label></td>                                                    
+                                                        <td width="28%">Roll</td>
+                                                        <td><label>@obj.Roll</label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Candidate Name</td>
+                                                        <td><label>@obj.Candi_Name</label></td>                                                    
+                                                        <td>Father Name</td>
+                                                        <td><label>@obj.Father_Name</label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Name</td>
+                                                        <td colspan="3"><label>@obj.Mother_Name</label></td>
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <td colspan="4">
+                                                            <div class="row" style="padding-top : 20px">
+                                                                <div class="col-md-12">
+                                                                    <table style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px" border="1" class="tbl">
+                                                                        <tr class="active-tr">
+                                                                            <td align="center" width="10%">CLASS</td>
+                                                                            <td align="center">ROLL</td>
+                                                                            <td align="center">BOARD</td>
+                                                                            <td align="center">SESSION</td>
+                                                                            <td align="center">RESULT</td>
+                                                                            <td align="center">OBT MARKS</td>
+                                                                            <td align="center">MAX MARKS</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td align="center" width="10%">MATRIC </td>
+                                                                            <td align="center"><input type="text" maxlength="10" id="MAT_ROLL-@obj.Std_id" onpaste="return false;" value="@obj.MAT_ROLL" /></td>
+                                                                            <td align="center">@Html.DropDownList("MAT_BOARD", new SelectList(Model.MyMatricBoard, "Value", "Text", obj.MAT_BOARD), new { @id = "MAT_BOARD-" + @obj.Std_id })</td>
+                                                                            <td align="center">
+                                                                                @Html.DropDownList("MAT_YEAR", new SelectList(Model.MatricYearList, "Value", "Text", obj.MAT_YEAR), new { @id = "MAT_YEAR-" + @obj.Std_id })
+                                                                                @Html.DropDownList("MAT_MONTH", new SelectList(Model.MonthList, "Value", "Text", obj.MAT_MONTH), new { @id = "MAT_MONTH-" + @obj.Std_id })
+                                                                            </td>
+                                                                            <td align="center">@Html.DropDownList("MAT_RESULT", new SelectList(Model.ResultList, "Value", "Text", obj.MAT_RESULT), new { @id = "MAT_RESULT-" + @obj.Std_id })</td>
+                                                                            <td align="center"><input type="text" maxlength="4" id="MAT_OBTMARKS-@obj.Std_id" onpaste="return false;" value="@obj.MAT_OBTMARKS" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@obj.Std_id)" /></td>
+                                                                            <td align="center"><input type="text" maxlength="4" id="MAT_MAXMARKS-@obj.Std_id" onpaste="return false;" value="@obj.MAT_MAXMARKS" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@obj.Std_id)" /></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td align="center" width="10%"> +1 </td>
+                                                                            <td align="center"><input type="text" maxlength="10" id="ELV_ROLL-@obj.Std_id" onpaste="return false;" value="@obj.ELV_ROLL" /></td>
+                                                                            <td align="center">@Html.DropDownList("ELV_BOARD", new SelectList(Model.MyMatricBoard, "Value", "Text", obj.ELV_BOARD), new { @id = "ELV_BOARD-" + @obj.Std_id })</td>
+                                                                            <td align="center">
+                                                                                @Html.DropDownList("ELV_YEAR", new SelectList(Model.YearList, "Value", "Text", obj.ELV_YEAR), new { @id = "ELV_YEAR-" + @obj.Std_id })
+                                                                                @Html.DropDownList("ELV_MONTH", new SelectList(Model.MonthList, "Value", "Text", obj.ELV_MONTH), new { @id = "ELV_MONTH-" + @obj.Std_id })
+                                                                            </td>
+                                                                            <td align="center">@Html.DropDownList("ELV_RESULT", new SelectList(Model.ResultList, "Value", "Text", obj.ELV_RESULT), new { @id = "ELV_RESULT-" + @obj.Std_id })</td>
+                                                                            <td align="center"><input type="text" maxlength="4" id="ELV_OBTMARKS-@obj.Std_id" onpaste="return false;" value="@obj.ELV_OBTMARKS" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@obj.Std_id)" /></td>
+                                                                            <td align="center"><input type="text" maxlength="4" id="ELV_MAXMARKS-@obj.Std_id" onpaste="return false;" value="@obj.ELV_MAXMARKS" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@obj.Std_id)" /></td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>                                                        
+                                                        <td colspan="4" align="center">
+                                                            @if (obj.IsFinalLock == false)
+                                                            {
+                                                                <input type="button" class="btn" value="Save" id="btnSave" onclick="SubMarks('@obj.Std_id','@obj.schl')" />
+                                                            }
+                                                            <br /><div id="loadingSM-@obj.Std_id"></div>
+                                                        </td>
+                                                    </tr>
+
+
+                                                </table>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            @* Modal End*@
+                        </td>
+                        <td>@obj.form_Name</td>
+                        <td>@obj.Admission_Date </td>
+                        <td>@obj.Candi_Name </td>
+                        <td>@obj.Father_Name </td>
+                        <td>@obj.Mother_Name </td>
+                        <td>@obj.DOB</td>                        
+                        <td>@obj.CreatedDate</td>                        
+                        <td>
+                            @if (obj.IsFinalLock == false)
+                            {
+                                <div class="cart">
+                                    Choose Action <span class="caret"></span>
+                                    <div id="sidebar">
+                                        <ul>
+
+                                            <li class="hideint"><a href="" data-toggle="modal" data-target="#myModal1-@obj.Std_id.ToString()">Update Marks</a></li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <span>Final Locked On <br />@obj.FinalSubmitOn.Value.ToString("dd/MM/yyyy hh:mm tt")</span>
+                            }
+                            </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 25,
+            "order": [[0, 'desc']],
+            language: {  "emptyTable":  "No Record Found" , searchPlaceholder: "Search By UniqueID, Student Name, Form or Any." },
+        })
+    });
+</script>
+
+@{
+    if (TempData["resultIns"] != null)
+    {
+        if (TempData["resultIns"].ToString() == "FNL")
+        {
+            <div id="dShowResult" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Final Submission Successfully</span>
+            </div>
+        }
+        else if (TempData["resultIns"].ToString().ToLower().Contains("error"))
+        {
+            <div id="dShowResult" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">@TempData["resultIns"]</span>
+            </div>
+        }
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#dShowResult").dialog({
+            modal: true,
+            title: "Alert",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                    window.location.href = "/RegistrationPortal/StudentPreviousYearMarks";
+                },
+            }
+        });
+    });
+</script>
+
+
+<script>
+    function CheckMarks(obj) {
+        //pad(obj, 3);
+        return true;
+    }
+
+
+    function pad(obj, length) {
+        var text = obj.value;
+        var str = '' + text;
+        while (str.length < length) {
+            str = '0' + str;
+        }
+        if (obj.value == 'A' || obj.value == 'C' || obj.value == 'a' || obj.value == 'c') { }
+        else {
+            obj.value = str;
+        }
+    }
+
+
+</script>
+<script type="text/javascript">
+    function SubMarks(stdid, schl) {
+
+        var flag = 0;
+
+
+        var MAT_ROLL = $("#MAT_ROLL-" + stdid).val();
+        if (MAT_ROLL == "" || MAT_ROLL == "0") {
+            $("#MAT_ROLL-" + stdid).focus();
+            $("#MAT_ROLL-" + stdid).addClass("input-validation-error");
+            alert("Select Matric Roll!!");
+            flag = 1;
+            return false;
+        }
+        var MAT_BOARD = $("#MAT_BOARD-" + stdid).val();
+        if (MAT_BOARD == "" || MAT_BOARD == "0") {
+            $("#MAT_BOARD-" + stdid).focus();
+            $("#MAT_BOARD-" + stdid).addClass("input-validation-error");
+            alert("Select Matric Board!!");
+            flag = 1;
+            return false;
+        }
+        var MAT_MONTH = $("#MAT_MONTH-" + stdid).val();
+        if (MAT_MONTH == "" || MAT_MONTH == "0") {
+            $("#MAT_MONTH-" + stdid).focus();
+            $("#MAT_MONTH-" + stdid).addClass("input-validation-error");
+            alert("Select Matric Month!!");
+            flag = 1;
+            return false;
+        }
+        var MAT_YEAR = $("#MAT_YEAR-" + stdid).val();
+        if (MAT_YEAR == "" || MAT_YEAR == "0") {
+            $("#MAT_YEAR-" + stdid).focus();
+            $("#MAT_YEAR-" + stdid).addClass("input-validation-error");
+            alert("Select Matric Year!!");
+            flag = 1;
+            return false;
+        }
+
+      
+
+        var MAT_RESULT = $("#MAT_RESULT-" + stdid).val();
+        if (MAT_RESULT == "") {
+            $("#MAT_RESULT-" + stdid).focus();
+            $("#MAT_RESULT-" + stdid).addClass("input-validation-error");
+            flag = 1;
+            return false;
+        }
+
+        // Matric Marks
+        var MAT_MAXMARKS = $("#MAT_MAXMARKS-" + stdid).val();
+
+        if (parseInt(MAT_MAXMARKS) <= 0 && MAT_RESULT == "PASS") {
+            $("#MAT_MAXMARKS-" + stdid).focus();
+            $("#MAT_MAXMARKS-" + stdid).addClass("input-validation-error");
+            alert("Invalid Marks, Please Enter Matric Max Marks Greater than Zero !!");
+            flag = 1;
+            return false;
+
+        }
+
+
+        var MAT_OBTMARKS = $("#MAT_OBTMARKS-" + stdid).val();
+        if (MAT_RESULT == "PASS") {
+            if (parseInt(MAT_OBTMARKS) <= 0 || (parseInt(MAT_MAXMARKS) < parseInt(MAT_OBTMARKS))) {
+                $("#MAT_OBTMARKS-" + stdid).focus();
+                $("#MAT_OBTMARKS-" + stdid).addClass("input-validation-error");
+                alert("Invalid Matric Marks, Please Enter Matric OBT Marks less than equal to Matric Max Marks and Greater than Zero !!");
+                flag = 1;
+                return false;
+            }
+        }
+        
+        // +1 MArks
+
+
+
+        var ELV_ROLL = $("#ELV_ROLL-" + stdid).val();
+        if (ELV_ROLL == "" || MAT_ROLL == "0") {
+            $("#ELV_ROLL-" + stdid).focus();
+            $("#ELV_ROLL-" + stdid).addClass("input-validation-error");
+            alert("Select +1 Roll!!");
+            flag = 1;
+            return false;
+        }
+
+        var ELV_BOARD = $("#ELV_BOARD-" + stdid).val();
+        if (ELV_BOARD == "" || ELV_BOARD == "0") {
+            $("#ELV_BOARD-" + stdid).focus();
+            $("#ELV_BOARD-" + stdid).addClass("input-validation-error");
+            alert("Select +1 Board!!");
+            flag = 1;
+            return false;
+        }
+
+        var ELV_MONTH = $("#ELV_MONTH-" + stdid).val();
+        if (ELV_MONTH == "" || ELV_MONTH == "0") {
+            $("#ELV_MONTH-" + stdid).focus();
+            $("#ELV_MONTH-" + stdid).addClass("input-validation-error");
+            alert("Select +1 Month!!");
+            flag = 1;
+            return false;
+        }
+        var ELV_YEAR = $("#ELV_YEAR-" + stdid).val();
+        if (ELV_YEAR == "" || ELV_YEAR == "0") {
+            $("#ELV_YEAR-" + stdid).focus();
+            $("#ELV_YEAR-" + stdid).addClass("input-validation-error");
+            alert("Select +1 Year!!");
+            flag = 1;
+            return false;
+        }
+
+        var ELV_RESULT = $("#ELV_RESULT-" + stdid).val();
+        if (ELV_RESULT == "") {
+            $("#ELV_RESULT-" + stdid).focus();
+            $("#ELV_RESULT-" + stdid).addClass("input-validation-error");
+            flag = 1;
+            return false;
+        }
+
+        var ELV_MAXMARKS = $("#ELV_MAXMARKS-" + stdid).val();  
+        if (parseInt(ELV_MAXMARKS) <= 0 && ELV_RESULT == "PASS") {
+            $("#ELV_MAXMARKS-" + stdid).focus();
+            $("#ELV_MAXMARKS-" + stdid).addClass("input-validation-error");
+            alert("Invalid Marks, Please Enter +1 Max Marks Greater than Zero !!");
+            flag = 1;
+            return false;
+        }
+
+
+        var ELV_OBTMARKS = $("#ELV_OBTMARKS-" + stdid).val();
+        if (ELV_RESULT == "PASS") {
+            if (parseInt(ELV_OBTMARKS) <= 0 || (parseInt(ELV_MAXMARKS) < parseInt(ELV_OBTMARKS))) {
+                $("#ELV_OBTMARKS-" + stdid).focus();
+                $("#ELV_OBTMARKS-" + stdid).addClass("input-validation-error");
+                alert("Invalid +1 Marks, Please Enter +1 OBT Marks less than equal to +1 Max Marks and Greater than Zero !!");
+                flag = 1;
+                return false;
+            }
+        }
+
+
+        
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            var modelUser = {
+                PYID: 0,
+                Std_Id: stdid,
+                SCHL: schl,
+                MAT_OBTMARKS: $("#MAT_OBTMARKS-" + stdid).val(),
+                MAT_MAXMARKS: $("#MAT_MAXMARKS-" + stdid).val(),
+                MAT_RESULT: $("#MAT_RESULT-" + stdid).val(),
+                ELV_OBTMARKS: $("#ELV_OBTMARKS-" + stdid).val(),
+                ELV_MAXMARKS: $("#ELV_MAXMARKS-" + stdid).val(),
+                ELV_RESULT: $("#ELV_RESULT-" + stdid).val(),
+                //
+                MAT_ROLL: $("#MAT_ROLL-" + stdid).val(),
+                MAT_BOARD: $("#MAT_BOARD-" + stdid).val(),
+                MAT_MONTH: $("#MAT_MONTH-" + stdid).val(),
+                MAT_YEAR: $("#MAT_YEAR-" + stdid).val(),
+                ELV_ROLL: $("#ELV_ROLL-" + stdid).val(),
+                ELV_BOARD: $("#ELV_BOARD-" + stdid).val(),
+                ELV_MONTH: $("#ELV_MONTH-" + stdid).val(),
+                ELV_YEAR: $("#ELV_YEAR-" + stdid).val()
+            };
+            $("#loadingSM-" + stdid).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/RegistrationPortal/StudentPreviousYearMarks", { "modelData": modelUser },
+                function (response) {
+                    $("#loadingSM-" + stdid).empty();
+                    if (response.outstatus == "1" || response.outstatus == "2") {
+                        alert("Submit Successfully");
+                        $('#myModal1-' + stdid).modal('hide');
+                    }
+                    else if (response.outstatus == "MARKS") {
+                        alert("Invalid Marks, Please Check OBT Marks less than equal to Max Marks and Greater than Zero !!");
+                    }
+                    else {
+                        alert("Submit Failure");
+                    }
+                });
+
+
+        }
+
+    }
+</script>
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>

@@ -1,0 +1,323 @@
+﻿@model PSEBONLINE.Models.SiteMenu
+@{
+    ViewBag.Title = "MenuMaster";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>Menu Details</h1>
+@using (Html.BeginForm("MenuMaster", "Admin", FormMethod.Post, new { id = "Migrate", enctype = "multipart/form-data" }))
+{
+<div id="divMain1">    
+    <div class="row">
+        <div class="col-md-4">
+            @*@Html.HiddenFor(a=>a.MenuID)*@
+            Menu Name @Html.TextBoxFor(a => a.MenuName, new { id = "txtName", @class = "textnone", required = "required" })
+        </div>
+        <div class="col-md-4" style="@(ViewBag.Id == 0 ? "display:block" : "display:none")">
+            Page Url @Html.TextBoxFor(a => a.MenuUrl, new { id = "txtUrl", @class = "textnone", required = "required" })
+        </div>
+        <div class="col-md-4" style="@(ViewBag.Id == 0 ? "display:block" : "display:none")">
+            Select Role  @Html.DropDownList("Parent", new SelectList(ViewBag.Parent, "Value", "Text", ViewBag.SelectedParent), "--Select ---", new { id = "ddlParent"})
+        </div>
+        <div class="col-md-4">Select Parent
+           @if (ViewBag.Id == 0)
+           {
+                @Html.DropDownList("SelMenu", new SelectList(string.Empty, "Value", "Text", ViewBag.SelectedSelMenu), "--Select Parent---", new { id = "ddlMenu", @class = "" })
+            }
+            else{  @Html.DropDownList("SelMenu", ViewBag.SelMenu as SelectList, "--Select Parent---", new { id = "ddlMenu", @class = "" })
+            }
+
+        </div>
+        <div class="col-md-4">
+            Select Session <span class="rqf"> (Multiple)</span>     @Html.DropDownList("SelectedSession", (MultiSelectList)ViewBag.MySession, new { multiple = "multiple", id = "ddlSession" })
+           @*Is Menu/Action:  @Html.DropDownList("SelAction", new SelectList(ViewBag.IsAction, "Value", "Text"), "--Select Menu---", new { id = "ddlAction", @class = "", required = "required" })*@
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            @if (ViewBag.Id == 0)
+            {
+            <input type="submit" value="Save" id="btnsave"  onclick="return valForm();"/>
+            }
+            else
+            {<input type="submit" value="Update" id="btnUpdate"  onclick="return UvalForm();" />  }
+            <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Reset</a>
+
+        </div>
+    </div>
+</div>
+}
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data saved Successfully");
+                window.location.href = '/Admin/MenuMaster';
+            </script>}
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Already Exist");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Menu for SubMenu");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "11")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Updated Successfully");
+                window.location.href = '/Admin/MenuMaster';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "11")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Updated.. Plz Try again");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "20")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Session");                
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Saved.. Plz Try again");
+            </script>
+        }
+    }
+}
+
+
+<div class="row">
+    <div class="col-md-12">Grid Total:  @ViewBag.TotalCount</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>Session</th>  
+                    <th>Role</th>        
+                    <th>Parent Name</th>
+                    <th>Title</th>
+                    <th>URL</th>                               
+                    <th>Created Date</th>
+                    <th>Action</th>  
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var MenuId = Model.StoreAllData.Tables[0].Rows[i]["MenuId"].ToString();
+                            var ParentName = Model.StoreAllData.Tables[0].Rows[i]["ParentName"].ToString();
+                            var MenuName = Model.StoreAllData.Tables[0].Rows[i]["MenuName"].ToString();
+                            var MenuUrl = Model.StoreAllData.Tables[0].Rows[i]["MenuUrl"].ToString();
+                            var MenuDirection = Model.StoreAllData.Tables[0].Rows[i]["MenuDirection"].ToString();
+                            var Role = Model.StoreAllData.Tables[0].Rows[i]["Role"].ToString();
+                            var IsMenu = Model.StoreAllData.Tables[0].Rows[i]["IsMenu"].ToString();
+                            var CreatedDateTime = Model.StoreAllData.Tables[0].Rows[i]["CreatedDateTime"].ToString();
+                            var STATUS = Model.StoreAllData.Tables[0].Rows[i]["MenuEnable"].ToString().ToUpper() ==  "TRUE" ? "ENABLE" : "DISABLE";
+                            // var STATUS = Model.StoreAllData.Tables[0].Rows[i]["MenuEnable"].ToString().ToUpper();
+                            var AssignYear = Model.StoreAllData.Tables[0].Rows[i]["AssignYear"].ToString();
+                            Count = Count + 1;
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @AssignYear
+                                </td>
+                                <td>
+                                    <a href='@(Role.ToUpper() == "SUB-MENU" ? '/' + MenuUrl :  "#" )' title="Click to View Page">
+                                        <span class="@(Role.ToUpper() == "ACTION" ? "redc" : Role.ToUpper() == "MENU" ? "text-success" : "text-primary" )">  @Role</span>
+                                    </a>
+                                </td>
+                                <td>
+                                    @ParentName
+                                </td>
+                                <td>
+                                    @MenuName
+                                </td>
+                                <td>
+                                    @MenuUrl
+                                </td>
+                               
+                                <td>
+                                    @CreatedDateTime
+                                </td>                              
+                                <td>                                   
+                                    
+                                    <a href='@Url.Action("UpdateMenuStatus", "admin", new { id = MenuId  })' onclick="return confirm('You are sure to change this?');">
+                                        <img title="Enable/Disable"  src="@(STATUS.ToUpper() == "ENABLE" ? "/Images/enable.gif" : "/Images/disable.gif"  )" />
+                                    </a>
+                                        &nbsp; &nbsp; 
+                                         <a href='@Url.Action("MenuMaster", "Admin", new { id = MenuId  })' onclick="return confirm('You are sure to modify this?');">
+                                        <img src="/Images/Edit_Icon.png" width="25" title="Modify" />
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @Html.Raw("Record Not Found");
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+   
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#ddlParent").change(function () {
+          //  alert(1)
+            var selectedParent = { Parent: $("#ddlParent").val() };
+         //   alert( $("#ddlParent").val())
+            if ($("#ddlParent").val() == 2 || $("#ddlParent").val() == 3) {
+                $.ajax({
+                    url: '@Url.Action("GetMenu", "Admin")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedParent),
+                    success: function (States) {
+                        $("#ddlMenu").empty();
+
+                        $.each(States, function (i, menuList) {
+                            $("#ddlMenu").append('<option value="'
+                               + menuList.Value + '">'
+                               + menuList.Text + '</option>');
+                        });
+                        if (SelMenu.success) {
+                            //alert('sucess');
+                            //document.getElementById("MName").value = data.result;
+                            // $("#TextBoxID").val(data.result.MName);
+                        }
+                        else {
+                            alert('invalid ID' + data.success);
+                        }
+                    }
+                });
+            }
+            else { $("#ddlMenu").empty(); }
+
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    function valForm() {       
+        var txtName = document.getElementById("txtName");
+        if (txtName.value == "") {
+            alert("Please Enter Title");
+            txtName.focus();
+            return false;
+        }
+
+
+        var txtUrl = document.getElementById("txtUrl");
+        if (txtUrl.value == "") {
+            alert("Please Enter Valid Url or  Enter / for Menu Role ");
+            txtUrl.focus();
+            return false;
+        }
+      
+       
+            var ddlParent = document.getElementById("ddlParent");
+            if (ddlParent.value == "0" || ddlParent.value == "")
+            {
+                alert("Please Select Menu/Sub-Menu/Action");
+                ddlParent.focus();
+                return false;
+            }
+            else
+            {
+                //alert("Parent Value" + ddlParent.value);
+            }
+
+            var ddlSession = document.getElementById("ddlSession");
+            if (ddlSession.value == "0" || ddlSession.value == "") {
+                alert("Select Atleast One Session");
+                ddlSession.focus();
+                return false;
+            }
+
+            if (ddlParent.value != 1)
+            {
+                var ddlMenu = document.getElementById("ddlMenu");
+                if (ddlMenu.value == "0" || ddlMenu.value == "")
+                {
+                    alert("Select Parent");
+                    ddlMenu.focus();
+                    return false;
+                }
+            }
+            else
+            {
+                alert("You Selected Menu..No need to select Parent");
+                ddlMenu.value = 0;
+             
+            }
+
+
+
+             return true;
+         }
+
+    function UvalForm() {
+        //  alert(1);
+        var txtName = document.getElementById("txtName");
+        if (txtName.value == "") {
+            alert("Please Enter Title");
+            txtName.focus();
+            return false;
+        }
+        var txtUrl = document.getElementById("txtUrl");
+        if (txtUrl.value == "") {
+            alert("Please Enter Valid Url");
+            txtUrl.focus();
+            return false;
+        }
+
+        var ddlMenu = document.getElementById("ddlMenu");
+        if (ddlMenu.value == "0" || ddlMenu.value == "") {
+            alert("Select Parent");
+            ddlMenu.focus();
+            return false;
+        }
+
+        var ddlSession = document.getElementById("ddlSession");
+        if (ddlSession.value == "0" || ddlSession.value == "") {
+            alert("Select Atleast One Session");
+            ddlSession.focus();
+            return false;
+        }
+
+        return true;
+    }
+</script>

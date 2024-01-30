@@ -1,0 +1,1069 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<h1>Final Submitted Records of Registration/Continuation Session @Session["Session"].ToString()</h1>
+@using (Html.BeginForm("FinalSubmittedRecordsAllAdmin", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Total Students <label>@ViewBag.TotalCount1</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-3">
+                        School Code:
+                        @Html.TextBoxFor(m => m.SCHL, new { @class = "", id = "schl", required = "required" })
+                        @*<input type="text" id="schl" name="schl" value="@TempData["SCHL"]" required />*@
+                    </div>
+                    <div class="col-md-3">
+                        Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-3">
+                        &nbsp;<br />
+                        @*<input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />*@
+                        <input type="text" id="SearchString" name="SearchString" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" />
+                        @*<input type="button" name="Reset" id="Reset" value="Reset" />*@
+
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row">
+
+    <div class="table-responsive">
+        <div class="col-md-12">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>Sr</th>
+                    <th>Unique ID</th>
+                    <th>Form</th>
+                    <th>Roll/Section</th>
+                    <th>Reg No</th>
+                    <th>Exam Roll</th>
+                    <th>Aadhar No</th>
+                    <th>Name / Father'sName / Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Adm Date</th>
+                    <th>Reg Date: Fee Status</th>
+                    <th>Lot</th>
+                    <th>Action</th>
+                </tr>
+                @{
+                    //DateTime dt = DateTime.Now;
+                    //DateTime str = DateTime.Parse(dt.ToString("dd/MM/yyyy").Replace('-', '/'));
+                    //DateTime date = str;
+
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 30 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var RowNumber = Model.StoreAllData.Tables[0].Rows[i]["RowNumber"].ToString();
+                            var schl = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
+                            var std_id = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                            var cls = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+                            var Form = Model.StoreAllData.Tables[0].Rows[i]["Form"].ToString();
+                            var Roll = Model.StoreAllData.Tables[0].Rows[i]["Roll"].ToString();
+                            var Section = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["RegNo"].ToString();
+                            var OldRoll = Model.StoreAllData.Tables[0].Rows[i]["OldRoll"].ToString();
+                            var AadharNo = Model.StoreAllData.Tables[0].Rows[i]["AadharNo"].ToString();
+                            var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                            var fname = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                            var mname = Model.StoreAllData.Tables[0].Rows[i]["mname"].ToString();
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["AdmDate"].ToString();
+                            var RegDate = Model.StoreAllData.Tables[0].Rows[i]["RegDate"].ToString();
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["Fee"].ToString();
+                            var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                            var Lot = Model.StoreAllData.Tables[0].Rows[i]["Lot"].ToString();
+                            var iscancel = Model.StoreAllData.Tables[0].Rows[i]["iscancel"].ToString();
+                            var groupName = Model.StoreAllData.Tables[0].Rows[i]["Group_Name"].ToString();
+                            //
+
+                            var ProofCertificate = Model.StoreAllData.Tables[0].Rows[i]["ProofCertificate"].ToString();
+                            var ProofNRICandidates = Model.StoreAllData.Tables[0].Rows[i]["ProofNRICandidates"].ToString();
+                            var IsNRICandidate = Model.StoreAllData.Tables[0].Rows[i]["IsNRICandidate"].ToString();
+                            // var StudentUniqueId = Model.StoreAllData.Tables[0].Rows[i]["StudentUniqueId"].ToString();
+
+                            Count = i + 1;
+                            <tr>
+                                <td>
+                                    @RowNumber
+                                </td>
+                                <td>
+                                    @std_id
+                                    <div class="container">
+                                        <div class="modal fade" id="myModalDocument-@std_id" role="dialog">
+                                            <div class="modal-dialog" style="width:50%">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>View Document Uploaded By School <br /><span class="rqf">Student Id : @std_id </span> </h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-lg-4"><br />Proof Certificate</div>
+                                                            <div class="col-lg-8">
+                                                                @if (!string.IsNullOrEmpty(ProofCertificate))
+                                                                {
+                                                                    if (Form == "F2" || Form == "A2")
+                                                                    {
+
+                                                                        <br /><a href="https://middleprimary2021.pseb.ac.in/Upload/Upload2023/@ProofCertificate" class="btn" target="_blank">Click here to View</a>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <br /><a href="https://registration2021.pseb.ac.in/upload/Upload2023/@ProofCertificate" class="btn" target="_blank">Click here to View</a>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <br /><span>No Document</span>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                        <div class="row">
+                                                            <div class="col-lg-4"><br />NRI Certificate</div>
+                                                            <div class="col-lg-8">
+                                                                @if (!string.IsNullOrEmpty(ProofNRICandidates))
+                                                                {
+                                                                    if (Form == "F2" || Form == "A2")
+                                                                    {
+
+                                                                        <br /> <a href="https://middleprimary2021.pseb.ac.in/Upload/Upload2023/@ProofNRICandidates" class="btn" target="_blank">Click here to View</a>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <br /> <a href="https://registration2021.pseb.ac.in/upload/Upload2023/@ProofNRICandidates" class="btn" target="_blank">Click here to View</a>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <br /><span>No Document</span>
+                                                                }
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="loading2-@std_id"></div>
+
+                                                        <div class="clearefix"></div>
+
+                                                        <h3 style="background-color:#333333; color: #ffffff">View Uploaded Documents By School</h3>
+                                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                            <tr>
+                                                                <td colspan="4">
+                                                                    <table width="100%" id="view-@std_id">
+                                                                        <tr class="active-tr">
+                                                                            <th width="30%">Submitted On</th>
+                                                                            <th width="20%">Document</th>
+                                                                        </tr>
+                                                                        @{
+                                                                            if (Model.StoreAllData.Tables[2].Rows.Count > 0)
+                                                                            {
+                                                                                for (int h = 0; h < Model.StoreAllData.Tables[2].Rows.Count; h++)
+                                                                                {
+                                                                                    var eDid = Model.StoreAllData.Tables[2].Rows[h]["Did"].ToString();
+                                                                                    var Stdid = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                                                                                    var Filepath = Model.StoreAllData.Tables[2].Rows[h]["Filepath"].ToString();
+                                                                                    var SubmitOn = Model.StoreAllData.Tables[2].Rows[h]["SubmitOn"].ToString();
+
+                                                                                    if (std_id == Stdid)
+                                                                                    {
+                                                                                        <tr id="trs-@d-@eDid">
+                                                                                            <td>@SubmitOn</td>
+                                                                                            <td>
+                                                                                                @{
+                                                                                                    if (Form == "F2" || Form == "A2")
+                                                                                                    {
+                                                                                                        <a href="https://middleprimary2020.pseb.ac.in/Upload/Upload2023/@Filepath" class="btn" target="_blank">Download</a>
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <a href="https://registration2021.pseb.ac.in/upload/Upload2023/@Filepath" class="btn" target="_blank">Download</a>
+                                                                                                    }
+                                                                                                }
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                <tr><td colspan="2">Record Not Found</td></tr>
+                                                                            }
+                                                                        }
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+
+                                                        </table>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="modal fade" id="myModalModify-@std_id" role="dialog">
+                                            <div class="modal-dialog">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3 class="modal-title">Modify Student Details : <span style="color:red;">@std_id</span> </h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table width="100%">
+                                                            <tr>
+                                                                <td>Student Id </td>
+                                                                <td><label>@std_id</label></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Form </td>
+                                                                <td><label>@Form</label></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Name/Fname/Mname </td>
+                                                                <td><label>@Name/@fname/@mname</label></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="28%">Reg No</td>
+                                                                <td>
+                                                                    <input type="text" id="RegNo-@std_id" name="RegNo" maxlength="25" value="@RegNo" />
+                                                                    <br />
+                                                                </td>
+                                                            </tr>
+                                                            @if (cls == "3")
+                                                            {
+                                                                <tr>
+                                                                    <td width="28%">Group Name</td>
+                                                                    <td>
+                                                                        @Html.DropDownList("GroupName-" + std_id, new SelectList(ViewBag.MyGroup, "Value", "Text", groupName), new { @required = "required", @class = "" })
+
+                                                                        <br />
+                                                                    </td>
+                                                                </tr>
+                                                            }
+
+
+
+                                                            <tr>
+                                                                <td width="28%">Remarks</td>
+                                                                <td>
+
+                                                                    <input type="text" id="ModifyRemarks-@std_id" name="ModifyRemarks" maxlength="100" />
+                                                                    <br />
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td> <div id="loadingModify-@std_id"></div></td>
+                                                                <td><input type="button" class="btn" value="Modify" id="btnModify" onclick="ModifyRegistrationData('@std_id')" /></td>
+                                                            </tr>
+
+
+
+                                                        </table>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @Form
+                                </td>
+                                <td>
+                                    @Roll /@Section
+                                </td>
+                                <td>
+                                    @RegNo
+                                </td>
+                                <td>
+                                    @OldRoll
+                                </td>
+                                <td>
+                                    @AadharNo
+                                </td>
+                                <td>
+                                    @Name/ @fname/ @mname
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @AdmDate
+                                </td>
+                                <td>
+                                    @RegDate:  @Fee / @Status
+                                </td>
+                                <td>
+                                    @Lot
+                                </td>
+                                <td>
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+                                                <li><input type="button" value="View Form" onclick="javascript:document.location.href='@Url.Action("CommanFormView","Admin", new { id = encrypt.QueryStringModule.Encrypt(std_id), formNM = Form })'" /></li>
+
+
+                                                @if (iscancel == "True")
+                                                {
+                                                    <li>  <span style="@(ViewBag.IsRMVCancel == 1 ? "display:block" : "display:none")"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@std_id">RMV Cancel</button></span></li>
+                                                }
+                                                else
+                                                {
+                                                    <li style="@(ViewBag.IsModify == 1 ? "display:block" : "display:none")"><a data-toggle="modal" data-target="#myModalModify-@std_id">Modify</a></li>
+                                                    if (Form.Contains("2"))
+                                                    {
+                                                        <li><a data-toggle="modal" data-target="#myModalDocument-@std_id">View Document By School</a></li>
+                                                    }
+                                                    <li style="@(ViewBag.IsShift == 1 ? "display:block" : "display:none")"><a href="" class="" data-toggle="modal" data-target="#myModal2-@std_id">Shift Form</a></li>
+
+                                                    <li> <span style="@(ViewBag.IsCancel == 1 ? "display:block" : "display:none")"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@std_id">Cancel</button></span></li>
+
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+
+                            </tr>
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="8">
+                                        Page @ViewBag.pagesize of @ViewBag.pn
+                                        &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+
+                                        {
+                                            @:<<
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "FinalSubmittedRecordsAllAdmin", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "FinalSubmittedRecordsAllAdmin", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                            @Html.ActionLink("<<", "FinalSubmittedRecordsAllAdmin", new { page = 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @Html.ActionLink("< Prev", "FinalSubmittedRecordsAllAdmin", new { page = ViewBag.pagesize - 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "FinalSubmittedRecordsAllAdmin", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "FinalSubmittedRecordsAllAdmin", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                            }
+
+                                        }
+
+
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 50,
+            "order": [[0, 'desc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By Any.." },
+        })
+    });
+</script>
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 text-center tbp">
+        <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Index", "Home" )'" />
+    </div>
+</div>
+<div class="clearfix"></div>
+@{
+
+
+    if (Model != null)
+    {
+        if (ViewBag.TotalCount > 0)
+        {
+            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+            {
+                //var schl = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
+                var std_id = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                //var rollNo = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                //var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                var RegNo = Model.StoreAllData.Tables[0].Rows[i]["RegNo"].ToString();
+                var Form = Model.StoreAllData.Tables[0].Rows[i]["Form"].ToString();
+                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+                var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+
+
+                var Remarks = Model.StoreAllData.Tables[0].Rows[i]["Remarks"].ToString().Trim();
+                var IsCancel = Model.StoreAllData.Tables[0].Rows[i]["IsCancel"].ToString();
+                var CancelDT = Model.StoreAllData.Tables[0].Rows[i]["CancelDT"].ToString();
+
+                var shiftFormList = Model.StoreAllData.Tables[0].Rows[i]["ShiftFormList"].ToString();
+
+                // ViewBag.rslist = "1";
+                //totmarks,obtmarks,Result
+                //var IsMarksFilled = Model.StoreAllData.Tables[0].Rows[i]["IsMarksFilled"].ToString();
+                var Prev = "0";
+                var Next = "0";
+                if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count == 1)
+                {
+                    Prev = "0";
+                    Next = "0";
+                }
+                else if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count > 1)
+                {
+                    Prev = "0";
+                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+                }
+                else if (i > 0 && i < Model.StoreAllData.Tables[0].Rows.Count - 1)
+                {
+                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+                }
+                else if (i > 0 && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
+                {
+                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+                    Next = "0";
+                }
+                int k = i + 1;
+                <div class="container">
+                    <div class="modal fade" id="myModal1-@std_id" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                    @*<h4 class="modal-title">Student Details Of Unique Id : @std_id</h4>*@
+                                    <h4 class="modal-title">Student Details Of @Html.Raw("&nbsp;&nbsp;") @std_id @Html.Raw("&nbsp;&nbsp;")& Form : @Form</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <table width="100%">
+                                        <tr>
+                                            <td width="28%">Student ID</td>
+                                            <td>@Html.Raw("")@std_id@Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Reg No.</td>
+                                            <td>@Html.Raw("")@RegNo@Html.Raw("")</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Name/F.Name/M.Name</td>
+                                            <td>@Html.Raw("")@FullName@Html.Raw("")</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Remarks<span class="rqf">*</span></td>
+                                            @*<td>@Html.Raw("")<input type="Text" id="Remarks-@std_id" name="Remarks" maxlength="500" class="obt" value="@Remarks" style="width:200px; height:50px;"  /><br /></td>*@
+                                            <td>
+                                                <textarea rows="0" cols="50" id="CanRemarks-@std_id" name="CanRemarks" maxlength="500" class="rmrks" value="@Remarks"></textarea>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td><br /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><br /></td>
+                                            <td><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@std_id,@Next,@Prev)" /></td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="rqf">
+                                                    Instructions:<br />1. Please Enter Remarks for Cancel Student!!<br />
+
+                                                </span><br />
+                                                <div id="loading1-@std_id"></div>
+                                            </td>
+                                        </tr>
+
+
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <span class="lft">
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                                    </span>
+                                    <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                                    @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal fade" id="myModal2-@std_id" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Student Details : @std_id</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <table width="100%">
+                                        <tr>
+                                            <td width="28%">Student ID</td>
+                                            <td>@Html.Raw("")@std_id@Html.Raw("") </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="28%">Form</td>
+                                            <td>@Html.Raw("")@Form@Html.Raw("") </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Reg No.</td>
+                                            <td>@Html.Raw("")@RegNo@Html.Raw("")</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Name/F.Name/M.Name</td>
+                                            <td>@Candi_Name @Html.Raw("")@Father_Name@Html.Raw("")@Mother_Name</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Select Shift Form <span class="rqf">*</span></td>
+                                            <td>
+                                                @{
+                                                    List<SelectListItem> formList = new List<SelectListItem>();
+                                                    formList.Add(new SelectListItem { Text = "---Select Board--", Value = "0" });
+                                                    foreach (var item in shiftFormList.Split(','))
+                                                    {
+                                                        formList.Add(new SelectListItem { Text = item.Replace("'", ""), Value = item.Replace("'", "") });
+                                                    }
+                                                }
+                                                @Html.DropDownList("formNM", formList, new { id = "formNM-" + @std_id, @onchange = "showOtherBoardByForm(this)" })
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Enter PSEB Reg. No.</td>
+                                            <td>
+                                                <input type="text" id="txtOldRegNoShift-@std_id" name="OldRegNoShift" maxlength="50" value="" />
+                                            </td>
+
+                                        </tr>
+                                        <tr id="trOtherBoard-@std_id" style="display:none">
+                                            <td><input type="Text" value="Board *" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td style="width:350px;">
+                                                @{
+                                                    List<SelectListItem> BoardList = new List<SelectListItem>();
+                                                    BoardList.Add(new SelectListItem { Text = "---Select Board--", Value = "0" });
+                                                    BoardList.Add(new SelectListItem { Text = "CBSE BOARD", Value = "CBSE BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "P.S.E.B BOARD", Value = "P.S.E.B BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "I.C.S.E BOARD", Value = "ICSE BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "HARYANA BOARD", Value = "HARYANA BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "HIMACHAL BOARD", Value = "HIMACHAL BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "J&K BOARD", Value = "J&K BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "RAJASTHAN BOARD", Value = "RAJASTHAN BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "OTHER BOARD", Value = "OTHER BOARD" });
+
+                                                }
+
+                                                @Html.DropDownList("Board", BoardList, new { id = "ddlboard-" + @std_id })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Select Authorised Person <span class="rqf">*</span></td>
+                                            <td>@Html.DropDownList("SelEmp", new SelectList(ViewBag.AllEmpList, "Value", "Text", ViewBag.SelectedEmp), "--All Authorized Person---", new { @class = "", id = "SelEmp-" + @std_id })</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Remarks<span class="rqf">*</span></td>
+                                            <td>
+                                                <textarea rows="0" cols="50" id="RemarksShift-@std_id" name="RemarksShift" maxlength="500" class="rmrks" value="@Remarks"></textarea>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td><br /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div id="loading2-@std_id"></div><br /></td>
+                                            <td><input type="button" class="btn" value="Shift Form" id="btnShift" onclick="ShiftForm(@std_id)" /></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+}
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+
+<script type="text/javascript">
+
+
+    function formVal() {
+
+
+        if (document.getElementById("schl").value == "") {
+
+            if (document.getElementById("SearchString").value == "") {
+                alert("Please Either Enter School Code Or Search By");
+                return false;
+            }
+            else {
+                if (document.getElementById("SelList").value == "" || document.getElementById("SelList").value == "0") {
+                    alert("Select Any Search List");
+                    document.getElementById("SelList").focus();
+                    return false;
+                }
+            }
+
+        }
+
+    }
+
+    function showOtherBoardByForm(selNum1) {
+
+        var selectedText = selNum1.options[selNum1.selectedIndex].innerHTML;
+        var value = selNum1.value;
+        var k = selNum1.id.split('-')[1];
+        var formNM = value;
+        $("#trOtherBoard-" + k).hide();
+        if (formNM == "N2" || formNM == "M2" || formNM == "E2" || formNM == "T2" || formNM == "F2" || formNM == "A2") {
+            $("#trOtherBoard-" + k).show();
+        }
+    }
+
+    function ShiftForm(k, formNM) {
+
+        var flag = 1;
+        var txtOldRegNoShift = $("#txtOldRegNoShift-" + k).val().trim();
+        var formNM = $("#formNM-" + k).val();
+        var ddlboard = $("#ddlboard-" + k).val();
+        var SelEmp = $("#SelEmp-" + k).val();
+
+        if (formNM == "" || formNM == "0") {
+            flag = 0;
+            alert("Please Select Shift Form");
+            $('#formNM-' + k).addClass("input-validation-error");
+            return false;
+        }
+
+        if (formNM == "N2" || formNM == "M2" || formNM == "E2" || formNM == "T2" || formNM == "F2" || formNM == "A2") {
+            if (ddlboard == "" || ddlboard == "0") {
+                flag = 0;
+                alert("Please Select Other Board");
+                $('#ddlboard-' + k).addClass("input-validation-error");
+                return false;
+            }
+        }
+        //1) when shift from N3,n2 to n1, f2 to f1, a2 to a1 then allot regno automatic
+        //2) when shift in n3, m1, e1, t1 make regno mandatory
+        //3) when shift in f2, a2, n2, m2, e2, t2 then allot regno automatic..
+        if (formNM == "N3" || formNM == "M1" || formNM == "E1" || formNM == "T1") {
+
+            if (txtOldRegNoShift == "") {
+                flag = 0;
+                alert("Please Enter PSEB Reg. Number");
+                $('#txtOldRegNoShift-' + k).addClass("input-validation-error");
+                return false;
+            }
+            else {
+                var chlregnum = txtOldRegNoShift.charAt(0);
+                if (((chlregnum != "b") && (chlregnum != "B")) || txtOldRegNoShift.length <= 5) {
+                    flag = 0;
+                    alert('PSEB Reg. Number Starts With Letter "B OR b" and Minimum 5 Characters');
+                    $('#txtOldRegNoShift-' + k).addClass("input-validation-error");
+                    return false;
+                }
+            }
+        }
+
+
+
+        var Remarks = $("#RemarksShift-" + k).val().trim();
+        if (Remarks == "") {
+            flag = 0;
+            alert("Please Enter Remarks");
+            $('#RemarksShift-' + k).addClass("input-validation-error");
+            return false;
+        }
+
+        if (SelEmp == "" || SelEmp == "0") {
+            flag = 0;
+            alert("Please Select Authorized Person");
+            $('#SelEmp-' + k).addClass("input-validation-error");
+            return false;
+        }
+
+        $('#txtOldRegNoShift-' + k).removeClass("input-validation-error");
+        $('#RemarksShift-' + k).removeClass("input-validation-error");
+        $('#ddlboard-' + k).removeClass("input-validation-error");
+        $('#formNM-' + k).removeClass("input-validation-error");
+        $('#SelEmp-' + k).removeClass("input-validation-error");
+
+        if (flag == 1) {
+            //alert(Remarks);
+            //alert(txtOldRegNoShift);
+            //alert(k);
+            //alert(ddlboard);
+            //alert(formNM);
+            //alert(SelEmp);
+
+            //string Remarks, string OldRegNo, string std_id,string OtherBoard, string ShiftFormNM,string VerifiedEmp
+            $('#loading2-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            //alert('Shifting Please Wait');
+            //$.post("/Master/ShiftAllFormAdmin", {"Remarks": Remarks, "OldRegNo": txtOldRegNoShift, "std_id": k, "OtherBoard": 'CBSE BOARD', "ShiftFormNM": 'N2', "VerifiedEmp": '2334' },
+            $.post("/Master/ShiftAllFormAdmin", { "Remarks": Remarks, "OldRegNo": txtOldRegNoShift, "stdid": k, "OtherBoard": ddlboard, "ShiftFormNM": formNM, "VerifiedEmp": SelEmp },
+                function (data) {
+                    //alert(data.status);
+                    if (data.chid == "0" || data.chid == "-1") {
+                        alert("Form Shifted Failure, Please Try Again or check Duplicate Aadhar No. or Reg No.");
+                    }
+                    else if (data.chid == "2") {
+                        alert("Not Allowed to Form Shift");
+                    }
+                    else if (data.chid == "-5") {
+                        alert("Student Already Exists, Either Duplicate Aadhar No. or Reg No. ");
+                    }
+                    else {
+                        alert("Form Shifted Successfully of Student id : " + k);
+                    }
+                    $("#loading2" + k).empty();
+                    $('#myModal2-' + k).modal('hide');
+                    $(".modal").hide();
+
+                });
+        }
+    }
+
+
+
+    function SubMarks(k, nxt, prv) {
+        //alert(k);
+        var Remarks = $("#CanRemarks-" + k).val().trim();
+        if (Remarks == "") {
+            alert("Remarks should Not be blank");
+            Remarks.focus();
+            return false;
+        }
+
+        $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+        $.post("/Admin/CancelStdRegNo", { "Remarks": Remarks, "stdid": k },
+            function (data) {
+                $('#loading1-' + k).empty();
+                if (data.sn == "Yes") {
+                    alert("RegNo Canceled Successfully of Student : " + k);
+                }
+                else {
+                    alert("Student Cancel Alloted Failure,");
+                }
+            });
+    }
+
+    function nxtDiv(nxt, crnt, prv) {
+        // var cid = '#myModal1-' + crnt
+        $('#myModal1-' + crnt).modal('hide');
+        if (nxt == "0" && prv == "0") { }
+        else if (nxt == "0" && prv != "0") {
+            $('#myModal1-' + prv).modal('show');
+        }
+        else if (prv == "0" && nxt != "0") {
+            $('#myModal1-' + nxt).modal('show');
+        }
+        else if (prv != "0" && nxt != "0") {
+            $('#myModal1-' + nxt).modal('show');
+        }
+    }
+
+
+</script>
+
+
+<script type="text/javascript">
+    function ModifyRegistrationData(stdid) {
+
+        var RegNo = $("#RegNo-" + stdid).val();
+        var Remarks = $("#ModifyRemarks-" + stdid).val();
+        var GroupName = $('select#GroupName-' + stdid + ' option:selected').val();
+        $("#RegNo-" + stdid).removeClass("input-validation-error");
+        $("#GroupName-" + stdid).removeClass("input-validation-error");
+        $("#ModifyRemarks-" + stdid).removeClass("input-validation-error");
+
+        if (RegNo == "") {
+            alert('Enter Registration Number');
+            $("#RegNo-" + stdid).addClass("input-validation-error");
+            $("#RegNo-" + stdid).focus();
+            return false;
+        }
+        if (GroupName != undefined) {
+            if (GroupName == "" || GroupName == "0") {
+                alert('Select Group Name');
+                $("#GroupName-" + stdid).addClass("input-validation-error");
+                $("#GroupName-" + stdid).focus();
+                return false;
+            }
+        }
+        else {
+            GroupName = "";
+        }
+        if (Remarks == "") {
+            alert('Enter Remarks');
+            $("#ModifyRemarks-" + stdid).addClass("input-validation-error");
+            $("#ModifyRemarks-" + stdid).focus();
+            return false;
+        }
+
+        if (RegNo != "") {
+            var regnum123 = RegNo;
+            var chlregnum = regnum123.charAt(0);
+            if (((chlregnum != "b") && (chlregnum != "B")) || regnum123.length <= 5) {
+                alert('Registration Number Starts With Letter "B OR b" and Minimum 5 Characters');
+                $("#RegNo-" + stdid).addClass("input-validation-error");
+                $("#RegNo-" + stdid).focus();
+                return false;
+            }
+        }
+        $('#loadingModify-' + stdid).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+
+        $.ajax({
+            type: "POST",
+            url: "/Master/ModifyRegistrationData", // this for calling the web method function in cs code.
+            data: '{std_id: "' + stdid + '",RegNo: "' + RegNo + '",Remarks:"' + Remarks + '",GroupName:"' + GroupName + '"}',// user name or email value
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //  alert(response.sn);
+                if (response.sn == 1) {
+                    alert("Updated Successfully");
+                }
+                else if (response.sn == -5) {
+                    alert("Duplicate Registration Number");
+                } else if (response.sn == -2) {
+                    alert("Student Not Exist, Please try again");
+                }
+                else {
+                    alert("Updated Failure");
+                }
+
+                $("#loadingModify" + stdid).empty();
+                $('#myModalModify-' + stdid).modal('hide');
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    }
+
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+        if (value == 5) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 2 || value == 3 || value == 4) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+    var form = $("#searchform").serialize();
+    $("#btnNext").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Next',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#btnPrevious").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Previous',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#SelectItem").change(function () {
+        var value = document.getElementById('SelectItem').value;
+        $('#SearchString').val('');
+        if (value == 5) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 2 || value == 3 || value == 4) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+
+    });
+
+</script>

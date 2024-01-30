@@ -1,0 +1,998 @@
+﻿@model PSEBONLINE.Models.OpenUserRegistration
+
+@{
+    ViewBag.Title = "Registration";
+    Layout = "~/Views/Shared/_HeaderOPEN.cshtml";
+}
+<section class="content-header">
+    @if (Model.FORM == "M3")
+    {
+        <h1>Open School Matric Registration</h1>
+    }
+    else
+    {
+        <h1>Open School Sr. Secondary Registration</h1>
+    }
+    <ol class="breadcrumb">
+        <li><a href="/open/Applicationstatus/@Session["app_no"].ToString()"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">Registration</li>
+    </ol>
+</section>
+<div id="loading1"></div>
+
+@using (Html.BeginForm("Registration", "Open", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+
+    <div class="box">
+        <div class="row">
+            <div class="col-md-2">
+                Category
+            </div>
+            <div class="col-md-4">
+                <label>  @Html.DisplayFor(model => model.CAT, new { htmlAttributes = new { @class = "" } })</label>
+                @Html.HiddenFor(model => model.CAT, new { htmlAttributes = new { } })
+            </div>
+
+
+            <div class="col-md-2">
+
+                Passing Session/ਪਾਸ ਕਰਨ ਦਾ ਸੈਸ਼ਨ<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.subStatus == "0")
+                {
+                    <div class="row">
+                        <div class="col-md-6">@((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.DropDownList("Month", (List<SelectListItem>)ViewBag.Months, new { @required = "required" }) : Html.DropDownList("Month", (List<SelectListItem>)ViewBag.Months, new { @disabled = "disabled", @style = "background-color:#DDDDDD;" }))</div>
+                        <div class="col-md-6">@((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.DropDownList("Year", (List<SelectListItem>)ViewBag.Years,"--Select--", new { @required = "required" }) : Html.DropDownList("Year", (List<SelectListItem>)ViewBag.Years,"--Select--",new { @disabled = "disabled", @style = "background-color:#DDDDDD;" }))</div>
+                    </div>
+                }
+                else
+                { <label>@Html.DisplayFor(model => model.OSESSION, new { htmlAttributes = new { } })</label>
+
+            }
+                @Html.HiddenFor(model => model.OSESSION, new { htmlAttributes = new { } })
+                @Html.ValidationMessageFor(model => model.OSESSION, "", new { @class = "text-danger" })
+            </div>
+            <!-- <div class="clearfix"></div> -->
+            <!-- <div class="col-md-12"><span style="color:red;font-size:12px;font-weight:bold" class="kdsfont">ਪ੍ਰਾਸਪੈਕਟਸ ਦੇ ਲੜੀ ਨੰ 4.2 ਅਨੁਸਾਰ ਸੀਨੀਅਰ ਸੈਕੰਡਰੀ ਕੋਰਸ ਵਿੱਚ ਦਾਖਲਾ ਲੈਣ ਸਮੇਂ ਵਿਦਿਆਰਥੀ ਮੈਟ੍ਰਿਕ ਦੀ ਪ੍ਰੀਖਿਆ ਪਾਸ ਕਰਨ ਤੋਂ ਘੱਟ ਤੋਂ ਘੱਟ ਇੱਕ ਸਾਲ ਦੀ ਵਿੱਥ ਰੱਖਦਾ ਹੋਵੇ</span></div> -->
+
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Board<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.subStatus == "0")
+                {@((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.DropDownListFor(model => model.BOARD, (List<SelectListItem>)ViewBag.Boards, new { @required = "required" }) : Html.DropDownListFor(model => model.BOARD, (List<SelectListItem>)ViewBag.Boards, new { @disabled = "disabled", @style = "background-color:#DDDDDD;" }))}
+                else
+                {
+                    <label>@Html.EditorFor(model => model.BOARD, new { htmlAttributes = new { @disabled = "disabled", @style = "background-color:#DDDDDD;" } })</label>}
+                @Html.HiddenFor(model => model.BOARD, new { })
+            </div>
+            <div class="col-md-6">
+                <div class="row" id="other">
+                    <div class="col-md-4"> Other Board<sup style="color:red;font-size:15px;">*</sup></div>
+
+                    <div class="col-md-8"><input type="text" id="OtherBoard" name="OtherBoard" disabled="disabled" /></div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Board/School Roll No.
+            </div>
+            <div class="col-md-4">
+
+                @((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.EditorFor(model => model.OROLL, new { htmlAttributes = new { } }) : Html.EditorFor(model => model.OROLL, new { htmlAttributes = new { @disabled = "disabled", @style = "background-color:#DDDDDD;" } }))
+            </div>
+            <div class="col-md-2">
+
+                Previous School Name
+            </div>
+            <div class="col-md-4">
+
+                @((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.EditorFor(model => model.OSCHOOL, new { htmlAttributes = new { } }) : Html.EditorFor(model => model.OSCHOOL, new { htmlAttributes = new { @disabled = "disabled", @style = "background-color:#DDDDDD;" } }))
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12">
+                <span style="color:red;font-size:12px;font-weight:bold" class="kdsfont">
+                    ਪ੍ਰਾਸਪੈਕਟਸ ਦੇ ਲੜੀ ਨੰ 4.2 ਅਨੁਸਾਰ ਮੈਟ੍ਰਿਕੁਲੇਸ਼ਨ ਕੋਰਸ ਵਿੱਚ ਦਾਖਲਾ ਲੈਣ ਸਮ੍ਹੇਂ ਮਿਡਲ ਦੀ ਪ੍ਰੀਖਿਆ ਪਾਸ ਕਰਨ ਤੋਂ ਘੱਟ ਤੋਂ ਘੱਟ ਇੱਕ ਸਾਲ ਦੀ ਵਿੱਥ ਰੱਖਦਾ ਹੋਵੇ।
+
+                    <!-- ਪ੍ਰਾਸਪੈਕਟਸ ਦੇ ਲੜੀ ਨੰ 4.2 ਅਨੁਸਾਰ ਸੀਨੀਅਰ ਸੈਕੰਡਰੀ ਕੋਰਸ ਵਿੱਚ ਦਾਖਲਾ ਲੈਣ ਸਮੇਂ ਵਿਦਿਆਰਥੀ ਮੈਟ੍ਰਿਕ ਦੀ ਪ੍ਰੀਖਿਆ ਪਾਸ ਕਰਨ ਤੋਂ ਘੱਟ ਤੋਂ ਘੱਟ ਇੱਕ ਸਾਲ ਦੀ ਵਿੱਥ ਰੱਖਦਾ ਹੋਵੇ -->
+                </span>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Registration No.
+            </div>
+            <div class="col-md-1">
+                @Html.DropDownListFor(model => model.IsREGNO, new SelectList(ViewBag.YesNoList, "Value", "Text"), new { id = "IsREGNO", @required = "required" })
+            </div>
+            <div class="col-md-3">
+                @((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.EditorFor(model => model.REGNO, new { htmlAttributes = new { @maxlength="40" } }) : Html.EditorFor(model => model.REGNO, new { htmlAttributes = new { @disabled = "disabled", @style = "background-color:#DDDDDD;" } }))
+                @Html.ValidationMessageFor(model => model.REGNO, "", new { @class = "text-danger" })
+            </div>
+
+           @*@if (Model.CLASS == "10" && (Model.CAT.ToUpper() == "8TH PASSED".ToUpper()))change by gulab@*@
+            @if (Model.CLASS == "10")
+            {<div class="col-md-2">
+                    First time appearing session/year in exam of selected category class<sup style="color:red;font-size:15px;">*</sup>
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-6">@((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.DropDownList("AppearingMonth", (List<SelectListItem>)ViewBag.Months, new { @required = "required" }) : Html.DropDownList("AppearingMonth", (List<SelectListItem>)ViewBag.Months, new { @disabled = "disabled", @style = "background-color:#DDDDDD;" }))</div>
+                        <div class="col-md-6">@((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.DropDownList("AppearingYr", (List<SelectListItem>)ViewBag.AppearingYears,"--Select --", new { @required = "required" }) : Html.DropDownList("AppearingYr", (List<SelectListItem>)ViewBag.AppearingYears, "--Select --", new { @disabled = "disabled", @style = "background-color:#DDDDDD;" }))</div>
+                    </div>
+
+                    @Html.HiddenFor(model => model.AppearingYear, new { htmlAttributes = new { } })
+                    @Html.ValidationMessageFor(model => model.AppearingYear, "", new { @class = "text-danger" })
+                </div> }
+            //else if (Model.CLASS == "12" && (Model.CAT.ToUpper() == "10TH PASSED")) change by anil
+            else if (Model.CLASS == "12")
+            {<div class="col-md-2">
+                    First time appearing session/year in exam of selected category class<sup style="color:red;font-size:15px;">*</sup>
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-6">@((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.DropDownList("AppearingMonth", (List<SelectListItem>)ViewBag.Months, new { @required = "required" }) : Html.DropDownList("AppearingMonth", (List<SelectListItem>)ViewBag.Months, new { @disabled = "disabled", @style = "background-color:#DDDDDD;" }))</div>
+                        <div class="col-md-6">@((ViewBag.disableBoard == null || ViewBag.disableBoard == "false") ? Html.DropDownList("AppearingYr", (List<SelectListItem>)ViewBag.AppearingYears, "--Select --", new { @required = "required" }) : Html.DropDownList("AppearingYr", (List<SelectListItem>)ViewBag.AppearingYears, "--Select --", new { @disabled = "disabled", @style = "background-color:#DDDDDD;" }))</div>
+                    </div>
+
+                    @Html.HiddenFor(model => model.AppearingYear, new { htmlAttributes = new { } })
+                    @Html.ValidationMessageFor(model => model.AppearingYear, "", new { @class = "text-danger" })
+                </div>}
+
+            <div class="clearfix"></div>
+            <div class="col-md-12">
+                <span class="rqf">
+                    Note : 1. If you have Registration No alloted by P.S.E.B. in any class then select "Yes" and fill Reg. No in given text box (e.g. B-00-BTD-000000,BS/00/000000000) else select "No"<br />
+                    2.If candidate first time appear in exam in March 2019 but passed in September 2019, then fill in this column  'March 2019' and fill  in Passing/Previous Session column  'September 2019'
+                </span>
+            </div>
+            <div class="col-md-12">
+                <h4>
+                    Personal Information
+                </h4>
+            </div><div class="clearfix"></div>
+            <div class="col-md-2">
+                Candidate's Name
+            </div>
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.NAME, new { htmlAttributes = new { required = "required", @readonly = "readonly", id = "NAME", @maxlength = "50", onkeypress = "return ValidateAlpha(event);" } })
+                @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2 kdsfont">
+                ÚÒÚÂ¤ØÏÁÛ ÂØ ÅØÌ<span class="rqf">*</span>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.PNAME, new
+                {
+                    required = "required",
+                    id = "PNAME",
+                    @class = "keyboardInput",
+                    onKeyPress = "javascript:convertThis(event)",
+                    onpaste = "return false;",
+                    oncopy = "return false;",
+                    oncut = "return false;",
+                    onclick = "toggleKBMode1(event)",
+                    lang = "pa"
+                })
+                @Html.ValidationMessageFor(model => model.PNAME, "", new { @class = "text-danger" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Father's Name<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.FNAME, new { htmlAttributes = new { required = "required", id = "FNAME", @maxlength = "50", onkeypress = "return ValidateAlpha(event);" } })
+                @Html.ValidationMessageFor(model => model.FNAME, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-2 kdsfont">
+                ÚÆ¼Ø ÂØ ÅØÌ<span class="rqf">*</span>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.PFNAME, new
+                {
+                    required = "required",
+                    id = "PFNAME",
+                    @class = "keyboardInput",
+                    onKeyPress = "javascript:convertThis(event)",
+                    onpaste = "return false;",
+                    oncopy = "return false;",
+                    oncut = "return false;",
+                    onclick = "toggleKBMode1(event)",
+                    lang = "pa"
+                })
+                @Html.ValidationMessageFor(model => model.PFNAME, "", new { @class = "text-danger" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Mother's Name<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.MNAME, new { htmlAttributes = new { required = "required", id = "MNAME", @maxlength = "50", onkeypress = "return ValidateAlpha(event);" } })
+                @Html.ValidationMessageFor(model => model.MNAME, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2 kdsfont">
+                ÌØ¼Ø ÂØ ÅØÌ<span class="rqf">*</span>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.PMNAME, new
+                {
+                    required = "required",
+                    id = "PMNAME",
+                    @class = "keyboardInput",
+                    onKeyPress = "javascript:convertThis(event)",
+                    onpaste = "return false;",
+                    oncopy = "return false;",
+                    oncut = "return false;",
+                    onclick = "toggleKBMode1(event)",
+                    lang = "pa"
+                })
+                @Html.ValidationMessageFor(model => model.PMNAME, "", new { @class = "text-danger" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Date of Birth
+            </div>
+            <div class="col-md-4">
+                <label>@Html.DisplayFor(model => model.DOB, new { htmlAttributes = new { required = "required", } })</label>
+                @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.DOB)
+            </div>
+            <div class="col-md-2">
+                Gender<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.SEX, (List<SelectListItem>)ViewBag.Gender, new { htmlAttributes = new { required = "required", } })
+                @Html.ValidationMessageFor(model => model.SEX, "", new { @class = "text-danger" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Caste
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.CASTE, (List<SelectListItem>)ViewBag.Cast, "--Select--", new { required = "required" })
+                @Html.ValidationMessageFor(model => model.CASTE, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="col-md-2">
+                Differently Abled<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.PHY_CHAL, (List<SelectListItem>)ViewBag.PhyChal, "--Select--", new { htmlAttributes = new { required = "required" } })
+                @Html.ValidationMessageFor(model => model.PHY_CHAL, "", new { @class = "text-danger" })
+            </div>
+            <div class="clearfix"></div>
+            <div id="divDisabilityPercent" style="display:none;">
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-2">
+                    Disability Percentage<br /> (1-100)<span class="kdsfont"></span> <span class="rqf">*</span>
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(m => m.DisabilityPercent, new { id = "DisabilityPercent", @maxlength = "3", onkeypress = "return isNumberKey(event);" })
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2" hidden="hidden">
+                Religion
+            </div>
+            <div class="col-md-4" hidden="hidden">
+                @Html.DropDownListFor(model => model.RELIGION, (List<SelectListItem>)ViewBag.Religion, "--Select--", new { htmlAttributes = new { required = "required" } })
+                @Html.ValidationMessageFor(model => model.RELIGION, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2">
+                Nationality
+            </div>
+            <div class="col-md-4">
+                <label>@Html.DisplayFor(model => model.NATION, new { htmlAttributes = new { required = "required" } })</label>
+                @Html.ValidationMessageFor(model => model.NATION, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.NATION)
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Aadhar No.
+            </div>
+            <div class="col-md-4">
+                <label>@Html.DisplayFor(model => model.AADHAR_NO, new { htmlAttributes = new { required = "required" } })</label>
+                @Html.ValidationMessageFor(model => model.AADHAR_NO, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.AADHAR_NO)
+            </div>
+            <div class="col-md-2">
+                Study Medium<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.CandStudyMedium, (List<SelectListItem>)ViewBag.StudyMedium, "--Select--", new { required = "required" })
+            </div>
+            <div class="clearfix"></div>
+
+            <div style="@(Model.FORM == "M3" ? "display:none" : "display:block")">
+                <div class="col-md-2"> Group</div>
+                <div class="col-md-4">
+                    <label>
+                        @if (Model.EXAM != null)
+                        {
+                            string Group = Model.EXAM.ToString() == "S" ? "SCIENCE" : Model.EXAM.ToString() == "H" ? "HUMANITIES"
+                                    : Model.EXAM.ToString() == "C" ? "COMMERCE" : Model.EXAM.ToString() == "IG" ? "INTIGRATED GROUP" : "No Group";
+                            @(Group + "(" + Model.EXAM.ToString() + ")")
+                            @Html.HiddenFor(model => model.EXAM)
+                        }
+
+                    </label>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Do you want Hard Copy of Certificate?<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @*@Html.DropDownListFor(model => model.IsHardCopyCertificate, (List<SelectListItem>)ViewBag.YesNoList, "--Select--", new { required = "required" })*@
+                @Html.DropDownListFor(model => model.IsHardCopyCertificate, (List<SelectListItem>)ViewBag.YesNoList, "YES", new { required = "required", @disabled = true })
+                @Html.HiddenFor(model => model.IsHardCopyCertificate)
+            </div>
+            <div class="col-md-2">
+                Do you have Smart Phone?<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.IsSmartPhone, (List<SelectListItem>)ViewBag.YesNoList, "--Select--", new { required = "required" })
+                @Html.HiddenFor(model => model.IsSmartPhone)
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12">
+                <h4>
+                    kindly Upload Clear Colored Photograph and Signature @*Upload Photo*@
+                </h4>
+            </div>
+            <div class="col-md-2"> Upload Photo<sup style="color:red;font-size:15px;">*</sup></div>
+            <div class="col-md-3">@Html.TextBox("Photo", null, null, new { id = "Photo", type = "file", onchange = "findSizeAndPreview(this)" }) <span class="rqf">kindly Upload Clear Colored Photograph<br />*Photp Size 5 to 50 KB  (Only .JPG)</span></div>
+            <div class="col-md-1"><img src="@ViewBag.Photo" class="img-responsive" style="width:80px;border:1px solid #ccc" alt="Photo" id="imgPhoto" /></div>
+            <div class="col-md-2">Upload Signature<sup style="color:red;font-size:15px;">*</sup></div>
+            <div class="col-md-3">@Html.TextBox("Sign", null, null, new { id = "Sign", type = "file", onchange = "findSizeAndPreviewSign(this)" }) <span class="rqf">kindly Upload Clear Signature<br />*Signature Size 1 to 50 KB   (Only .JPG)</span></div>
+            <div class="col-md-1"><img src="@ViewBag.Sign" class="img-responsive" style="height:30px;border:1px solid #ccc" alt="Signature" id="imgSign" /></div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center">
+                &nbsp;<br />
+                <input type="submit" value="Submit" class="btn" onclick="return valForm();" />
+                <br /> &nbsp;<br />
+            </div>
+
+        </div>
+    </div>
+}
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+               alert("Data Saved Successfully \n Proceeding to next Step");
+                window.location.href = '@Url.Action("Subjects", "Open")';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data not saved..plz try again");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please fill all required fields");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "-2")
+        {
+            <script type="text/javascript" language="javascript">
+              alert("Something Wrong : " + '@ViewBag.Message');
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "4")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Plz Select Session");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "5")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Plz fill  Registration No allotted to you by PSEB BOARD");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "AP")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Plz Select Appearing Year");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "12")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Sorry, You are not eligible for 12th class");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "OROLL")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Board Roll no is Mandatory");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "ML1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("You Can Choose Only 1 Between PUNJABI (ELECTIVE) and HINDI (ELECTIVE)");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "ML2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("You Can Choose Only 1 Between MUSIC (VOCAL), MUSIC (TABLA) and MUSIC (INSTRUMENTAL)");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "DisabilityPercent")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Disability Percentage should be between 1-100");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "DR")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Duplicate Registration Number");
+            </script>
+        }
+    }
+}
+
+
+
+@if (ViewBag.month != null && ViewBag.year != null)
+{
+    <script>
+                                document.onload(function () {
+                                    document.getElementById("Month").value=@ViewBag.month;
+                                    document.getElementById("Year").value=@ViewBag.year;
+                                });
+    </script>
+}
+
+
+<script type="text/javascript">
+    $("#PHY_CHAL").change(function () {
+        var selectedVal = $("#PHY_CHAL").val();//document.getElementById("#MyDist");
+        if (selectedVal == "N.A." || selectedVal == "0" || selectedVal == "" || selectedVal == "Others") {
+            $('#divDisabilityPercent').css("display", "none");
+            $("#DisabilityPercent").val("0");
+        }
+        else {
+            $('#divDisabilityPercent').css("display", "block");
+
+        }
+
+    });
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var EditPhyChl = '@Model.PHY_CHAL';
+        if (EditPhyChl == "0" || EditPhyChl == "" || EditPhyChl == "N.A." || EditPhyChl == "Others") {
+            $('#divDisabilityPercent').css("display", "none");
+            $("#DisabilityPercent").val('0');
+
+        }
+        else {
+            $('#divDisabilityPercent').css("display", "block");
+        }
+
+
+
+                                    document.getElementById("REGNO").disabled = true;
+                                document.getElementById("other").hidden = true;
+                                document.getElementById("OtherBoard").disabled = true;
+                                var selectedVal = $("#BOARD").val();
+                                if (selectedVal == "P.S.E.B BOARD") {
+                                    document.getElementById("REGNO").disabled = false;
+                                }
+								else if (selectedVal == "OTHER BOARD") {
+                                    document.getElementById("OtherBoard").disabled = false;
+                                    document.getElementById("other").hidden = false;
+                                    document.getElementById("REGNO").disabled = false;
+                                    $('#OtherBoard').show();
+                                }
+                                else
+                                {
+                                    if(document.getElementById("REGNO").value!="")
+                                    {
+                                        document.getElementById("REGNO").disabled = false;
+                                    }
+                                    else
+                                    {
+                                       // document.getElementById("REGNO").disabled = true;   Change by harpal sir
+										 document.getElementById("REGNO").disabled = false;
+                                    }
+        }
+
+        var IsREGNO = $("#IsREGNO").val();
+        var regno = $("#REGNO").val();
+        if (IsREGNO == "Y") {
+            document.getElementById("REGNO").disabled = false;
+        }
+        else {
+            document.getElementById("REGNO").disabled = true;
+            $("#REGNO").val("");
+        }
+
+    });
+
+
+    $('#IsREGNO').change(function () {
+        var IsREGNO = $("#IsREGNO").val();
+        var regno = $("#REGNO").val();
+        if (IsREGNO == "Y") {
+            document.getElementById("REGNO").disabled = false;
+        }
+        else {
+            document.getElementById("REGNO").disabled = true;
+            $("#REGNO").val("");
+        }
+    });
+
+
+                            $("#BOARD").change(function () {
+                                var selectedVal = $("#BOARD").val();
+                                if (selectedVal == "OTHER BOARD") {
+                                    document.getElementById("OtherBoard").disabled = false;
+                                    document.getElementById("other").hidden = false;
+                                  // document.getElementById("REGNO").disabled = true;   Change by harpal sir
+										 document.getElementById("REGNO").disabled = false;
+                                    $('#OtherBoard').show();
+                                }
+                                else if(selectedVal=="P.S.E.B BOARD")
+                                {
+                                    document.getElementById("REGNO").disabled = false;
+                                    document.getElementById("OtherBoard").disabled = true;
+                                    document.getElementById("other").hidden = true;
+                                    alert("You have selected PSEB Board for Previous Class, Select 'YES' to fill P.S.E.B. Registration No alloted by PSEB Board in any class or Select 'NO'")
+                                }
+                                else {
+                                    document.getElementById("OtherBoard").disabled = true;
+                                    document.getElementById("other").hidden = true;
+                             // document.getElementById("REGNO").disabled = true;   Change by harpal sir
+										 document.getElementById("REGNO").disabled = false;
+                                }
+
+                            });
+
+                            function findSizeAndPreview(input) {
+                                if (typeof ($("#Photo")[0].files) != "undefined") {
+
+                                    var ext = $('#Photo').val().split('.').pop().toLowerCase();
+                                    if ($.inArray(ext, [ 'jpg', 'jpeg']) == -1) {
+                                        alert('Only  .jpg and .jpeg format file allowed ');
+                                        $('#Photo').val('');
+                                        $('#imgPhoto').attr('src','~/Images/NOSignature.jpg');
+                                        return false;
+                                    }
+
+                                    var size = parseFloat($("#Photo")[0].files[0].size / 1024).toFixed(2);
+                                    if (parseInt(size) >= 5 && parseInt(size) <= 50)
+                                    {
+                                        var filerdr = new FileReader();
+                                        filerdr.onload = function (e)
+                                        {
+                                            $('#imgPhoto').attr('src', e.target.result);
+
+                                        }
+                                        filerdr.readAsDataURL(input.files[0]);
+                                        $("#errmsg").hide();
+
+                                    }
+                                    else {
+                                        if (parseInt(size) <= 5)
+                                        {
+                                            alert("Your file size is too Small that is " + size + " KB.");
+                                            $('#Photo').val('');
+                                            $('#imgPhoto').attr('src','~/Images/NOSignature.jpg');
+                                        }
+                                        if (parseInt(size) > 50)
+                                        {
+                                            alert("Your file size is too large that is " + size + " KB.");
+                                            $('#Photo').val('');
+                                            $('#imgPhoto').attr('src','~/Images/NOSignature.jpg');
+                                        }
+
+
+                                    }
+                                }
+
+                            }
+
+                            function findSizeAndPreviewSign(input) {
+                                if (typeof ($("#Sign")[0].files) != "undefined") {
+
+                                    var ext = $('#Sign').val().split('.').pop().toLowerCase();
+                                    if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+                                        alert('Only .gif, .png, .jpg and .jpeg format file allowed ');
+                                        $('#Sign').val('');
+                                        $('#imgSign').attr('src','~/Images/NOSignature.jpg');
+                                        return false;
+                                    }
+
+                                    var size = parseFloat($("#Sign")[0].files[0].size / 1024).toFixed(2);
+                                    // alert(size);
+                                    if (parseInt(size) >= 1 && parseInt(size) <= 50) {
+                                        var filerdrS = new FileReader();
+                                        filerdrS.onload = function (e) {
+                                            $('#imgSign').attr('src', e.target.result);
+
+                                        }
+                                        filerdrS.readAsDataURL(input.files[0]);
+                                        $("#errmsg").hide();
+
+                                    }
+                                    else {
+                                        if (parseInt(size) <= 1) {
+                                            alert("Your file size is too Small that is " + size + " KB.");
+                                            $('#Sign').val('');
+                                            $('#imgSign').attr('src','~/Images/NOSignature.jpg');
+                                        }
+                                        if (parseInt(size) > 50) {
+                                            alert("Your file size is too large that is " + size + " KB.");
+                                            $('#Sign').val('');
+                                            $('#imgSign').attr('src','~/Images/NOSignature.jpg');
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+                            function ValidateAlpha(evt) {
+                                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+                                    alert("Only Characters Allowed!!");
+                                    return false;
+                                }
+                                else {
+                                    return true;
+                                }
+
+                            }
+                            function isNumberKey(evt) {
+                                var charCode = (evt.which) ? evt.which : event.keyCode
+                                if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+                                    return true;
+                                }
+                                else {
+                                    alert("Invalid character...Enter Only Number!!");
+                                    return false;
+                                }
+                            }
+
+
+                            $(document).ready(function () {
+                                // alert('C');
+                                var selectedText = { text: $("#NAME").val() };
+                                var Father_Name_P = { text1: $("#PNAME").val() };
+                                var fname = document.getElementById('NAME').value;
+                                var fnameP = document.getElementById('PNAME').value;
+
+                                if (fnameP == "") {
+
+                                    $.ajax({
+                                        url: '@Url.Action("getPunjabiName", "School")',
+                                        type: 'Post',
+                                        contentType: 'application/json',
+                                        dataType: 'json',
+                                        data: JSON.stringify(selectedText),
+                                        success: function (result) {
+                                            //  alert("Father Name: " + result);
+                                            $('#PNAME').val(result);
+                                        }
+                                    });
+                                }
+                            });
+
+                            $('#FNAME').change(function () {
+                                // alert('F');
+                                var selectedText = { text: $("#FNAME").val() };
+                                var Father_Name_P = { text1: $("#PFNAME").val() };
+                                var fname = document.getElementById('FNAME').value;
+                                var fnameP = document.getElementById('PFNAME').value;
+                                if (fnameP == "") {
+
+                                    $.ajax({
+                                        url: '@Url.Action("getPunjabiName", "School")',
+                                        type: 'Post',
+                                        contentType: 'application/json',
+                                        dataType: 'json',
+                                        data: JSON.stringify(selectedText),
+                                        success: function (result) {
+                                            //  alert("Father Name: " + result);
+                                            $('#PFNAME').val(result);
+                                        }
+                                    });
+                                }
+                            });
+
+                            $('#MNAME').change(function () {
+                                // alert('M');
+                                var selectedText = { text: $("#MNAME").val() };
+                                var cname = document.getElementById('MNAME').value;
+                                var cnameP = document.getElementById('PMNAME').value;
+                                if (cnameP == "") {
+                                    $.ajax({
+                                        url: '@Url.Action("getPunjabiName", "School")',
+                                        type: 'Post',
+                                        contentType: 'application/json',
+                                        dataType: 'json',
+                                        data: JSON.stringify(selectedText),
+                                        success: function (result) {
+                                            //  alert("Candidate Name: " + result);
+                                            $('#PMNAME').val(result);
+                                        }
+                                    });
+                                }
+                            });
+
+                             //matric year
+
+
+                                $("#Year").change(function ()
+                                {
+                                   
+                                         var selectedVal = $("#CAT").val();
+                                         var selectedddlyearVal = $("#Year").val();
+                                    var yearlist;
+                                        
+                                             $("#AppearingYr").empty();
+                                         var selectedCat = { SelCat: selectedVal, SelYear: selectedddlyearVal};
+                                         $.ajax({
+                                            url: '@Url.Action("BindAppearingYearByCategory", "Open")',
+                                            type: 'Post',
+                                            contentType: 'application/json',
+                                            dataType: 'json',
+                                             data: JSON.stringify(selectedCat),
+                                               success: function (States) {
+                                                   /*document.getElementById("ddlboard").disabled = false;*/
+
+                                                   $("#AppearingYr").append('<option value="0">--Select Board--</option>');
+                                                $.each(States, function (i, yearlist) {
+                                                     
+                                                    $("#AppearingYr").append('<option value="'
+                                                       + yearlist.Value + '">'
+                                                       + yearlist.Text + '</option>');
+                                                });
+
+                                                if (yearlist.success) {
+
+                                                }
+                                                else {
+                                                    alert('invalid ID' + data.success);
+                                                }
+                                            }
+                                         });
+                                         
+
+
+
+                                        });
+
+
+                                //matricc end
+
+
+
+                            </script>
+
+                            <script>
+                            function valForm() {
+                            
+
+                                if ('@ViewBag.disableBoard' == "false" && '@ViewBag.subStatus' =="0") {
+
+
+                                      var month = document.getElementById("Month");
+                                    //  alert("month : " + month.value);
+                                      if ((month.value.trim() == "" || month.value.trim() == "0") && month.attr("disabled") != "disabled") {
+                                          alert("Enter month of your Session");
+                                          month.focus();
+                                          return false;
+                                      }
+
+                                      var year = document.getElementById("Year");
+                                     // alert("year : " + year.value);
+                                      if (year.value.trim() == "" || month.value.trim() == "0") {
+                                          alert("Enter year of your Session");
+                                          year.focus();
+                                          return false;
+                                      }
+
+                                      //
+                                    //  var AppearingMonth = document.getElementById("AppearingMonth");
+                                    // // alert("AppearingMonth : " + AppearingMonth.value);
+                                    //  if ((AppearingMonth.value.trim() == "" || AppearingMonth.value.trim() == "0") && AppearingMonth.attr("disabled") != "disabled") {
+                                    //     alert("Select Appearing Month");
+                                    //      AppearingMonth.focus();
+                                    //      return false;
+                                    //  }
+
+                                    //  var AppearingYear = document.getElementById("AppearingYr");
+                                    ////  alert("AppearingYear : " + AppearingYear.value);
+                                    //  if ((AppearingYear.value.trim() == "" || AppearingYear.value.trim() == "0") && AppearingYear.attr("disabled") != "disabled") {
+                                    //      alert("Select Appearing Year");
+                                    //      AppearingYear.focus();
+                                    //      return false;
+                                    //  }
+
+
+                                      var BOARD = document.getElementById("BOARD");
+                                     // alert("BOARD : " + BOARD.value);
+                                    if (BOARD.value.trim() == "" || BOARD.value.trim() == "0") {
+                                        alert("Select BOARD");
+                                        BOARD.focus();
+                                        return false;
+                                    }
+
+
+                                      var OROLL = document.getElementById("OROLL");
+                                     // alert("OROLL : " + OROLL.value);
+                                      if (OROLL.value.trim() == "" || OROLL.value.trim() == "0") {
+                                          alert("Enter Board/School Roll No.");
+                                          OROLL.focus();
+                                          return false;
+                                      }
+
+                                }
+
+
+
+
+                              
+
+                                var regnum = document.getElementById("REGNO").value;
+                           
+                                var IsREGNO = $("#IsREGNO").val();
+                            
+
+                                if (IsREGNO == "Y") {
+
+                                    if (regnum == "") {
+                                        alert('Please fill Valid Registration Number');
+                                        document.getElementById("REGNO").focus();
+                                        return false;
+                                    }
+                                    else {
+                                        var pattern = /^(B)/;
+                                        var pattern1 = /^(b)/;
+                                        if (!pattern.test(regnum)) {
+                                            if (!pattern1.test(regnum)) {
+                                                alert('Registration Number Starts With Letter "B"');
+                                                document.getElementById("REGNO").focus();
+                                                return false;
+                                            }
+                                        }
+
+
+                                        var textLength = document.getElementById("REGNO").value.length;
+                                        if (textLength < 5) {
+                                            alert('Registration Number Should be more than 4 Characters');
+                                            document.getElementById("REGNO").focus();
+                                            return false;
+                                        }
+                                    }
+
+                                }
+                                
+                                //if (selectedVal == "P.S.E.B BOARD" && regnum == "") {
+                                //    alert("You selected PSEB Board for Previous Class, but P.S.E.B. Registration No is not filled by you.")
+                                //}
+
+                                
+
+                                var fname = document.getElementById("FNAME");
+                                if (fname.value.trim() == "") {
+                                    alert("Enter your Fathers Name");
+                                    fname.focus();
+                                    return false;
+                                }
+
+                                var mname = document.getElementById("MNAME");
+                                if (mname.value.trim() == "") {
+                                    alert("Enter your Mothers Name");
+                                    mname.focus();
+                                    return false;
+                                }
+
+                                var sex = document.getElementById("SEX");
+                                if (sex.value.trim() == "" || sex.value.trim() == "0") {
+                                    alert("Enter your Gender");
+                                    sex.focus();
+                                    return false;
+                                }
+
+                             
+                                var CASTE = document.getElementById("CASTE");
+                                if (CASTE.value.trim() == "" || CASTE == "0") {
+                                    alert("Select your CASTE");
+                                    CASTE.focus();
+                                    return false;
+                                }
+
+
+                                var PHY_CHAL = document.getElementById("PHY_CHAL");
+                                if (PHY_CHAL.value.trim() == "" || PHY_CHAL == "0") {
+                                    alert("Select your Differently Abled");
+                                    PHY_CHAL.focus();
+                                    return false;
+                                }
+                                else {
+                                    var tdp = document.getElementById("DisabilityPercent");
+                                    if (PHY_CHAL.value != "N.A.") {
+                                        if (tdp.value == "") {
+                                            alert("Enter Disability Percentage");
+                                            document.getElementById("DisabilityPercent").focus();
+                                            return false;
+                                        }
+                                        else if (tdp.value == "0") {
+                                            alert("Disability Percentage should be between 1-100");
+                                            document.getElementById("DisabilityPercent").focus();
+                                            return false;
+                                        }
+                                        else if (tdp.value > 100) {
+                                            alert("Disability Percentage should be smaller than or Equal to 100");
+                                            document.getElementById("DisabilityPercent").focus();
+                                            return false;
+                                        }
+                                    }
+                                }
+                               
+                                var CandStudyMedium = document.getElementById("CandStudyMedium");
+                                if (CandStudyMedium.value.trim() == "" || CandStudyMedium == "0") {
+                                    alert("Select your Study Medium ");
+                                    CandStudyMedium.focus();
+                                    return false;
+                                }
+
+                                var IsSmartPhone = document.getElementById("IsSmartPhone");
+                                if (IsSmartPhone.value.trim() == "" || IsSmartPhone == "0") {
+                                    alert("Select Do you have Smart Phone?");
+                                    IsSmartPhone.focus();
+                                    return false;
+                                }
+
+                                //to send IsHardCopyCertificateHidden by default yes by gulab ji sir 
+                                document.getElementById("IsHardCopyCertificateHidden").value = "Y";
+                                var IsHardCopyCertificate = document.getElementById("IsHardCopyCertificate");
+                                if (IsHardCopyCertificate.value.trim() == "" || IsHardCopyCertificate == "0") {
+                                    alert("Select Do you want Hard Copy of Certificate?");
+                                    IsHardCopyCertificate.focus();
+                                    return false;
+                                }
+
+                                var photo = document.getElementById("Photo");
+                                var photoImg = '@ViewBag.Photo';
+                                if (photo.value.trim() == "") {
+                                    if (photoImg.includes("NoPhoto.jpg")) {
+                                        alert("Upload your photo");
+                                        photo.focus();
+                                        return false;
+                                    }
+                                }
+
+                                var sign = document.getElementById("Sign");
+                                var signImg = '@ViewBag.Sign';
+                                if (sign.value.trim() == "") {
+                                    if (signImg.includes("NoSignature.jpg")) {
+                                        alert("Upload your sign");
+                                        sign.focus();
+                                        return false;
+                                    }
+                                }
+
+                            }
+</script>

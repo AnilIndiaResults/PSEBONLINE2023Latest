@@ -1,0 +1,299 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/print.css" />
+<style type="text/css">
+    .header_outer {
+        display: none;
+    }
+
+    .bs-docs-footer {
+        display: none;
+    }
+
+    body {
+        font-size: 11px;
+    }
+
+    td {
+        padding: 0 7px;
+    }
+</style>
+
+@* <h1>Centre List Report</h1><p>
+        Welcome: @if (Session["NAME"] != null)
+        {@Session["NAME"].ToString()}
+        else { Response.Redirect("~/DeoPortal/Index"); }
+    </p>*@
+@using (Html.BeginForm("ClusterWiseStaffListPrintLot", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Click Here to Print" dowload class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" border="1">
+        <thead>
+            <tr>
+                <td colspan="12" style="border:0;text-align:center;padding:15px 0 5px 0">
+                    <span style="font-size:32px">Punjab School Education Board</span><br />
+                                                                                     <span style="font-size:18px">District wise Examination Centres List for @Session["DeoSessionMonthYear"].ToString()</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align:left;border:0">
+                    District Name: (@Session["Dist"].ToString()) @if (Session["NAME"] != null)
+                    {
+
+                        @Session["DISTNM"].ToString();
+                    }
+                    else { Response.Redirect("~/DeoPortal/Index"); }
+                </td>
+                <td colspan="6" style="text-align:right;border:0">Date: @ViewBag.Date</td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align:left;border:0">
+                    Lot: &nbsp;&nbsp;@ViewBag.lot
+                </td>
+                <td colspan="6" style="text-align:right;border:0">Final Submit Date: &nbsp;&nbsp;@ViewBag.fdate </td>
+            </tr>
+        </thead>
+        @{
+            if (ViewBag.TotalCount > 0)
+            {
+                int d = 0, p = 0;
+
+                //int TotMatricReg = 0;
+                //int TotMatricOpen = 0;
+                //int TotSrSecReg = 0;
+                //int TotSrSecOpen = 0;
+
+                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                {
+                    d = d + 1;
+                    var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+                    var CCENT = Model.StoreAllData.Tables[0].Rows[i]["CCENT"].ToString();
+                    var cschl = Model.StoreAllData.Tables[0].Rows[i]["cschl"].ToString();
+                    var clustername = Model.StoreAllData.Tables[0].Rows[i]["clusternam"].ToString();
+                    var Buildingname = Model.StoreAllData.Tables[0].Rows[i]["ADDRESS"].ToString();
+                    int centres = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["cnt"].ToString());
+                    int Supdt = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["spdt"].ToString());
+                    int DSUPDT = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["dspdt"].ToString());
+                    int invisi = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["invg"].ToString());
+
+                    int Obsr = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["Obsr"].ToString());
+                    int FlyS = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["FlyS"].ToString());
+                    int DupCntlr = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["DupCntlr"].ToString());
+
+                    <tr>
+                        <td colspan="12" style="padding:15px 0 0 0;border-top:0" align="center">
+                            <table width="100%" border="1" align="center">
+                                <tr>
+                                    <td>Block Code</td>
+                                    <td colspan="3">@CCODE</td>
+                                    <td>Block Cent Code</td>
+                                    <td>@CCENT</td>
+                                    <td>Block Schl Code</td>
+                                    <td>@cschl</td>
+                                </tr>
+                                <tr>
+                                    <td>Block Name & Building</td>
+                                    <td colspan="9">@Buildingname</td>
+                                </tr>
+                                <tr>
+                                    <td width="15%">No of Centre</td>
+                                    <td width="10%">@centres</td>
+                                    <td width="15%">No of Supdt.</td>
+                                    <td width="10%">@Supdt</td>
+                                    @*<td width="15%">No of Deputy Supdt</td>
+                                    <td width="10%">@DSUPDT</td>
+                                    <td width="15%">No of Invisilator</td>
+                                    <td width="10%">@invisi</td>*@
+                                    <td width="15%">No of Observer</td>
+                                    <td width="10%">@Obsr</td>
+                                    <td width="15%">No of Flying Squid</td>
+                                    <td width="10%">@FlyS</td>
+                                    <td width="15%">No of Deputy Controller(Vigilance)</td>
+                                    <td width="10%">@DupCntlr</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td colspan="12" style="border:0"></td>
+                    </tr>
+
+                                <tbody>
+                                    <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                                        <th width="4%">Sr</th>
+                                        @*<th width="5%">Ccode</th>*@
+                                        <th width="5%">Dcode</th>
+                                        <th width="5%">Designation</th>
+                                        <th width="5%">Staff ID</th>
+                                        <th width="5%">E-Pun. Id</th>
+                                        @*<th width="5%">Aadhar No.</th>*@
+                                        <th width="24%">Name / Fname (Cadre, Designation/Subject)</th>
+                                        <th width="19%">School Details</th>
+                                        <th width="7%" align="center">Gender</th>
+                                        <th width="7%" align="center">Mobile</th>
+                                        @*<th width="7%" align="center">Exp (YY-MM)</th>
+                                        <th width="7%" align="center">Bank IFSC</th>
+                                        <th width="7%" align="center">Bank Acc</th>*@
+                                    </tr>
+
+
+                                    @for (int j = 0; j < Model.StoreAllData.Tables[1].Rows.Count; j++)
+                        {
+
+                            if (@CCODE == Model.StoreAllData.Tables[1].Rows[j]["ccode"].ToString())
+                            {
+                                p = p + 1;
+
+                                            <tr>
+
+
+                                                <td>@p</td>
+                                                @*<td>@Model.StoreAllData.Tables[1].Rows[j]["cent"].ToString()</td>*@
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["dcode"].ToString()</td>
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["dutytype"].ToString()</td>
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["staffid"].ToString()</td>
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["epunjabid"].ToString()</td>
+                                                @*<td>@Model.StoreAllData.Tables[1].Rows[j]["adharno"].ToString()</td>*@
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["fullDetails"].ToString()</td>
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["SCHOOLDETAILS"].ToString()</td>
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["Gender"].ToString()</td>
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["mobile"].ToString()</td>
+                                                @*<td>@Model.StoreAllData.Tables[1].Rows[j]["yymm"].ToString()</td>
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["ifsc"].ToString()</td>
+                                                <td>@Model.StoreAllData.Tables[1].Rows[j]["acno"].ToString()</td>*@
+
+                                            </tr>
+                                            //TotMatricReg = TotMatricReg + Convert.ToInt32(@Model.StoreAllData.Tables[1].Rows[j]["matreg"].ToString());
+                                            //TotMatricOpen = TotMatricOpen + Convert.ToInt32(@Model.StoreAllData.Tables[1].Rows[j]["matopn"].ToString());
+                                            //TotSrSecReg = TotSrSecReg + Convert.ToInt32(@Model.StoreAllData.Tables[1].Rows[j]["ssreg"].ToString());
+                                            //TotSrSecOpen = TotSrSecOpen + Convert.ToInt32(@Model.StoreAllData.Tables[1].Rows[j]["ssopn"].ToString());
+
+                                        }
+
+
+                                    }
+                                    @{
+                                        p = 0;
+                                    }
+                                    @*<tr style="background-color:#c1c1c1">
+                                            <td colspan="5" align="right">
+                                                Total Count
+                                            </td>
+                                            <td align="center">
+                                                @TotMatricReg
+                                                @{
+                                                    TotMatricReg = 0;
+                                                }
+
+                                            </td>
+                                            <td align="center">
+                                                @TotMatricOpen
+                                                @{TotMatricOpen = 0;}
+
+                                            </td>
+                                            <td align="center">
+                                                @TotSrSecReg
+                                                @{TotSrSecReg = 0;}
+                                            </td>
+                                            <td align="center">
+                                                @TotSrSecOpen
+                                                @{TotSrSecOpen = 0;}
+                                            </td>
+                                        </tr>*@
+                                    <tr>
+                                        <td colspan="12" style="height:20px;border-top:0;border-bottom:1px dashed #000"></td>
+                                    </tr>
+                                </tbody>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="12">
+                                                    @ViewBag.Message
+                                                </td>
+                                            </tr>
+                                        }
+        }
+
+    </table>
+
+
+                                        }
+
+<script>
+
+                function dee() {
+
+                    if ($("#SelDist").val() == "") {
+
+                        $("#reqsession").slideDown("slow");
+                        return false;
+                    }
+                    if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+
+                        $("#reqsellist").slideDown("slow");
+                        return false;
+                    }
+
+                        //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+                        //    $("#reqsellist").slideUp("slow");
+                        //    $("#reqsstring").slideDown("slow");
+                        //    return false;
+                        //}
+                    else
+                        return true;
+
+                }
+                $(document).ready(function () {
+
+                    $("#SelDist").change(function () {
+                        if ($("#SelDist").val() == "") {
+                            // $("#SearchString").focus(function () { $("#reqsellist").slideUp("slow"); });
+                            $("#reqsession").slideDown("slow");
+                        }
+                        else {
+                            $("#reqsession").slideUp("slow");
+                        }
+
+                    });
+
+                });
+
+
+                var form = $("#searchform").serialize();
+                $("#btnNext").click(function () {
+                    $.ajax({
+                        url: 'DeoPortal/Next',
+                        data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                        success: function (response) {
+                            $("body").html(response);
+                        }
+                    });
+                });
+
+                $("#btnPrevious").click(function () {
+                    $.ajax({
+                        url: 'DeoPortal/Previous',
+                        data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                        success: function (response) {
+                            $("body").html(response);
+                        }
+                    });
+                });
+
+
+
+</script>

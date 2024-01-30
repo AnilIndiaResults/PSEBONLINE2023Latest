@@ -1,0 +1,79 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "School Staff Summary Report";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/cardprintc.css" />
+<h1 class="noprint">School Staff Summary Report</h1>
+<div class="row">
+    <div class="col-md-12 text-right noprint">
+        @*<input type="button" value="Download Complete Data" onclick="javascript:document.location.href='@Url.Action("DownloadFinalSubmitPendingSchoolList", "Admin", new { id = "Complete" })'" />*@
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div style="border:1px solid #fff !important;display:block;margin-bottom:30px">
+            <table border="1" width="100%" class="tprint">
+                <thead>
+                    <tr>
+                        <td style="border-right:0 !important" colspan="2" width="15%"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                        <td colspan="4" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                            <span style="font-size:28px">Punjab School Education Board</span><br /><span>
+    School Staff Summary Report Session @Session["Session"].ToString()
+</span>
+                        </td>
+                        <td style="text-align:right;border-left:0 !important;" width="25%">
+                            Print Date/Time : @DateTime.Now.ToString("dd/MM/yyyy hh:mmtt") &nbsp;
+                        </td>
+                    </tr>
+                </thead>
+
+                <div class="table-responsive">
+                    <table id="t01" class="table table-bordered">
+                        <tr class="active-tr">
+                            <th width="5%">&nbsp;Sr.No</th>
+                            <th width="30%">&nbsp;UserType</th>
+                            <th width="10%">&nbsp;Total</th>
+                            <th width="10%">&nbsp;Final</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var UserType = Model.StoreAllData.Tables[0].Rows[i]["UserType"].ToString();
+                                    var Total = Model.StoreAllData.Tables[0].Rows[i]["Total"].ToString();
+                                    var Final = Model.StoreAllData.Tables[0].Rows[i]["Final"].ToString();                     
+                                    Count = Count + 1;
+                                    <tr>
+                                        <td>@Count</td>
+                                        <td>&nbsp;@UserType</td>
+                                        <td>&nbsp;@Total</td>
+                                        <td>&nbsp;@Final</td>                                       
+                                    </tr>
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="10">
+                                        <span class="rqf">@ViewBag.Message</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </table>
+                </div>
+            </table>
+        </div>
+    </div>
+</div>
+
+

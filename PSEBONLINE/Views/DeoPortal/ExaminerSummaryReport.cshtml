@@ -1,0 +1,121 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/print.css" />
+<style type="text/css">
+    .header_outer {
+        display: none;
+    }
+
+    .bs-docs-footer {
+        display: none;
+    }
+
+    body {
+        font-size: 9px;
+    }
+
+    td {
+        padding: 0 7px;
+    }
+</style>
+@* <h1>Centre List Report</h1><p>
+        Welcome: @if (Session["NAME"] != null)
+        {@Session["NAME"].ToString()}
+        else { Response.Redirect("~/DeoPortal/Index"); }
+    </p>*@
+
+@using (Html.BeginForm("ExaminerSummaryReport", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Click Here to Print" dowload class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" border="1">
+        <thead style="border:0">
+            <tr>
+                <td colspan="20" style="border:0;text-align:center;padding:15px 0 5px 0">
+                    <span style="font-size:32px">Punjab School Education Board</span><br />
+                                                                                     <span style="font-size:18px">District wise Examiner Summary Report for @Session["DeoSessionMonthYear"].ToString()</span>
+                    <br /><span style="font-size:16px">Date: @ViewBag.Date</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="14" style="text-align:left;border:0">
+                    @*District Name: (@Session["Dist"].ToString()) @if (Session["NAME"] != null)
+                        {
+
+                            @Session["DISTNM"].ToString();
+                        }
+                        else { Response.Redirect("~/DeoPortal/Index"); }*@
+
+                </td>
+
+                <td colspan="6" style="text-align:right;border:0"></td>
+            </tr>
+            <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                <th width="5%">Dist</th>
+                <th width="9%">District Name</th>               
+                <th width="43%">Matric</th>               
+                <th width="43%">Senior Secondary</th>
+               
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @{
+                if (ViewBag.TotalCount > 0)
+                {
+                    int d = 0;
+                    int Count = 0;
+                    if (ViewBag.pagesize == 1)
+                    {
+                        Count = 0;
+                    }
+                    //dist	District	DEO_Name	Mobile	PhoneNo	EmailID	cent	ucent	clst	rspdt	rdspdt	rivg	spdt	dspdt	ivg	fucent	fclst	fspdt	fdspdt	fivg
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        d = d + 1;
+                        var dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                        var District = Model.StoreAllData.Tables[0].Rows[i]["distnm"].ToString();
+                        var mat = Model.StoreAllData.Tables[0].Rows[i]["matric"].ToString();
+                        var sec = Model.StoreAllData.Tables[0].Rows[i]["srsec"].ToString();
+                       
+                        Count = Count + 1;
+                        <tr>
+                            <td>@dist</td>
+                            <td>@District</td>
+                            <td>@mat</td>
+                            <td>@sec</td>                           
+                            
+                        </tr>
+
+                       
+                    }
+
+                }
+                else
+                {
+                    <tr class="noprint">
+                        <td colspan="12">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+
+ 
+
+}
+
+

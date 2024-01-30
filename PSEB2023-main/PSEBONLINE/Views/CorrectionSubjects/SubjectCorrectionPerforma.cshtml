@@ -1,0 +1,1458 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>
+    Matric Regular Subject Correction Performa - Session @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+else { Response.Redirect("~/Login"); }
+</h1>
+@using (Html.BeginForm("SubjectCorrectionPerforma", "CorrectionSubjects", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12 text-center">
+            @*<p class="kdsfont">
+                    Import ¨Û¼ã ²Ù ÅÒÛ× ¤è×¶ÏÛ ÒØÐã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û Âãª» Ð¥Û Ú¥Ó ÚÐâ¨ ¼ã ¨ÚÐó¨ ¨Û¼Ø ²ØÒã¢ Ú¥Ó ¤ÄÛÅ ÆñÛÚª¤ØÏÁÛ Âã ÒãÏÒã Modify ²Ù Delete ¨Û¼ã ²Ø Ó¨Âã ÕÅ¢ Ú¥Ó ¼ë× Ú¥ÐØÒØ Rough Report or Student Verification Form ÂãªÛ ¤¼ã ÚÆâñ¶ ¨Û¼Û ²Ø Ó¨ÂÛ Õè¢
+                </p>*@
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                @* @if (Session["SCHL"].ToString() == "0103603" || Session["SCHL"].ToString() == "0085711" || Session["SCHL"].ToString() == "0083041" || Session["SCHL"].ToString() == "0011701" || Session["SCHL"].ToString() == "0018733" || Session["SCHL"].ToString() == "0038676" || Session["SCHL"].ToString() == "0032327" || Session["SCHL"].ToString() == "0032066"|| Session["SCHL"].ToString() == "0025164"|| Session["SCHL"].ToString() == "0026273"|| Session["SCHL"].ToString() == "0026407"|| Session["SCHL"].ToString() == "0064004" || Session["SCHL"].ToString() == "0015482"|| Session["SCHL"].ToString() == "0018746"|| Session["SCHL"].ToString() == "0028491"|| Session["SCHL"].ToString() == "0033576"|| Session["SCHL"].ToString() == "0082021" || Session["SCHL"].ToString() == "0091701") *@
+                @if (Session["SCHL"].ToString() != "")
+                {
+                    <div class="col-md-3">
+                        @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select Class---", new { @class = "" })
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-3">
+                        <select class="" id="Selsc" name="SelFilter">
+                            <option value="">--Select--</option>
+                        </select>
+                    </div>
+                }
+                <form id="myForm">
+                    <div class="col-md-3">
+                        <label>Enter Student Unique Id</label>
+                    </div>
+                    <div class="col-md-3">
+                        @if (ViewBag.btnshow == "1")
+                        {
+                            @Html.TextBoxFor(m => m.Std_id, new { @maxlength = "10", value = @ViewBag.stdid, @readonly = "readonly" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.Std_id, new { @maxlength = "10", value = @ViewBag.stdid })
+                        }
+                    </div>
+                    <div class="col-md-3">
+                        @if (ViewBag.btnshow == "1")
+                        {
+                            <a href="/CorrectionSubjects/SubjectCorrectionPerforma" class="btn">Search Another Student</a>
+                        }
+                        else
+                        {
+                            <input type="submit" value="Search Student" onclick="return formVal();" />
+
+                        }
+                        @*<input type="submit" name="Reset" value="Reset"/>*@
+
+                    </div>
+                </form>
+            </fieldset>
+            <div class="clearfix"></div>
+            <div class="clearfix"></div>
+            <h4>Student Details</h4>
+            <div class="row">
+                <div class="table-responsive">
+                    <div class="col-md-12">
+                        <table id="" class="table table-bordered">
+                            <tr class="active-tr">
+                                <th>Unique Id</th>
+                                <th>Reg Num</th>
+                                <th>Old Roll No.</th>
+                                <th>Class</th>
+                                <th>Session</th>
+                                <th>Candidate Name</th>
+                                <th>Father's Name</th>
+                                <th>Mother's Name</th>
+                                <th>DOB</th>
+                            </tr>
+                            <tr>
+                                @{
+                                    if (@ViewBag.message == "1")
+                                    {
+                                        <td>@ViewBag.stdid</td>
+                                        <td>@ViewBag.Regno</td>
+                                        <td>@ViewBag.oroll</td>
+                                        <td>@ViewBag.category</td>
+                                        <td>@ViewBag.session</td>
+                                        <td class="kdsfont">@ViewBag.canName</td>
+                                        <td class="kdsfont">@ViewBag.FName</td>
+                                        <td class="kdsfont">@ViewBag.Mname</td>
+                                        <td>@ViewBag.DOB</td>
+                                    <tr><td colspan="9">Subjects: @ViewBag.Subjlist</td></tr>
+                                }
+                                else
+                                {
+                                    <td colspan="4">@ViewBag.message </td>
+                                }
+
+                                }
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="CorrSub">
+                    @if (ViewBag.SubCnt > 0)
+                    {
+                        <h4>
+                            Correction Subjects
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                @**R-> Regular Subject,G->Grading Subject,A-Additional Subject,C-Credit Carry Subject (CRC)*@
+                            </div>
+                        </div>
+
+                        //---------------------------Start Matric Subjects-------------------------------------------
+
+                        <div style="display:none;">
+                            Differently Abled / <span class="kdsfont">
+                                ÚÒÐóª» ÓÌÏóÁØ
+                            </span>
+                        </div>
+                        <div style="display:none;">
+                            @Html.DropDownList("DA", new SelectList(ViewBag.DAb, "Value", "Text", ViewBag.DAItem), new { })
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="row">
+
+                            @if (ViewData["NSQFSCHOOL"].ToString() == "1")
+                            {
+
+                                <div id="NSQFNINTHFail">
+                                    <div class="col-md-12">
+                                        <h4>
+                                            NSQF Details
+                                        </h4>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-2">Previous Class NSQF</div>
+                                    <div class="col-md-4">
+                                        @*@Html.DropDownListFor(m=> m.PreNSQF, new SelectList(ViewBag.nsfqList, "Value", "Text"), "--Select Subject--", new { @class = "" })*@
+                                        @Html.DropDownList("PreNSQF", new SelectList(ViewBag.nsfqList, "Value", "Text"), "--Select Subject--", new { @class = "" })
+
+                                    </div>
+
+                                    <div ID="NSQFSUB">
+                                        <div class="col-md-2">Want NSQF Subjects In Current Class?</div>
+                                        <div class="col-md-4">
+                                            @*@Html.DropDownListFor(m => m.NsqfsubS6, new SelectList(ViewBag.nsqfcatg, "Value", "Text"), "--Select Subject--", new { @class = "", id= "NSQFsubS6" })*@
+                                            @Html.DropDownList("NSQFsubS6", new SelectList(ViewBag.nsqfcatg, "Value", "Text"), "--Select Subject--", new { @class = "" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                            <div class="clearfix"></div>
+                            <h4>Main Subjects</h4>
+
+
+                            <div id="DivNA">
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <table id="t02" class="table ">
+                                            <tbody>
+                                                <tr style="font-family: arial; font-size: 12px;">
+                                                    <th style="width: 5%;text-align:center">
+                                                        S.No.
+                                                    </th>
+                                                    <th style="width: 30%;" align="left">
+                                                        Subject
+                                                    </th>
+                                                    <th style="width: 15%;display:none;" align="left">
+                                                        Medium
+                                                    </th>
+                                                    <th style="width: 5%;text-align:center">
+                                                        S.No.
+                                                    </th>
+                                                    <th style="width: 30%" align="left">
+                                                        Subject
+                                                    </th>
+                                                    <th style="width: 15%;display:none;" align="left">
+                                                        Medium
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>1.</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            List<SelectListItem> s1 = new List<SelectListItem>();
+
+                                                            s1.Add(new SelectListItem { Text = "PUNJABI", Value = "01" });
+                                                            s1.Add(new SelectListItem { Text = "PUNJAB HISTORY AND CULTURE", Value = "07" });
+
+                                                        }
+
+                                                        @Html.DropDownList("subS1", s1, new { })
+
+                                                    </td>
+                                                    <td style="display:none;">
+
+                                                        @Html.DropDownList("subm1", new SelectList(ViewBag.BM, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.subm1)
+                                                    </td>
+                                                    <td>
+                                                        <span>2.</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            List<SelectListItem> s2 = new List<SelectListItem>();
+
+                                                            s2.Add(new SelectListItem { Text = "ENGLISH", Value = "02" });
+
+                                                        }
+
+                                                        @Html.DropDownList("subS2", s2, new { })
+
+
+                                                    </td>
+                                                    <td style="display:none;">
+
+                                                        @Html.DropDownList("subM1", new SelectList(ViewBag.BM, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.subm1)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>3.</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            List<SelectListItem> s3 = new List<SelectListItem>();
+
+                                                            s3.Add(new SelectListItem { Text = "HINDI", Value = "03" });
+                                                            s3.Add(new SelectListItem { Text = "URDU (IN LIEV OF HINDI)", Value = "71" });
+                                                            //s3.Add(new SelectListItem { Text = "SOCIAL STUDIES", Value = "06" });
+
+                                                        }
+
+                                                        @Html.DropDownList("subS3", s3, new { })
+
+                                                    </td>
+                                                    <td style="display:none;">
+
+                                                        @Html.DropDownList("subm3", new SelectList(ViewBag.BM, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.subm3)
+                                                    </td>
+                                                    <td>
+                                                        <span>4.</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            List<SelectListItem> s4 = new List<SelectListItem>();
+
+                                                            s4.Add(new SelectListItem { Text = "MATHEMATICS", Value = "04" });
+
+
+                                                        }
+
+                                                        @Html.DropDownList("subS4", s4, new { })
+                                                        @Html.HiddenFor(m => m.subS4)
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @{
+                                                            List<SelectListItem> m4 = new List<SelectListItem>();
+
+                                                            m4.Add(new SelectListItem { Text = "Medium", Value = "Medium" });
+                                                            m4.Add(new SelectListItem { Text = "PUNJABI", Value = "PUNJABI" });
+                                                            m4.Add(new SelectListItem { Text = "HINDI", Value = "HINDI" });
+                                                            m4.Add(new SelectListItem { Text = "ENGLISH", Value = "ENGLISH" });
+                                                        }
+
+                                                        @Html.DropDownList("subM4", m4, new { })
+                                                        @Html.HiddenFor(m => m.subM4)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>5.</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            List<SelectListItem> s5 = new List<SelectListItem>();
+
+                                                            s5.Add(new SelectListItem { Text = "SCIENCE", Value = "05" });
+
+                                                        }
+
+                                                        @Html.DropDownList("subS5", s5, new { })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @{
+                                                            List<SelectListItem> m5 = new List<SelectListItem>();
+
+                                                            m5.Add(new SelectListItem { Text = "Medium", Value = "Medium" });
+                                                            m5.Add(new SelectListItem { Text = "PUNJABI", Value = "PUNJABI" });
+                                                            m5.Add(new SelectListItem { Text = "HINDI", Value = "HINDI" });
+                                                            m5.Add(new SelectListItem { Text = "ENGLISH", Value = "ENGLISH" });
+                                                        }
+
+                                                        @Html.DropDownList("subM5", m5, new { })
+                                                        @Html.HiddenFor(m => m.subM5)
+                                                    </td>
+
+
+                                                    <td>
+                                                        <span>6.</span>
+                                                    </td>
+
+                                                    <td id="nsqfsub">
+                                                        @Html.DropDownList("subS6", new SelectList(ViewBag.SubS6, "Value", "Text"), new { @class = "" })
+                                                        @*@Html.DropDownList("NsqfsubS6Upd", new SelectList(ViewBag.nsfqList, "Value", "Text"), new { @class = "" })*@
+                                                        @*@if (Model.NSQF == "YES")
+                                                            {
+                                                                @Html.DropDownList("NsqfsubS6", new SelectList(ViewBag.nsfqList, "Value", "Text"), new { @class = "" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownList("subS6", new SelectList(ViewBag.SubS6, "Value", "Text"), new { @class = "" })
+                                                            }*@
+
+                                                    </td>
+                                                    <td id="nonsqf" style="display:none;">
+                                                        @Html.DropDownList("subS6", new SelectList(ViewBag.SubS6, "Value", "Text"), new { @class = "" })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @{
+                                                            List<SelectListItem> m6 = new List<SelectListItem>();
+
+                                                            m6.Add(new SelectListItem { Text = "Medium", Value = "Medium" });
+                                                            m6.Add(new SelectListItem { Text = "PUNJABI", Value = "PUNJABI" });
+                                                            m6.Add(new SelectListItem { Text = "HINDI", Value = "HINDI" });
+                                                            m6.Add(new SelectListItem { Text = "ENGLISH", Value = "ENGLISH" });
+                                                        }
+
+                                                        @Html.DropDownList("subM6", m6, new { })
+                                                        @Html.HiddenFor(m => m.subM6)
+                                                    </td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td colspan="6"><h4 class="text-left">Grading/Elective Subjects</h4></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>7.</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            List<SelectListItem> s7 = new List<SelectListItem>();
+
+                                                            s7.Add(new SelectListItem { Text = "COMPUTER SCIENCE", Value = "63" });
+
+                                                        }
+
+                                                        @Html.DropDownList("subS7", s7, new { })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("subM7", new SelectList(string.Empty, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.subM7)
+                                                    </td>
+
+
+                                                    <td>
+                                                        <span>8.</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            List<SelectListItem> s8 = new List<SelectListItem>();
+                                                            s8.Add(new SelectListItem { Text = "WELCOME LIFE", Value = "92" });
+                                                        }
+
+                                                        @Html.DropDownList("subS8", s8, new { })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("subM8", new SelectList(string.Empty, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.subM8)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>9.</span>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("S9", new SelectList(ViewBag.SubS9, "Value", "Text"), "--Select Elective Subjects---", new { @class = "" })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("m9", new SelectList(ViewBag.SubS9m, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.m9)
+                                                    </td>
+
+                                                    <td colspan="3"></td>
+
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="divBlind" style="display:none;">
+                                        <table id="t02" class="table ">
+                                            <tbody>
+                                                <tr style="font-family: arial; font-size: 12px;">
+                                                    <th style="width: 5%;text-align:center">
+                                                        S.No.
+                                                    </th>
+                                                    <th style="width: 30%;" align="left">
+                                                        Subject
+                                                    </th>
+                                                    <th style="width: 15%;display:none;" align="left">
+                                                        Medium
+                                                    </th>
+                                                    <th style="width: 5%;text-align:center">
+                                                        S.No.
+                                                    </th>
+                                                    <th style="width: 30%" align="left">
+                                                        Subject
+                                                    </th>
+                                                    <th style="width: 15%;display:none;" align="left">
+                                                        Medium
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>1.</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            List<SelectListItem> bs1 = new List<SelectListItem>();
+
+                                                            bs1.Add(new SelectListItem { Text = "PUNJABI", Value = "01" });
+                                                            bs1.Add(new SelectListItem { Text = "PUNJAB HISTORY AND CULTURE", Value = "07" });
+
+                                                        }
+
+                                                        @Html.DropDownList("subbS1", bs1, new { })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @*@Html.DropDownList("bm1", new SelectList(string.Empty, "Value", "Text"),  new { @readonly="readonly" })*@
+                                                        @Html.DropDownList("bm1", new SelectList(ViewBag.BM, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.bm1)
+                                                    </td>
+
+                                                    <td>
+                                                        <span>2.</span>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("subbS2", new SelectList(ViewBag.bs2, "Value", "Text"), "--Select Elective Subjects---", new { @class = "" })
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @*@Html.DropDownList("bM1", new SelectList(string.Empty, "Value", "Text"), "medium", new { @class = "" })*@
+                                                        @Html.DropDownList("bM1", new SelectList(ViewBag.BM1m, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.bm1)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>3.</span>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("subbS3", new SelectList(ViewBag.bs3, "Value", "Text"), "--Select Elective Subjects---", new { @class = "" })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("bm3", new SelectList(ViewBag.BM3m, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.bm3)
+                                                    </td>
+
+                                                    <td>
+                                                        <span>4.</span>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("subbS4", new SelectList(ViewBag.bs4, "Value", "Text"), "--Select Elective Subjects---", new { @class = "" })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("bm4", new SelectList(ViewBag.BM4m, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.bm4)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>5.</span>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("subbS5", new SelectList(ViewBag.bs5, "Value", "Text"), "--Select Elective Subjects---", new { @class = "" })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("bm5", new SelectList(ViewBag.BM5m, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.bm5)
+                                                    </td>
+
+                                                    <td>
+                                                        <span>6.</span>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("subbS6", new SelectList(ViewBag.bs6, "Value", "Text"), "--Select Elective Subjects---", new { @class = "" })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("bm6", new SelectList(ViewBag.BM6m, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.bm6)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="6"><h4 class="text-left">Grading/Elective Subjects</h4></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>7.</span>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("subbS7", new SelectList(ViewBag.bs7, "Value", "Text"), "--Select Elective Subjects---", new { @class = "" })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("bm7", new SelectList(ViewBag.BM7m, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.bm7)
+                                                    </td>
+
+                                                    <td>
+                                                        <span>8.</span>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("subbS8", new SelectList(ViewBag.bs8, "Value", "Text"), "--Select Elective Subjects---", new { @class = "" })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("bm8", new SelectList(ViewBag.BM8m, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.bm8)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>9.</span>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("subbS9", new SelectList(ViewBag.bs9, "Value", "Text"), "--Select Elective Subjects---", new { @class = "" })
+
+                                                    </td>
+                                                    <td style="display:none;">
+                                                        @Html.DropDownList("bm9", new SelectList(ViewBag.BM9m, "Value", "Text"), "medium", new { @class = "" })
+                                                        @Html.HiddenFor(m => m.bm9)
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    @*<input type="submit" value="Add Record" formmethod="post" formaction="SubjectCorrectionAdd" onclick="return formValadd();" />*@
+                                    <input type="submit" value="Save Subject Details" formmethod="post" formaction="SubjectCorrectionAdd" onclick="return valForm();" />
+                                </div>
+                            </div>
+                            <div class="clearfix"></div><br />
+                            <div class="clearfix"></div>
+
+                        </div>
+                        @*//---------------------------End Matric Subjects-------------------------------------------*@
+                    }
+                </div>
+                <div class="clearfix"></div>
+                <h4>
+                    List Of Correction Subjects
+                </h4>
+                <div class="row">
+                    <div class="table-responsive">
+                        <div class="col-md-12">
+                            <table id="" class="table table-bordered">
+                                <tr class="active-tr">
+                                    <th>SL No</th>
+                                    <th>CLASS</th>
+                                    <th>CORRECTION TYPE</th>
+                                    <th>CORRECTION ID</th>
+                                    <th>STUDENT ID</th>
+                                    <th>OLD SUB List</th>
+                                    <th>NEW SUB List</th>
+                                    @*<th>Diff Sub</th>*@
+                                    <th>CRC</th>
+                                    <th>Action</th>
+                                </tr>
+                                @{
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        int d = 0;
+                                        int Count = 0;
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            d = d + 1;
+                                            var CorrectionId = Model.StoreAllData.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                            var cls = Model.StoreAllData.Tables[0].Rows[i]["OpenRegularType"].ToString();
+                                            var Osub = Model.StoreAllData.Tables[0].Rows[i]["Oldsubcode"].ToString();
+                                            var Nsub = Model.StoreAllData.Tables[0].Rows[i]["Newsubcode"].ToString();
+                                            var DiffSub = Model.StoreAllData.Tables[0].Rows[i]["DiffSub"].ToString();
+                                            var Ntype = Model.StoreAllData.Tables[0].Rows[i]["Correctiontype"].ToString();
+                                            var Can = Model.StoreAllData.Tables[0].Rows[i]["CANDID"].ToString();
+                                            var Clot = Model.StoreAllData.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                                            var CRC = Model.StoreAllData.Tables[0].Rows[i]["CRC"].ToString();
+
+                                            Count = Count + 1;
+                                            <tr>
+                                                <td>@Count</td>
+                                                <td>@cls</td>
+                                                <td>@Ntype</td>
+                                                <td>@CorrectionId</td>
+                                                <td>@Can</td>
+                                                <td>@Osub</td>
+                                                <td>@Nsub</td>
+                                                @*<td>@DiffSub</td>*@
+                                                <td>@CRC</td>
+                                                <td>
+                                                    @if (Clot == "0" || Clot == "")
+                                                    {
+                                                        @Html.ActionLink("Delete", "CorrSubDelete", new { id = CorrectionId }, new { onclick = "return confirm('Are you sure delete this record?');" })
+                                                    }
+                                                    else
+                                                    {
+                                                        <div style="color:forestgreen"><b>Final Submitted</b></div>
+                                                    }
+
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="8">
+                                                @ViewBag.Message
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-12 text-center">
+                            @if (@ViewBag.TotalCount > 0)
+                            {
+
+                                <input type="button" id="finalsubmit" value="Final Submit Correction" onclick="return Finalval()" />
+                                <input type="button" value="Rough Print" onclick="javascript:document.location.href='@Url.Action("SchoolCorrectionPerformaRoughReportSJ", "RegistrationPortal")'" />
+                            }
+                            <input type="button" value="View Previous Correction Status" onclick="javascript:document.location.href='@Url.Action("SchoolCorrectionAllRecord", "RegistrationPortal")'" />
+                            <input type="button" value="Print Correction Performa" onclick="javascript:document.location.href='@Url.Action("SchoolCorrectionFinalPrintList", "RegistrationPortal")'" />
+
+                            @*@if (@ViewBag.TotalCount > 0)
+                                { <input type="submit" id="finalsubmit" value="Final Submit Correction" onclick="return val()"/>}
+                                <input type="submit" value="View Previous Correction Status" onclick="return val1()" />
+                                <input type="submit" value="Print Correction Performa" onclick="return val2()" />*@
+
+
+                            @*<input type="submit" value="View All Correction Record" name="cmd" />&nbsp;&nbsp;*@
+                            @*<input type="submit" value="View All Record" formmethod="post" formaction="SubjectCorrectionViewALL" onclick="return ViewAll();" />&nbsp;&nbsp;*@
+                            @*&nbsp;&nbsp;<input type="submit" value="Back" />
+                                &nbsp;&nbsp;<input type="submit" value="Exit" />*@
+                            @*&nbsp;&nbsp;<input type="submit" value="View All Correction Pending Record" name="cmd" />*@
+
+                            <a href="/School/SchoolCorrection" class="btn">Verify Corrections</a>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12 text-left rqf">
+
+                        *R - Regular Subject, G - Grading Subject, A - Additional Subject, C - Credit Carry Subject (CRC)
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+@{
+    if (TempData["resultUpdate"] != null)
+    {
+        var result = TempData["resultUpdate"].ToString();
+        if (result == "5")
+        {
+            <script type="text/javascript" language="javascript">
+
+                alert("Correction data already exist for this student, please verify or reject correction then you can able to re-apply.");
+            </script>
+        }
+
+        else if (result == "3")
+        {
+            <script type="text/javascript" language="javascript">
+
+                alert("Correction data already exist for this student.");
+            </script>
+        }
+        else if (result == "2")
+        {
+            <script type="text/javascript" language="javascript">
+
+                alert("Correction data can not same, please check.");
+            </script>
+        }
+        else if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Correction data Added successfully.");
+            </script>
+        }
+        else if (result == "-3")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Duplicate Aadhar number..plz try again");
+            </script>
+        }
+        else if (result == "10")
+        {
+            <script type="text/javascript" language="javascript">
+
+                 alert('@TempData["Duplicate"]');
+            </script>
+        }
+        else if (result == "20")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@TempData["errorMsg"]');
+            </script>
+        }
+        else if (result == "15")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please fill mandatory subjects and check combination");
+            </script>
+        }
+        else if (result == "NSQFSUBWANT")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('NSQF Subject Missing in Subject List');
+            </script>
+        }
+        else if (result == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Correction data not Added, Please try again .");
+            </script>
+        }
+    }
+
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script type="text/javascript">
+
+    $("#Correctiontype").change(function () {
+
+       var selectedVal = $("#Correctiontype").val();
+
+        if (selectedVal == "MODIFY")
+        {
+            document.getElementById("NewSub").disabled = false;
+            $.ajax({
+                url: '@Url.Action("GetSubDetailsByStd", "RegistrationPortal")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({ s: $("#Std_id").val(), f: $("#SelList").val() }),
+                success: function (States) {
+                    $("#OldSub").empty();
+                    $.each(States, function (i, SList) {
+                        $("#OldSub").append('<option value="'
+                           + SList.Value + '">'
+                           + SList.Text + '</option>');
+                    });
+                    if (SList.success) {
+
+                        //document.getElementById("MName").value = data.result;
+                        // $("#TextBoxID").val(data.result.MName);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+
+        }
+
+    });
+</script>
+
+<script type="text/javascript">
+    function formVal() {
+
+        var slist = document.getElementById("SelList");
+        var sid = document.getElementById("Std_id");
+
+        if (slist.value == "0" || slist.value == "") {
+            alert("Please Select Class Type");
+            slist.focus();
+            return false;
+        }
+        if (sid.value == "0" || sid.value == "") {
+            alert("Enter Student Unique ID");
+            sid.focus();
+            return false;
+        }
+
+        return true;
+    }
+
+</script>
+
+<script type="text/javascript">
+   $(document).ready(function () {
+        var selectedText = $("#PreNSQF option:selected").text();
+        var selectedVal = $("#PreNSQF").val();//document.getElementById("#MyDist");
+        var selectedValNSQFsubS6 = $("#NSQFsubS6").val();
+       //alert(selectedText);
+      // alert(selectedVal);
+      // alert(selectedValNSQFsubS6);
+
+        if (selectedVal == "" || selectedVal == "0") {
+            $('#NSQFSUB').css("display", "none");
+
+        }
+        else if (selectedVal == "NO") {
+
+            $('#NSQFSUB').css("display", "block");
+            $("#NSQFsubS6").empty();
+            $("#NSQFsubS6").append('<option value="NO">NO</option>');
+        }
+        else if (selectedValNSQFsubS6 == "NO" || selectedValNSQFsubS6 == "") {
+            $("#NSQFsubS6").empty();
+            $("#NSQFsubS6").append('<option value="NO">NO</option>');
+            $("#NSQFsubS6").append('<option value="' + selectedVal + '">' + selectedText + '</option>');
+        }
+        else {
+            @*
+           alert('@ViewData["NSQFSCHOOL"]');
+            alert('@Model.DA');*@
+
+            //$("#PreNSQF").empty();
+            $("#PreNSQF").append('<option value="' + selectedVal + '">' + selectedText + '</option>');
+            //$("#PreNSQF").append('<option value="NO">NO</option>');
+
+            if ('@ViewData["NSQFSCHOOL"]' == "1") {
+                if ('@Model.DA' == "N.A.") {
+
+                    $("#S9,#subbS9").empty();
+                    $("#S9,#subbS9").append('<option value="' + selectedVal + '">' + selectedText + '</option>');
+
+                } else {
+                    $("#subbS9").empty();
+                    $("#subbS9").append('<option value="' + selectedVal + '">' + selectedText + '</option>');
+                }
+            }
+
+
+
+            $('#NSQFSUB').css("display", "block");
+            $("#NSQFsubS6").empty();
+            $("#NSQFsubS6").append('<option value="' + selectedVal + '">' + selectedText + '</option>');
+            $("#NSQFsubS6").append('<option value="NO">NO</option>');
+        }
+
+
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var selectedVal = '@Model.DA';
+
+        if (selectedVal == "N.A.") {
+            $('#divBlind').css('display', 'none')
+            $('#DivNA').css("display", "block");
+            $('#sw').css("display", "none");
+
+
+        }
+        else {
+
+            $('#DivNA').css('display', 'none')
+            $('#divBlind').css("display", "block");
+
+        }
+    }
+    );
+
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var selectedVal = '@Model.DA';//document.getElementById("#MyDist");
+        //alert(selectedVal);
+        if (selectedVal == "N.A.") {
+            $('#divBlind').css('display', 'none')
+            $('#DivNA').css("display", "block");
+            $('#sw').css("display", "none");
+            $('#NSQFYES').css("display", "block");
+            $('#NSQFNO').css("display", "block");
+            $('#NSQFNINTHFail').css("display", "block");
+        }
+        else {
+
+            $('#DivNA').css('display', 'none')
+            $('#divBlind').css("display", "block");
+            $('#sw').css("display", "block");
+            //$('#NSQFYES').css("display", "none");
+            //$('#NSQFNO').css("display", "none");
+            //$('#NSQFNINTHFail').css("display", "none");
+            $('#NSQFYES').css("display", "block");
+            $('#NSQFNO').css("display", "block");
+            $('#NSQFNINTHFail').css("display", "block");
+        }
+    }
+    );
+
+</script>
+
+
+
+
+<script type="text/javascript">
+     function bind_NSQFSUB6(selectedVal) {
+         if (selectedVal == '10') {
+
+             var selected_NsqfPattern = { val: selectedVal };
+             $("#NSQFsubS6").empty();
+             $.ajax({
+                 url: '@Url.Action("GetNSQFSUB6_ByNSQF_Pattern", "RegistrationPortal")',
+                 type: 'Post',
+                 contentType: 'application/json',
+                 dataType: 'json',
+                 data: JSON.stringify(selected_NsqfPattern),
+                 success: function (States) {
+                     $("#NSQFsubS6").append('<option value="">--Select Subject--</option>');
+                     $.each(States, function (i, SList) {
+                         $("#NSQFsubS6").append('<option value="'
+                             + SList.Value + '">'
+                             + SList.Text + '</option>');
+                     });
+                     $("#NSQFsubS6").focus();
+                     if (SList.success) {
+
+                         //document.getElementById("MName").value = data.result;
+                         // $("#TextBoxID").val(data.result.MName);
+                     }
+                     else {
+                         alert('invalid ID' + data.success);
+                     }
+                 }
+             });
+         }
+    }
+
+     $("#NSQFsubS6").change(function () {
+
+        var selectedText = $(this).find("option:selected").text();
+        var selectedVal = $(this).find("option:selected").val();
+
+         var selectedValDA = '@Model.DA';
+
+
+        $("#S9").empty();
+        $("#subbS6").empty();
+                var selectedData = { CurrentNSQFText: selectedText, CurrentNSQFVal: selectedVal, DA: selectedValDA };
+
+
+                    $.ajax({
+                        url: '@Url.Action("SubjectMatricBasedOnNSQF", "RegistrationPortal")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedData),
+                        success: function (data) {
+                            console.log(data);
+                            console.log("--------------");
+
+                            if (selectedValDA == "N.A.") {
+                                $.each(data.Sublist6, function (i, list6) {
+                                    $("#subbS6").append('<option value="'
+                                        + list6.Value + '">'
+                                        + list6.Text + '</option>');
+                                });
+                                if (selectedVal == "NO") {
+                                    $("#S9").append('<option value="">--Select Elective Subjects--</option>');
+                                }
+
+                                $.each(data.Sublist9, function (i, list9) {
+                                    $("#S9").append('<option value="'
+                                        + list9.Value + '">'
+                                        + list9.Text + '</option>');
+                                });
+                            }
+                            else {
+
+                                $("#subbS9").empty();
+                                $("#subbS6").empty();
+                                if (selectedVal == "NO") {
+                                    $("#subbS9").append('<option value="">--Select Elective Subjects--</option>');
+                                }
+                                $("#subbS6").append('<option value="">--Select Elective Subjects--</option>');
+                                $.each(data.Sublist6, function (i, list6) {
+                                    $("#subbS6").append('<option value="'
+                                        + list6.Value + '">'
+                                        + list6.Text + '</option>');
+                                });
+
+                                $.each(data.Sublist9, function (i, list9) {
+                                    $("#subbS9").append('<option value="'
+                                        + list9.Value + '">'
+                                        + list9.Text + '</option>');
+                                });
+                            }
+
+
+
+                        }
+         });
+
+
+    });
+
+
+    //without NSQF PAttern
+    $("#PreNSQF").change(function () {
+        $("#NsqfPattern").prop('disabled', false);
+        var selectedText = $(this).find("option:selected").text();
+        var selectedVal = $("#PreNSQF").val();//document.getElementById("#MyDist");
+        $("#NsqfPattern").prop('disabled', false);
+        if (selectedVal == "" || selectedVal == "0") {
+            $('#NSQFSUB').css("display", "none");
+            $("#NSQFsubS6").empty();
+        }
+        else if (selectedVal == "NO") {
+            bind_S9();
+            $('#NSQFSUB').css("display", "block");
+            $("#NSQFsubS6").empty();
+            $("#NSQFsubS6").append('<option value="">--Select Subject--</option>');
+            $("#NSQFsubS6").append('<option value="NO">NO</option>');
+
+        }
+        else {
+
+            $('#NSQFSUB').css("display", "block");
+            $("#NSQFsubS6").empty();
+            $("#NSQFsubS6").append('<option value="">--Select Subject--</option>');
+            $("#NSQFsubS6").append('<option value="NO">NO</option>');
+            $("#NSQFsubS6").append('<option value="' + selectedVal + '">' + selectedText + '</option>');
+        }
+
+    });
+
+    function bind_S9() {
+        $("#S9").empty();
+        $("#S9").append('<option value="">--Select Subject--</option>');
+        $("#S9").append('<option value="35">AGRICULTURE (35)</option>');
+        $("#S9").append('<option value="34">COMPUTER SCIENCE (PV) (34)</option>');
+        $("#S9").append('<option value="29">CUTTING &amp; TAILORING (29)</option>');
+        $("#S9").append('<option value="39">ELECTRONIC TECHNOLOGY (39)</option>');
+        $("#S9").append('<option value="48">ENGINEERING DRAFTING &amp; DUPLICATING (48)</option>');
+        $("#S9").append('<option value="49">FOOD PRESERVATION (49)</option>');
+        $("#S9").append('<option value="15">FRENCH (15)</option>');
+        $("#S9").append('<option value="16">GERMAN (16)</option>');
+        $("#S9").append('<option value="08">HEALTH &amp; PHY. EDU. (08)</option>');
+        $("#S9").append('<option value="70">HEALTH SCIENCE (70)</option>');
+        $("#S9").append('<option value="33">HOME SCIENCE (33)</option>');
+        $("#S9").append('<option value="47">KNITTING (HAND &amp; MACHINE) (47)</option>');
+        $("#S9").append('<option value="54">MANUFACTURING OF LEATHER GOODS (54)</option>');
+        $("#S9").append('<option value="28">MECH. DRAWING &amp; PAINTING (28)</option>');
+        $("#S9").append('<option value="31">MUSIC (INSTR.) (31)</option>');
+        $("#S9").append('<option value="32">MUSIC (TABLA) (32)</option>');
+        $("#S9").append('<option value="30">MUSIC (VOCAL) (30)</option>');
+        $("#S9").append('<option value="38">REPAIR AND MAINTENANACE OF HOUSEHOLD ELECTRICAL APPLIANCES (38)</option>');
+        $("#S9").append('<option value="40">REPAIR AND MAINTENANCE OF FARM POWER AND MACHINERY (40)</option>');
+        $("#S9").append('<option value="09">SANSKRIT (09)</option>');
+        $("#S9").append('<option value="10">URDU ELECTIVE (10)</option>');
+
+    }
+</script>
+
+<script type="text/javascript">
+    function IsNotNSQF() {
+
+        if (NSQFNo.checked) {
+
+            $('#nsqfsub').css('display', 'none');
+            $('#nonsqf').css('display', 'block');
+
+
+            Clearsubjects();
+           // alert("Clear");
+
+            $('#spn10').css("display", "none");
+            $('#asspn10').css('display', 'none');
+            $('#Addm10').css("display", "none");
+
+            $('#spn10b').css("display", "none");
+            $('#asspn10b').css('display', 'none');
+            $('#Addsub10').css("display", "none");
+
+
+            $('#bm1').empty();
+            $("#bm1").append('<option value="01">PUNJABI</option>');
+
+            var selectedVal = '@Model.DA';
+            //alert(selectedVal);
+            if (selectedVal == "N.A.") {
+                $('#divBlind').css('display', 'none')
+                $('#DivNA').css("display", "block");
+                $('#sw').css("display", "none");
+
+
+            }
+            else {
+
+                $('#DivNA').css('display', 'none')
+                $('#divBlind').css("display", "block");
+
+            }
+
+
+            $("#subS3").find('[value="06"]').remove();
+            $("#subS3").append('<option value="71">URDU (IN LIEV OF HINDI)</option>');
+
+            $("#subS6").empty();
+            $("#subS6").append('<option value="06">SOCIAL STUDIES</option>');
+            var selectedS2 = { text: $("#NSQFNo").val() };
+
+            $.ajax({
+                url: '@Url.Action("GetNotNSFQ", "RegistrationPortal")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedS2),
+                success: function (States) {
+                    //alert(StatesList);
+                    //document.getElementById("Address").value = StatesList;
+                    $("#S9,#subbS9").empty();
+
+                    $.each(States, function (i, nsfqList) {
+                        $("#S9,#subbS9").append('<option value="'
+                           + nsfqList.Value + '">'
+                           + nsfqList.Text + '</option>');
+                    });
+                    if (nsfqList.success) {
+
+                        //document.getElementById("MName").value = data.result;
+                        // $("#TextBoxID").val(data.result.MName);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+
+
+        }
+
+    }
+</script>
+
+<script type="text/javascript">
+
+    $("#DA").change(function () {
+        Clearsubjects();
+        NSQFNo.checked = true;
+        NSQFYES.checked = false;
+        IsNotNSQF();
+        var selectedVal = '@Model.DA';//document.getElementById("#MyDist");
+
+        if (selectedVal == "N.A.") {
+
+            $('#divBlind').css('display', 'none')
+            $('#DivNA').css("display", "block");
+            $('#sw').css("display", "none");
+            $('#NSQFYES').css("display", "block");
+            $('#NSQFNO').css("display", "block");
+        }
+        else {
+
+            $('#DivNA').css('display', 'none')
+            $('#divBlind').css("display", "block");
+            $('#sw').css("display", "block");
+            $('#NSQFYES').css("display", "none");
+            $('#NSQFNO').css("display", "none");
+        }
+
+    });
+
+</script>
+
+<script type="text/javascript">
+    function valForm() {
+
+        //------------------------------------Start-----------
+
+        //---------------------End----------------------
+        var ses = '@Request.RequestContext.HttpContext.Session["Session"]';
+        //subm1,subM2,subm3,subM4,subM5,subM6,subM7,subM8,s9,m9
+        var da = document.getElementById("DA");
+        var m1 = document.getElementById("subm1");
+        var m2 = document.getElementById("subM2");
+        var m3 = document.getElementById("subm3");
+        var m4 = document.getElementById("subM4");
+        var m5 = document.getElementById("subM5");
+        var subS6 = document.getElementById("subS6");
+        var NsqfsubS6 = document.getElementById("NsqfsubS6");
+        var m6 = document.getElementById("subM6");
+        var m7 = document.getElementById("subM7");
+        var m8 = document.getElementById("subM8");
+        var selsub9 = document.getElementById("S9");
+        var m9 = document.getElementById("m9");
+        //----------for Blind
+        //subbS2,bm2,subbS3,bm3,subbS4,bm4,subbS5,bm5,subbS6,bm6
+        var bm1 = document.getElementById("bm1");
+        var subbS2 = document.getElementById("subbS2");
+        var bm2 = document.getElementById("bm2");
+        var subbS3 = document.getElementById("subbS3");
+        var bm3 = document.getElementById("bm3");
+        var subbS4 = document.getElementById("subbS4");
+        var bm4 = document.getElementById("bm4");
+        var subbS5 = document.getElementById("subbS5");
+        var bm5 = document.getElementById("bm5");
+        var subbS6 = document.getElementById("subbS6");
+        var bm6 = document.getElementById("bm6");
+        var subbS7 = document.getElementById("subbS7");
+        var subbS8 = document.getElementById("subbS8");
+        var subbS9 = document.getElementById("subbS9");
+        //alert("BLIND");
+        if (da.value == "N.A.") {
+
+            if (selsub9.value == "" || selsub9.value == "0") {
+                alert("Select Subject 9");
+                selsub9.focus();
+                return false;
+            }
+
+            //alert("NSQF");
+          //  alert('@ViewData["NSQFSCHOOL"].ToString()');
+            if ('@ViewData["NSQFSCHOOL"].ToString()' == "1") {
+
+                var NSQF1 = document.getElementById("PreNSQF").value;
+                //alert("NSQF: " + NSQF1)
+                var NSQFsubS6 = document.getElementById("NSQFsubS6").value;
+               //alert("NSQFsubS6: " + NSQFsubS6)
+                if (NSQFsubS6 != "NO") {
+                    if (NsqfsubS6 == "" || NsqfsubS6 == "0") {
+                        alert("Select NSFQ Subject 6");
+                        NsqfsubS6.focus();
+                        return false;
+                    }
+                }
+                if (NSQFsubS6 == "NO") {
+                    if (subS6.value == "" || subS6.value == "0") {
+                        alert("Select Subject 6");
+                        subS6.focus();
+                        return false;
+                    }
+                }
+
+				 if (NSQFsubS6 != "NO") {
+                if (NSQFsubS6 !== selsub9.value) {
+                    alert("Wrong NSQF Subject 9");
+                    selsub9.focus();
+                    return false;
+                }
+				}
+            }
+
+
+            //alert("Start multiple subjects" + subS6.value);
+
+            if (subS2.value != "" && subS3.value != "" && subS4.value != "" && subS5.value != "" && subS6.value != "") {
+                // alert("Hello");
+
+                //------------------------------Start multiple Selection--------------------
+                // The number of dropdowns you have (use the naming convention 'dropx' as an id attribute)
+                var iDropdowns = 6;
+                var sValue;
+                var sValue2;
+                // Loop over dropdowns
+                for (var i = 2; i <= iDropdowns; ++i) {
+                    // Get selected value
+                    sValue = document.getElementById('subS' + i).value;
+
+                    // Nested loop - loop over dropdowns again
+                    for (var j = 2; j <= iDropdowns; ++j) {
+                        // Get selected value
+                        sValue2 = document.getElementById('subS' + j).value;
+                        //alert(sValue);
+                       // alert(sValue2);
+                        // If we're not checking the same dropdown and the values are the same...
+                        if (i != j && sValue == sValue2) {
+                            // ...we have a duplicate!
+                            alert('Duplicate Subjects Are Not Allowed!' + sValue + '-' + sValue2);
+                            return false;
+                        }
+                    }
+                }
+              //  alert("multiple Validation");
+                //----------------------------End multiple Selection------------
+
+            }
+
+
+        }
+       else {
+            if (subbS2.value == "") {
+                alert("Select Subject 2");
+                subbS2.focus();
+                return false;
+            }
+            if (subbS3.value == "") {
+                alert("Select Subject 3");
+                subbS3.focus();
+                return false;
+            }
+
+            if (subbS4.value == "") {
+                alert("Select Subject 4");
+                subbS4.focus();
+                return false;
+            }
+
+            if (subbS5.value == "") {
+                alert("Select Subject 5");
+                subbS5.focus();
+                return false;
+            }
+            if (subbS6.value == "") {
+                alert("Select Subject 6");
+                subbS6.focus();
+                return false;
+            }
+           // alert("check");
+            if (subbS2.value != "" && subbS3.value != "" && subbS4.value != "" && subbS5.value != "" && subbS6.value != "") {
+               // alert("Hello");
+
+                // alert("Hello123");
+                //------------------------------Start multiple Selection--------------------
+                // The number of dropdowns you have (use the naming convention 'dropx' as an id attribute)
+                var iDropdowns = subbS6;
+                var sValue;
+                var sValue2;
+                // Loop over dropdowns
+                for (var i = 2; i <= iDropdowns; ++i) {
+
+                    // Get selected value
+                    sValue = document.getElementById('subbS' + i).value;
+
+                    // Nested loop - loop over dropdowns again
+                    for (var j = 2; j <= iDropdowns; ++j) {
+                        // Get selected value
+                        sValue2 = document.getElementById('subbS' + j).value;
+                      //  alert(sValue);
+                       // alert(sValue2);
+                        // If we're not checking the same dropdown and the values are the same...
+                        if (i != j && sValue == sValue2) {
+                            // ...we have a duplicate!
+                            alert('Duplicate Subjects Are Not Allowed!');
+                            return false;
+                        }
+                    }
+                }
+              //  alert("multiple Validation");
+                //----------------------------End multiple Selection------------
+
+            }
+
+
+                // alert("Hello123");
+                //------------------------------Start multiple Selection--------------------
+                // The number of dropdowns you have (use the naming convention 'dropx' as an id attribute)
+                var iDropdowns = subbS6;
+                var sValue;
+                var sValue2;
+                // Loop over dropdowns
+                for (var i = 2; i <= iDropdowns; ++i) {
+
+                    // Get selected value
+                    sValue = document.getElementById('subS' + i).value;
+
+                    // Nested loop - loop over dropdowns again
+                    for (var j = 2; j <= iDropdowns; ++j) {
+                        // Get selected value
+                        sValue2 = document.getElementById('subS' + j).value;
+                       // alert(sValue);
+                       // alert(sValue2);
+                        // If we're not checking the same dropdown and the values are the same...
+
+                        if (i != j && sValue == sValue2) {
+                            // ...we have a duplicate!
+                            alert('Duplicate Subjects Are Not Allowed!');
+                            return false;
+                        }
+                    }
+                }
+
+
+               // alert("multiple Validation");
+                //----------------------------End multiple Selection------------
+
+
+        }
+
+
+            return true;
+        }
+
+</script>
+
+
+<script type="text/javascript">
+    function Finalval() {
+    if (!window.confirm("Are you Sure to Final Submit. Once Final Submitted and Lot generated you will not able to make any kind of changes in this correction Lot?")) {
+            return false;
+        }
+        else {
+            document.location.href = '@Url.Action("FinalSubmitCorrection", "CorrectionSubjects")';
+            }
+}
+    function val1() {
+        $.post('/RegistrationPortal/SchoolCorrectionAllRecord');
+        @*document.location.href = '@Url.Action("SchoolCorrectionAllRecord", "CorrectionSubjects")';*@
+    }
+    function val2() {
+        window.location.href = '/RegistrationPortal/SchoolCorrectionFinalPrintList';
+
+    }
+
+</script>

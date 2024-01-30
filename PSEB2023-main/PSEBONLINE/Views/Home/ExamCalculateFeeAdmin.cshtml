@@ -1,0 +1,157 @@
+﻿@model PSEBONLINE.Models.FeeHomeViewModel
+@{
+    ViewBag.Title = "Exam Calculate Fee";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>Exam Calculate Fee</h1>
+@if (Session["Session"] != null)
+{ }
+else { Response.Redirect("~/Login"); }
+
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<div class="row" id="divall">
+    <div class="col-md-12">     
+
+        @using (Html.BeginForm("ExamCalculateFeeAdmin", "Home", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+        {
+            <form id="myForm">
+                <div class="col-md-3">
+                    &nbsp;<br />
+                    @{
+                        List<SelectListItem> catgilist = new List<SelectListItem>();
+                        catgilist.Add(new SelectListItem { Text = "Matric Regular Calculate Fee", Value = "M" });
+                        catgilist.Add(new SelectListItem { Text = "Senior Regular Calculate Fee", Value = "S" });
+                        catgilist.Add(new SelectListItem { Text = "Matric Open Calculate Fee", Value = "MO" });
+                        catgilist.Add(new SelectListItem { Text = "Senior Open Calculate Fee", Value = "SO" });
+                    }                 
+                    @Html.DropDownListFor(m => m.formSelected, catgilist, new { id = "ddlcategory" })
+                    @Html.TextBoxFor(m => m.dateSelected, new
+           {
+               id = "SearchString",
+               @maxlength = "10",
+               onpaste = "return false;",
+               oncopy = "return false;",
+               oncut = "return false;",
+               required = "required"
+           })
+                </div>
+                <div class="col-md-3">
+                    <br />
+                    <input type="submit" value="Search" id="btnsubmit" />
+                    <a href="~/Home/ExamCalculateFeeAdmin" class="btn">Reset</a>
+
+                </div>
+            </form>
+            <div class="clearfix"></div>
+    }
+        <p>
+            @{
+                if (ViewData["FeeStatus"] != null)
+                {
+                    if (ViewData["FeeStatus"].ToString() == "1")
+                    {
+                    <p style="color:#cc0000">
+                        This Fee is Valid Upto date @Html.DisplayFor(m => m.EndDate)
+                    </p>
+                    }
+                    else if (ViewData["FeeStatus"].ToString() == "3")
+                    {
+                        <p style="color:#cc0000">@ViewBag.Message</p>
+                    }
+                }
+            }
+           </p>
+            <div class="table-responsive">
+
+                @{
+                    if (ViewData["FeeStatus"] != null)
+                    {
+                        if (ViewData["FeeStatus"].ToString() == "1")
+                        {
+
+                            <table class="table table-bordered" id="t01">
+                                <tr class="active-tr">
+                                    <th>Form</th>
+                                    <th>No. Of Students</th>
+                                    <th>Fee</th>
+                                    <th>No of Add Sub</th>
+                                    <th>AddSubFee</th>
+                                    <th>No of Pr Sub</th>
+                                    <th>PracFee</th>
+                                    <th>Late fee</th>
+                                    <th>Total Fees</th>
+                                </tr>
+                                @{
+
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        var StudentList = "";
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            var Form = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                            var NOS = Model.StoreAllData.Tables[0].Rows[i]["NOS"].ToString();
+                                            var fee = Model.StoreAllData.Tables[0].Rows[i]["fee"].ToString();
+                                            var AddSubFee = Model.StoreAllData.Tables[0].Rows[i]["AddSubFee"].ToString();
+                                            var NOAS = Model.StoreAllData.Tables[0].Rows[i]["NOAS"].ToString();
+                                            var PracFee = Model.StoreAllData.Tables[0].Rows[i]["PrSubFee"].ToString();
+                                            var NOPS = Model.StoreAllData.Tables[0].Rows[i]["NOPS"].ToString();
+                                            var latefee = Model.StoreAllData.Tables[0].Rows[i]["latefee"].ToString();
+                                            var TotalFees = Model.StoreAllData.Tables[0].Rows[i]["totfee"].ToString();
+                                            StudentList += Model.StoreAllData.Tables[0].Rows[i]["StudentList"].ToString() + ",";
+                                            int Count = i + 1;
+                                            <tr>
+                                                <td align="center">@Form</td>
+                                                <td align="center">@NOS</td>
+                                                <td align="center">@fee</td>
+                                                <td align="center">@NOAS</td>
+                                                <td align="center">@AddSubFee</td>
+                                                <td align="center">@NOPS</td>
+                                                <td align="center">@PracFee</td>
+                                                <td align="center">@latefee</td>
+                                                <td align="center">@TotalFees</td>
+                                            </tr>
+                                        }
+                                        Session["ExamStudentList"] = StudentList.ToString();
+                                        <tr>
+                                            <td colspan="7"></td>
+                                            <td colspan="2" align="right">Total Fees : ₹  @Html.DisplayFor(m => m.TotalFeesInWords)  </td>
+                                        </tr>
+                                    }                                 
+                                }
+                            </table>
+                                        }
+                                    }
+
+                }
+
+
+                @{
+                    if (ViewData["FeeStatus"] != null)
+                    {
+                        if (ViewData["FeeStatus"].ToString() == "1")
+                        {
+
+                            <a href="~/Home/ExamPaymentForm?id=@ViewBag.SearchId" class="btn" onclick="return confirm('You are going to submit the data. After that data will be locked for any changes?');">Final Submission</a>
+                        }
+                    }
+                }
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-center">
+            <a href="~/Home/ExamCalculateFeeAdmin" class="btn">Back</a>
+        </div>
+    </div>
+    <script type="text/javascript">
+    $(document).ready(function () {
+        var deedate1 = '@ViewBag.date';
+        $("#SearchString").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: deedate1,
+                 yearRange:  '2019:' + (new Date().getFullYear())
+        });
+    });
+    </script>

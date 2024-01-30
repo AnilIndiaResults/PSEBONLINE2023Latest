@@ -1,0 +1,934 @@
+﻿@model PSEBONLINE.Models.AffiliationFee
+@{
+    ViewBag.Title = "CalculateFee";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+@if (Session["IsAffiliation"].ToString() == null)
+{ Response.Redirect("~/Login"); }
+
+<style type="text/css">
+
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+
+
+@if (ViewData["MagazineStatus"] != null)
+{
+    if (ViewData["MagazineStatus"].ToString() == "0")
+    {
+        <script type="text/javascript" language="javascript">
+
+    alert("Magazine Fee of Session 2023-24 is pending. After payment of Magazine Fee, then you can able to pay Annual Progress Report Fee. Click Ok to Pay");
+window.location.href = '@Url.Action("MagazineSchoolRequirements", "School")';
+        </script>
+
+    }
+}
+else
+{
+    <script type="text/javascript" language="javascript">
+
+    alert("Magazine Fee of Session 2023-24 is pending. After payment of Magazine Fee, then you can able to pay Annual Progress Report Fee. Click Ok to Pay");
+window.location.href = '@Url.Action("MagazineSchoolRequirements", "School")';
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-md-12">@Html.Partial("_AffiliationHeading")</div>
+    <div class="clearfix"></div>
+    <div class="col-md-3">
+        @*@Html.Partial("_AffiliationMenu")*@
+        <div class="panel-group" id="accordion">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AffiliationContinuation/SchoolProfile/@ViewBag.SCHL">School Profile</a>
+                    </h4>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AffiliationContinuation/ResultStatics/@ViewBag.SCHL">Result Statics </a>
+
+                    </h4>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AffiliationContinuation/StudentFeeDetails/@ViewBag.SCHL">Student Fee/Funds Details</a>
+                    </h4>
+                </div>
+            </div>
+
+            <div class="panel panel-default" style="display:none">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AffiliationContinuation/BalanceSheet/@ViewBag.SCHL">Balance Sheet</a>
+                    </h4>
+                </div>
+            </div>
+
+            <div class="panel panel-default" style="display:none">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+
+                        <a href="/AffiliationContinuation/SafetyDetails/@ViewBag.SCHL">Building/Fire Safety Details</a>
+                    </h4>
+                </div>
+            </div>
+
+            <div class="panel panel-default" style="display:none">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AffiliationContinuation/BooksPurchaseDetails/@ViewBag.SCHL">Books Purchase Details</a>
+                    </h4>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AffiliationContinuation/Activities/@ViewBag.SCHL">Other information & Activities</a>
+                    </h4>
+                </div>
+            </div>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AffiliationContinuation/UploadAffiliationContinuationDocuments/@ViewBag.SCHL" title="Upload Documents">Upload Documents</a>
+                    </h4>
+                </div>
+            </div>
+
+
+            @if (ViewBag.challanVerify == 0)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="/AffiliationContinuation/PrintForm/@ViewBag.SCHL">View Application</a>
+                        </h4>
+                    </div>
+                </div>
+            }
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AffiliationContinuation/CalculateFee/@ViewBag.SCHL">Calculate Fee & Final Submit</a>
+                    </h4>
+                </div>
+            </div>
+
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/AffiliationContinuation/FinalPrintForm/@ViewBag.SCHL">Print Form</a>
+                    </h4>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-9">
+        <h4>Calculate Fee & Final Submit</h4>
+        @using (Html.BeginForm("CalculateFee", "AffiliationContinuation", FormMethod.Post, new { id = "upForm", enctype = "multipart/form-data" }))
+        {
+            if (ViewData["ChlnStatus"] != null && ViewBag.TotalCount == 1)
+            {
+            }
+            else if (ViewBag.IsSchlSubmiited == 0)
+            {<p class="rqf">Please Fill Form First For Online Fees.</p>}
+            else if (ViewBag.RequiredData == 0)
+            {<p class="rqf">The following information is required to be filled out only after final submission can be made. : <br /> <span style="color:#2f2d2d;font-size:medium;"> @TempData["notValidForChallan"]</span></p>}
+        else if (ViewBag.TotalStudent201819 == 0)
+        { <p class="rqf">Total Students of Session 2020-21 are not matched.<br /> Check BooksPurchaseDetails <span style="color:#f0ad4e;font-size:medium;">(Total Student Count : @ViewBag.TS2)</span> and Student Fee Details <span style="color:#f0ad4e;font-size:medium;">(Total Candidate 2018-19 : @ViewBag.TS1)</span></p>}
+    else
+    {
+        <div class="row">
+            <div class="col-md-3">Select Category</div>
+            <div class="col-md-7">@Html.DropDownListFor(a => a.ChallanCategory, new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "---Select Category ---", new { @required = "required", @class = "" })</div>
+            <div class="col-md-2">
+                <input type="submit" name="submit" value="Submit" />
+            </div>
+        </div>
+    }
+
+}
+
+
+
+        @using (Html.BeginForm("CalculateFee", "AffiliationContinuation", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+        {
+            @*<p class="rqf">Balance sheet Documents, building safety Documents, fire safety Documents, Other information &  Staff, Principal Name & mobile No fields are mandatory to final submit. After that you can calculate fee & final submit.</p>*@
+            if (ViewData["ChallanCategory"] != null)
+            {
+                if (ViewData["ChallanCategory"].ToString() == "1")
+                {
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <fieldset style="margin-bottom:15px">
+                                <legend style="font-size:16px">Enter Details of Lumsum fee of 12 years already paid</legend>
+                                <div class="row">
+                                    <div class="col-md-4">Challan Id </div>
+                                    <div class="col-md-8">@Html.TextBoxFor(a => a.oldChallanId, new { id = "oldChallanId", @maxlength = "15", onkeypress = "return isNumberKey(event);", placeholder = "Enter Challan Id" })</div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">Bank Reference / Board Receipt No.<span class="rqf">*</span></div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(a => a.OldRecieptNo, new { @required = "required", id = "OldRecieptNo", @maxlength = "25", placeholder = "Enter J_REF_NO" })
+                                        <br /><span class="rqf">(In case of more than one receipt, enter comma (,) Separated receipt no)*</span>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">Amount<span class="rqf">*</span></div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(a => a.OldAmount, new { @required = "required", id = "OldAmount", @maxlength = "8", onkeypress = "return isNumberKey(event);", placeholder = "Enter Amount" })
+                                        <br /><span class="rqf">(In case of more than one receipt, enter total amount of all receipts)</span>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">Fee Deposit Date<span class="rqf">*</span></div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(a => a.OldDepositDate, new { @required = "required", id = "OldDepositDate", @class = "datepickerLumsum", @maxlength = "10", onkeypress = "return false", placeholder = "Select DEPOSIT DATE" })
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">Receipt Scanned Copy<span class="rqf">*</span></div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(a => a.ReceiptScannedCopy, null, new { @required = "required", type = "file" })@Html.HiddenFor(a => a.ReceiptScannedCopy)
+                                        <br /><span class="rqf">(Upload scanned copy of receipts (One or More) in single PDF)</span>
+                                    </div>
+
+                                </div>
+                                <div class="clearfix"></div>
+
+
+                                @if (ViewBag.totfee > 0)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered" id="t01">
+                                                <tr class="active-tr">
+                                                    <th>Schl</th>
+                                                    <th>Fee Category</th>
+                                                    <th>Fee</th>
+                                                    <th>Late fee</th>
+                                                    <th>Total Fees</th>
+                                                </tr>
+                                                @{
+                                                    if (ViewBag.totfee > 0)
+                                                    {
+                                                        <tr>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.SCHL)</td>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.FEECAT)</td>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.fee)</td>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.latefee)</td>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.totfee)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2"></td>
+                                                            <td colspan="3" align="right">Total Fees : ₹  @Html.DisplayFor(m => m.TotalFeesInWords)  </td>
+                                                        </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="8">
+                                                                Record Not Found
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </table>
+                                        </div>
+                                    </div>
+                                    @*<div class="col-md-12" style="font-size:18px;color:red;">
+                                        Select Payment Gateway .<br>
+                                        <span class="rqf" style="font-size:15px">Note : After selection of payment gateway, you can pay fee from any bank (which listed) in any mode like Debit Card, Credit Card, Net banking etc.</span>
+
+                                    </div>*@
+                                }
+                                <div class="clearfix"></div>
+
+                                <div class="col-md-8" style="display:none">
+                                    @if (ViewBag.totfee > 0)
+                                    {
+
+
+                                        @*<span>@Html.RadioButtonFor(m => m.BankCode, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span>
+                                        <span>@Html.RadioButtonFor(m => m.BankCode, "302", new { id = "ATOM" }) <img src="~/Images/PNSB.jpg" alt="ATOM" width="150" /></span>*@
+
+                                        <span>@Html.RadioButtonFor(m => m.BankCode, "203", new { id = "HOD" })PSEB HOD</span>
+
+
+                                    }
+                                    else
+                                    {
+                                        <span>@Html.RadioButtonFor(m => m.BankCode, "203", new { id = "HOD" })PSEB HOD</span>
+                                    }
+
+
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-8">
+                                    @Html.HiddenFor(a => a.ChallanCategory)
+                                    @if (ViewBag.totfee > 0)
+                                    {
+                                        @*<input type="submit" name="submit" class="btn" value="Generate Challan & Final Submit" id="btnSave" />*@
+                                        @*<input id="btnPayment" name="submit" type="submit" value="Proceed to Pay Online" class="btn" />*@
+                                        <input id="btnPaymentHOD" name="submit" type="submit" value="Save & Final Submit" class="btn" onclick="return confirm('You are going to submit the data. After that data will be locked for any changes?');" />
+                                        <div id="loading1"></div>
+                                    }
+                                    else if (ViewBag.totfee == 0)
+                                    {
+                                        <input id="btnPaymentHOD" name="submit" type="submit" value="Save & Final Submit" class="btn" onclick="return confirm('You are going to submit the data. After that data will be locked for any changes?');" />
+                                    }
+
+
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                }
+                else if (ViewData["ChallanCategory"].ToString() == "4")
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <fieldset style="margin-bottom:15px">
+                                <legend style="font-size:16px">Enter Details of Current Session Fee Paid Offline</legend>
+                                <div class="row">
+                                    <div class="col-md-4">Receipt No.<span class="rqf">*</span></div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(a => a.OldRecieptNo, new { @required = "required", id = "OldRecieptNo", @maxlength = "25", placeholder = "Enter Receipt No" })
+                                        @Html.HiddenFor(a => a.OldRecieptNo)
+                                        <br /><span class="rqf">(In case of more than one receipt, enter comma (,) Separated receipt no)*</span>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">Amount<span class="rqf">*</span></div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(a => a.OldAmount, new { @required = "required", id = "OldAmount", @maxlength = "8", onkeypress = "return isNumberKey(event);", placeholder = "Enter Amount" })
+                                        <br /><span class="rqf">(In case of more than one receipt, enter total amount of all receipts)</span>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">Fee Deposit Date<span class="rqf">*</span></div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(a => a.OldDepositDate, new { @required = "required", id = "OldDepositDate", @class = "datepicker", @maxlength = "10", onkeypress = "return false", placeholder = "Select DEPOSIT DATE" })
+                                        @Html.HiddenFor(a => a.OldDepositDate)
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">Receipt Scanned Copy<span class="rqf">*</span></div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(a => a.ReceiptScannedCopy, null, new { @required = "required", type = "file" })@Html.HiddenFor(a => a.ReceiptScannedCopy)
+                                        <br /><span class="rqf">(Upload scanned copy of receipts (One or More) in single PDF)</span>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-8"><input id="btnGo" name="submit" type="submit" value="Go" class="btn" /></div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="clearfix"></div>
+
+
+                                @if (ViewBag.Total > 0)
+                                {
+                            <h3>Fee Calculation as per schedule on date which filled in Deposit Date column</h3>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered" id="t01">
+                                                <tr class="active-tr">
+                                                    <th>Schl</th>
+                                                    <th>Fee Category</th>
+                                                    <th>Fee</th>
+                                                    <th>Late fee</th>
+                                                    <th>Total Fees</th>
+                                                </tr>
+                                                @{
+                                                    if (ViewBag.Total > 0)
+                                                    {
+                                                        <tr>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.SCHL)</td>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.FEECAT)</td>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.fee)</td>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.latefee)</td>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.totfee)</td>
+                                                        </tr>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="8">
+                                                                Record Not Found
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <h3>Balance Fee Details(If any)</h3>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered" id="t01">
+                                                <tr class="active-tr">
+                                                    <th>Schl</th>
+                                                    <th>Fee Category</th>
+                                                    <th>Fee Paid Offline</th>
+                                                    <th>Fee as per Schedule fee</th>
+                                                    <th>Balance Fees</th>
+                                                </tr>
+                                                @{
+                                                    if (ViewBag.Total > 0)
+                                                    {
+                                                        <tr>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.SCHL)</td>
+                                                            <td align="center">@Html.DisplayFor(Model => Model.FEECAT)</td>
+                                                            <td align="center">@ViewBag.OldAmount</td>
+                                                            <td align="center">@ViewBag.Total</td>
+                                                            <td align="center">@ViewBag.Balance</td>
+                                                        </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="8">
+                                                                Record Not Found
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                }
+                                <div class="clearfix"></div>
+                                <div class="col-md-12">
+                                    @if (ViewBag.Balance > 0 && ViewBag.Total > 0)
+                                    {
+                                        <span class="rqf" style="font-size:15px">Pay balance fee manually through receipt, after that enter its details in above columns.</span>
+                                        @*<span>@Html.RadioButtonFor(m => m.BankCode, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span>*@
+                                    }
+                                    else if (ViewBag.Balance <= 0 && ViewBag.Total > 0)
+                                    {
+                                        @* <span>@Html.RadioButtonFor(m => m.BankCode, "203", new { id = "HOD" })PSEB HOD</span>*@
+                                    }
+
+
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-12">
+                                    @Html.HiddenFor(a => a.ChallanCategory)
+                                    @if (ViewBag.Balance > 0 && ViewBag.Total > 0)
+                                    {
+                                        <span></span>
+                                    }
+                                    else if (ViewBag.Balance <= 0 && ViewBag.Total > 0)
+                                    {
+                                        <input id="btnPaymentHOD" name="submit" type="submit" value="Save & Final Submit" class="btn" onclick="return confirm('You are going to submit the data. After that data will be locked for any changes?');" />
+                                    }
+
+
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                }
+            }
+
+        }
+
+
+        @{
+            if (ViewData["FeeStatus"] != null && ViewData["ChallanCategory"] != null)
+            {
+                if (ViewData["FeeStatus"].ToString() == "1" && ViewData["ChallanCategory"].ToString() != "1" && ViewData["ChallanCategory"].ToString() != "4")
+                {
+
+                    using (Html.BeginForm("CalculateFee", "AffiliationContinuation", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+                    {
+                        <div class="box">
+                            <div class="row">
+                                <div class="col-md-12" id="divMain1">
+                                    <table class="table table-bordered" id="t01">
+                                        <tr class="active-tr">
+                                            <th>Schl</th>
+                                            <th>Fee Category</th>
+                                            <th>Fee</th>
+                                            <th>Late fee</th>
+                                            <th>Total Fees</th>
+                                        </tr>
+                                        @{
+                                            if (ViewBag.TotalCount > 0)
+                                            {
+                                                <tr>
+                                                    <td align="center">@Html.DisplayFor(Model => Model.SCHL)</td>
+                                                    <td align="center">@Html.DisplayFor(Model => Model.FEECAT)</td>
+                                                    <td align="center">@Html.DisplayFor(Model => Model.fee)</td>
+                                                    <td align="center">@Html.DisplayFor(Model => Model.latefee)</td>
+                                                    <td align="center">@Html.DisplayFor(Model => Model.totfee)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"></td>
+                                                    <td colspan="3" align="right">Total Fees : ₹  @Html.DisplayFor(m => m.TotalFeesInWords)  </td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="8">
+                                                        Record Not Found
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        <tr style="font-size:18px;color:red;">
+                                            <td colspan="8">
+                                                Select Payment Gateway .<br>
+                                                <span class="rqf" style="font-size:15px">Note : After selection of payment gateway, you can pay fee from any bank (which listed) in any mode like Debit Card, Credit Card, Net banking etc.</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="8" style="border:0">
+                                                <span>@Html.RadioButtonFor(m => m.BankCode, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span>
+                                                <span>@Html.RadioButtonFor(m => m.BankCode, "302", new { id = "ATOM" }) <img src="~/Images/PNSB.jpg" alt="ATOM" width="150" /></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="8" style="text-align:center;border:0">
+                                                @Html.HiddenFor(a => a.ChallanCategory)
+                                                @if (ViewBag.TotalCount > 0)
+                                                {
+                                                    <input id="btnPayment" name="submit" type="submit" value="Proceed to Pay Online" class="btn" />
+                                                    <div id="loading1"></div>
+                                                }
+                                                @*<input id="btnPayment" name="submit" type="submit" value="Generate Challan & Final Submit" class="btn" onclick="return confirm('You are going to submit the data. After that data will be locked for any changes?');" />*@
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        }
+
+
+
+
+        @{
+            if (ViewData["ChlnStatus"] != null && ViewBag.TotalCount == 1)
+            {
+                <div class="box">
+                    <div class="row">
+                        <div class="col-md-12" id="divall">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="t01">
+                                    <tr class="active-tr">
+                                        <th>S.No</th>
+                                        <th>Category</th>
+                                        <th>Name of Bank</th>
+                                        <th>Challan No</th>
+                                        <th>Challan Date</th>
+                                        <th>Challan Valid Till Date</th>
+                                        <th>Challan Verified on</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    @{
+                                        if (ViewBag.TotalCount > 0)
+                                        {
+                                            if (Model.StoreAllData.Tables[0].Rows.Count > 0)
+                                            {
+                                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                                {
+                                                    var IsCancel = Model.StoreAllData.Tables[0].Rows[i]["IsCancel"].ToString();
+                                                    var Bank = Model.StoreAllData.Tables[0].Rows[i]["Bank"].ToString();
+                                                    var ChallanNo = Model.StoreAllData.Tables[0].Rows[i]["ChallanId"].ToString();
+                                                    var ChallanDate = Model.StoreAllData.Tables[0].Rows[i]["ChallanDate"].ToString();
+                                                    var ChallanVDate = Model.StoreAllData.Tables[0].Rows[i]["CHLNVDATE"].ToString();
+                                                    var ChallanVerifiedOn = Model.StoreAllData.Tables[0].Rows[i]["ChallanVerifiedOn"].ToString();
+                                                    var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                                    var ExpireVDate = Model.StoreAllData.Tables[0].Rows[i]["ExpireVDate"].ToString();
+                                                    var FeeDepositStatus = Model.StoreAllData.Tables[0].Rows[i]["FeeDepositStatus"].ToString();
+                                                    var SchoolCode = Model.StoreAllData.Tables[0].Rows[i]["SchoolCode"].ToString();
+                                                    var ChallanStatus = Model.StoreAllData.Tables[0].Rows[i]["ChallanStatus"].ToString();
+                                                    int Count = i + 1;
+                                                    <tr>
+                                                        <td align="center">@Count</td>
+
+                                                        <td align="center">
+                                                            @{
+                                                                List<SelectListItem> list = (List<SelectListItem>)ViewBag.MySch;
+                                                                string catName = list.SingleOrDefault(s => s.Value == SchoolCode).Text;
+                                                                <span>@catName</span>
+
+                                                            }
+                                                        </td>
+
+                                                        <td align="center">@Bank</td>
+                                                        <td align="center">
+                                                            @ChallanNo
+
+                                                            <div class="modal fade" id="myModal2-@ChallanNo" role="dialog">
+                                                                <div class="modal-dialog">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                                            <h3>Cancel Challan of @ChallanNo </h3>
+                                                                            <h5 class="rqf">Warning : After cancelation of challan, New Fee/Fine will be applicable according current date. If fee already paid against this challan then don't cancel this challan and wait for 2-3 days or contact with PSEB</h5>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            Cancel Remarks <textarea id="cancelremarks-@ChallanNo" name="cancelremarks"></textarea>
+                                                                            <input type="button" class="btn" value="Submit" id="btnsubmitCancel" onclick="cancelChallan(@ChallanNo)" />
+                                                                            <div id="loading1"></div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </td>
+                                                        <td align="center">@ChallanDate</td>
+                                                        <td align="center">@ChallanVDate</td>
+                                                        <td align="center">@ChallanVerifiedOn</td>
+                                                        <td align="center">
+
+
+                                                            @if (Model.StoreAllData.Tables[0].Rows[i]["StatusNumber"].ToString() == "5")
+                                                            {
+                                                                @ChallanStatus
+                                                            }
+                                                            else
+                                                            {
+                                                                @Status
+                                                            }
+
+                                                        </td>
+                                                        <td align="center" class="nlink">
+                                                            @*<a href='@Url.Action("GenerateChallaan", "AffiliationContinuation", new { Id = ChallanNo })' class="btn">Click to View Challan</a><br />*@
+                                                            @if (Model.StoreAllData.Tables[0].Rows[i]["StatusNumber"].ToString() == "1")
+                                                            {
+
+                                                                if (ExpireVDate.ToString() == "0" && FeeDepositStatus.ToString() == "0")
+                                                                {
+                                                                    @Html.ActionLink("Enter Fee Deposit Details", "FeeDepositDetails", "Home", new { id = @ChallanNo }, "")
+                                                                }
+                                                                else if (FeeDepositStatus.ToString() == "1")
+                                                                {
+                                                                    <span>Challan Verification Pending</span>
+                                                                }
+                                                                // Re Generate Challan
+                                                                else if (ExpireVDate.ToString() == "1" && FeeDepositStatus.ToString() == "0")
+                                                                {
+                                                                    @Html.ActionLink("Enter Fee Deposit Details", "FeeDepositDetails", "Home", new { id = @ChallanNo }, "")
+
+                                                                }
+                                                            }
+                                                            else if (Model.StoreAllData.Tables[0].Rows[i]["StatusNumber"].ToString() == "2")
+                                                            {
+                                                                @Html.ActionLink("Download Form", "FinalPrintForm", new { Id = @ViewBag.SCHL.ToString() })
+                                                            }
+                                                            else if (Model.StoreAllData.Tables[0].Rows[i]["StatusNumber"].ToString() == "5" && SchoolCode == "1")
+                                                            {
+                                                                <a href='@Url.Action("GenerateChallaan", "AffiliationContinuation", new { Id = ChallanNo })' class="btn">Click to View Challan</a><br />
+                                                                if (ExpireVDate.ToString() == "1" && FeeDepositStatus.ToString() == "0" && IsCancel == "0")
+                                                                {
+                                                                    <a data-toggle="modal" class="btn btn-danger" data-target="#myModal2-@ChallanNo">CANCEL CHALLAN</a>
+
+                                                                }
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="8">
+                                                    Challan Not Found
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+</div>
+
+
+
+
+
+@{
+    if (ViewData["SelectBank"] != null)
+    {
+        if (ViewData["SelectBank"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+               alert("Please Select Bank ");
+                  window.location.href = '@Url.Action("CalculateFee", "AffiliationContinuation")';
+            </script>
+
+        }
+    }
+
+
+    if (ViewData["result"] != null)
+    {
+
+        if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Payment Failure, Plz Try Again");
+                $('#Main1').show();
+                $('#loading1').empty();
+            </script>
+
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Payment Already Exists");
+                $('#Main1').show();
+                $('#loading1').empty();
+            </script>
+
+        }
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+              alert("Payment Successfully ");
+                $('#Main1').show();
+$('#loading1').empty();
+@*window.location.href = '@Url.Action("GenerateChallaan", "AffiliationContinuation", new { Id = @ViewBag.ChallanNo })';*@
+            </script>
+
+        }
+    }
+}
+
+
+
+<div id="dialogOnline" style="display: none">
+    <span class="rqf">Click OK button to do Online Payment through Credit Card, Debit Card, Net Banking etc of any bank otherwise click Cancel button.</span>
+</div>
+
+<script type="text/javascript">
+
+    $("#btnPayment").click(function () {
+
+        var SBPa = document.getElementById("HDFC").checked;
+        var PNBa = document.getElementById("ATOM").checked;
+
+        if (SBPa == false && PNBa == false) {
+            alert("Please Select Any Bank For Online Payment");
+            return false;
+        }
+        else {
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to do online payment?");
+            // $('#dialogOnline').dialog('open');
+            return true;
+        }
+
+    });
+    $(function () {
+        $("#dialogOnline").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to do online payment?",
+            width: 400,
+            height: 220,
+            buttons: {
+                "OK": function () {
+                    // $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $('#myForm').submit();
+
+                },
+                Cancel: function () {
+                    $('#loading1').empty("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+
+    function cancelChallan(challanid) {
+
+        // alert($("#cancelremarks-" + k).val());
+        var flag = 0;
+        if ($("#cancelremarks-" + challanid).val() == "") {
+            $("#cancelremarks-" + challanid).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Home/CancelOfflineChallanBySchl", // this for calling the web method function in cs code.
+                data: '{cancelremarks: "' + $("#cancelremarks-" + challanid).val() + '",challanid: "' + challanid + '", "Type": 1}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "1") {
+                        alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        // alert("Challan Cancel Successfully");
+                        $('#myModal2-' + challanid).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else if (response.sn == "2") {
+                        //  alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                        alert("Challan Failure...Student exists in Examination Form");
+                        $('#myModal2-' + challanid).modal('hide');
+                        $('#loading1').empty();
+                    }
+                    else {
+                        $('#loading1').empty();
+                        alert("Challan Not Found/Expired.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+
+</script>
+@*<script type="text/javascript">
+        //Start Payment
+        $("#btnPayment,#btnSave").click(function () {
+            var SBPa = document.getElementById("SBI").checked;
+            var PNBa = document.getElementById("PNB").checked;
+
+            if (SBPa == false && PNBa == false) {
+                alert("Please Select Any Bank");
+                return false;
+            }
+            else {
+                $('#Main1').hide();
+                $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                alert("Are you sure to Generate Challan ?");
+                return true;
+            }
+
+        });
+
+        //End  Payment
+    </script>*@
+
+
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<script>
+    $(document).ready(function () {
+   $(".datepicker").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: '0',
+            minDate: new Date('2020/04/01'),
+            yearRange: '1969:' + (new Date().getFullYear())
+        });
+		 $(".datepickerLumsum").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: '0',
+           // minDate: new Date('2020/04/01'),
+            yearRange: '1969:' + (new Date().getFullYear())
+        });
+
+
+
+        if ('@ViewData["ChallanCategory"] == "4"' && '@ViewBag.OldAmount' != "") {
+            $("#OldAmount").prop("readonly", true);
+            $("#OldDepositDate").prop("readonly", true);
+            $("#OldRecieptNo").prop("readonly", true);
+            $("#OldDepositDate").datepicker("disable");
+        }
+        else {
+            $("#OldAmount").prop("readonly", false);
+            $("#OldDepositDate").prop("readonly", false);
+            $("#OldRecieptNo").prop("readonly", false);
+            $(".datepicker").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                yearRange: '1969:' + (new Date().getFullYear())
+            });
+            $("#OldDepositDate").datepicker("enable");
+        }
+
+
+    });
+</script>
+
+
+@*<script type="text/javascript">
+        //Start Payment
+        $("#btnPaymentHOD").click(function () {
+            var HOD = document.getElementById("HOD").checked;
+            if (HOD == false) {
+                alert("Please Select Any Bank");
+                return false;
+            }
+            else {
+                $('#Main1').hide();
+                $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                alert("Are you sure to Final Submit ?");
+                return true;
+            }
+
+        });
+    </script>*@

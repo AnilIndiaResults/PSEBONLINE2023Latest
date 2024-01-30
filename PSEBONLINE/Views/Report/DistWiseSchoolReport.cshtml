@@ -1,0 +1,71 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "Summary Report";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1 style="text-align:center">
+    Punjab School Education Board<br />
+    <span style="font-size:16px;color:#333">School Category dist wise count of Schools for Session  @Session["Session"].ToString()</span>
+</h1>
+<table class="table table-bordered" id="tsummary">
+    <tr class="active-tr">
+        <th>School Category</th>
+        <th>dist</th>
+        <th>5th Level</th>
+        <th>8th Level</th>
+        <th>10th Level</th>
+        <th>12th Level</th>
+        <th>Total Schools</th>
+    </tr>
+    @{
+        if (ViewBag.TotalCount > 0)
+        {
+            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+            {
+                var dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                var SchoolCategory = Model.StoreAllData.Tables[0].Rows[i]["usertype"].ToString();
+                var TotalPri = Model.StoreAllData.Tables[0].Rows[i]["TotalPri"].ToString();
+                var TotalMid = Model.StoreAllData.Tables[0].Rows[i]["TotalMid"].ToString();
+                var Totalmat = Model.StoreAllData.Tables[0].Rows[i]["Totalmat"].ToString();
+                var TotalSrSec = Model.StoreAllData.Tables[0].Rows[i]["TotalSrSec"].ToString();
+                var TotalFinalEntries = Model.StoreAllData.Tables[0].Rows[i]["Total"].ToString();
+                int Count = i + 1;
+                if (@SchoolCategory == "Grand Total")
+                {
+                    <tr>
+                        <td style="color:red">@SchoolCategory</td>
+                        <td style="color:red">@dist</td>
+                        <td style="color:red">@TotalPri</td>
+                        <td style="color:red">@TotalMid</td>
+                        <td style="color:red">@Totalmat</td>
+                        <td style="color:red">@TotalSrSec</td>
+                        <td style="color:red">@TotalFinalEntries</td>
+
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@SchoolCategory</td>
+                        <td>@dist</td>
+                        <td>@TotalPri</td>
+                        <td>@TotalMid</td>
+                        <td>@Totalmat</td>
+                        <td>@TotalSrSec</td>
+                        <td>@TotalFinalEntries</td>
+
+                    </tr>
+                }
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">
+                    @ViewBag.Message
+                </td>
+            </tr>
+        }
+    }
+</table>

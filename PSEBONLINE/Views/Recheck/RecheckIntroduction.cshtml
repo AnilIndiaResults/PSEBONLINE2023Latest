@@ -1,0 +1,350 @@
+﻿ @model PSEBONLINE.Models.RecheckModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+
+
+<style type="text/css">
+    h1 {
+        font-size: 23px !important;
+        padding-bottom: 10px !important;
+    }
+</style>
+<div class="container KDBG">
+@*<h1>Rechecking/Re-evaluation of Sr. Secondary/Matriculation Examination, March 2022</h1> *@
+    <h1>Rechecking/Re-evaluation of Sr. Secondary Examination, September 2023</h1> 
+
+
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    @using (Html.BeginForm("RecheckIntroduction", "Recheck", FormMethod.Post, new { id = "refno", enctype = "multipart/form-data" }))
+    {
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <form name="myForm">
+            <div class="row">
+                <div class="col-md-12"><h4>Candidate Registration Form</h4></div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Session <span class="rqf">*</span></div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> batch = new List<SelectListItem>();
+                        //batch.Add(new SelectListItem { Text = "January", Value = "JAN" });
+                        //batch.Add(new SelectListItem { Text = "March", Value = "MAR" });
+                        //batch.Add(new SelectListItem { Text = "JULY", Value = "JULY" });
+                        //batch.Add(new SelectListItem { Text = "August", Value = "AUG" });
+                        batch.Add(new SelectListItem { Text = "September", Value = "SEP" });
+                        //batch.Add(new SelectListItem { Text = "November", Value = "OCT" });
+                        //batch.Add(new SelectListItem { Text = "November", Value = "NOV" });
+                    }
+                    @Html.DropDownList("batch", batch, new { id = "batch" })
+                </div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> batchYear = new List<SelectListItem>();
+                       // batchYear.Add(new SelectListItem { Text = "2020", Value = "2020" });
+                        //batchYear.Add(new SelectListItem { Text = "2022", Value = "2022" });
+						batchYear.Add(new SelectListItem { Text = "2023", Value = "2023" });
+                    }
+                    @Html.DropDownList("batchYear", batchYear, new { id = "batchYear" })
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-2">Class <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @{
+                        List<SelectListItem> Class = new List<SelectListItem>();
+                        Class.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        Class.Add(new SelectListItem { Text = "Matriculation", Value = "10" });
+                        Class.Add(new SelectListItem { Text = "Senior Secondary", Value = "12" });
+
+                    }
+                    @Html.DropDownList("Class", Class, new { id = "Class" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"> Exam Type <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @{
+                        List<SelectListItem> Exam_Type = new List<SelectListItem>();
+                        Exam_Type.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        Exam_Type.Add(new SelectListItem { Text = "Regular", Value = "R" });
+                        Exam_Type.Add(new SelectListItem { Text = "Open", Value = "O" });
+                        //Exam_Type.Add(new SelectListItem { Text = "Private", Value = "P" });
+                    }
+                    @Html.DropDownList("Exam_Type", Exam_Type, new { id = "Exam_Type" })
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-2">Roll No. <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.OROLL, new { id = "OROLL", @maxlength = "25", onkeypress = "return isNumberKey(event);" })
+                    @Html.ValidationMessageFor(model => model.OROLL, "", new { @class = "text-danger" })
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Email ID <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.emailID, new { @class = "form-control", @maxlength = "100", title = "Enter Candidate's Personal/relative's Email ID." })
+                                @Html.ValidationMessageFor(model => model.emailID, "", new { @class = "text-danger" })
+                            </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Mobile No. <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.mobileNo, new { id = "mobileNo", @maxlength = "10", title = "Enter Candidate's Personal/relative's Mobile No.", onkeypress = "return isNumberKey(event);" })
+                                @Html.ValidationMessageFor(model => model.mobileNo, "", new { @class = "text-danger" })
+                            </div>
+                <div class="clearfix"></div>
+
+                <div class="col-md-6"><span class="rqf">* Fields are mandatory.</span><br />&nbsp;<br /></div>
+                <div class="clearfix"></div>
+                <div class="col-md-12"><span class="rqf">NOTE : Kindly Enter Only Candidate or Candidate's Relative Personal Email Id And Mobile No For Further Communication With Candidate By Board.</span></div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                    <span class="kdsfont" style="font-weight:normal !important;font-size:22px;display:none">Ú¥Ó ¬óÐ ÒóÐ ÚÒÓÖãÓÖ ÚÄ¤ØÅ ÚÂó¼Ø ²ØÒã Ú¨ °ÐØÅ ²ÅÏã¶ Õë» ¦ÝÆÏâ¼ ÅØÐ ÂÛ ÅØÐ ÕÛ ÏÛ-°èÚ¨â¬ ÂØ ÇØÏÌ ÚÆâñ¶ ÚÅ¨Ð ²ØÒã¬Ø, °ÐØÅ ¼ã ÂÏ² ¤ØªÏÛ ÚÌ¼Û (²ã¨Ï Ú¨Óã ÚÒÓÖãÓÖ ÕÐØ¼ ÚÒó° ÚÌ¼Û ÚÒó° ÒØÄØ ÒÛ ÕÝâÂØ Õè ¼Ù °ÐØÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û ¦ÝÕÛ ÏÕã¬Û ²ë °ÐØÅ ¦ÝóÆÏ ÂÏ² Õè, °ÐØÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û ª¼Ì Õë» ¦ÝÆÏâ¼ ÕÛ °ÐØÅ ÏÛ²ÅÏã¶ ¨Û¼Ø ²Ø Ó¨ã¬Ø)  ¼ó¨ ÕÏ ÕØÐ¼ ÚÒó° Éè×¨ ÚÒó° ÇÛÓ ²ÌðÙ ¨ÏÒØ¥Û ²ØÒã ¤¼ã ÇØÏÌ ÂØ ÚÆâñ¶ ÓÌã¼ °ÐØÅ ÂÛ ¨ØÆÛ ÓÉâÄ¼ ªã¼ÏÛ ÂÇ¼Ï / ÌÝóª ÂÇ¼Ï ÚÒó° ²ÌðÙ ¨ÏÒØÚ¥¤Ø ²ØÒã¢</span>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                    <div style="padding:15px 0;line-height:25px">
+                        <span>ਮੁੜ ਮੁਲਾਂਕਣ ਕੀਤੀਆਂ ਉੱਤਰ-ਪੱਤਰੀਆਂ ਦੇ ਨਤੀਜੇ ਵਿੱਚ ਸੋਧ ਕੀਤੀ ਜਾਵੇਗੀ ਭਾਵ ਜੇ ਅੰਕ ਵੱਧ ਜਾਂਦੇ ਹਨ ਤਾਂ ਵੱਧ ਅੰਕਾਂ ਅਨੁਸਾਰ ਜੇ ਅੰਕ ਘੱਟ ਜਾਂਦੇ ਹਨ ਤਾਂ ਘੱਟ ਅੰਕਾਂ ਅਨੁਸਾਰ ਨਤੀਜਾ ਸੋਧਿਆ ਜਾਵੇਗਾ| </span><br />
+                        <span>ਜੇਕਰ ਪ੍ਰੀਖਿਆਰਥੀ ਦੇ ਅੰਕ 5% ਜਾਂ ਇਸ ਤੋਂ ਵੱਧ ਜਾਂਦੇ ਹਨ ਤਾਂ ਤੀਜੇ ਪ੍ਰੀਖਿਅਕ ਨੂੰ ਕੇਸ ਮਾਰਕਿੰਗ ਲਈ ਭੇਜਿਆ ਜਾਵੇਗਾ| </span><br />
+                        <span>ਪ੍ਰੀਖਿਆਰਥੀ ਕੋਲ ਨਤੀਜੇ ਨੂੰ ਚੈਲੰਜ ਕਰਨ ਦਾ ਕੋਈ ਅਧਿਕਾਰ ਨਹੀਂ ਹੋਵੇਗਾ|</span><br />
+                        <span>ਜੇਕਰ ਰੀ-ਵੈਲੂਏਸ਼ਨ ਉਪਰੰਤ ਉਤਰ-ਪੱਤਰੀ ਦੀ ਫੋਟੋਕਾਪੀ ਲੈਣੀ ਹੈ ਤਾਂ ਵਾਧੂ ਹੋਰ ਸਮਾਂ ਨਹੀਂ ਦਿੱਤਾ ਜਾਵੇਗਾ ਅਤੇ ਪਹਿਲਾਂ ਦਿੱਤੇ ਨਿਰਧਾਰਿਤ ਮਿਤੀਆਂ/ਸਡਿਊਲ ਅਨੁਸਾਰ ਹੀ ਅਪਲਾਈ ਕਰਨਾ ਪਵੇਗਾ|</span>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-12"><hr /></div>
+                <div class="clearfix"></div>
+                <div class="col-md-6">
+                    <b class="rqf">Rechecking Sr. Secondary</b>
+                    <div class="kdsfont" title="Sr" style="padding-left:20px;font-weight:normal !important;font-size:22px">
+                        • ÏÛ °èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ÓÝÏÞ¤Ø¼Û ÚÌ¼Û 11-10-2023<br />
+                        • ÏÛ-°èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û 26-10-2023<br />
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <b class="rqf">Re-Evaluation Sr. Secondary</b>
+                    <div title="Sr" style="padding-left:20px;">
+                        • ਰੀਵੈਲੂਏਸ਼ਨ ਦਾ ਫਾਰਮ ਭਰਨ ਦੀ ਸ਼ੁਰੂਆਤੀ ਮਿਤੀ 11-10-2023<br />
+                        • ਰੀਵੈਲੂਏਸ਼ਨ ਦਾ ਫਾਰਮ ਭਰਨ ਦੀ ਆਖਰੀ ਮਿਤੀ 26-10-2023<br />
+
+                        <br />
+                    </div>
+                </div>
+
+<div class="clearfix"></div>
+                <div class="col-md-6">
+                    <b class="rqf">Rechecking Matriculation</b>
+                    <div class="kdsfont" title="Sr" style="padding-left:20px;font-weight:normal !important;font-size:22px">
+                        • ÏÛ °èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ÓÝÏÞ¤Ø¼Û ÚÌ¼Û 11-10-2023<br />
+                        • ÏÛ-°èÚ¨â¬ ÂØ ÇØÏÌ ÊÏÅ ÂÛ ¤ØªÏÛ ÚÌ¼Û 26-10-2023<br />
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <b class="rqf">Re-Evaluation Matriculation</b>
+                    <div title="Sr" style="padding-left:20px;">
+                        • ਰੀਵੈਲੂਏਸ਼ਨ ਦਾ ਫਾਰਮ ਭਰਨ ਦੀ ਸ਼ੁਰੂਆਤੀ ਮਿਤੀ 11-10-2023<br />
+                        • ਰੀਵੈਲੂਏਸ਼ਨ ਦਾ ਫਾਰਮ ਭਰਨ ਦੀ ਆਖਰੀ ਮਿਤੀ 26-10-2023<br />
+
+                        <br />
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-6">
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 kdsfont" style="color:#cc0000;display:none"><b>ÚÒÓÖãÓÖ Åë¶ :</b> Ú¥Õ ÇØÏÌ ¸Ø¨ ÏÙÕÛ ÌÝóª-ÂÇ¼Ï ÅØ ÊãÚ²¤Ø ²ØÒã Ú¥Ó ÇØÏÌ ÅÞâ ¨ãÒÐ ªã¼ÏÛ ÂÇ¼Ï ²Ù ÌÝóª-ÂÇ¼Ï ÚÒªã ÂÓ¼Û ÕÛ ²ÌðØ ¨ÏÒØÚ¥¤Ø ²ØÒã ²Û¢</div>
+                <div class="clearfix"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-4 tbp text-center">
+                    <input value="Register" type="submit" onclick="return valForm();" />
+                    <input value="Reset" type="button" onclick="javascript:document.location.href='@Url.Action("RecheckIntroduction", "Recheck")'" />
+                    @*<input value="Login" type="button" onclick="return valLogin();" />*@
+                    <input value="Home" type="button" onclick="javascript:document.location.href='@Url.Action("RecheckExamination", "Recheck")'" />
+                    @*<input value="Reset" type="submit" />*@
+                </div>
+            </div>
+        </form>
+    }
+</div>
+
+@{
+
+    if (ViewData["Status"] != null)
+    {
+        var result = ViewData["Status"].ToString();
+        if (result == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Refrence No. Not Generated. Please check details ");
+                //document.location.href = 'Url.Action("RecheckExamination", "Recheck")';
+            </script>
+        }
+        else if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                @*document.location.href = '@Url.Action("RecheckConfirmation/4R0317200001", "Recheck")';*@
+                var refno = @TempData["refno"].ToString();
+                var roll = @TempData["roll"].ToString();
+                @*var Yar = @TempData["Yar"].ToString();
+                var Mnth = @TempData["Mnth"].ToString();*@
+
+                alert("You are successfully registred, your refrence no. " + refno + " is generated against roll no. " + roll + ", Keep this for further use till result declaration.");
+                document.location.href = '@Url.Action("RecheckConfirmation/" + @TempData["refno"].ToString(), "Recheck")';
+            </script>
+        }
+
+        else if (result == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Refrence No.: "+@ViewData["RefNo"] +" Already Generated. Kindly Check your Email and Mobile No. ");
+                @*document.location.href = '@Url.Action("RecheckConfirmation/" + ViewData["roll"], "Recheck")';*@
+            </script>
+        }
+        else if (result == "-10")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Last Date of Rechecking/Re-evaluation are Finished");
+                @*document.location.href = '@Url.Action("RecheckConfirmation/" + ViewData["roll"], "Recheck")';*@
+            </script>
+        }
+        else if (result == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("RollNo Does not Exists, Kindly Check your Roll Number");
+            </script>
+        }
+
+
+    }
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+    });
+    $("#category").change(function () {
+        var selectedCATE = { CATE: $("#category").val() };
+
+        $.ajax({
+            url: '@Url.Action("GetMonthID", "Recheck")',
+            type: 'Post',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(selectedCATE),
+            success: function (States) {
+
+                //alert(StatesList);
+                //document.getElementById("Address").value = StatesList;
+                // $("#SelYear").empty();
+                $("#SelMonth").empty();
+                $("#SelMonth").append('<option value="0">Month</option>');
+                $.each(States, function (i, Monthlist) {
+                    $("#SelMonth").append('<option value="'
+                       + Monthlist.Value + '">'
+                       + Monthlist.Text + '</option>');
+                });
+                if (Monthlist.success) {
+
+                    //document.getElementById("MName").value = data.result;
+                    // $("#TextBoxID").val(data.result.MName);
+                }
+                else {
+                    alert('invalid ID' + data.success);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '@Url.Action("GetYearID", "Recheck")',
+            type: 'Post',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(selectedCATE),
+            success: function (States) {
+
+                //alert(StatesList);
+                //document.getElementById("Address").value = StatesList;
+                $("#SelYear").empty();
+               // $("#SelMonth").empty();
+                $("#SelYear").append('<option value="0">Year</option>');
+
+                $.each(States, function (i, yearlist) {
+
+                    $("#SelYear").append('<option value="'
+                       + yearlist.Value + '">'
+                       + yearlist.Text + '</option>');
+                });
+                if (yearlist.success) {
+
+                    //document.getElementById("MName").value = data.result;
+                    // $("#TextBoxID").val(data.result.MName);
+                }
+                else {
+                    alert('invalid ID' + data.success);
+                }
+            }
+        });
+    });
+    //------------------------------------------------
+    function valForm() {
+        var txtClass = document.getElementById("Class").value;
+        if (txtClass == "0") {
+            alert("Select Class");
+            document.getElementById("Class").focus();
+            return false;
+        }
+        var Exam_Type=document.getElementById("Exam_Type").value;
+        if (Exam_Type == "0") {
+            alert("Select Type");
+            document.getElementById('Exam_Type').focus();
+            return false;
+        }
+        var txtOROLL = document.getElementById("OROLL");
+        if (txtOROLL.value == "") {
+            alert("Enter Roll Number");
+            txtOROLL.focus();
+            return false;
+        }
+        if (!ValidateEmail($("#emailID").val())) {
+            alert("Enter valid Email Address");
+            document.getElementById("emailID").focus();
+            return false;
+        }
+        var txtmobileNo = document.getElementById("mobileNo");
+        if (txtmobileNo.value == "" || txtmobileNo.value.length != 10) {
+            alert("Enter valid Mobile Number");
+            txtmobileNo.focus();
+            return false;
+        }
+    }
+
+    function ValidateEmail(emailID) {
+        var expr = /[A-Z0-9._%+-]@@[A-Z0-9.-]+\.[A-Z]{2,4}/igm;;
+        return expr.test(emailID);
+    }
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+

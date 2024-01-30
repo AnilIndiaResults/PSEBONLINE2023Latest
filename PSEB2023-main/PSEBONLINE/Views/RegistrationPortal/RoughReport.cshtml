@@ -1,0 +1,367 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    ViewBag.Title = "RoughReport";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<style type="text/css">
+    body {
+        font-size: 10px;
+    }
+</style>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4L-SRR.css" />
+
+<h1 class="noprint">
+    Rough Report : Session 2023-2024
+</h1>
+
+
+@using (Html.BeginForm("RoughReport", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+<div class="row">
+@*<div class="col-md-12" style="color:#cc0000;text-align:center;font-size:16px">Photo and Signature will display soon..</div>*@
+    <div class="col-md-12 noprint">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            <div class="col-md-3">
+                Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem" })
+                <span id="reqsession" style="color:red;display:none;">Select One</span>
+            </div>
+            <div class="col-md-7">
+                &nbsp;<br />
+                <input type="text" id="SearchString" name="SearchString" value="@Request[" SearchString"]" />
+            </div>
+            <div class="col-md-2">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm();" title="Search Record" /></div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 rqf" style="font-size:13px">Note : Kindly select search criteria & then click search button to show records.</div>
+        </fieldset>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-right noprint">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <table width="100%" border="1">
+            <thead>
+                <tr>
+                    <td colspan="2" style="border-right:0 !important;border-bottom:0 !important">&nbsp;<span class="kdsfont">Ó¨ÞÐ ÂØ ¨ë¸</span> : @ViewBag.SCHL</td>
+                    <td colspan="3" rowspan="2" align="center" class="kdsfont" style="border-left:0 !important;border-right:0 !important;font-size:18px">
+                        <span style="font-size:28px">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span><br />
+                        @if (Session["FormName"].ToString() == "N1" || Session["FormName"].ToString() == "N2" || Session["FormName"].ToString() == "N3")
+                        {
+                            <span>
+                                ÅïÒÜ ÓÖñã»Û Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û(ÏÚ²Ó¶ÏãÓÖÅ /¨â¶ÛÚÅ¦Þ¥ãÓÖÅ) ÓèÓÖÅ Session @if (Session["Session"] != null)
+                                {@Session["Session"].ToString()}
+                            else { Response.Redirect("~/Login"); }(Rough Print)
+                            </span>
+                        }
+                        @if (Session["FormName"].ToString() == "M1" || Session["FormName"].ToString() == "M2")
+                        {
+                            <span>
+                                ÂÓÒÛ× ÓÖñã»Û Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û(ÏÚ²Ó¶ÏãÓÖÅ /¨â¶ÛÚÅ¦Þ¥ãÓÖÅ) ÓèÓÖÅ Session @if (Session["Session"] != null)
+                                {@Session["Session"].ToString()}
+                            else { Response.Redirect("~/Login"); }(Rough Print)
+                            </span>
+                        }
+                        @if (Session["FormName"].ToString() == "E1" || Session["FormName"].ToString() == "E2")
+                        {
+                            <span>
+                                Ú¬¤ØÏÒÛ× ÓÖñã»Û Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û(ÏÚ²Ó¶ÏãÓÖÅ /¨â¶ÛÚÅ¦Þ¥ãÓÖÅ) ÓèÓÖÅ Session @if (Session["Session"] != null)
+                                {@Session["Session"].ToString()}
+                            else { Response.Redirect("~/Login"); }(Rough Print)
+                            </span>
+                        }
+                        @if (Session["FormName"].ToString() == "T1" || Session["FormName"].ToString() == "T2")
+                        {
+                            <span>
+                                ÉØÏðÒÛ× ÓÖñã»Û Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û(ÏÚ²Ó¶ÏãÓÖÅ /¨â¶ÛÚÅ¦Þ¥ãÓÖÅ) ÓèÓÖÅ Session @if (Session["Session"] != null)
+                                {@Session["Session"].ToString()}
+                            else { Response.Redirect("~/Login"); }(Rough Print)
+                            </span>
+                        }
+                    </td>
+                    <td colspan="2" style="border-left:0 !important;border-bottom:0 !important;text-align:right"><span class="kdsfont">ÚÆñâ¶ ¨ÏÅ ÂÛ ÚÌ¼Û</span> : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-right:0 !important;border-top:0 !important">&nbsp;<span class="kdsfont">ÔÅØª¼Û ÅâÉÏ</span> : @ViewBag.IDNO</td>
+                    <td colspan="2" style="border-left:0 !important;border-top:0 !important;text-align:right"><span class="kdsfont">ÇØÏÌ Åâ</span> : @Session["FormName"].ToString() &nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="7" style="font-size:12px;padding:3px 0">&nbsp;<span class="kdsfont" style="font-size:22px;">Ó¨ÞÐ ÂØ ÅÙ/Ú²ÐðØ</span> : @ViewBag.SSE / <span class="kdsfont" style="font-size:22px;">@ViewBag.SSP</span></td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td width="10%">&nbsp;<span class="kdsfont">Ð¾Û Åâ.</span></td>
+                    <td width="10%">&nbsp;<span class="kdsfont">¤ÄØÏ ÅâÉÏ</span></td>
+                    <td width="32%">&nbsp;<span class="kdsfont">¨è¶Ø¬ÏÛ</span></td>
+                    <td width="21%">&nbsp;<span class="kdsfont">ÂØ.ªØ. ÏÚ². Åâ. : ÂØªÐØ Åâ. : ÂØªÐØ ÚÌ¼Û</span></td>
+                    <td width="7%">&nbsp;<span class="kdsfont">²Ø¼Û</span></td>
+                    <td width="13%">&nbsp;<span class="kdsfont">¤è×¶ÏÛ : ¤Æ¸ã¶ ÂÛ ÚÌ¼Û</span></td>
+                    <td rowspan="3" width="7%" style="text-align:center;vertical-align:top">&nbsp;<span class="kdsfont">Çë¶ë×</span></td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td>&nbsp;<span class="kdsfont">Ó¶Þ¸è×¶ ¤Ø¥Û. ¸Û.</span></td>
+                    <td>&nbsp;<span class="kdsfont">¥Û-Æâ²ØÉ ¤Ø¥Û.¸Û.</span></td>
+                    <td>&nbsp;<span class="kdsfont">ÚÆ±ÐÛ Ôñã»Û Âã ÒãÏÒã ÉëÏ¸ : ÏëÐ ÅâÉÏ : ÓèÔÅ : Ó¨ÞÐ ÂØ ÅÙ (¨ë¸)</span></td>
+                    <td>&nbsp;<span class="kdsfont">
+                            @if (Session["FormName"].ToString() == "E1" || Session["FormName"].ToString() == "E2" || Session["FormName"].ToString() == "T1" || Session["FormName"].ToString() == "T2")
+                            {<span>ÌèÚ¶ñ¨ ÆØÓ ¨ÏÅ Âã ÒãÏÒã </span>@*show only 11th & 12th*@
+                        }
+                        else
+                        { }
+                        </span>
+                    </td>
+                    <td>&nbsp;<span class="kdsfont">ÄÏÌ</span></td>
+                    <td>&nbsp;<span class="kdsfont">Æ¾Ø¥Û ÂØ ÌØÚÄ¤Ì</span></td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td>&nbsp;<span class="kdsfont">ÏëÐ Åâ./Óè¨ÓÖÅ</span></td>
+                    <td>&nbsp;<span class="kdsfont">²ÅÌ ÚÌ¼Û</span></td>
+                    <td>&nbsp;<span class="kdsfont">Candidate's / Father's / Mother's Name</span></td>
+                    <td>&nbsp;<span class="kdsfont">ÚÒÐóª» ÓÌÏóÁØ (Æñ¼ÛÓÖ¼¼Ø) : ÉÛ.ÆÛ.¤èÐ</span></td>
+                    <td>&nbsp;<span class="kdsfont">ÚÐâ¬</span></td>
+                    <td>&nbsp;<span class="kdsfont">NSQF ÚÒÓÖØ</span></td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td>&nbsp;<span class="kdsfont">ÏÚ². ÅâÉÏ</span></td>
+                    <td>&nbsp;<span class="kdsfont">ÏÚ².ÂÛ ÚÌ¼Û/Ðï¶ Åâ</span></td>
+                    <td>&nbsp;<span class="kdsfont">ÆñÛÚª¤ØÏÁÛ/ÚÆ¼Ø/ÌØ¼Ø ÂØ ÅÙ (Æâ²ØÉÛ)</span></td>
+                    <td colspan="3">&nbsp;<span class="kdsfont">ÆñÛÚª¤ØÏÁÛ ÂØ ®Ï ÂØ Æ¼Ø  (ÌëÉØ¥ÛÐ ÅâÉÏ)</span></td>
+                    <td rowspan="2">&nbsp;<span class="kdsfont">ÕÓ¼ØªÏ</span></td>
+                </tr>
+                <tr style="background-color:#dfdfdf !important">
+                    <td>&nbsp;<span class="kdsfont"></span></td>
+                    <td>&nbsp;<span class="kdsfont"></span></td>
+                    <td>&nbsp;<span class="kdsfont">Belongs to B.P.L?</span></td>
+                    <td>&nbsp;<span class="kdsfont">Is NRI Candidate?</span></td>
+                    <td colspan="2">&nbsp;<span class="kdsfont">Is Provisional Admission?</span></td>
+                </tr>
+            </thead>
+            @{
+                if (ViewBag.TotalCount > 0)
+                {
+                    int Count = 0;
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        var cat = Model.StoreAllData.Tables[0].Rows[i]["catg"].ToString();
+                        var cls = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                        var SCHl = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                        var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                        var SCHlName = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                        var REGNO = Model.StoreAllData.Tables[0].Rows[i]["Registration_Num"].ToString();
+                        var stdid = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                        var Cname = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                        var CnameP = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name_P"].ToString();
+                        var Fname = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                        var FnameP = Model.StoreAllData.Tables[0].Rows[i]["Father_Name_P"].ToString();
+                        var Mname = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                        var MnameP = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name_P"].ToString();
+                        var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                        var LOT = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                        var GEN = Model.StoreAllData.Tables[0].Rows[i]["gender"].ToString();
+                        var reli = Model.StoreAllData.Tables[0].Rows[i]["Religion"].ToString();
+                        var caste = Model.StoreAllData.Tables[0].Rows[i]["Caste"].ToString();
+
+                        var address = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+                        var mob = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                        var aadhar = Model.StoreAllData.Tables[0].Rows[i]["Aadhar_num"].ToString();
+                        var StdPhoto = Model.StoreAllData.Tables[0].Rows[i]["CandPhoto"].ToString();
+                        var stdSign = Model.StoreAllData.Tables[0].Rows[i]["CandSign"].ToString();
+                        var NamDetailsE = Model.StoreAllData.Tables[0].Rows[i]["NamDetailsE"].ToString();
+                        var NamDetailsP = Model.StoreAllData.Tables[0].Rows[i]["NamDetailsP"].ToString();
+                        var CurrentClassDetails = Model.StoreAllData.Tables[0].Rows[i]["CurrentClassDetails"].ToString();
+
+                        var BPL = Model.StoreAllData.Tables[0].Rows[i]["Belongs_BPL"].ToString();
+                        var Epunid = Model.StoreAllData.Tables[0].Rows[i]["E_punjab_Std_id"].ToString();
+                        var DA = Model.StoreAllData.Tables[0].Rows[i]["Differently_Abled"].ToString();
+                        var DP = Model.StoreAllData.Tables[0].Rows[i]["DP"].ToString();
+                        var WW = Model.StoreAllData.Tables[0].Rows[i]["wantwriter"].ToString();
+
+                        var BoardRoll = Model.StoreAllData.Tables[0].Rows[i]["Board_Roll_Num"].ToString();
+                        var Mon = Model.StoreAllData.Tables[0].Rows[i]["Month"].ToString();
+                        var Year = Model.StoreAllData.Tables[0].Rows[i]["Year"].ToString();
+                        var PersonalInformation = Model.StoreAllData.Tables[0].Rows[i]["PersonalInformation1"].ToString();
+                        var PI = PersonalInformation.Replace("/", " : ");
+                        var admdate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                        var lot = Model.StoreAllData.Tables[0].Rows[i]["lot"].ToString();
+                        var PrevClassInfo = Model.StoreAllData.Tables[0].Rows[i]["PreviousClassInformation"].ToString();
+                        var PCI = PrevClassInfo.Replace("/", ":");
+                        var FullAddress = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+                        var SubjectList = Model.StoreAllData.Tables[0].Rows[i]["SubjectList"].ToString();
+                        var Roll = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                        var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                        var EpunjabStdid = Model.StoreAllData.Tables[0].Rows[i]["E_punjab_Std_id"].ToString();
+
+                        var AWREGNO = Model.StoreAllData.Tables[0].Rows[i]["AWRegisterNo"].ToString();
+                        var AdmissionNo = Model.StoreAllData.Tables[0].Rows[i]["Admission_Num"].ToString();
+                        var AdmissionDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+
+                        var stydyMedium = Model.StoreAllData.Tables[0].Rows[i]["CandStudyMedium"].ToString();
+                        var NSQF = Model.StoreAllData.Tables[0].Rows[i]["NSQF_SUB"].ToString();
+                        var cd = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString();
+                        var ud = Model.StoreAllData.Tables[0].Rows[i]["UpdatedDate"].ToString();
+                        var MD = Model.StoreAllData.Tables[0].Rows[i]["MatricDetails"].ToString();
+                        var GroupName = Model.StoreAllData.Tables[0].Rows[i]["GroupName"].ToString();
+                        var Sublist = Model.StoreAllData.Tables[0].Rows[i]["SubjectList"].ToString();
+                        //
+                        var IsNRICandidate = Model.StoreAllData.Tables[0].Rows[i]["IsNRICandidate"].ToString();
+                        var IsBPL = Model.StoreAllData.Tables[0].Rows[i]["IsBPL"].ToString();
+                        var IsProvisional = Model.StoreAllData.Tables[0].Rows[i]["IsProvisional"].ToString();
+						
+						//
+						
+						var CandPhotoFullPath = Model.StoreAllData.Tables[0].Rows[i]["CandPhotoFullPath"].ToString();
+                        var CandSignFullPath = Model.StoreAllData.Tables[0].Rows[i]["CandSignFullPath"].ToString();
+                        Count = i + 1;
+                        <tr>
+                            <td colspan="7">&nbsp;Group : @GroupName</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;@Count</td>
+                            <td>&nbsp;@aadhar</td>
+                            <td>&nbsp;@cat</td>
+                            <td>&nbsp;@AWREGNO : @AdmissionNo : @AdmissionDate</td>
+                            <td>&nbsp;@caste</td>
+                            <td>&nbsp;@cd : @ud</td>
+                            <td rowspan="3" style="text-align:center;vertical-align:top;padding-top:10px">
+							@if (Session["FormName"].ToString() != "" )
+                                {
+                                   // string path = "../../upload/Upload2023/" + @StdPhoto;
+								   
+								   string path =  @CandPhotoFullPath;
+                                    <img src="@path" style="background-color:#000!important;padding:1px !important" alt="Photo" height="60px" width="60px" />
+                                }
+							
+							                            </td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;@stdid</td>
+                            <td>&nbsp;@EpunjabStdid</td>
+                            <td style="height:49px">&nbsp;@PCI</td>
+                            @*40px*@
+                            <td>
+                                &nbsp;@if (Session["FormName"].ToString() == "E1" || Session["FormName"].ToString() == "E2" || Session["FormName"].ToString() == "T1" || Session["FormName"].ToString() == "T2")
+                                {<span>@MD</span>}
+                            else { }
+                            </td>
+                            <td>&nbsp;@reli</td>
+                            <td>&nbsp;@stydyMedium</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;@Roll / @sec</td>
+                            <td>
+                                &nbsp;@if (@Session["FormName"].ToString() == "" || @Session["FormName"].ToString() == "")
+                                {
+                                }
+                                else
+                                {
+                                    @DOB
+                                }
+                            </td>
+                            <td>&nbsp;@NamDetailsE</td>
+                            <td>&nbsp;@DA (@DP %) : @WW : @BPL</td>
+                            <td>&nbsp;@GEN</td>
+                            <td style="font-size:8px">&nbsp;@NSQF</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;@REGNO</td>
+                            <td>&nbsp;@LOT</td>
+                            <td>&nbsp;<span class="kdsfont">@NamDetailsP</span></td>
+                            <td colspan="3">&nbsp;@address (@mob)</td>
+                            <td rowspan="2" style="text-align:center;vertical-align:top;padding-top:2px">	
+@if (Session["FormName"].ToString() != "" )
+                                {
+                                    //string pathSign = "../../upload/Upload2023/" + @stdSign;
+									
+									 string pathSign =  @CandSignFullPath;
+                                    <img src="@pathSign" alt="Signature" style="background-color:#000!important;padding:1px !important" height="20px" width="60px" />
+                                }
+
+							
+														
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+							 <td>&nbsp;@IsBPL</td>
+                            <td>&nbsp;@IsNRICandidate</td>                           
+                            <td colspan="2">&nbsp;@IsProvisional</td>
+                        </tr>
+                        if (@Session["FormName"].ToString() == "N1" || @Session["FormName"].ToString() == "N2" || @Session["FormName"].ToString() == "N3")
+                        {
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td height="35px">&nbsp;Subject List</td>
+                                <td colspan="6">&nbsp;@Sublist</td>
+                            </tr>
+                        }
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>
+                    }
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            //alert(value);
+            if (value == "") {
+                // $("#reqsession").slideUp("slow");
+                //("#reqsession").slideDown("slow");
+                alert("Please Select One");
+                return false;
+            }
+            else if (value == 1) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = true;
+
+            }
+            else if (value == 3 || value == 4 || value == 5 || value == 6) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+    });
+</script>
+

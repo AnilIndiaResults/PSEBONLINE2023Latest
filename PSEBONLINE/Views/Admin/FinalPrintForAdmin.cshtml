@@ -1,0 +1,497 @@
+﻿@model PSEBONLINE.Models.ChallanMasterModel
+@{
+    ViewBag.Title = "FinalPrint";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .nlink a {
+        padding-right: 10px;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<script>
+    //function myFunction() {
+    //    window.print();
+    //}
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+
+        window.print();
+
+        document.body.innerHTML = originalContents;
+    }
+</script>
+<h1>Final Print</h1>
+
+@*<p style="text-align:center;font-size:24px;color:#f00">If you already deposited amount in Bank, then please Enter Fee Deposit Details and don't Re-Generate challan.</p>*@
+
+
+@using (Html.BeginForm("FinalPrintForAdmin", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+
+    <div class="row">
+        <div class="col-md-6">
+            @Html.TextBox("schl", null, null, new { })
+        </div>
+        <div class="col-md-6">
+            <input type="submit" value="Search">
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="divall">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="t01">
+                        <tr class="active-tr">
+                            <th>Sr.No</th>
+                            <th>Lotno</th>
+                            <th>Form Count</th>
+                            <th>Name of Bank</th>
+                            <th>Challan ID</th>
+                            <th>Generate Date</th>
+                            <th>Valid Date</th>
+                            <th>Fee+Late Fee = Total</th>
+                            <th>Challan Status</th>
+                            <th>Action</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                if (Model.ChallanMasterData.Tables[0].Rows.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.ChallanMasterData.Tables[0].Rows.Count; i++)
+                                    {
+                                        var IsCancel = Model.ChallanMasterData.Tables[0].Rows[i]["IsCancel"].ToString();
+                                        var Lotno = Model.ChallanMasterData.Tables[0].Rows[i]["LOT"].ToString();
+                                        var FormCount = Model.ChallanMasterData.Tables[0].Rows[i]["FormCount"].ToString();
+                                        var Bank = Model.ChallanMasterData.Tables[0].Rows[i]["Bank"].ToString();
+                                        var ChallanNo = Model.ChallanMasterData.Tables[0].Rows[i]["ChallanId"].ToString();
+                                        var ChallanDate = Model.ChallanMasterData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                                        var ChallanVDate = Model.ChallanMasterData.Tables[0].Rows[i]["CHLNVDATE"].ToString();
+                                        var ChallanVerifiedOn = Model.ChallanMasterData.Tables[0].Rows[i]["ChallanVerifiedOn"].ToString();
+                                        var TotalFee = Model.ChallanMasterData.Tables[0].Rows[i]["TotalFee"].ToString();
+                                        var FEE = Model.ChallanMasterData.Tables[0].Rows[i]["FEE"].ToString();
+                                        var LateFee = Model.ChallanMasterData.Tables[0].Rows[i]["LateFee"].ToString();
+                                        var showfee = FEE.ToString() + " + " + LateFee.ToString() + " = " + TotalFee.ToString();
+
+                                        var Status = Model.ChallanMasterData.Tables[0].Rows[i]["Status"].ToString();
+                                        var StudentList = Model.ChallanMasterData.Tables[0].Rows[i]["StudentList"].ToString();
+                                        var StatusNumber = Model.ChallanMasterData.Tables[0].Rows[i]["StatusNumber"].ToString();
+                                        // 0 - Gen , 1-Download,2-verified
+                                        var ExpireVDate = Model.ChallanMasterData.Tables[0].Rows[i]["ExpireVDate"].ToString();
+                                        //1 : Expire , 0-Not expire
+                                        var FeeDepositStatus = Model.ChallanMasterData.Tables[0].Rows[i]["FeeDepositStatus"].ToString();
+                                        //1 : Filled , 0-Not Filled
+                                        var Verified = Model.ChallanMasterData.Tables[0].Rows[i]["verified"].ToString();
+                                        //
+                                        var downldflg = Model.ChallanMasterData.Tables[0].Rows[i]["downldflg"].ToString();
+                                        var BCODE = Model.ChallanMasterData.Tables[0].Rows[i]["BCODE"].ToString();
+
+                                        var OfflineDate = Model.ChallanMasterData.Tables[0].Rows[i]["OfflineDate"].ToString();
+                                        var IsOfflineAllow = Model.ChallanMasterData.Tables[0].Rows[i]["IsOfflineAllow"].ToString();
+                                        var DupStatus = Model.ChallanMasterData.Tables[0].Rows[i]["DupStatus"].ToString();
+
+                                        //1 : Verified , 0-Not Verified
+                                        int Count = i + 1;
+                                        <tr>
+                                            <td align="center">@Count</td>
+                                            <td align="center">@Lotno</td>
+                                            <td align="center">@FormCount</td>
+                                            <td align="center">@Bank</td>
+                                            <td align="center">@ChallanNo</td>
+                                            <td align="center">@ChallanDate</td>
+                                            <td align="center">@ChallanVDate</td>
+                                            <td align="center"> @showfee</td>
+                                            <td align="center">@Status</td>
+                                            <td align="center" class="nlink">
+                                                @if (FormCount != "")
+                                                {
+                                                    <div class="cart">
+                                                        Choose Action <span class="caret"></span>
+                                                        <div id="sidebar">
+                                                            <ul>
+
+                                                                <li><a href="" data-toggle="modal" data-target="#myModal1-@ChallanNo">View Candidate List</a></li>
+                                                                <li>
+                                                                    @* 0-> Not Expired  ,  1-> Expired *@
+
+                                                                    @if (StatusNumber.ToString() == "0")//Challan Generated
+                                                                    {
+                                                                        @* 0-> Not Expired  ,  1-> Expired *@
+                                                                    if (ExpireVDate.ToString() == "0" && FeeDepositStatus.ToString() == "0")
+                                                                    {
+                                                                            @Html.ActionLink("Print Challan", "GenerateChallaan", new { ChallanId = @ChallanNo })
+
+                                                                        }
+                                                                    }
+                                                                    else if (StatusNumber.ToString() == "2") // Challan/Fee Verified : Date
+                                                                    {
+                                                                        //Candidate List :: Final Print (Fee Verified By Bank)
+                                                                        if (Verified.ToString() == "1")
+                                                                        {
+                                                                            @*<span> Final Print will be live soon. Watch out this space for further update.</span>*@
+                                                                            @Html.ActionLink("Final Print", "FinalReport", new { schl = Model.ChallanMasterData.Tables[0].Rows[i]["SchoolCode"].ToString(), lot = @Lotno, Challanid = @ChallanNo })
+                                                                        }
+
+                                                                    }
+                                                                    else if (StatusNumber.ToString() == "1") //Downloaded by Bank : Date
+                                                                    {
+                                                                        @* 0-> Not Expired  ,  1-> Expired *@
+                                                                        //Candidate List :: Enter Fee Deposit Details :: Regenerate Challan (Valid Date corrosed & Fee Details not Entered)
+                                                                        if (ExpireVDate.ToString() == "0" && FeeDepositStatus.ToString() == "0")
+                                                                        {
+                                                                            @Html.ActionLink("Print Challan", "GenerateChallaan", new { ChallanId = @ChallanNo })
+                                                                            @Html.ActionLink("Enter Fee Deposit Details", "FeeDepositDetails", new { id = @ChallanNo })
+                                                                        }
+                                                                        else if (FeeDepositStatus.ToString() == "1")
+                                                                        {
+                                                                            <span>Challan Verification Pending</span>
+                                                                            if (BCODE == "204" || BCODE == "202")
+                                                                            {
+
+                                                                                if (IsOfflineAllow == "1")
+                                                                                {
+                                                                                    <button type="button" class="" data-toggle="modal" data-target="#myModal-@ChallanNo" onclick="return confirm('If you already deposited amount in Bank then please dont regenerate challan. Are you sure to Re-Generate Challan or Cancel?');">Re-Generate Challan</button>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <a data-toggle="modal" data-target="#myModal2-@ChallanNo">CANCEL CHALLAN</a>
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else if (ExpireVDate.ToString() == "1" && FeeDepositStatus.ToString() == "0" && IsCancel == "0")
+                                                                        {
+                                                                            @Html.ActionLink("Enter Fee Deposit Details", "FeeDepositDetails", new { id = @ChallanNo })
+
+                                                                            if (BCODE == "204" || BCODE == "202")
+                                                                            {
+                                                                                if (IsOfflineAllow == "1")
+                                                                                {
+                                                                                    <button type="button" class="" data-toggle="modal" data-target="#myModal-@ChallanNo" onclick="return confirm('If you already deposited amount in Bank then please dont regenerate challan. Are you sure to Re-Generate Challan or Cancel?');">Re-Generate Challan</button>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <a data-toggle="modal" data-target="#myModal2-@ChallanNo">CANCEL CHALLAN</a>
+                                                                                }
+
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    @if (@Model.ChallanMasterData.Tables[0].Rows[i]["Verified"].ToString() == "0" && @Model.ChallanMasterData.Tables[0].Rows[i]["downldflg"].ToString() == "0" && IsCancel == "0")
+                                                                    {
+                                                                        <a data-toggle="modal" data-target="#myModal2-@ChallanNo">CANCEL CHALLAN</a>
+                                                                    }
+                                                                </li>
+
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="rqf">@DupStatus</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-center"><a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a></div>
+    </div>
+
+
+                            }
+
+    @{
+        if (Session["resultReGenerate"] != null)
+        {
+            if (Session["resultReGenerate"].ToString() == "1")
+            {
+                @ViewBag.Message
+            }
+            else if (Session["resultReGenerate"].ToString() == "0")
+            {
+                @ViewBag.Message
+            }
+        }
+    }
+
+    @if (Model != null)
+    {
+        if (ViewBag.TotalCount > 0)
+        {
+            int k = 0;
+            for (int i = 0; i < Model.ChallanMasterData.Tables[0].Rows.Count; i++)
+            {
+                var ChallanID = Model.ChallanMasterData.Tables[0].Rows[i]["ChallanID"].ToString();
+                k = i + 1;
+                <div class="container">
+                    <div class="modal fade" id="myModal1-@ChallanID" role="dialog">
+                        <div class="modal-dialog" style="width:80%">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h3><span style="color:#cc0000">Count : @Model.ChallanMasterData.Tables[1].Select("Challanid = '" + ChallanID + "'").Count()</span>&nbsp; | &nbsp;Student Details of Challan Id :  @ChallanID</h3>
+                                </div>
+
+                                <div class="modal-body">
+                                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                        <thead>
+                                            <tr class="active-tr">
+                                                <td>Form</td>
+                                                <td>CandID</td>
+                                                <td>RegNo</td>
+                                                <td>Name</td>
+                                                <td>Father Name</td>
+                                                <td>Mother Name</td>
+                                                <td>DOB</td>
+                                                <td>Photo</td>
+                                                <td>Sign</td>
+                                                <td>Lot</td>
+                                            </tr>
+                                        </thead>
+
+                                        @for (int s = 0; s < Model.ChallanMasterData.Tables[1].Rows.Count; s++)
+                                        {
+                                            var chlnid = Model.ChallanMasterData.Tables[1].Rows[s]["ChallanID"].ToString();
+                                            var Std_id = Model.ChallanMasterData.Tables[1].Rows[s]["Std_id"].ToString();
+                                            var LOT = Model.ChallanMasterData.Tables[1].Rows[s]["LOT"].ToString();
+                                            var form_Name = Model.ChallanMasterData.Tables[1].Rows[s]["form_Name"].ToString();
+                                            var Registration_num = Model.ChallanMasterData.Tables[1].Rows[s]["Registration_num"].ToString();
+                                            var Candi_Name = Model.ChallanMasterData.Tables[1].Rows[s]["Candi_Name"].ToString();
+                                            var Father_Name = Model.ChallanMasterData.Tables[1].Rows[s]["Father_Name"].ToString();
+                                            var Mother_Name = Model.ChallanMasterData.Tables[1].Rows[s]["Mother_Name"].ToString();
+                                            var Photo = Model.ChallanMasterData.Tables[1].Rows[s]["std_Photo"].ToString();
+                                            var Sign = Model.ChallanMasterData.Tables[1].Rows[s]["std_Sign"].ToString();
+                                            var DOB = Model.ChallanMasterData.Tables[1].Rows[s]["DOB"].ToString();
+                                            if (ChallanID == chlnid)
+                                            {
+                                                <tr style="font-size:11px">
+                                                    <td>@form_Name</td>
+                                                    <td>@Std_id</td>
+                                                    <td>@Registration_num</td>
+                                                    <td>@Candi_Name</td>
+                                                    <td>@Father_Name</td>
+                                                    <td>@Mother_Name</td>
+                                                    <td>@DOB</td>
+                                                    <td>
+                                                        @if (form_Name == "N1" || form_Name == "N2" || form_Name == "N3" || form_Name == "M1" || form_Name == "E1" || form_Name == "E2" || form_Name == "N3" || form_Name == "M2" || form_Name == "T1" || form_Name == "T2")
+                                                        {
+                                                            <img src="@Photo" style="width:35px;height:35px;background-color:#000 !important;padding:1px !important;" alt="Photograph" id="imgPhoto" />
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (form_Name == "N1" || form_Name == "N2" || form_Name == "N3" || form_Name == "M1" || form_Name == "E1" || form_Name == "E2" || form_Name == "N3" || form_Name == "M2" || form_Name == "T1" || form_Name == "T2")
+                                                        {
+                                                            <img src="@Sign" style="height:35px;width:35px;background-color:#000 !important;padding:1px !important" alt="Signature" id="img1" />
+                                                        }
+                                                    </td>
+                                                    <td>@LOT</td>
+                                                </tr>
+                                            }
+                                        }
+
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="myModal2-@ChallanID" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h3>Cancel Challan of @ChallanID </h3>
+                                    <h5 class="rqf">Warning : After cancelation of challan, New Fee/Fine will be applicable according current date. If fee already paid against this challan then don't cancel this challan and wait for 2-3 days or contact with PSEB</h5>
+                                </div>
+                                <div class="modal-body">
+                                    Cancel Remarks <textarea id="cancelremarks-@ChallanID" name="cancelremarks"></textarea>
+                                    <input type="button" class="btn" value="Submit" id="btnsubmitCancel" onclick="cancelChallan(@ChallanID)" />
+                                    <div id="loading1"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="myModal-@ChallanID" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content" id="printableArea">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Re-Generate Challan</h4>
+                                    <p style="text-align:center;font-size:18px;color:#f00">If you already deposit amount in Bank then please dont Re-Generate Challan. Are you sure to Re-Generate Challan or Cancel?</p>
+                                </div>
+                                <div class="modal-body">
+                                    <center> <input type="text" id="txtChallanNo-@ChallanID" name="txtChallanNo" value="@ChallanID" readonly /></center>
+                                    <input name="SBI-@ChallanID" id="SBI-@ChallanID" type="radio" value="204"><img src="~/Images/SBIbank.png" width="150" />
+                                    <input name="PNB-@ChallanID" id="PNB-@ChallanID" type="radio" value="202"><img src="~/Images/PNBbank.gif" width="150" />  <br />
+                                    <input type="button" class="btn" value="Click here to Re-Generate Challan" id="btnSend" onclick="Send(@ChallanID)" />
+                                    <div id="loading1-@ChallanID"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    @*  <input type="button" onclick="printDiv('printableArea')" value="Print" />*@
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            }
+        }
+    }
+
+
+
+
+    <script type="text/javascript">
+
+        function Send(k) {
+            var txtChallanNo = '#txtChallanNo-' + k;
+            // alert("Start  Re-Generate Challan " + txtChallanNo);
+
+            var SBIa = document.getElementById("SBI-" + k).checked;
+            var PNBa = document.getElementById("PNB-" + k).checked;
+            var BCODE = "";
+            if (SBIa == false && PNBa == false) {
+                alert("Please Select Any Bank");
+                return false;
+            }
+            else if (SBIa == true && PNBa == true) {
+                alert("Please Select Only 1 Bank Either SBI or PNB");
+                document.getElementById("SBI-" + k).checked = false;
+                document.getElementById("PNB-" + k).checked = false;
+                return false;
+            }
+            else {
+                if (document.getElementById("SBI-" + k).checked == true) { BCODE = "204"; }
+                else if (document.getElementById("PNB-" + k).checked == true) { BCODE = "202"; }
+                else { BCODE = ""; }
+            }
+
+            if (BCODE == "") {
+                alert('Please Select Bank')
+                return false;
+            }
+            else if ($('#txtChallanNo-' + k).val() == "") {
+                $('#txtChallanNo-' + k).addClass("input-validation-error");
+                return false;
+            }
+            else {
+                //  alert('Now Re-Generate Challan of :' + $('#txtChallanNo-' + k).val())
+                // $('#Main1').hide();
+                $('#loading1-' + k).html("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/jqReGenerateChallaanNew",
+                    data: '{ChallanId:"' + $('#txtChallanNo-' + k).val() + '", BCODE:"' + BCODE + '" }',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: OnSuccess,
+                    failure: function (response) {
+                        alert(response);
+                        $('#loading1-' + k).empty();
+                    }
+                });
+                function OnSuccess(response) {
+                    if (response.dee == "1") {
+                        alert("Challan Re-Generated Successfully & Your Challan ID is " + response.chid);
+                        $("#myModal-" + k).hide();
+                        $('#loading1-' + k).empty();
+                        window.open("/Home/GenerateChallaan?ChallanId=" + response.chid, "_blank");
+                    }
+                    else {
+                        alert("Something Went Wrong, Please Try Again.");
+                        $('#loading1-' + k).empty();
+                    }
+                }
+            }
+        }
+
+
+        //Cancel
+        function cancelChallan(challanid) {
+
+            // alert($("#cancelremarks-" + k).val());
+            var flag = 0;
+            if ($("#cancelremarks-" + challanid).val() == "") {
+                $("#cancelremarks-" + challanid).addClass("input-validation-error");
+                flag = 1;
+            }
+            if (flag == 1) {
+                return false;
+            }
+            else {
+                $('#loading1').html("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+                $.ajax({
+                    type: "POST",
+                    url: "../Home/CancelOfflineChallanBySchl", // this for calling the web method function in cs code.
+                    data: '{cancelremarks: "' + $("#cancelremarks-" + challanid).val() + '",challanid: "' + challanid + '", "Type": 1}',// user name or email value
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.sn == "1") {
+                            alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                            // alert("Challan Cancel Successfully");
+                            $('#myModal2-' + challanid).modal('hide');
+                            $('#loading1').empty();
+                        }
+                        else if (response.sn == "2") {
+                            //  alert("Challan Cancel Successfully & Your Challan ID is " + response.chid);
+                            alert("Challan Failure...Student exists in Examination Form");
+                            $('#myModal2-' + challanid).modal('hide');
+                            $('#loading1').empty();
+                        }
+                        else {
+                            $('#loading1').empty();
+                            alert("Challan Not Found/Expired.");
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response);
+                    }
+                });
+                //alert("All is Well");
+            }
+        }
+
+    </script>
+
+
+
+
+

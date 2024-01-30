@@ -1,0 +1,388 @@
+﻿
+@{
+    ViewBag.Title = "AccountReportDetails";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/cardprintr.css" />
+<h1 class="noprint">Date Wise Fee Collection Details</h1>
+<div class="row">
+    <div class="col-md-12 noprint">
+        @using (Html.BeginForm("AccountReportDetails", "Report", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+        {
+            if (Model != null)
+            {
+<fieldset style="margin-bottom:15px">
+    <legend>Search</legend>
+    <div class="col-md-3">
+        Search By @Html.DropDownList("SelClass", new SelectList(ViewBag.Mycls, "Value", "Text", ViewBag.Selectedcls), "--Select---", new { @class = "", id = "SelClass" })
+    </div>
+    <div class="col-md-3">
+        Bank @Html.DropDownList("Bank", new SelectList(ViewBag.MyBank, "Value", "Text", ViewBag.SelectedBank), "--All---", new { @class = "", })
+    </div>
+    <div class="col-md-3">
+        Fee Category
+        @Html.ListBox("FEECAT", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), new { id = "FEECAT", @class = "selectPicker show-tick form-control input-md" })
+
+    </div>
+    <div class="col-md-3">
+        Date Type @Html.DropDownList("DateType", new SelectList(ViewBag.MyDateType, "Value", "Text", ViewBag.SelectedDateType), "--Select---", new { @class = "", id = "DateType", @required = "required" })
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-3">
+        From Date <input type="text" onkeypress="return false" required id="FromDate" name="FromDate" class="date" value="@Request["FromDate"]" />
+    </div>
+    <div class="col-md-3">
+        To Date <input type="text" onkeypress="return false" required id="ToDate" name="ToDate" class="date" value="@Request["ToDate"]" />
+    </div>
+    <div class="col-md-6">
+        <br /><input type="submit" name="submit" value="Search" class="btn" onclick="return formValSearch();" />
+        <input type="submit" value="Download Challan Master Data" class="btn" name="submit" onclick="return formValDownload();" />
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-left noprint">
+        Note :<br />
+        1. Search -> Selection of Search by, FromDate, ToDate are Mandatory<br />
+        2. Download Challan Data -> Selection of Bank, FromDate, ToDate are Mandatory
+    </div>
+</fieldset>}
+            }
+    </div>
+
+    <div class="clearfix"></div>
+    @if (ViewBag.TotalCount > 0)
+    {
+<div class="col-md-12 text-right noprint">
+    <input type="button" value="Print" class="btn" onclick="window.print()" />
+    <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+</div>}
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+
+        @if (ViewBag.Selectedcls != null)
+        {
+            if (ViewBag.Selectedcls == "1" || ViewBag.Selectedcls == "2")
+            {
+<div style="border:1px solid #fff !important;display:block;margin-bottom:30px">
+    <table border="1" width="100%" class="tprint">
+        <thead>
+            <tr>
+                <td style="border-right:0 !important" width="15%" colspan="2"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                <td colspan="3" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                    <span style="font-size:28px">Punjab School Education Board</span><br /><span>Date & Fee Head Wise Fee Collection Report(Session @Session["session"].ToString())</span>
+                </td>
+
+                <td style="text-align:right;border-left:0 !important;border-right:0 !important;" width="15%">  Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+            </tr>
+            <tr style="font-size:medium;">
+                <td></td>
+                <td colspan="4" align="center">Date Range : @ViewBag.FromDate to @ViewBag.ToDate</td>
+                <td align="right">
+                    @if (ViewBag.SelectedBank != null)
+                    {
+                        if (ViewBag.SelectedBank == "202")
+                        {<span>PNB</span> }
+                        else if (ViewBag.SelectedBank == "204")
+                        {<span>SBI</span> }
+                        else if (ViewBag.SelectedBank == "203")
+                        {<span>HOD</span> }
+                        else if (ViewBag.SelectedBank == "301")
+                        {<span>HDFC</span> }
+                        else if (ViewBag.SelectedBank == "302")
+                        {<span> PNSB</span> }
+                        else
+                        {<span>All</span> }
+                    }
+                    else
+                    {<span>All</span>}
+                </td>
+            </tr>
+            <tr>
+                <td width="10%">&nbsp;S.No</td>
+                <td width="15%" colspan="2">&nbsp;Date</td>
+                <td width="25%">&nbsp;Fee Head Name</td>
+                <td width="25%">
+                    &nbsp;
+                    @if (ViewBag.Selectedcls != null)
+                    {
+                        if (ViewBag.Selectedcls == "1")
+                        {<span>Bank</span> }
+                        else
+                        {<span>Branch</span>}
+                    }
+
+                </td>
+                <td width="15%">&nbsp;Total Fee</td>
+            </tr>
+        </thead>
+        @{ if (ViewBag.TotalCount > 0)
+                                {
+                                    int Count = 0;
+                                    int total = 0;
+                                    int total1 = 0;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        Count = Count + 1;
+                                        var VerifyDate = Model.StoreAllData.Tables[0].Rows[i]["VerifyDate"].ToString();
+                                        var FEECAT = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                                        var BANK = Model.StoreAllData.Tables[0].Rows[i]["BANK"].ToString();
+                                        var TOTFEE = Model.StoreAllData.Tables[0].Rows[i]["TOTFEE"].ToString();
+                                        var RM = Model.StoreAllData.Tables[0].Rows[i]["RM"].ToString();
+                                        int TOTFEE1 = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["TOTFEE"].ToString());
+
+                                        if (RM == "1" && i > 0)
+                                        {
+                                            total1 = total;
+                                            total = TOTFEE1;
+            <tr style="font-size:medium">
+                <td colspan="5" align="center">Total  of @Model.StoreAllData.Tables[0].Rows[i - 1]["VerifyDate"].ToString() : </td>
+                <td><b>@total1</b></td>
+            </tr> }
+                                        else
+                                        {
+                                            total += TOTFEE1;
+                                        }
+
+            <tr>
+                <td>&nbsp;@RM</td>
+                <td colspan="2">&nbsp;@VerifyDate</td>
+                <td>&nbsp;@FEECAT</td>
+                <td>&nbsp;@BANK</td>
+                <td>&nbsp;@TOTFEE</td>
+            </tr> if (RM != "1" && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
+                                        {
+            <tr style="font-size:medium">
+                <td colspan="5" align="center">Total  of @Model.StoreAllData.Tables[0].Rows[i - 1]["VerifyDate"].ToString() : </td>
+                <td><b>@total</b></td>
+            </tr> }
+
+                                    }
+                                } }
+        <tr>
+            <td colspan="5" style="text-align:right;font-size:16px">Total &nbsp; @*Amount(In Words) :&nbsp;@ViewBag.AmountInWords*@</td>
+            <td style="font-size:16px">&nbsp;@ViewBag.Total</td>
+        </tr>
+    </table>
+
+
+
+</div> }
+                else if (ViewBag.Selectedcls == "3")
+                { @*Date Wise*@
+
+                                    <div style="border:1px solid #fff !important;display:block;margin-bottom:30px">
+                                        <table border="1" width="100%" class="tprint">
+                                            <thead>
+                                                <tr>
+                                                    <td style="border-right:0 !important" colspan="2"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                                                    <td style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                                                        <span style="font-size:28px">Punjab School Education Board</span><br /><span>Date Wise Fee Collection Report (Session @Session["session"].ToString())</span>
+                                                    </td>
+                                                    <td style="text-align:right;border-left:0 !important;">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3" align="left">&nbsp;Date Range : @ViewBag.FromDate to @ViewBag.ToDate</td>
+                                                    <td align="left">
+                                                        &nbsp;
+                                                        @if (ViewBag.SelectedBank != null)
+                                                        {
+                                                            if (ViewBag.SelectedBank == "202")
+                                                            {<span>PNB</span> }
+                                                            else if (ViewBag.SelectedBank == "204")
+                                                            {<span>SBI</span> }
+                                                            else if (ViewBag.SelectedBank == "203")
+                                                            {<span>HOD</span> }
+                                                            else if (ViewBag.SelectedBank == "301")
+                                                            {<span>HDFC</span> }
+                                                            else if (ViewBag.SelectedBank == "302")
+                                                            {<span> PNSB</span> }
+                                                            else
+                                                            {<span>All</span> }
+                                                        }
+                                                        else
+                                                        {<span>All</span>}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="10%">&nbsp;Sr No</td>
+                                                    <td width="10%">&nbsp;Date</td>
+                                                    <td width="60%">&nbsp;Day Name</td>
+                                                    <td width="20%">&nbsp;Total Fee</td>
+                                                </tr>
+                                            </thead>
+                                            @{ if (ViewBag.TotalCount > 0)
+                                                                    {
+                                                                        int Count = 0;
+                                                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                                                        {
+                                                                            Count = Count + 1;
+                                                                            var MM = Model.StoreAllData.Tables[0].Rows[i]["MM"].ToString();
+                                                                            var VerifyDate = Model.StoreAllData.Tables[0].Rows[i]["VerifyDate"].ToString();
+                                                                            var TOTFEE = Model.StoreAllData.Tables[0].Rows[i]["TOTFEE"].ToString();
+                                                <tr>
+                                                    <td>&nbsp;@Count</td>
+                                                    <td>&nbsp;@VerifyDate</td>
+                                                    <td>&nbsp;@MM</td>
+                                                    <td>&nbsp;@TOTFEE</td>
+                                                </tr> }
+                                                                    } }
+                                            <tr>
+                                                <td colspan="3" style="text-align:right;font-size:16px">&nbsp;Total &nbsp;@*Amount(In Words): &nbsp;@ViewBag.AmountInWords*@</td>
+                                                <td style="font-size:16px">&nbsp;@ViewBag.Total</td>
+                                            </tr>
+                                        </table>
+                                    </div> }
+
+                                                    else if (ViewBag.Selectedcls == "4")
+                                                    {
+                                    <div style="border:1px solid #fff !important;display:block;margin-bottom:30px">
+                                        <table border="1" width="100%" class="tprint">
+                                            <thead>
+                                                <tr>
+                                                    <td style="border-right:0 !important" width="15%"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                                                    <td colspan="2" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                                                        <span style="font-size:28px">Punjab School Education Board</span><br /><span>Bank & Fee Head Wise Fee Collection Report(Session @Session["session"].ToString())</span>
+                                                    </td>
+
+                                                    <td style="text-align:right;border-left:0 !important;border-right:0 !important;" width="15%">  Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                                                </tr>
+                                                <tr style="font-size:medium;">
+                                                    <td></td>
+                                                    <td colspan="2" align="center">Date Range : @ViewBag.FromDate to @ViewBag.ToDate</td>
+                                                    <td align="right">
+                                                        @if (ViewBag.SelectedBank != null)
+                                                        {
+                                                            if (ViewBag.SelectedBank == "202")
+                                                            {<span>PNB</span> }
+                                                            else if (ViewBag.SelectedBank == "204")
+                                                            {<span>SBI</span> }
+                                                            else if (ViewBag.SelectedBank == "203")
+                                                            {<span>HOD</span> }
+                                                            else if (ViewBag.SelectedBank == "301")
+                                                            {<span>HDFC</span> }
+                                                            else if (ViewBag.SelectedBank == "302")
+                                                            {<span> PNSB</span> }
+                                                            else
+                                                            {<span>All</span> }
+                                                        }
+                                                        else
+                                                        {<span>All</span>}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="10%">&nbsp;S.No</td>
+                                                    <td width="25%">&nbsp;Fee Head Name</td>
+                                                    <td width="25%">&nbsp;Bank</td>
+                                                    <td width="15%">&nbsp;Total Fee</td>
+                                                </tr>
+                                            </thead>
+                                            @{ if (ViewBag.TotalCount > 0)
+                                                                    {
+                                                                        int Count = 0;
+                                                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                                                        {
+                                                                            Count = Count + 1;
+                                                                            var FEECAT = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                                                                            var BANK = Model.StoreAllData.Tables[0].Rows[i]["BANK"].ToString();
+                                                                            var TOTFEE = Model.StoreAllData.Tables[0].Rows[i]["TOTFEE"].ToString();
+                                                                            var RM = Model.StoreAllData.Tables[0].Rows[i]["RM"].ToString();
+                                                                            int TOTFEE1 = Convert.ToInt32(Model.StoreAllData.Tables[0].Rows[i]["TOTFEE"].ToString());
+
+                                                <tr>
+                                                    <td>&nbsp;@RM</td>
+                                                    <td>&nbsp;@FEECAT</td>
+                                                    <td>&nbsp;@BANK</td>
+                                                    <td>&nbsp;@TOTFEE</td>
+                                                </tr> }
+                                                                    } }
+                                            <tr>
+                                                <td colspan="3" style="text-align:right;font-size:16px">Total &nbsp; @*Amount(In Words) :&nbsp;@ViewBag.AmountInWords*@</td>
+                                                <td style="font-size:16px">&nbsp;@ViewBag.Total</td>
+                                            </tr>
+                                        </table>
+                                    </div>}
+                                                }
+
+
+
+
+
+
+
+
+    </div>
+
+
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">$(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2019:' + (new Date().getFullYear()),
+            maxDate: 0
+            // defaultDate: "+1w",
+            // setDate: new Date()
+
+        });
+    });
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+
+    //$(document).ready(function () {
+    //    // Enable Live Search.
+    //    $('#FEECAT').attr('data-live-search', true);
+    //    //// Enable multiple select.
+    //    $('#FEECAT').attr('multiple', true);
+    //    $('#FEECAT').attr('data-selected-text-format', 'count');
+
+    //    $('.selectPicker').selectpicker(
+    //        {
+    //            width: '100%',
+    //            title: '--All--',
+    //            style: 'btn-warning',
+    //            size: 6,
+    //            iconBase: 'fa',
+    //            tickIcon: 'fa-check'
+    //        });
+    //});</script>
+
+
+
+<script>function formValDownload() {
+        var Bank = document.getElementById('Bank').value;
+        if (Bank == '' || Bank == '0') {
+            alert("select Bank");
+            document.getElementById('Bank').focus();
+            return false;
+        }
+        return true;
+    }
+
+
+
+    function formValSearch() {
+        var SelClass = document.getElementById('SelClass').value;
+
+        if (SelClass == '' || Bank == '0') {
+            alert("select Search By");
+            document.getElementById('SelClass').focus();
+            return false;
+        }
+
+        return true;
+    }</script>
+

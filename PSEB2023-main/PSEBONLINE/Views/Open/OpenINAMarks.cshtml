@@ -1,0 +1,784 @@
+﻿
+@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Open INA Marks";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>Open-INA Panel For @ViewBag.ClassName (Session <b>@Session["Session"].ToString()</b>) </h1>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+@*
+    <script src="~/Scripts/jquery.json-2.4.min.js"></script>*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#dialog").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to  Final Submit??",
+            width: 450,
+            height: 250,
+            buttons: {
+                "Proceed": function () {
+                    window.location.href = '@Url.Action("OpenINAMarksFinalReport", "Open", new {id = @ViewBag.cid })';
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+        $("#btnShow").click(function () {
+            $('#dialog').dialog('open');
+        });
+    });
+</script>
+
+<p class="rqf">NOTE: ਇਸ ਪੋਰਟਲ ਅਧੀਨ ਸਿਰਫ ਉਹ ਪ੍ਰੀਖਿਆਰਥੀ ਦਿਖਣਗੇ, ਜਿੰਨ੍ਹਾਂ ਦੀ ਬਾਰਵੀਂ ਦੀ ਪ੍ਰੀਖਿਆ ਫੀਸ ਭਰੀ ਹੋਈ ਹੈ, ਰੋਲ ਨੰਬਰ ਅਲਾਟ ਹੋ ਚੁੱਕਾ ਹੈ,  ਰਜਿਸ਼ਟ੍ਰੇਸ਼ਨ ਨੰਬਰ ਵਿੱਚ ਕੋਈ Error ਨਹੀਂ ਹੈ। ਰੋਲ ਨੰਬਰ , INA  ਅਤੇ ਰਜਿਸ਼ਟ੍ਰੇਸ਼ਨ ਨੰਬਰ ਦੀ Error ਹਟਵਾਉਣ ਲਈ  ਪ੍ਰੀਖਿਆ ਸ਼ਾਖਾ  ਨਾਲ ਸੰਪਰਕ ਕੀਤਾ ਜਾਵੇ।</p>
+
+@if (ViewBag.TotalCount > 0)
+{
+    <h3 class="ui-state-highlight"> Last Date  : @Convert.ToDateTime(ViewBag.FinalSubmitLastDate).ToString("dd/MM/yyyy")</h3>
+}
+@using (Html.BeginForm("OpenINAMarks", "Open", FormMethod.Post, new { id = "CCE", enctype = "multipart/form-data" }))
+{
+    DateTime todayDate = DateTime.Now;
+    <fieldset style="margin-bottom:15px">
+        <legend>Search</legend>
+        <form id="myForm">
+            <div class="clearefix"></div>
+            <div class="row">
+                <div class="col-md-2">
+                    Select Action:  @Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), "--All---", new { @class = "" })
+                </div>
+                <div class="col-md-2">
+                    Filter By:  @Html.DropDownList("SelFilter", new SelectList(ViewBag.MyFilter, "Value", "Text", ViewBag.SelectedFilter), "Select", new { @class = "" })
+                </div>
+                <div class="col-md-2">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request[" SearchString"]" />
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <input type="submit" value="Search" />
+                    @Html.Hidden("cid", (string)ViewBag.cid)
+                    <a href="/Open/CCE_Grading_Portal" class="btn">Back</a>
+                    @if (ViewBag.IsFinal != 1 && ViewBag.IsFinal != -1)
+                    {
+                        if (ViewBag.cid == "S")
+                        {
+                            <a href="/Open/OpenINAMarksReport/@ViewBag.cid" class="btn">Print Rough Report</a>
+                            if (ViewBag.IsAllow == "1" && ViewBag.IsActive == "1" && DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                            {
+                                <span class="">
+                                    <input type="button" id="btnShow" class="btn" value="Click here to Final Submit" />
+                                </span>
+                            }
+                            else if (ViewBag.FinalSubmitLastDate != null)
+                            {
+                                DateTime finalSubmitLastDate = Convert.ToDateTime(ViewBag.FinalSubmitLastDate);
+                                if (finalSubmitLastDate.Date >= todayDate.Date)
+                                {
+                                    <input type="button" id="btnShow" class="btn" value="Click here to Final Submit" />
+                                }
+
+                            }
+
+                        }
+                        else if (ViewBag.cid == "M")
+                        {
+                            <a href="/Open/OpenINAMarksReport/@ViewBag.cid" class="btn">Print Rough Report</a>
+                            if (ViewBag.IsAllow == "1" && ViewBag.IsActive == "1" && DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                            { <span class="">
+                                    <input type="button" id="btnShow" class="btn" value="Click here to Final Submit" />
+                                </span>
+                            }
+                            else if (ViewBag.FinalSubmitLastDate != null)
+                            {
+                                DateTime finalSubmitLastDate = Convert.ToDateTime(ViewBag.FinalSubmitLastDate);
+                                if (finalSubmitLastDate.Date >= todayDate.Date)
+                                {
+                                    <input type="button" id="btnShow" class="btn" value="Click here to Final Submit" />
+                                }
+
+                            }
+
+                        }
+                    }
+                    else if (ViewBag.IsFinal == -1)
+                    { }
+                    else
+                    {
+                        if (ViewBag.cid == "S")
+                        {
+
+                            <span><a href="/Open/OpenINAMarksFinalReport/@ViewBag.cid" class="btn">Print Final Report</a></span>
+                        }
+                        else if (ViewBag.cid == "M")
+                        { <span>
+                                <a href="/Open/OpenINAMarksFinalReport/@ViewBag.cid" class="btn">Print Final Report</a>
+                            </span>
+                        }
+                    }
+
+
+                </div>
+            </div>
+
+            <div id="dialog" style="display: none" class="kdsfont">
+                ÓÛ.ÓÛ.¥Û. Âã ¤â¨ ÓÕÛ ¤¼ã ÂÏÝÓ¼ ÊÏã ¬¥ã ÕÅ, Ú¥ÓÂØ ÏÇ ÚÆâñ¶ °èó¨ ¨Ï ÚÐ¤Ø Ú¬¤Ø Õè ¤¼ã Ú¥Ó ÚÒó° ¨ë¥Û ÕëÏ ÓëÄ ÉØ¨Û ÅÕÛ× Õè¢Ìè× Ú¥Ó ÕÂØÚ¥¼ ¼ë× ²Ø»Þ ÕÙ Ú¨ ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¦ÝÆÏâ¼ ¸Ø¶Ø ÐØ¨ Õë ²ØÒã¬Ø, Ú¥Ó ¦ÝÆÏâ¼ Ú¨Óã ÒÛ ÓÞÏ¼ ÚÒó° ¨ë¥Û ÒÛ ÓëÄ ÅÕÛ× ¨Û¼Û/¨ÏÒØ¥Û ²Ø Ó¨ã¬Û¢ Ìè× ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¨ÏÅ Ð¥Û ÓÚÕÌ¼ ÕÙ¢
+            </div>
+        </form>
+    </fieldset>
+}
+<div id="loading1"></div>
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12" style="text-align:right;font-weight :bold"><h3>Last Date : @Convert.ToDateTime(ViewBag.FinalSubmitLastDate).ToString("dd/MM/yyyy")</h3></div>
+    <br /><div class="clearfix"></div>
+</div>
+<div class="clearfix"></div>
+<div class="row" id="divMain1">
+    <div class="col-md-4">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="col-md-8 text-right">
+        @if (ViewBag.TotalPen > 0)
+        {
+            <h3 class="rqf"> Final Submission Status : Pending (@ViewBag.TotalPen)</h3>
+        }
+        else if (ViewBag.TotalPen == 0 && ViewBag.IsFinal == -1)
+        {
+            <h3 class="rqf">No Students Found</h3>
+        }
+        else if (ViewBag.TotalCount > 0 && ViewBag.TotalPen == 0)
+        {
+            <h3 class="rqf"> Final Submission Status : Submitted</h3>
+        }
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="5%">S.No.</th>
+                    <th width="5%">ID</th>
+                    <th width="10%">ROLL</th>
+                    <th width="5%">Form</th>
+                    <th width="5%">Reg.No.</th>
+                    <th width="26%">Name/Father's Name/Mother's Name</th>
+                    <th width="5%">DOB</th>
+                    <th width="5%">Gender</th>
+                    <th width="7%">Is NSQF</th>
+                    <th width="13%">Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                            var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                            var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                            var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                            var FName = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                            var MName = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+                            var FullName = Name + "/ " + FName + "/ " + MName;
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                            var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["REGFEE"].ToString();
+                            var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                            var IsCCEFilledDone = Model.StoreAllData.Tables[0].Rows[i]["IsCCEFilled"].ToString();
+                            var NSQF_flag = Model.StoreAllData.Tables[0].Rows[i]["NSQF_SUB"].ToString().ToUpper() == "" ? "NO" : Model.StoreAllData.Tables[0].Rows[i]["NSQF_SUB"].ToString().ToUpper() == "NO" ? "NO" : "YES";
+
+                            Count = Count + 1;
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @stdid
+                                </td>
+                                <td>
+                                    @ROLL
+                                </td>
+                                <td>
+                                    @FormName
+                                </td>
+                                <td>
+                                    @RegNo
+                                </td>
+                                <td>
+                                    @FullName
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @Gender
+                                </td>
+                                <td>
+                                    @NSQF_flag
+                                </td>
+                                <td>
+
+                                    @if (IsCCEFilledDone == "1")
+                                    {<button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View</button>}
+                                    else if (IsCCEFilledDone == "3" || IsCCEFilledDone == "2")
+                                    {
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button> }
+
+                                    else if (ViewBag.IsAllow == "1" && ViewBag.IsActive == "1" && DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                                    {
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
+                                    }
+                                    else
+                                    { <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>}
+
+
+
+
+
+                                </td>
+                            </tr>
+
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                        Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {@:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp = ViewBag.pagesize + 1;
+                                                <a href="~/Open/OpenINAMarks?id=@ViewBag.cid&page=@dp">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/Open/OpenINAMarks?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var dp = ViewBag.pagesize - 1;
+                                            <a href="~/Open/OpenINAMarks?id=@ViewBag.cid&page=1"><<</a>
+                                            @Html.Raw("&nbsp;");
+                                            <a href="~/Open/OpenINAMarks?id=@ViewBag.cid&page=@dp">< Prev</a>
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp1 = ViewBag.pagesize + 1;
+                                                <a href="~/Open/OpenINAMarks?id=@ViewBag.cid&page=@dp1">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/Open/OpenINAMarks?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (Model != null)
+{
+    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+    {
+        var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+        var rollNo = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+        var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+        var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+        var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+        var FName = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+        var MName = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+        var FullName = Name + "/ " + FName + "/ " + MName;
+        var IsCCEFilled = Model.StoreAllData.Tables[0].Rows[i]["IsCCEFilled"].ToString();
+
+        //
+        DateTime todayDate = DateTime.Now;
+        DateTime finalSubmitLastDate = Convert.ToDateTime(Model.StoreAllData.Tables[0].Rows[i]["FinalSubmitLastDate"]);
+
+        var Prev = "0";
+        var Next = "0";
+        if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count == 1)
+        {
+            Prev = "0";
+            Next = "0";
+        }
+        else if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count > 1)
+        {
+            Prev = "0";
+            Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+        }
+        else if (i > 0 && i < Model.StoreAllData.Tables[0].Rows.Count - 1)
+        {
+            Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+            Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+        }
+        else if (i > 0 && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
+        {
+            Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+            Next = "0";
+        }
+        int k = i + 1;
+        <div class="container">
+            <div class="modal fade" id="myModal1-@stdid" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Student Details Of Roll No : @rollNo</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            @Html.Raw("Student Id: ")@stdid@Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")    @Html.Raw("Reg No.: ")@RegNo@Html.Raw("</br>")
+                            @Html.Raw("Name/F.Name/M.Name: ")@FullName@Html.Raw("</br>")
+
+                            <div>
+                                @* Subject Details*@
+                                <table width="100%" id="subjects-@stdid">
+                                    <tr class="active-tr">
+                                        <th width="15%">SUB</th>
+                                        <th width="35%">SUB NAME</th>
+                                        <th width="20%">OBTMARKS</th>
+                                        <th width="30%">MAXMARK</th>
+                                    </tr>
+                                    @{
+                                        for (int s = 0; s < Model.StoreAllData.Tables[2].Rows.Count; s++)
+                                        {
+                                            var sID = Model.StoreAllData.Tables[2].Rows[s]["ID"].ToString();
+                                            var appno = Model.StoreAllData.Tables[2].Rows[s]["appno"].ToString();
+                                            var SUB = Model.StoreAllData.Tables[2].Rows[s]["SUB"].ToString();
+                                            var SUBNM = Model.StoreAllData.Tables[2].Rows[s]["SUBNM"].ToString();
+                                            var SUBABBR = Model.StoreAllData.Tables[2].Rows[s]["SUBABBR"].ToString();
+                                            var OBTMARKSCC = Model.StoreAllData.Tables[2].Rows[s]["OBTMARKSCC"].ToString();
+                                            var inmin = Model.StoreAllData.Tables[2].Rows[s]["inmin"].ToString();
+                                            var inmax = Model.StoreAllData.Tables[2].Rows[s]["inmax"].ToString();
+                                            int mm = Convert.ToInt32(Model.StoreAllData.Tables[2].Rows[s]["inmax"].ToString());
+                                            if (stdid == appno)
+                                            {
+                                                <tr id="trs-@appno-@SUB">
+                                                    <td>
+                                                        @SUB
+                                                        <input type="hidden" id="cb^@appno^@SUB" class="chksub" value="@SUB" />
+                                                    </td>
+                                                    <td>
+                                                        @SUBNM
+                                                    </td>
+                                                    <td>
+
+
+
+                                                        @if (IsCCEFilled == "1")
+                                                        {@OBTMARKSCC}
+                                                    else if (IsCCEFilled == "3" || IsCCEFilled == "2")
+                                                    {
+                                                        if (ViewBag.cid == "S")
+                                                        { <span class="hideinta"> <input type="text" id="@appno^@SUB" class="chkclass" maxlength="3" onblur="CheckMarks(this,@appno,@mm)" value="@OBTMARKSCC" /></span>}
+                                                        else if (ViewBag.cid == "M")
+                                                        { <span class="hideintma">
+                                                                <input type="text" id="@appno^@SUB" class="chkclass" maxlength="3" onblur="CheckMarks(this,@appno,@mm)" value="@OBTMARKSCC" />
+                                                            </span>
+                                                        }
+                                                    }
+
+
+                                                    else if ((ViewBag.IsAllow == "1" || ViewBag.IsAllow == "3") && ViewBag.IsActive == "1")
+                                                    {
+                                                        if (DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                                                        {
+                                                            if (ViewBag.cid == "S")
+                                                            { <span class="hideintA"> <input type="text" id="@appno^@SUB" class="chkclass" maxlength="3" onblur="CheckMarks(this,@appno,@mm)" value="@OBTMARKSCC" /></span>}
+                                                            else if (ViewBag.cid == "M")
+                                                            { <span class="hideintmA">
+                                                                    <input type="text" id="@appno^@SUB" class="chkclass" maxlength="3" onblur="CheckMarks(this,@appno,@mm)" value="@OBTMARKSCC" />
+                                                                </span>
+                                                            }
+                                                        }
+                                                        else
+                                                        {@OBTMARKSCC}
+                                                }
+                                                else if (finalSubmitLastDate != null)
+                                                {
+                                                    if (finalSubmitLastDate.Date >= todayDate.Date)
+                                                    {
+                                                        if (ViewBag.cid == "S")
+                                                        { <span> <input type="text" id="@appno^@SUB" class="chkclass" maxlength="3" onblur="CheckMarks(this,@appno,@mm)" value="@OBTMARKSCC" /></span>}
+                                                        else if (ViewBag.cid == "M")
+                                                        { <span>
+                                                                <input type="text" id="@appno^@SUB" class="chkclass" maxlength="3" onblur="CheckMarks(this,@appno,@mm)" value="@OBTMARKSCC" />
+                                                            </span>
+                                                        }
+                                                    }
+                                                    else
+                                                    {@OBTMARKSCC}
+
+                                            }
+
+                                            @*<input type="number" id="@appno^@SUB" min="1" max="@inmax" maxlength="3" class="chkclass" value="@OBTMARKSCC" required />*@
+
+                                                    </td>
+                                                    <td>
+                                                        @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") @inmax
+
+                                                        <input type="hidden" id="mi^@appno^@SUB" class="chkmin" value="@inmin" />
+                                                        <input type="hidden" id="ma^@appno^@SUB" class="chkmax" value="@inmax" />
+                                                    </td>
+                                                </tr>
+
+                                            }
+                                        }
+                                    }
+                                </table>
+                            </div>
+                            @*<input id="btnSave-@stdid" type="button" value="Save & Next" class="btn" />*@
+                            @if (IsCCEFilled == "1") { }
+
+                            else if (IsCCEFilled == "3" || IsCCEFilled == "2")
+                            {
+
+                                if (ViewBag.cid == "S")
+                                {<p style="text-align:center" class="hideintA"><input type="button" class="btn" value="Save & Final Submit" id="btnSave" onclick="SubMarks(@stdid,'','')" /></p>}
+                                else if (ViewBag.cid == "M")
+                                { <p style="text-align:center" class="hideintmA"><input type="button" class="btn" value="Save & Final Submit" id="btnSave" onclick="SubMarks(@stdid,'','')" /></p>}
+
+                            }
+                            else if (ViewBag.IsActive == "1" && DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                            {
+                                if (ViewBag.cid == "S")
+                                {<p style="text-align:center" class="hideintA"><input type="button" class="btn" value="Save & Final Submit" id="btnSave" onclick="SubMarks(@stdid,'','')" /></p>}
+                                else if (ViewBag.cid == "M")
+                                { <p style="text-align:center" class="hideintmA"><input type="button" class="btn" value="Save & Final Submit" id="btnSave" onclick="SubMarks(@stdid,'','')" /></p>}
+                            }
+                            else if (finalSubmitLastDate != null)
+                            {
+                                if (finalSubmitLastDate.Date >= todayDate.Date)
+                                {
+                                    if (ViewBag.cid == "S")
+                                    { <p style="text-align:center"><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev)" /></p>}
+                                    else if (ViewBag.cid == "M")
+                                    { <p style="text-align:center"><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev)" /></p>}
+                                }
+
+                            }
+                            <p><span class="rqf">Instructions:<br />1.Please Enter OBT Marks less than equal to Max Marks and Greater than Zero !!<br />2. A:Absent, C:Cancel </span></p>
+                            <div id="loading1-@stdid"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <span class="lft">
+                                <button type="button" class="" data-toggle="modal" data-target="#myModal1-@Prev" data-dismiss="modal" style="@(Prev != " 0" ? "display:block" : "display:none" )">Prev Details</button>
+                            </span>
+                            <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@Next" data-dismiss="modal" style="@(Next != " 0" ? "display:block" : "display:none" )">Next Details</button></span>
+
+                            @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    }
+}
+
+
+
+
+<script type="text/javascript">
+    function SubMarks(k, nxt, prv) {
+        var tblname = '#subjects-' + k;
+        var tblnxt = '#subjects-' + nxt;
+        //  alert(tblname);
+        //   alert(tblnxt);
+        var TableData;
+        TableData = JSON.stringify(storeTblValues());
+        // console.log("JsonString  = " + TableData + "\n");
+        // alert(TableData);
+        //post
+        if (TableData == "false") {
+            alert("Please Fill Subject OBT-Marks, OBTMarks can be in-between Min and Max Marks");
+            //// $('#subjects-' + k).addClass("input-validation-error");
+            // $('.chkclass').addClass("input-validation-error");
+        }
+        else if (TableData != "false") {
+            // alert('Now Start:' + TableData);
+            $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/Open/JqOpenINAMarks", { "stdid": k, "CandSubject": TableData },
+                function (data) {
+                    $('#loading1-' + k).empty();
+                    //alert('data.status  = ' + data.status);
+                    if (data.status == "0" || data.status == "-1") {
+                        // alert(tblnxt);
+                        // $('' + tblname + '').css('display', 'none');
+                        alert("Subject Marks Alloted Failure, Please Try Again");
+                    }
+                    else if (data.status == "-2") {
+                        // alert(tblnxt);
+                        // $('' + tblname + '').css('display', 'none');
+                        // alert("Please Check Subject Marks Again,  OBT Marks less than equal to Max Marks");
+                        alert("Invalid Marks, Please Enter OBT Marks less than equal to Max Marks and Greater than Zero !!");
+                    }
+                    else if (data.status == "-3") {
+                        // alert(tblnxt);
+                        // $('' + tblname + '').css('display', 'none');
+                        alert("Please Fill All Subject OBTMARKS");
+                    }
+                    else {
+                        alert("Subject Marks Alloted Successfully of Student : " + k);
+                        nxtDiv(nxt, k, prv);
+                    }
+                });
+        }
+
+        function storeTblValues() {
+            // alert('3');
+            var TableData = new Array();
+            $('' + tblname + ' tr').each(function (row, tr) {
+                TableData[row] = {
+                    //"SUB": $(tr).find('td:eq(0)').text()
+                    "SUB": $(tr).find('.chksub').val()
+                    , "OBTMARKS": $(tr).find('.chkclass').val()
+                    , "MINMARKS": $(tr).find('.chkmin').val()
+                    , "MAXMARKS": $(tr).find('.chkmax').val()
+                }
+            });
+            TableData.shift();  // first row will be empty - so remove
+            //alert(TableData);
+            return TableData;
+
+        }
+    }
+
+    function nxtDiv(nxt, crnt, prv) {
+        // var cid = '#myModal1-' + crnt
+        $('#myModal1-' + crnt).modal('hide');
+        if (nxt == "0" && prv == "0") { }
+        else if (nxt == "0" && prv != "0") {
+            $('#myModal1-' + prv).modal('show');
+        }
+        else if (prv == "0" && nxt != "0") {
+            $('#myModal1-' + nxt).modal('show');
+        }
+        else if (prv != "0" && nxt != "0") {
+            $('#myModal1-' + nxt).modal('show');
+        }
+    }
+
+
+</script>
+<script type="text/javascript">
+
+    function pad(obj, length) {
+        // alert("pad:- " + obj)
+        var text = obj.value;
+        // alert("pad v:- " + text)
+        var str = '' + text;
+        // alert("pad str:- " + str)
+        while (str.length < length) {
+            str = '0' + str;
+        }
+        if (obj.value == 'A' || obj.value == 'C' || obj.value == 'a' || obj.value == 'c') { }
+        else {
+            obj.value = str;
+        }
+    }
+
+    function CheckMarks(obj, k, marks) {
+
+        if (obj.value == 'A' || obj.value == 'C' || obj.value == 'a' || obj.value == 'c' || obj.value == '') {
+            if (obj.value == 'A' || obj.value == 'a') {
+                obj.value = 'ABS';
+            }
+            else if (obj.value == 'C' || obj.value == 'c') {
+                obj.value = 'CAN';
+            }
+            return true;
+        }
+        else if (obj.value > marks || obj.value < 0) {
+            obj.value = '';
+            alert("Invalid Marks, Please Enter OBT Marks less than equal to Max Marks and Greater than Zero !!");
+            return false;
+        }
+        else {
+            // alert("call pad");
+            pad(obj, 3);
+            return true;
+        }
+    }
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(".chkclass").off('keypress');
+
+        $(".chkclass").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 65) || (charCode == 67) || (charCode == 97) || (charCode == 99)) {
+                return true;
+            }
+            else {
+                alert("Invalid character, Enter Numeric Value or 'A' or 'C' !!");
+                return false;
+            }
+        });
+
+
+        var value = document.getElementById('SelFilter').value;
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0'
+                //maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+    var form = $("#searchform").serialize();
+    $("#btnNext").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Next',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#btnPrevious").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Previous',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#SelFilter").change(function () {
+        var value = document.getElementById('SelFilter').value;
+        $('#SearchString').val('');
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0'
+                //maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+
+    });
+
+</script>
+
+

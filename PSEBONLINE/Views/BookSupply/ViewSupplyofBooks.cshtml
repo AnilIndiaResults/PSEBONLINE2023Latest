@@ -1,0 +1,213 @@
+﻿@model PSEBONLINE.Models.PrinterModel
+@{
+    ViewBag.Title = "ViewSupplyofBooks";
+    //Layout = "~/Views/Shared/_BookSupplyLayout.cshtml";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2018.pseb.ac.in/Content/print-4p.css" />
+<style type="text/css">
+    body {
+        font-size: 10px;
+        line-height: 18px
+    }
+</style>
+
+<h1 class="noprint">View Supply of Books</h1>
+@{
+    if (ViewBag.Supplylot == 0)
+    {
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="15%">Supply Lot</th>
+                    <th width="20%">Supply Date</th>
+                    <th width="15%">Total</th>
+                    <th width="15%">No. Of Supplied Books</th>
+                    <th width="40%">View</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var PrinterId = Model.StoreAllData.Tables[0].Rows[i]["PrinterId"].ToString();
+                            var SupplyLot = Model.StoreAllData.Tables[0].Rows[i]["SupplyLot"].ToString();
+                            var NOSB = Model.StoreAllData.Tables[0].Rows[i]["NOSB"].ToString();
+                            var Total = Model.StoreAllData.Tables[0].Rows[i]["Total"].ToString();
+                            var SupplyFinalDT = Model.StoreAllData.Tables[0].Rows[i]["SupplyFinalDT"].ToString();
+                            int Count = i + 1;
+                            <tr>
+                                <td style="text-align:center">
+                                    <span style="background-color:#3b4d1d;color:#fff;padding:5px;font-size:16px">@SupplyLot</span>
+                                </td>
+                                <td>
+                                    @SupplyFinalDT
+                                </td>
+                                <td>
+                                    @Total
+                                </td>
+                                <td>
+                                    @NOSB
+                                </td>
+
+                                <td>
+                                    <a href="/BookSupply/ViewSupplyofBooks/@SupplyLot" class="btn">View Details</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <p class="rqf">Data Not Found</p>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+
+    }
+
+    else if (ViewBag.Supplylot > 0)
+    {
+        <table style="width:100%;" border="0" class="noprint">
+            <tr>
+                <td style="text-align:right;padding-bottom:3px">
+                    <a href="/BookSupply/ViewSupplyofBooks" class="btn">Back</a> <a href="#" class="btn" onclick="window.print()">Print</a>
+                   </td>
+                </tr></table>
+                    <table class="table table-bordered" id="t01" style="border-color:#797979">
+                        <tr>
+                            <td colspan="6" style="font-size:26px;padding-top:10px;padding-bottom:10px;text-align:center">Delivery Challan</td>
+                        </tr>
+                        <tr>
+                            <td width="15%">Challan No.</td>
+                            <td width="18%"></td>
+                            <td width="15%">Dated</td>
+                            <td width="19%"></td>
+                            <td width="15%">Time</td>
+                            <td width="18%"></td>
+                        </tr>
+                        <tr>
+                            <td>Party Name</td>
+                            <td colspan="5"></td>
+                        </tr>
+                        <tr>
+                            <td>Address</td>
+                            <td colspan="5"></td>
+                        </tr>
+                        <tr>
+                            <td>City</td>
+                            <td></td>
+                            <td>State</td>
+                            <td></td>
+                            <td>State Code</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Party GSTIN</td>
+                            <td colspan="5"></td>
+                        </tr>
+                        <tr>
+                            <td>Transport</td>
+                            <td colspan="5"></td>
+                        </tr>
+                        <tr>
+                            <td>Vehcile No.</td>
+                            <td colspan="5"></td>
+                        </tr>
+                        <tr>
+                            <td>Note(s)</td>
+                            <td colspan="5"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding:0">
+                                <table class="table table-bordered" id="t01">
+                                    <tr class="active-tr">
+                                        <th width="10%">S.No.@*Depot*@</th>
+                                        <th width="10%">Trans Id</th>
+                                        <th width="35%">Book Name</th>
+                                        <th width="10%">Supply Lot</th>
+                                        <th width="10%">Supply Date</th>
+                                        <th width="15%">No. Of Supplied Books</th>
+                                        <th width="10%">Supply Type</th>
+                                        @*<th width="10%">Depot Status</th>*@
+                                    </tr>
+                                    @{
+                                        if (ViewBag.TotalCount > 0)
+                                        {
+                                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                            {
+                                                var DepotUserId = Model.StoreAllData.Tables[0].Rows[i]["DepotUserId"].ToString();
+                                                var TransId = Model.StoreAllData.Tables[0].Rows[i]["TransId"].ToString();
+                                                var PrinterId = Model.StoreAllData.Tables[0].Rows[i]["PrinterName"].ToString();
+                                                var BookName = Model.StoreAllData.Tables[0].Rows[i]["BookName"].ToString();
+                                                var SupplyLot = Model.StoreAllData.Tables[0].Rows[i]["SupplyLot"].ToString();
+                                                var SupplyFinalDT = Model.StoreAllData.Tables[0].Rows[i]["SupplyFinalDT"].ToString().Split(' ')[0];
+                                                var NumberofSuppliedbooks = Model.StoreAllData.Tables[0].Rows[i]["NumberofSuppliedbooks"].ToString();
+                                                var DateStamp = Model.StoreAllData.Tables[0].Rows[i]["DateStamp"].ToString();
+                                                var Remarks = Model.StoreAllData.Tables[0].Rows[i]["Remarks"].ToString();
+                                                var TypeName = Model.StoreAllData.Tables[0].Rows[i]["TypeName"].ToString();
+                                                var CreatedDate = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString().Split(' ')[0];
+                                                var IsDepotReceived = Model.StoreAllData.Tables[0].Rows[i]["IsDepotReceived"].ToString();
+                                                var DepotReceivedDT = Model.StoreAllData.Tables[0].Rows[i]["DepotReceivedDT"].ToString().Split(' ')[0];
+                                                var DepotRemarks = Model.StoreAllData.Tables[0].Rows[i]["DepotRemarks"].ToString();
+                                                var NumberofReceivedbooks = Model.StoreAllData.Tables[0].Rows[i]["NumberofReceivedbooks"].ToString();
+
+                                                int Count = i + 1;
+                                                <tr>
+                                                    <td>
+                                                        @*@DepotUserId*@
+                                                    </td>
+                                                    <td>
+                                                        @TransId
+                                                    </td>
+                                                    <td>
+                                                        @BookName
+                                                    </td>
+                                                    <td>
+                                                        @SupplyLot
+                                                    </td>
+                                                    <td>
+                                                        @SupplyFinalDT
+                                                    </td>
+                                                    <td>
+                                                        @NumberofSuppliedbooks
+                                                    </td>
+                                                    <td>
+                                                        @TypeName
+                                                    </td>
+                                                    @*<td>
+                                                            @if (IsDepotReceived == "1")
+                                                            {
+                                                                <span title="@DepotRemarks">Book Receieved: @NumberofReceivedbooks</span><br />
+                                                                <span>Received DT : @DepotReceivedDT</span><br />
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>Not Received</span>
+                                                            }
+                                                        </td>*@
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="4">
+                                                    <p class="rqf">Data Not Found</p>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                }
+
+}
+

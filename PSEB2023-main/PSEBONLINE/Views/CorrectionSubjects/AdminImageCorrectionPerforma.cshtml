@@ -1,0 +1,396 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>Photo/Sign Correction Performa</h1>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+@using (Html.BeginForm("AdminImageCorrectionPerforma", "CorrectionSubjects", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+  
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Class:
+                    @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select Class---", new { @class = "", @required = "required", })
+                </div>
+                <form id="myForm">
+                    <div class="col-md-3">
+                        School Code :
+                        &nbsp;<br />
+                        <input type="text" id="SCHL" name="SCHL" maxlength="7" value="@ViewBag.SCHLstring" onkeypress="return isNumberKey(event);" required />
+                    </div>                   
+                    <div class="col-md-3">
+                        Student Unique Id:
+                        @Html.TextBoxFor(m => m.Std_id, new { @required= "required", @maxlength = "10", value = @ViewBag.stdid })
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" />
+                        <input type="submit" name="Reset" value="Reset" formaction="AdminSchoolCorrection" />
+                    </div>
+
+                </form>
+            </fieldset>
+            <div class="clearfix"></div>
+            <div class="clearfix"></div>
+            <h4>Student Details</h4>
+            <div class="row">
+                <div class="table-responsive">
+                    <div class="col-md-12">
+                        <table id="" class="table table-bordered">
+                            <tr class="active-tr">
+                                <th>Unique Id</th>
+                                <th>Reg Num</th>
+                                <th>Old Roll No.</th>
+                                <th>Class</th>
+                                <th>Session</th>
+                                <th>Candidate Name</th>
+                                <th>Father's Name</th>
+                                <th>Mother's Name</th>
+                                <th>DOB</th>
+                            </tr>
+                            <tr>
+                                @{
+                                    if (@ViewBag.message == "1")
+                                    {
+                                        <td>@ViewBag.stdid</td>
+                                        <td>@ViewBag.Regno</td>
+                                        <td>@ViewBag.oroll</td>
+                                        <td>@ViewBag.category</td>
+                                        <td>@ViewBag.session</td>
+                                        <td class="kdsfont">@ViewBag.canName</td>
+                                        <td class="kdsfont">@ViewBag.FName</td>
+                                        <td class="kdsfont">@ViewBag.Mname</td>
+                                        <td>@ViewBag.DOB</td>
+                                        @*<tr><td colspan="9">Subjects: @ViewBag.Subjlist</td></tr>*@
+                                    }
+                                    else
+                                    {
+                                        <td colspan="4">@ViewBag.message </td>
+                                    }
+
+                                }
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @if (@ViewBag.TotalCountSearch > 0)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <fieldset style="margin-bottom:15px">
+                            <div class="col-md-3">
+                                Select Correction Field:
+                                @Html.DropDownList("SelListField", new SelectList(ViewBag.MySchField, "Value", "Text"), "Select Field", new { @class = "" })
+                            </div>
+                            @*-----------------------Photo sign-----------------------------*@
+                            <div id="corPhoto" class="col-md-9">
+                                @{
+                                    ViewBag.PhotoOld = "https://registration2022.pseb.ac.in//upload/Upload2023/" + @ViewBag.PhotoOld;
+                                }
+                                <div class="col-md-2">OldPhoto<img src=@ViewBag.PhotoOld class="img-responsive" style="max-width:100%" alt="Photo" id="imgPhotoOld" /></div>
+                                <div class="col-md-5">
+                                    <span class="rqfst" style="font-size:11PX;">Upload Colored Passport Size Photograph(3.5 * 4.5)</span>
+                                    @Html.TextBoxFor(a => a.std_Photo, new { id = "std_Photo", type = "file", onchange = "findSizeAndPreview(this)" })
+                                    <br /><a href="/PDF/Instruction_To_Upload_Photographs.pdf" target="_blank" class="rqf" style="font-size:11PX;color:#CC0000">? Instruction To Upload Photographs* Photo Size 5 to 50 KB (Only JPG)</a>
+                                </div>
+                                <div class="col-md-2">NewPhoto<img src="@ViewBag.Photo" class="img-responsive" style="max-width:100%" alt="Photo" id="imgPhoto" /></div>
+                            </div>
+                            @*-----------------------Photo sign-----------------------------*@
+                            @*-----------------------Photo sign-----------------------------*@
+                            <div id="corSign" class="col-md-9">
+                                @{
+                                    ViewBag.SignOld = "https://registration2022.pseb.ac.in//upload/Upload2023/" + @ViewBag.SignOld;
+                                }
+                                <div class="col-md-2">OldSign<img src=@ViewBag.SignOld class="img-responsive" style="max-width:100%" alt="Photo" id="imgSignOld" /></div>
+                                <div class="col-md-5">
+                                    @Html.TextBoxFor(a => a.std_Sign, new { id = "std_Sign", type = "file", onchange = "findSizeAndPreviewSign(this)" })
+                                    <span class="rqf">*Signature Size 1 to 50 KB  (.JPG ONly)</span>
+                                </div>
+                                <div class="col-md-2">NewSign<img src="@ViewBag.Sign" class="img-responsive" style="max-width:100%" alt="Photo" id="imgSign" /></div>
+                            </div>
+                            @*-----------------------Photo sign-----------------------------*@
+
+                            <div class="col-md-2">
+                                <br />
+                                <input type="submit" value="Add Record" name="cmd" onclick="return formValadd();" />
+                            </div>
+
+                        </fieldset>
+                    </div>
+                </div>
+            }
+
+            <div class="clearfix"></div>
+            <h4>
+                List Of Correction Images
+            </h4>
+            <div class="row">
+                <div class="table-responsive">
+                    <div class="col-md-12">
+                        <table id="" class="table table-bordered">
+                            <tr class="active-tr">
+                                <th>SL No</th>
+                                <th>CLASS</th>
+                                <th>CORRECTION TYPE</th>
+                                <th>STUDENT ID</th>
+                                <th>OLD PHOTO/SIGN</th>
+                                <th>NEW PHOTO/SIGN</th>
+                                <th>Correction Lot</th>
+                                <th>Action</th>
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var CorrectionId = Model.StoreAllData.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                        var cls = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                        var OPhotoSign = "";
+                                        if (cls == "Matriculation Open" || cls == "Sr.Secondary Open")
+                                        {
+                                            OPhotoSign = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                        }
+                                        else
+                                        {
+                                            OPhotoSign = "https://registration2022.pseb.ac.in//upload/Upload2023/" + Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                        }
+
+                                        var NPhotoSign = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                        var Ntype = Model.StoreAllData.Tables[0].Rows[i]["CorrectionType"].ToString();
+                                        var Can = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                                        var Clot = Model.StoreAllData.Tables[0].Rows[i]["CorrectionLot"].ToString();                                      
+                                        Count = Count + 1;
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@cls</td>
+                                            <td>@Ntype</td>
+                                            <td>@Can</td>
+                                            <td><img src="@OPhotoSign" class="" style="max-width:15%" alt="Photo" id="imgPhotoO" /></td>
+                                            <td><img src="@NPhotoSign" class="" style="max-width:15%" alt="Photo" id="imgPhotoN" /></td>
+                                            <td>@Clot</td>
+                                            <td>
+                                                @if (Clot == "0")
+                                                {
+                                                    @Html.ActionLink("Delete", "AdminCorrDeletePhotoSignData", new { id = CorrectionId }, new { onclick = "return confirm('Are you sure Delete This Record?');" })
+                                                }
+                                                else
+                                                {
+                                                    <div style="color:forestgreen"><b>Final Submitted</b></div>
+                                                }
+
+                                            </td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8">
+                                            <span class="rqf">Record Not Found</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12 text-center">                   
+
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                <input type="submit" id="finalsubmit" value="Final Submit Correction" name="cmd" onclick="return val()" />
+                                @*<input type="button" value="Rough Print" onclick="javascript:document.location.href='@Url.Action("SchoolCorrectionPerformaRoughReportPS", "CorrectionSubjects")'" />*@
+                            }
+                        }
+                        @*<input type="button" value="View Previous Correction Status" onclick="javascript:document.location.href='@Url.Action("SchoolCorrectionAllRecord", "CorrectionSubjects")'" />
+                        <input type="button" value="Print Correction Performa" onclick="javascript:document.location.href='@Url.Action("SchoolCorrectionFinalPrintList", "CorrectionSubjects")'" />*@
+                        @*<a href="/School/SchoolCorrection" class="btn">Verify Corrections</a>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@{
+    if (ViewData["Status"] != null)
+    {
+        var result = ViewData["Status"].ToString();
+        if (result == "0")
+        {
+            <script type="text/javascript" language="javascript">
+
+                alert("Correction data already exist for this student.");
+            </script>
+        }
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Correction data Added successfully.");
+            </script>
+        }
+    }
+
+}
+<script type="text/javascript">
+    function val() {
+            if (!window.confirm("Are you Sure to Final Submit. Once Final Submitted and Lot generated you will not able to make any kind of changes in this correction Lot?")) {
+            return false;
+        }
+        else {
+            document.location.href = '@Url.Action("AdminImageCorrectionPerforma", "CorrectionSubjects")';
+            }
+            }
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#corPhoto").hide();
+        $("#corSign").hide();
+
+        $("#SelListField").change(function () {
+            var Cfld = $("#SelListField").val();
+            $("#newVal").val('');
+            if (Cfld == 'Photo' || Cfld == 'Sign') {
+                $("#corPhoto").hide();
+                $("#corSign").hide();
+            }
+            if (Cfld == 'Photo') {
+                $("#corPhoto").show();
+            }
+            else if (Cfld == 'Sign') {
+                $("#corSign").show();
+           }
+            else {
+                $("#corPhoto").hide();
+                $("#corSign").hide();
+            }
+
+        });
+    });
+
+
+
+    function formVal() {
+
+        if (document.getElementById("SelList").value == "" || document.getElementById("SelList").value == "0" || document.getElementById("SelList").value == "--Select Class---") {
+            alert("Select Class");
+            document.getElementById("SelList").focus();
+            return false;
+        }
+        else if (document.getElementById("SearchString").value == "" || document.getElementById("SearchString").value == "0") {
+            alert("Enter Unique Id");
+            document.getElementById("SearchString").focus();
+            return false;
+        }
+
+
+
+    }
+    function formValadd() {
+        if (document.getElementById("SelListField").value == "" || document.getElementById("SelListField").value == "0" || document.getElementById("SelListField").value == "Select Field") {
+            alert("Select Correction Field");
+            document.getElementById("SelListField").focus();
+            return false;
+        }
+        else if (document.getElementById("newValT").value == "" && document.getElementById("newValP").value == "" && document.getElementById("newValDOB").value == "" && document.getElementById("newValGender").value == "") {
+            alert("Enter New Value");
+            document.getElementById("newVal").focus();
+            return false;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+
+
+</script>
+<script>
+    function findSizeAndPreview(input) {
+        if (typeof ($("#std_Photo")[0].files) != "undefined") {
+
+            var size = parseFloat($("#std_Photo")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 50) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#imgPhoto').attr('src', e.target.result);
+
+                }
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#std_Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+
+
+            }
+        }
+
+    }
+    function findSizeAndPreviewSign(input) {
+        if (typeof ($("#std_Sign")[0].files) != "undefined") {
+
+            var size = parseFloat($("#std_Sign")[0].files[0].size / 1024).toFixed(2);
+            // alert(size);
+            if (parseInt(size) >= 1 && parseInt(size) <= 50) {
+                var filerdrS = new FileReader();
+                filerdrS.onload = function (e) {
+                    $('#imgSign').attr('src', e.target.result);
+
+                }
+                filerdrS.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 1) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#std_Sign').val('');
+                    ('#imgSign').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#Sign').val('');
+                    ('#imgSign').hide();
+                }
+
+            }
+        }
+
+    }
+</script>

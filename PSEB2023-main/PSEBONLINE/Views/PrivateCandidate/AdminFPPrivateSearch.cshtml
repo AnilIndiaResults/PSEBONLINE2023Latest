@@ -1,0 +1,308 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    ViewBag.Title = "Final Print Private Search";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprint.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<div id="HPL">
+    @{
+        @*if (ViewData["result"].ToString() == "0")
+        {
+            <h1>Download Admit Card November 2017</h1>
+            <div class="row">
+                <div class="col-md-12" style="padding-top:25px;padding-bottom:400px">
+                    <input type="button" value="Admit Card of Re-Appear of Matric Examination November 2017" onclick="javascript:document.location.href='@Url.Action("AdminFPPrivateSearch/Matric", "PrivateCandidate", new { })'" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="button" value="Admit Card of Compartment of Senior Examination November 2017" onclick="javascript:document.location.href='@Url.Action("AdminFPPrivateSearch/Senior", "PrivateCandidate", new { })'" />
+                </div>
+            </div>
+        }
+        else
+        {*@
+
+            using (Html.BeginForm("AdminFPPrivateSearch", "PrivateCandidate", FormMethod.Post, new { id = "searchform" }))
+            {
+                 <h1>Print/Edit Application&nbsp;@ViewBag.ClassName @*Admit Card of Compartment/Re-Appear of @ViewBag.ClassName Examination June 2017*@</h1>
+                {<div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px;overflow:hidden">
+                <legend>Search</legend>
+                <div class="col-md-1">
+                    TotalCount
+                    <label>@ViewBag.TotalCount</label>
+                </div>
+                <div class="col-md-3" id="drpdwn_select">
+                    Select
+                    <select id="dropdown_choice" required>
+                        <option value="0">--Select Search Option--</option>
+                        <option value="1">Ref. No</option>
+                        <option value="2">Candidate Name/Father Name</option>
+                        <option value="3">Old Roll</option>
+                        <option value="4">New Roll</option>
+                    </select>
+                </div>
+                <div class="col-md-3" id="txt_refNo">
+                    Enter Ref. No. &nbsp;
+                    @Html.TextBoxFor(m => m.refNo, new { id = "refNo", @maxlength = "15", onkeypress = "return isNumberKey(event);", placeholder = "Ref. No." })
+                </div>
+                <div class="col-md-3" id="txt_Candi_Name">
+                    Enter Candidate Name &nbsp;
+                    @Html.TextBoxFor(m => m.Candi_Name, new { id = "Candi_Name", @maxlength = "20", placeholder = "Candidate Name" })
+                </div>
+                <div class="col-md-3" id="txt_Father_Name">
+                    Enter Father Name &nbsp;
+                    @Html.TextBoxFor(m => m.Father_Name, new { id = "Father_Name", @maxlength = "20", placeholder = "Father Name" })
+                </div>
+                <div class="col-md-2" id="txt_OROLL">
+                    Old Roll No. &nbsp;
+                    @Html.TextBoxFor(m => m.OROLL, new { id = "OROLL", @maxlength = "12", placeholder = "All Old Roll" })
+                </div>
+                <div class="col-md-2" id="txt_NROLL">
+                    New Roll No. &nbsp;
+                    @Html.TextBoxFor(m => m.NROLL, new { id = "NROLL", @maxlength = "12", placeholder = "All New Roll" })
+                </div>
+                <div class="col-md-1">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm2();" title="Search Record" /></div>
+                <div class="col-md-1">&nbsp;<br />
+                @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+                  <input value="Back" type="button" onclick="javascript:document.location.href='@Url.Action("Welcome", "Admin")'" />
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-12"><span class="rqf" style="color:firebrick">Note : For Search Kindly Enter Reference Number Or Enter Minimum 3 Starting Characters of Candidate Name and Father Name or Old Roll No </span></div>
+            </fieldset>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th width="5%">Sl. No.</th>
+                        <th width="15%">Ref. No</th>
+                        <th width="11%">Old Roll No</th>
+                        <th width="11%">New Roll No</th>
+                        <th width="15%">Batch No.</th>
+                        <th width="10%">Category</th>
+                        <th width="15%">Candi/Father Name</th>
+                        <th width="20%">Fee Status</th>
+                        <th width="20%">Action</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                var regno = Model.StoreAllData.Tables[0].Rows[i]["regno"].ToString();
+                                var batch = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+                                var Utype = Model.StoreAllData.Tables[0].Rows[i]["Utype"].ToString();
+                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                                var examRoll = Model.StoreAllData.Tables[0].Rows[i]["examRoll"].ToString();
+                                var examcent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                                var challanverify = Model.StoreAllData.Tables[0].Rows[i]["challanverify"].ToString();
+                                if (challanverify == "1" || challanverify == "True") { challanverify = "Fee Done"; }
+                                else {challanverify = "Fee Pending";}
+                                Count = Count + 1;
+                    <tr>
+                        <td>
+                            @Count
+                        </td>
+                        <td>
+                            @refno
+                        </td>
+                        <td>
+                            @ROLL
+                        </td>
+                        <td>
+                            @examRoll
+                        </td>
+                        <td>
+                            @batch
+                        </td>
+
+                        <td>
+                            @Utype
+                        </td>
+                        <td>
+                            @Candi_Name/ @Father_Name
+                        </td>
+                        <td>
+                            @challanverify
+                        </td>
+
+                        <td>
+                            <table border="0">
+                                <tr>
+                                    <td style="@(ViewBag.IsView == 1 ? "display:block" : "display:none")">@Html.ActionLink("View", "AdminFPPrivate", new { refno = encrypt.QueryStringModule.Encrypt(@refno) }, new { Class = "", title = "View/Print Final Page" }) </td>
+                                    <td style="@(ViewBag.IsModify == 1 ? "display:block" : "display:none")">@Html.ActionLink("Edit", "AdminPrivateCandidateConfirmation", new { refno1 = encrypt.QueryStringModule.Encrypt(@refno) }, new { Class = "", title = "Edit Private Candidate Confirmation Page" })</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                            }
+                        }
+                        else
+                        {
+                    <tr>
+                        <td colspan="11">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-center" style="padding:10px 0;display:none">
+            <input type="submit" value="Back" formaction="FinalPrintPrivateAdmitCardSearch" title="Go for Home Page" />
+        </div>
+    </div>
+                                }
+                            }
+                        }
+   
+    </div>
+    <script>
+
+
+        $(document).ready(function () {
+            $("#refNo").val("");
+            $("#OROLL").val("");
+            $("#NROLL").val("");
+            $("#Candi_Name").val("");
+            $("#Father_Name").val("");
+            $("#txt_Candi_Name").hide();
+            $("#txt_Father_Name").hide();
+            $("#txt_OROLL").hide();
+            $("#txt_NROLL").hide();
+            $("#txt_refNo").hide();
+            $("#dropdown_choice").change(function () {
+                var sel_value = 0;
+                sel_value = $("#dropdown_choice").val();
+                switch (sel_value) {
+                    case "1": $("#txt_refNo").show();
+                        $("#txt_refNo").attr('required',true);
+                        $("#txt").hide();
+                        $("#txt_Candi_Name").hide();
+                        $("#txt_Father_Name").hide();
+                        $("#txt_OROLL").hide();
+                        $("#txt_NROLL").hide();
+                        break;
+
+                    case "2": $("#txt_refNo").hide();
+                        $("#txt").hide();
+                        $("#txt_Candi_Name").show();
+                        $("#txt_Father_Name").show();
+                        $("#txt_NROLL").hide();
+                        $("#txt_OROLL").hide();
+                        $("#txt_Candi_Name").attr('required',true);
+                        break;
+
+                    case "3": $("#txt_refNo").hide();
+                        $("#txt").hide();
+                        $("#txt_Candi_Name").hide();
+                        $("#txt_Father_Name").hide();
+                        $("#txt_NROLL").hide();
+                        $("#txt_OROLL").show();
+                        $("#txt_OROLL").attr('required',true);
+                        break;
+                    case "4": $("#txt_refNo").hide();
+                        $("#txt").hide();
+                        $("#txt_Candi_Name").hide();
+                        $("#txt_Father_Name").hide();
+                        $("#txt_OROLL").hide();
+                        $("#txt_NROLL").show();
+                        $("#txt_NROLL").attr('required', true);
+                        break;
+                    default: $("#txt_refNo").attr("style", "display:none");
+                        $("#txt").attr("display", "block");
+                        $("#txt_Candi_Name").attr("style", "display:none");
+                        $("#txt_Father_Name").attr("style", "display:none");
+                        $("#txt_OROLL").attr("style", "display:none");
+                        $("#txt_NROLL").attr("style", "display:none");
+                }
+            });
+        });
+    </script>
+    <script>
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+                return true;
+            }
+            else {
+                alert("Invalid character...Enter Only Number!!");
+                return false;
+            }
+        }
+
+        function valForm2() {
+            var sel_value1 = 0;
+            sel_value1 = $("#dropdown_choice").val();
+            // alert(sel_value1);
+            var txt_refNo =  $("#refNo").val();
+            var txt_OROLL = $("#OROLL").val();
+            var txt_NROLL = $("#NROLL").val();
+            var txt_Candi_Name =  $("#Candi_Name").val();
+            var txt_Father_Name =  $("#Father_Name").val();
+            //alert("ref :" + txt_refNo);
+            //alert("OROLL :" + txt_OROLL);
+            //alert("Candi_Name :" + txt_Candi_Name);
+            //alert("Father_Name :" + txt_Father_Name);
+            if(sel_value1 == "" || sel_value1 == "0")
+            {
+                alert("Please Select Search Option");
+                document.getElementById("dropdown_choice").focus();
+                return false;
+            }
+            else
+            {
+                if (txt_refNo == "" && txt_OROLL == "" && txt_NROLL == "" && txt_Candi_Name == "" && txt_Father_Name == "")
+                {
+                    alert("Please Enter Text");
+                    return false;
+                }
+
+            }
+        }
+
+        function valForm1() {
+            var category = document.getElementById('category').value;
+            var refNo = document.getElementById('refNo').value;
+            var Candi_Name = document.getElementById('Candi_Name').value;
+            var Father_Name = document.getElementById('Father_Name').value;
+            var OROLL = document.getElementById('OROLL').value; 
+            var NROLL = document.getElementById('NROLL').value;
+
+
+            if ((refNo == "" || refNo.length == 0) && (Candi_Name.length < 3 || Father_Name.length < 3) && (OROLL == "" || OROLL.length == 0)) {
+                if (refNo.length == 0 && Candi_Name.length > 2  && Father_Name.length < 3) {
+                    alert("Enter Candidate and Father Name");
+                    document.getElementById("Father_Name").focus();
+                    return false;
+                }
+                if (refNo.length == 0 && Candi_Name.length < 3 && Father_Name.length > 2) {
+                    alert("Enter Candidate and Father Name");
+                    document.getElementById("Candi_Name").focus();
+                    return false;
+                }
+                alert("Enter RefNo or Candidate and Father Name  or Old Roll No.");
+                document.getElementById("refNo").focus();
+                return false;
+            }
+
+        }
+    </script>

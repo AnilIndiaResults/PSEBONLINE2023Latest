@@ -1,0 +1,859 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    ViewBag.Title = "Late Admission Form";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 12px;
+    }
+</style>
+
+<h1 class="noprint">
+    Late Admission Form : Session @Session["Session"].ToString()
+</h1>
+@using (Html.BeginForm("LateAdmissionSchl", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <p class="kdsfont kdsrc">Note: When you get Permission regarding late registration of candidate, Fill form normally like other candidates and click on check box option "Is late admission" . When  you tick on check box you will get a text box in which you have to entre Request id . "That request Id you already have on your permission page . If request id is approved and candidate details matched then it will allow to fill late admission date in pop up calender.   Challan will generate at school level and fee correspondig to this will submit in bank.</p>
+            <p class="kdsfont">²ã¨Ï ÆñÛÚª¤ØÏÁÛ ÅÞâ Ðã¶ ÂØªÐã ÂÛ ÆñÒØÅ¬Û ÚÌÐ ¬¥Û Õè ¼Ù ÆñÛÚª¤ØÏÁÛ ÂÛ ÏÚ²Ó¶ñãÓÖÅ ¨ÏÅ Ð¥Û ÉØ¨Û ÆñÛÚª¤ØÏÁÛ¤Ù ÂÛ ¼ÏðÙ ÆñÛÚª¤ØÏÁÛ ÂØ ¸Ø¶Ø ¤è×¶Ï/Ú¥âÌÆëÏ¶ ¨Û¼Ø ²ØÒã ¤¼ã ÂØªÐã ÂÛ ÚÌ¼Û ÒØÐã ¨ØÐÌ ¨ëÐ ÚÂó¼Û ¤ØÆÓÖÅ Is Late Admission Âã ¤ó¬ã Ðó¬ã °è¨ ÉØ¨Ó ÅÞâ Ú¶ó¨ ¨Û¼Ø ²ØÒã¢ Ú¥Ó ¤ØÆÓÖÅ ÅÞâ Ú¶ó¨ ¨ÏÅ ¦ÝÆÏâ¼ Ú¥ó¨ ÅÒÙ ¨ØÐÌ ªÝóÐã¬Ø, Ú²Ó ÚÒó° ÆñÛÚª¤ØÏÁÛ ÂÛ Late Admission ÒØÐÛ Request ID ÊÏÛ ²ØÒã¢ Ú²Ó ÚÌ¼Û ¼ó¨ ÆñÛÚª¤ØÏÁÛ ÂÛ ÂØªÐã ÂÛ ÆñÒØÅ¬Û ÚÌÐÛ Õë¥ã¬Û, ¦ÝÓ ÚÌ¼Û ¼ó¨ ¨èÐâ¸Ï ªÝóÐ ²ØÒã¬Ø ¤¼ã ²ã¨Ï ÊÏÛ ¬¥Û Request ID Âã ÒãÏÒã ÇØÏÌ ÅØÐ ÌãÐ ¨ÏÂã Õë»¬ã ¼Ù ÇØÏÌ ÓãÒ ¨Û¼Ø ²Ø Ó¨ã¬Ø¢ Ú¥ÕÅÙ ÂÛ ÇØ¥ÛÅÐ ÓÉÚÌÓÖÅ ¤¼ã °ÐØÅ ²ÅÏã¶ Ó¨ÞÐ ÆóÄÏ ¼ã Õë¥ã¬Ø ¤¼ã ÇÛÓ Éè×¨ ÚÒó° ²ÌðÙ ÕëÒã¬Û¢  </p>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12 noprint">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total Students <label>@ViewBag.TotalCount</label>
+                </div>
+                <div class="col-md-3">
+                    Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-3">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                </div>
+                <div class="col-md-2">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valFormSearch();" title="Search Record" /></div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 rqf" style="font-size:13px">Note : Kindly select search criteria & then click search button to show records.</div>
+            </fieldset>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-6 text-left noprint">
+            <span style="font-size:16px;color:darkred;">Last Date : @ViewBag.LastDate</span>
+
+        </div>
+        <div class="col-md-6 text-right noprint">
+            @{
+                DateTime todayDate = DateTime.Today;
+                DateTime lastDate = Convert.ToDateTime(ViewBag.LastDate);
+
+                if (todayDate <= lastDate)
+                {
+                    <a href="" data-toggle="modal" class="btn" data-target="#myModal">Apply New</a>
+                }
+
+            }
+            <input type="button" value="Print" class="btn" onclick="window.print()" />
+            @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table style="width:100%;" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>REQUEST ID</th>
+                        <th>SCHOOL</th>
+                        <th>CLASS</th>
+                        <th>FORM</th>
+                        <th>REGNO</th>
+                        <th>CANDIDATE/ FATHER'S/ MOTHER'S NAME</th>
+                        <th>DOB</th>
+                        <th>MOBILE NO</th>
+                        <th>APPLY DATE</th>
+                        <th>STATUS</th>
+                        <th>APPROVAL DATE</th>
+                        <th>APPROVAL UPTO DATE</th>
+                        <th>DOCUMENTS</th>
+                        <th>ACTION</th>
+                    </tr>
+                    @{
+                        DateTime todayDT = DateTime.Today;
+                        DateTime lastDT = Convert.ToDateTime(ViewBag.LastDate);
+
+                        if (ViewBag.TotalCount > 0)
+                        {
+
+                            int Count = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                var PanelType = Model.StoreAllData.Tables[0].Rows[i]["PanelType"].ToString();
+                                var RequestID = Model.StoreAllData.Tables[0].Rows[i]["RequestID"].ToString();
+                                var SCHl = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                var Form = Model.StoreAllData.Tables[0].Rows[i]["Form"].ToString();
+                                var RegNo = Model.StoreAllData.Tables[0].Rows[i]["RegNo"].ToString();
+                                var Cname = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                var Fname = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                                var Mname = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+                                var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                var mobileno = Model.StoreAllData.Tables[0].Rows[i]["mobileno"].ToString();
+                                var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                var FSDate = Model.StoreAllData.Tables[0].Rows[i]["FSDate"].ToString();
+                                var ApprovalDate = Model.StoreAllData.Tables[0].Rows[i]["ApprovalDate"].ToString();
+                                var ApprovalUpto = Model.StoreAllData.Tables[0].Rows[i]["ApprovalUpto"].ToString();
+                                var FilePath = Model.StoreAllData.Tables[0].Rows[i]["FilePath"].ToString();
+                                if (FilePath.ToString() != "") { FilePath = "https://registration2022.pseb.ac.in/upload/upload/Upload2023/LateAdmission/" + FilePath; }
+                                var Statusmsg = "";
+                                if (Status == "0") { Statusmsg = "Created"; }
+                                if (Status == "1") { Statusmsg = "Submitted"; }
+                                if (Status == "2") { Statusmsg = "Approved"; }
+                                if (Status == "3") { Statusmsg = "Rejected"; }
+                                if (Status == "4") { Statusmsg = "Inserted In Registration"; }
+
+                                Count = i + 1;
+                                <tr>
+                                    <td>@RequestID</td>
+                                    <td>@SCHl</td>
+                                    <td>@Class</td>
+                                    <td>@Form</td>
+                                    <td>@RegNo</td>
+                                    <td>@Cname /@Fname /@Mname</td>
+                                    <td>@DOB</td>
+                                    <td>@mobileno</td>
+                                    <td>@FSDate</td>
+                                    <td>@Statusmsg</td>
+                                    <td>@ApprovalDate</td>
+                                    <td>@ApprovalUpto</td>
+                                    <td>
+                                        @if (Model.StoreAllData.Tables[0].Rows[i]["FilePath"].ToString() != "")
+                                        {<a href=@FilePath target="_blank">file download</a> }
+                                        else
+                                        {
+                                            <a href=#>No file</a>}
+                                    </td>
+                                    <td>
+                                        <div class="cart">
+                                            Choose Action <span class="caret"></span>
+                                            <div id="sidebar">
+                                                <ul>
+
+                                                    @if (Status == "0")
+                                                    {
+                                                        if (todayDT <= lastDT)
+                                                        {
+                                                            <li><a href="" data-toggle="modal" data-target="#myModalModify-@RequestID">MODIFY</a></li>
+                                                            <li>@Html.ActionLink("Final Submit", "FinalSubmit", new { CID = @RequestID, mobileNo = @mobileno, formNM = @Form, PanelType = @PanelType }, new { onclick = "return confirm('Are you sure want to Final Submit This Record?');" })</li>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <li><a href="" data-toggle="modal" data-target="">DATE IS OVER</a></li>
+
+                                                        }
+                                                    }
+                                                    @if (Status == "1")
+                                                    {
+                                                        <li><a href="" data-toggle="modal" data-target="">SUBMITTED</a></li>
+
+                                                    }
+                                                    @if (Status == "2" || Status == "3" || Status == "4" || Status == "5")
+                                                    {
+                                                        <li>@Html.ActionLink("Print Letter", "LateAdmPrintLetter", new { CID = @RequestID })</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                                @*<tr>
+                                    <td colspan="12" style="border-top:2px dashed #000 !important;height:36px"></td>
+                                    </tr>*@
+
+
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="12">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+}
+
+
+@*/ BEGIN Add new record/*@
+@using (Html.BeginForm("AddLateAdmissionSchl", "RegistrationPortal", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        @*<p class="kdsfont-n" style="padding:10px 0;color:red;font-size:12px"><b>Note</b> : ਬਾਹਰਲੇ ਰਾਜ / ਬੋਰਡ ਵਾਲੇ ਪ੍ਰੀਖਿਆਰਥੀਆਂ ਦੇ ਲੇਟ ਦਾਖਲੇ ਦੀ ਪ੍ਰਵਾਨਗੀ ਲਈ Inter Board Migration ਫਾਰਮ ਭਰਿਆ ਜਾਵੇ। ਇਹ ਫਾਰਮ School Login -> Registration -> Inter Board Migration ਲਿੰਕ ਅਧੀਨ ਉਪਲਬਧ ਹੋਵੇਗਾ।</p>*@
+                        <div style="border-bottom:1px dashed #ccc;font-size:14px;padding:4px 4px;margin-bottom:10px;background-color:#ff6a00;color:#fff">Late Admission Form : @Session["Session"].ToString()</div>
+                        <table class="cs-tbl">
+                            <tr>
+                                <td>
+
+                                    <input type="Text" value="CLASS *" style="background-color:lightgray" disabled="disabled" />
+                                </td>
+                                <td>
+                                    @{
+                                        List<SelectListItem> classItem = new List<SelectListItem>();
+                                        classItem.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                        classItem.Add(new SelectListItem { Text = "9th", Value = "9" });
+                                        classItem.Add(new SelectListItem { Text = "10th", Value = "10" });
+                                        classItem.Add(new SelectListItem { Text = "11th", Value = "11" });
+                                        classItem.Add(new SelectListItem { Text = "12th", Value = "12" });
+                                    }
+                                    @Html.DropDownList("class", classItem, new { id = "class" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="Text" value="Form Name *" style="background-color:lightgray" disabled="disabled" /></td>
+                                <td>
+                                    @{
+                                        List<SelectListItem> formNMItem = new List<SelectListItem>();
+                                        formNMItem.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                    }
+                                    @Html.DropDownList("formNM", formNMItem, new { id = "formNM" })
+                                </td>
+                            </tr>
+                            <tr id="trOtherBoard" style="display:none">
+                                <td><input type="Text" value="Board *" style="background-color:lightgray" disabled="disabled" /></td>
+                                <td>
+                                    @{
+                                        List<SelectListItem> BoardList = new List<SelectListItem>();
+                                        BoardList.Add(new SelectListItem { Text = "---Select Board--", Value = "0" });
+                                        BoardList.Add(new SelectListItem { Text = "CBSE BOARD", Value = "CBSE BOARD" });
+                                        BoardList.Add(new SelectListItem { Text = "P.S.E.B BOARD", Value = "P.S.E.B BOARD" });
+                                        BoardList.Add(new SelectListItem { Text = "I.C.S.E BOARD", Value = "ICSE BOARD" });
+                                        BoardList.Add(new SelectListItem { Text = "HARYANA BOARD", Value = "HARYANA BOARD" });
+                                        BoardList.Add(new SelectListItem { Text = "HIMACHAL BOARD", Value = "HIMACHAL BOARD" });
+                                        BoardList.Add(new SelectListItem { Text = "J&K BOARD", Value = "J&K BOARD" });
+                                        BoardList.Add(new SelectListItem { Text = "RAJASTHAN BOARD", Value = "RAJASTHAN BOARD" });
+                                        BoardList.Add(new SelectListItem { Text = "OTHER BOARD", Value = "OTHER BOARD" });
+
+                                    }
+
+                                    @Html.DropDownList("Board", BoardList, new { id = "ddlboard" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="Text" value="Reg No." style="background-color:lightgray" disabled="disabled" /></td>
+                                <td>
+                                    <input type="Text" id="regno" class="obt" name="regno" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="Text" value="Student Name *" style="background-color:lightgray" disabled="disabled" /></td>
+                                <td><input type="Text" id="name" class="obt" name="name" /> </td>
+                            </tr>
+                            <tr>
+                                <td><input type="Text" value="Father Name *" style="background-color:lightgray" disabled="disabled" /></td>
+                                <td><input type="Text" id="fname" class="obt" name="fname" /> </td>
+                            </tr>
+                            <tr>
+                                <td><input type="Text" value="Mother Name *" style="background-color:lightgray" disabled="disabled" /></td>
+                                <td><input type="Text" id="mname" class="obt" name="mname" /> </td>
+                            </tr>
+                            <tr>
+                                <td><input type="Text" value="Date Of Birth *" style="background-color:lightgray" disabled="disabled" /></td>
+                                <td>
+                                    @Html.TextBoxFor(a => a.DOB, new
+                               {
+                                   id = "DOB",
+                                   //@readonly = "readonly",
+                                   @maxlength = "10",
+                                   //onkeypress = "javascript: return false;",
+                                   onpaste = "return false;",
+                                   oncopy = "return false;",
+                                   oncut = "return false;",
+                                   @class = "dobdate",
+                                    autocomplete="off"
+                               })
+                                    @*<input type="Text" id="dob" class="obt" />*@
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="Text" value="Student Contanct No *" style="background-color:lightgray" disabled="disabled" /></td>
+                                <td><input type="Text" id="mobileno" name="mobileno" class="obt" /> </td>
+                            </tr>
+                            <tr>
+                                <td><input type="Text" value="Attach File *" style="background-color:lightgray" disabled="disabled" /></td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.file, new { id = "file", type = "file", onchange = "findSizeAndPreview(this)" }) <span class="rqf">*Attach scanned copy of request letter on school letter head and supporting eligibility documents in single PDF</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">---------------------------------------------------------------------------------------------------------------------------------</td>
+                            </tr>
+                            <tr class="text-center">
+                                <td></td>
+                                <td>
+
+                                    @Html.Hidden("PanelType", "LA")
+
+                                    @*<input type="button" class="btn" value="SUBMIT" id="btnSave" onclick="SaveData()" />*@
+                                    <input type="submit" class="btn" value="SUBMIT" id="btnSave" onclick="return valForm();" />
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a href="javascript:void(0);" onclick="history.go(0);" class="btn">Close</a>
+                                </td>
+                            </tr>
+                            <tr class="text-left">
+                                <td colspan="2">
+                                    <span class="rqf">
+                                        Instructions:<br />1. Please enter student related information Only.<br />
+                                    </span><br />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@*/END Add new record/*@
+
+@{
+
+    if (Model != null)
+    {
+        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+        {
+            var RequestID = Model.StoreAllData.Tables[0].Rows[i]["RequestID"].ToString();
+            var SCHl = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+            var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+            var formNM = Model.StoreAllData.Tables[0].Rows[i]["Form"].ToString();
+            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["RegNo"].ToString();
+            var Cname = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+            var Fname = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+            var Mname = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+            var mobileno = Model.StoreAllData.Tables[0].Rows[i]["mobileno"].ToString();
+            var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+            var ApprovalDate = Model.StoreAllData.Tables[0].Rows[i]["ApprovalDate"].ToString();
+            var ApprovalUpto = Model.StoreAllData.Tables[0].Rows[i]["ApprovalUpto"].ToString();
+            var FilePath = Model.StoreAllData.Tables[0].Rows[i]["FilePath"].ToString();
+            if (FilePath.ToString() != "") { FilePath = "https://registration2022.pseb.ac.in/upload/Upload2023/LateAdmission/" + FilePath; }
+            using (Html.BeginForm("ModifyLateAdmissionSchl", "RegistrationPortal", new { RequestID = @RequestID }, FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+            {
+                <div class="modal fade" id="myModalModify-@RequestID" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="clearfix"></div>
+                                <div class="col-md-12">
+
+
+                                    <div style="border-bottom:1px dashed #ccc;font-size:14px;padding:4px 4px;margin-bottom:10px;background-color:#ff6a00;color:#fff">Late Admission Form : @Session["Session"].ToString()</div>
+                                    <table class="cs-tbl">
+                                        <tr>
+                                            <td><input type="Text" value="Request No." style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td><input type="Text" id="RID" name="RID" value="@RequestID" readonly="readonly" class="obt" /> </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="CLASS *" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td>
+                                                @{
+                                                    List<SelectListItem> classItem = new List<SelectListItem>();
+                                                    classItem.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                                    classItem.Add(new SelectListItem { Text = "9th", Value = "9" });
+                                                    classItem.Add(new SelectListItem { Text = "10th", Value = "10" });
+                                                    classItem.Add(new SelectListItem { Text = "11th", Value = "11" });
+                                                    classItem.Add(new SelectListItem { Text = "12th", Value = "12" });
+                                                }
+                                                @Html.DropDownList("class", new SelectList(classItem, "Value", "Text", Class), new { id = "class" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="Form Name *" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td>
+                                                @{
+                                                    List<SelectListItem> formNMItem = new List<SelectListItem>();
+                                                    formNMItem.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                                  //  formNMItem.Add(new SelectListItem { Text = "N1", Value = "N1" });
+                                                    formNMItem.Add(new SelectListItem { Text = "N2", Value = "N2" });
+                                                    formNMItem.Add(new SelectListItem { Text = "N3", Value = "N3" });
+                                                    formNMItem.Add(new SelectListItem { Text = "M1", Value = "M1" });
+                                                    formNMItem.Add(new SelectListItem { Text = "M2", Value = "M2" });
+                                                    formNMItem.Add(new SelectListItem { Text = "E1", Value = "E1" });
+                                                    formNMItem.Add(new SelectListItem { Text = "E2", Value = "E2" });
+                                                    formNMItem.Add(new SelectListItem { Text = "T1", Value = "T1" });
+                                                    formNMItem.Add(new SelectListItem { Text = "T2", Value = "T2" });
+                                                }
+                                                @Html.DropDownList("formNM", new SelectList(formNMItem, "Value", "Text", formNM), new { id = "formNM" })
+                                            </td>
+                                        </tr>
+                                        <tr id="trOtherBoardM" style="display:none">
+                                            <td><input type="Text" value="Board *" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td>
+                                                @{
+                                                    List<SelectListItem> BoardList = new List<SelectListItem>();
+                                                    BoardList.Add(new SelectListItem { Text = "---Select Board--", Value = "0" });
+                                                    BoardList.Add(new SelectListItem { Text = "CBSE BOARD", Value = "CBSE BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "P.S.E.B BOARD", Value = "P.S.E.B BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "I.C.S.E BOARD", Value = "ICSE BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "HARYANA BOARD", Value = "HARYANA BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "HIMACHAL BOARD", Value = "HIMACHAL BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "J&K BOARD", Value = "J&K BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "RAJASTHAN BOARD", Value = "RAJASTHAN BOARD" });
+                                                    BoardList.Add(new SelectListItem { Text = "OTHER BOARD", Value = "OTHER BOARD" });
+
+                                                }
+
+                                                @Html.DropDownList("Board", BoardList, new { id = "ddlboard" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="Reg No." style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td><input type="Text" id="regno" value="@RegNo" name="RegNo" class="obt" /> </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="Student Name *" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td><input type="Text" id="name" value="@Cname" name="name" class="obt" /> </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="Father Name *" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td><input type="Text" id="fname" value="@Fname" name="Fname" class="obt" /> </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="Mother Name *" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td><input type="Text" id="mname" value="@Mname" name="Mname" class="obt" /> </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="Date Of Birth *" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td>
+                                                @Html.TextBox("DOB", DOB, new
+                                           {
+                                               id = "DOBModify",
+                                               //@readonly = "readonly",
+                                               @maxlength = "10",
+                                               //onkeypress = "javascript: return false;",
+                                               onpaste = "return false;",
+                                               oncopy = "return false;",
+                                               oncut = "return false;",
+                                               @class = "PracDate",
+                                               autocomplete = "off"
+                                           })
+                                                @*<input type="Text" id="dob" class="obt" />*@
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="Student Contanct No" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td><input type="Text" id="mobileno" value="@mobileno" name="mobileno" class="obt" /> </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="Attach File" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td>
+                                                @Html.TextBoxFor(m => m.fileM, new { id = "fileM", type = "file", onchange = "findSizeAndPreviewModify(this)" }) <span class="rqf">*Attach scanned copy of request letter on school letter head and supporting eligibility documents in single PDF</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="Text" value="VIEW PREVIOUS FILE" style="background-color:lightgray" disabled="disabled" /></td>
+                                            <td style="background-color:#ffbb8b">
+                                                @if (Model.StoreAllData.Tables[0].Rows[i]["FilePath"].ToString() != "")
+                                                {<a href=@FilePath target="_blank">CLICK HERE TO VIEW</a> }
+                                                else
+                                                {
+                                                    <a href=#>No file</a>}
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">---------------------------------------------------------------------------------------------------------------------------------</td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td></td>
+                                            <td>
+                                                @Html.Hidden("PanelType", "LA")
+                                                @Html.Hidden("RequestID", @RequestID)
+                                                @*<input type="button" class="btn" value="SUBMIT" id="btnSave" onclick="UpdateAdmission(@RequestID)" />*@
+                                                <input type="submit" class="btn" value="Update" id="btnSave" />
+
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a href="javascript:void(0);" onclick="history.go(0);" class="btn">Close</a>
+                                            </td>
+                                        </tr>
+                                        <tr class="text-left">
+                                            <td colspan="2">
+                                                <span class="rqf">
+                                                    Instructions:<br />1. Please enter student related information Only.<br />
+                                                </span><br />
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    } }
+
+@{
+    if (TempData["resultUpdate"] != null)
+    {
+        if (TempData["resultUpdate"].ToString() == "11")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Record Inserted Successfuly");
+                @*window.location.href = '@Url.Action("LateAdmissionSchl", "RegistrationPortal")';*@
+            </script>
+        }
+        if (TempData["resultUpdate"].ToString() == "12")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Record Updated Successfuly");
+                @*window.location.href = '@Url.Action("LateAdmissionSchl", "RegistrationPortal")';*@
+            </script>
+        }
+        if (TempData["resultUpdate"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submitted Data Successfuly");
+                @*window.location.href = '@Url.Action("LateAdmissionSchl", "RegistrationPortal")';*@
+            </script>
+        }
+    }
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $(".PracDate").datepicker({
+            dateFormat: "dd/mm/yy",
+            showButtonPanel: false,
+            changeMonth: false,
+            changeYear: false,
+            yearRange: '1930:' + (new Date().getFullYear()),
+
+            //showOn: "button",
+            //buttonImage: "images/calendar.gif",
+            //buttonImageOnly: true,
+            minDate: new Date(2021, 4 - 1, 1),  //new Date(yyyy, current month - 1, date),
+            maxDate: new Date(),
+            inline: true
+        });
+    });
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(".dobdate").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: '-10yr',
+            //maxDate: '10/08/2016',
+            yearRange: '1930:' + (new Date().getFullYear())
+
+
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            //alert(value);
+            if (value == "") {
+                // $("#reqsession").slideUp("slow");
+                //("#reqsession").slideDown("slow");
+                alert("Please Select One");
+                return false;
+            }
+            else if (value == 1) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = true;
+
+            }
+            else if (value == 3 || value == 4 || value == 5 || value == 6) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+    });
+
+    $("#class").change(function () {
+        $("#formNM").empty();
+        var cls = $("#class").val();
+
+        if (cls == "9") {
+            $("#formNM").append('<option value="">--Select --</option>');
+           // $("#formNM").append('<option value="N1">N1</option>');
+            $("#formNM").append('<option value="N2">N2</option>');
+            $("#formNM").append('<option value="N3">N3</option>');
+        }
+        if (cls == "10") {
+            $("#formNM").append('<option value="">--Select --</option>');
+            $("#formNM").append('<option value="M1">M1</option>');
+            $("#formNM").append('<option value="M2">M2</option>');
+        }
+        if (cls == "11") {
+            $("#formNM").append('<option value="">--Select --</option>');
+            $("#formNM").append('<option value="E1">E1</option>');
+            $("#formNM").append('<option value="E2">E2</option>');
+        }
+        if (cls == "12") {
+            $("#formNM").append('<option value="">--Select --</option>');
+            $("#formNM").append('<option value="T1">T1</option>');
+            $("#formNM").append('<option value="T2">T2</option>');
+        }
+    })
+
+    $("#classM").change(function () {
+        $("#formNMM").empty();
+        var cls = $("#classM").val();
+        alert(cls);
+        if (cls == "9") {
+            $("#formNMM").append('<option value="">--Select --</option>');
+           // $("#formNMM").append('<option value="N1">N1</option>');
+            $("#formNMM").append('<option value="N2">N2</option>');
+            $("#formNMM").append('<option value="N3">N3</option>');
+        }
+        if (cls == "10") {
+            $("#formNMM").append('<option value="">--Select --</option>');
+            $("#formNMM").append('<option value="M1">M1</option>');
+            $("#formNMM").append('<option value="M2">M2</option>');
+        }
+        if (cls == "11") {
+            $("#formNMM").append('<option value="">--Select --</option>');
+            $("#formNMM").append('<option value="E1">E1</option>');
+            $("#formNMM").append('<option value="E2">E2</option>');
+        }
+        if (cls == "12") {
+            $("#formNMM").append('<option value="">--Select --</option>');
+            $("#formNMM").append('<option value="T1">T1</option>');
+            $("#formNMM").append('<option value="T2">T2</option>');
+        }
+    })
+
+
+    $("#formNM").change(function () {
+        var formNM = $("#formNM").val();
+
+        $('#trOtherBoard').hide();
+        if (formNM == "N2" || formNM == "M2" || formNM == "E2" || formNM == "T2") {
+            $('#trOtherBoard').show();
+        }
+
+    });
+</script>
+
+<script type="text/javascript">
+    function SaveData() {
+        var k = 0;
+        var cls = document.getElementById("class").value;
+        var formNM = document.getElementById("formNM").value;
+        var regno = document.getElementById("regno").value;
+        var name = document.getElementById("name").value;
+        var fname = document.getElementById("fname").value;
+        var mname = document.getElementById("mname").value;
+        var dob = document.getElementById("DOB").value;
+        var mobileno = document.getElementById("mobileno").value;
+        var file = document.getElementById("file").value;
+        //
+        var files = "";
+        if (file != "") {
+            alert('upload file now');
+            var fileUpload = $("#file").get(0);
+             files = fileUpload.files;
+            alert(files);
+        }
+
+        if (cls == 0 || formNM == 0 || regno == 0 || name == 0 || fname == 0 || mname == 0 || dob == 0 || mobileno == 0) {
+            alert("Please enter required Data before submit");
+            document.getElementById("cls").focus();
+            return false;
+        }
+
+        if (formNM == "N2" || formNM == "M2" || formNM == "E2" || formNM == "T2") {
+            if (ddlboard == "" || ddlboard == "0") {
+                alert("Please Select Other Board");
+                document.getElementById("ddlboard").focus();
+            }
+        }
+
+
+        $.ajax({
+            type: "POST",
+            url: "../RegistrationPortal/SetLateAdmissionSchl",
+            data: '{RID: "' + k + '",cls: "' + cls + '",formNM:"' + formNM + '",regno:"' + regno + '",name:"' + name + '",fname:"' + fname + '",mname:"' + mname + '",dob:"' + dob + '",mobileno:"' + mobileno + '",file:"' + files + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                alert(response.sn);
+                if (ViewBag.updStatus == 1) {
+
+                    alert("Inserted Successfully view in List.");
+                    document.location.href = '@Url.Action("LateAdmissionSchl", "RegistrationPortal")';
+                }
+                else {
+                    alert("Not Inserted, Please try again!!.");
+                }
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    }
+    function UpdateAdmission(k) {
+            var cls = $("#class-" + k).val();
+            var formNM = $("#formNM-" + k).val();
+            var regno = $("#regno-" + k).val();
+            var name = $("#name-" + k).val();
+            var fname = $("#fname-" + k).val();
+            var mname = $("#mname-" + k).val();
+            var dob = $("#DOB-" + k).val();
+            var mobileno = $("#mobileno-" + k).val();
+            var file = $("#file-" + k).val();
+            //alert(file);
+            if (cls == 0 || formNM == 0 || regno == 0 || name == 0 || fname == 0 || mname == 0 || dob == 0 || mobileno == 0) {
+                alert("Please enter required Data before submit");
+                document.getElementById("cls").focus();
+                return false;
+            }
+        if (formNM == "N2" || formNM == "M2" || formNM == "E2" || formNM == "T2") {
+            if (ddlboard == "" || ddlboard == "0") {
+                alert("Please Select Other Board");
+                document.getElementById("ddlboard").focus();
+            }
+        }
+            $.ajax({
+                type: "POST",
+                url: "../RegistrationPortal/SetLateAdmissionSchl",
+                data: '{RID: "' + k + '",cls: "' + cls + '",formNM:"' + formNM + '",regno:"' + regno + '",name:"' + name + '",fname:"' + fname + '",mname:"' + mname + '",dob:"' + dob + '",mobileno:"' + mobileno + '",file:"' + file + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    alert(response.sn);
+                    if (ViewBag.updStatus == 1) {
+
+                        alert("Updated Successfully view in List.");
+                        document.location.href = '@Url.Action("LateAdmissionSchl", "RegistrationPortal")';
+                    }
+                    else {
+                        alert("Not Inserted, Please try again!!.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        }
+    function findSizeAndPreview(input) {
+        if (typeof ($("#file")[0].files) != "undefined") {
+
+            var ext = $('#file').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#file').val(this.value);
+                //('#imgPhoto').hide();
+                return false;
+            }
+        }
+    }
+    function findSizeAndPreviewModify(input) {
+        if (typeof ($("#fileM")[0].files) != "undefined") {
+
+            var ext = $('#fileM').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#fileM').val(this.value);
+                //('#imgPhoto').hide();
+                return false;
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+    function valForm() {
+        var cls = $("#class").val();
+        var formNM = $("#formNM").val();
+        var regno = $("#regno").val();
+        var name = $("#name").val();
+        var fname = $("#fname").val();
+        var mname = $("#mname").val();
+        var dob = $("#DOB").val();
+        var mobileno = $("#mobileno").val();
+        var file = $("#file").val();
+        if (cls == 0) {
+            alert("Please select class, before submit");
+            $("#class").focus();
+            return false;
+        }
+        if (formNM == 0) {
+            alert("Please select Form, before submit");
+            $("#formNM").focus();
+            return false;
+        }
+        if (name == 0 || fname == 0 || mname == 0) {
+            alert("Please enter Student, Father and Mother name, before submit");
+            $("#name").focus();
+            return false;
+        }
+        if (dob == 0) {
+            alert("Please enter DOB, before submit");
+            $("#DOB").focus();
+            return false;
+        }
+        if (mobileno == 0) {
+            alert("Please enter mobile no, before submit");
+            $("#mobileno").focus();
+            return false;
+        }
+        if (file == '' || file == null) {
+            alert("Please select required pdf file, before submit");
+            $("#file").focus();
+            return false;
+        }
+    }
+</script>

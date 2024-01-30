@@ -1,0 +1,110 @@
+﻿@model PSEBONLINE.Models.AdditionalSectionModel
+@{
+    ViewBag.Title = "Balance Sheet Details";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<div class="row">
+<div class="col-md-12">@Html.Partial("_AdditionalSectionHeading")</div>
+<div class="clearfix"></div>
+ <div class="col-md-3">    
+@Html.Partial("_AdditionalSectionMenu")        
+    </div>
+    <div class="col-md-9">
+<h4>Balance Sheet Details</h4>
+@using (Html.BeginForm("BalanceSheet", "AdditionalSection", FormMethod.Post, new { @required= "required", id = "uploadform", enctype = "multipart/form-data" }))
+{       
+<div class="row">
+    <div class="col-md-2">Session<span class="rqf">*</span></div>
+    <div class="col-md-2">@Html.DropDownListFor(a => a.BSDSES, new SelectList(ViewBag.SessionList, "Value", "Text", ViewBag.SelectedItem), "---Select Session---", new { @required= "required", @class = "" })</div>
+    <div class="col-md-2">Total Income<span class="rqf">*</span></div>
+    <div class="col-md-2">@Html.TextBoxFor(a => a.BSDTINC, new { @required= "required", @maxlength = "12", onkeypress = "return isNumberKey(event);", })</div>
+    <div class="col-md-2">Total Expenditure<span class="rqf">*</span></div>
+    <div class="col-md-2">@Html.TextBoxFor(a => a.BSDTEXP, new { @required= "required", @maxlength = "12", onkeypress = "return isNumberKey(event);", })</div>
+    <div class="clearfix"></div>
+    <div class="col-md-2">C A Name<span class="rqf">*</span></div>
+    <div class="col-md-6">@Html.TextBoxFor(a => a.BSDNAME, new { @required= "required", @maxlength = "50" })</div>
+    <div class="col-md-2">C A Identity No.<span class="rqf">*</span></div>
+    <div class="col-md-2">@Html.TextBoxFor(a => a.BSDIDNO, new { @required= "required", @maxlength = "50" })</div>
+    <div class="clearfix"></div>
+    <div class="col-md-2">C A Address<span class="rqf">*</span></div>
+    <div class="col-md-10">@Html.TextBoxFor(a => a.BSDADD, new { @required= "required", @maxlength = "100" })</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12"><span class="rqf">Note : Attach attested balance sheet copy from CA with printed hard copy of this form and submit it at PSEB Head/Sub Office.</span></div>
+     
+        @*<div class="col-md-12">@Html.TextBoxFor(a => a.BSDFILE, null, new { @required= "required", id = "BSDFILE", type = "file" })@Html.HiddenFor(a => a.BSDFILE)</div>*@
+        <div class="clearfix"></div>
+    <div class="col-md-12 text-center tbp">
+        @if (string.IsNullOrEmpty(Model.ChallanId))
+        {
+            <input type="submit" name="submit" value="SAVE" />
+        }
+        <a href="/AdditionalSection/Index" class="btn">Back</a>
+    </div>
+</div>
+                       
+
+}
+
+    </div>
+</div>
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");                  
+                </script>}
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                     alert("Submit Failure, Please Try Again");
+                </script>
+            }
+        }
+    }
+}
+
+
+<script type="text/javascript">
+                        function ValidateAlpha(evt) {
+                            var keyCode = (evt.which) ? evt.which : evt.keyCode
+                            if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+                                alert("Only Characters Allowed!!");
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+
+                        }
+                        function isNumberKey(evt) {
+                            var charCode = (evt.which) ? evt.which : event.keyCode
+                            if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+                                return true;
+                            }
+                            else {
+                                alert("Invalid character...Enter Only Number!!");
+                                return false;
+                            }
+                        }
+
+                        function isNumberKeyGreaterThanZero(evt) {
+                            var charCode = (evt.which) ? evt.which : event.keyCode;
+                            if ((charCode >= 49 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+                                return true;
+                            }
+                            else {
+                                if (charCode == 48)
+                                { alert("Invalid Number...Enter Greater Than Zero!!"); }
+                                else { alert("Invalid character...Enter Only Number!!"); }
+                                return false;
+                            }
+                        }
+
+
+</script>

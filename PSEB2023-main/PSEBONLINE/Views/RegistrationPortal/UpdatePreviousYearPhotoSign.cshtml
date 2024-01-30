@@ -1,0 +1,468 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+
+@using (Html.BeginForm("UpdatePreviousYearPhotoSign", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Total Students <label>@ViewBag.TotalCount1</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-3">
+                        Select Form : @Html.DropDownList("FormNameList", new SelectList(ViewBag.MyForm, "Value", "Text", ViewBag.SelectedForm), "--All Form---", new { required = "required", @class = "" })
+
+                    </div>
+                    <div class="col-md-3">
+                        Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+                    </div>
+                    <div class="col-md-3">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" />
+                        <a href="/RegistrationPortal/UpdatePreviousYearPhotoSign" class="btn">Reset</a>
+
+
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12 rqf">Note : Kindly select search criteria & then click search button to show records.</div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div id="loading1"></div>
+<div class="row">
+
+    <div class="col-md-12 text-right">
+        @if (ViewBag.TotalCount > 0)
+        {
+            <input type="submit" value="Update Previous Year Photo & Sign" id="btnsubmit" />
+        }
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>Id</th>
+                    <th>Unique Id</th>
+                    <th>Form Name</th>
+                    <th>Candidate/Father's/Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Lot</th>
+                    <th>Photo</th>
+                    <th>Sign</th>
+                    <th width="10%">Select All <input type="checkbox" id="selectall" /></th>
+
+                </tr>
+                @{
+                    DateTime dt = DateTime.Now;
+                    DateTime str = DateTime.Now;// DateTime.Parse(dt.ToString("MM/dd/yyyy").Replace('-', '/'));
+                    DateTime date = str;
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 30 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                            var form_Name = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+
+                            var canName = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                            var Fname = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                            var Mname = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var LOT = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+
+                            var std_Photo = Model.StoreAllData.Tables[0].Rows[i]["std_Photo"].ToString();
+                            var std_Sign = Model.StoreAllData.Tables[0].Rows[i]["std_Sign"].ToString();
+                            var Photo = "https://registration2022.pseb.ac.in/upload/upload2021/" + Model.StoreAllData.Tables[0].Rows[i]["std_Photo"].ToString();
+                            var Sign = "https://registration2022.pseb.ac.in/upload/upload2021/" + Model.StoreAllData.Tables[0].Rows[i]["std_Sign"].ToString();
+                            Count = Count + 1;
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @stdid
+                                </td>
+                                <td>
+                                    @form_Name
+                                </td>
+
+                                <td>
+                                    @canName /  @Fname / @Mname
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @LOT
+                                </td>
+                                <td>
+                                    <img src="@Photo" style="width:74px;height:75px;background-color:#000 !important;padding:1px !important;" alt="Photograph" id="imgPhoto" />
+                                </td>
+                                <td>
+                                    <img src="@Sign" style="height:38px;width:128px;background-color:#000 !important;padding:1px !important" alt="Signature" id="img2" />
+                                </td>
+                                <td>
+                                    @if (std_Photo != "" && std_Sign != "")
+                                    {<span></span>}
+                                    else
+                                    {<input type="checkbox" id="@stdid" class="checkbox" name="AllChkId" value="@form_Name" />}
+
+
+                                </td>
+
+                            </tr>
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="8">
+
+                                        Page @ViewBag.pagesize of @ViewBag.pn
+
+                                        &nbsp;
+
+                                        @if (ViewBag.pagesize == 1)
+
+                                        {
+                                            @:<<
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "UpdatePreviousYearPhotoSign", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "UpdatePreviousYearPhotoSign", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                            @Html.ActionLink("<<", "UpdatePreviousYearPhotoSign", new { page = 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @Html.ActionLink("< Prev", "UpdatePreviousYearPhotoSign", new { page = ViewBag.pagesize - 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "UpdatePreviousYearPhotoSign", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "UpdatePreviousYearPhotoSign", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                            }
+
+                                        }
+
+
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+
+
+<script type="text/javascript">
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        // Check or Uncheck All checkboxes
+        $("#selectall").change(function () {
+            var checked = $(this).is(':checked');
+            if (checked) {
+                $(".checkbox").each(function () {
+                    $(this).prop("checked", true);
+                });
+            } else {
+                $(".checkbox").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
+
+        // Changing state of CheckAll checkbox
+        $(".checkbox").click(function () {
+
+            if ($(".checkbox").length == $(".checkbox:checked").length) {
+                $("#selectall").prop("checked", true);
+            } else {
+                $("#selectall").removeAttr("checked");
+            }
+
+        });
+
+
+
+
+        // Get the value of CheckAll checkbox
+
+        //Start Save Data
+        $("#btnsubmit").click(function () {
+            var isvalid = true;
+            if (isvalid == true) {
+                var chkdee = "";
+                var studentid = "";
+                var formname = "";
+                var pageid = "";
+                var storeid1 = "";
+                var storechkid = "";
+                var storescid = "";
+                $('.checkbox').each(function () {
+                    var id = this.id;
+                    // alert(id);
+                    var val = this.value;
+                    // alert(val);
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var arrcast = "";
+                    var j = 0;
+                    if (this.checked) {
+                        studentid += id + ",";
+                        //formname = val;
+                        //formname = id.split["-"][2];
+
+
+
+
+                    }
+                });
+
+                if (studentid == "") {
+                    alert("Please Select Atleast 1 Record .");
+                }
+
+                else {
+                   // alert(studentid);
+                    $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "../RegistrationPortal/jqBulkUpdatePhotoSign", // this for calling the web method function in cs code.
+                        data: '{studentid: "' + studentid + '" }',// user name or email value
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: OnSuccess,
+                        failure: function (response) {
+                            alert(response);
+                        }
+                    });
+
+                    function OnSuccess(response) {
+                        $('#loading1').empty();
+                        if (response.result <= 0) {
+                            alert("Something Went Wrong,Try Again.");
+                        }
+                        else {
+                            alert("Photo and Sign Updated Successfully");
+
+                        }
+
+                    }
+                }
+
+            }// if true close
+        });
+
+        //End  Save Data
+
+
+
+
+    });
+
+</script>
+
+
+
+<script>
+
+
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+        if (value == 5) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+
+            $("#SearchString").datepicker({
+               // dateFormat: "dd/mm/yy",
+               // changeMonth: true,
+               // changeYear: true,
+                // maxDate: '-10Y',
+
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1969:2007"
+
+            });
+
+        }
+        else if (value == 2 || value == 3 || value == 4) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            if (value == 5) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10Y',
+
+                });
+
+            }
+            else if (value == 2 || value == 3 || value == 4) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+</script>

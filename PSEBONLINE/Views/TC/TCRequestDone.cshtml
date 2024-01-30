@@ -1,0 +1,179 @@
+﻿@model PSEBONLINE.Models.TCModels
+@{
+    ViewBag.Title = "TCRequestDone";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+    textarea {
+background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555;
+    font-weight: 400;
+    line-height: inherit;
+    margin-bottom: 6px;
+    padding: 3px 6px;
+    text-transform: uppercase;
+    width: 100%;
+    }
+
+</style>
+
+@using (Html.BeginForm("TCRequestDone", "TC", FormMethod.Post, new { id = "TCRequestDone", enctype = "multipart/form-data" }))
+{
+    <h1>Enter TC Request Information</h1>
+    <div style="color:green">@TempData["msg"]</div>
+    <div class="clearfix"></div>
+    <div class="row">
+<div class="col-md-12">
+        <div id="UpdateResult">
+ <p><b>@ViewBag.Message</b></p>
+                                @Html.HiddenFor(a => a.ID)
+                                @Html.HiddenFor(a => a.SCHL)
+                                @Html.HiddenFor(a => a.SelYear)
+                                @*@Html.HiddenFor(a => a.SearchResult)*@</div>
+<div class="clearfix"></div>
+<div class="col-md-2">FORM NAME</div>
+<div class="col-md-4"> <label>@Html.DisplayFor(a => a.FormName)</label></div>
+<div class="clearfix"></div>
+<div class="col-md-2">STUDENT ID</div>
+<div class="col-md-4"><label>@Html.DisplayFor(a => a.SdtID)</label></div>
+<div class="clearfix"></div>
+<div class="col-md-2">CANDIDATE NAME</div>
+<div class="col-md-4"><label>@Html.DisplayFor(a => a.Candi_Name)</label></div>
+<div class="clearfix"></div>
+<div class="col-md-2">FATHER'S NAME</div>
+<div class="col-md-4"><label>@Html.DisplayFor(a => a.Father_Name)</label></div>
+<div class="clearfix"></div>
+<div class="col-md-2">MOTHER'S NAME</div>
+<div class="col-md-4"> <label>@Html.DisplayFor(a => a.Mother_Name)</label></div>
+<div class="clearfix"></div>
+<div class="col-md-2">DOB</div>
+<div class="col-md-4"><label>@Html.DisplayFor(a => a.DOB)</label></div>
+<div class="clearfix"></div>
+<div class="col-md-2">REG.No.</div>
+<div class="col-md-4"><label>@Html.DisplayFor(a => a.regno)</label></div>
+<div class="clearfix"></div>
+<div class="col-md-2">Dispatch No.<span class="rqf">*</span></div>
+<div class="col-md-4"> @Html.TextBoxFor(a => a.dispatchNo, new { id = "dispatchNo", @maxlength = "10", onpaste = "return false" })</div>
+<div class="clearfix"></div>
+<div class="col-md-2">Attendance (Total)<span class="rqf">*</span></div>
+<div class="col-md-4">@Html.TextBoxFor(a => a.attendanceTot, new { id = "attendanceTot", @maxlength = "3", onkeypress = "return isNumberKey(event);", onpaste = "return false" })</div>
+<div class="clearfix"></div>
+<div class="col-md-2">Attendance (Present)<span class="rqf">*</span></div>
+<div class="col-md-4">@Html.TextBoxFor(a => a.attendancePresnt, new { id = "attendancePresnt", @maxlength = "3", onkeypress = "return isNumberKey(event);", onpaste = "return false" })</div>
+<div class="clearfix"></div>
+<div class="col-md-2">Struck Off Date<span class="rqf">*</span></div>
+<div class="col-md-4"> @Html.TextBoxFor(a => a.struckOff, "{0:dd/MM/yyyy}", new
+                           {
+                               id = "txtstruckOff",
+                               @readonly = "readonly",
+                               @maxlength = "10",
+                               //onkeypress = "javascript: return false;",
+                               onpaste = "return false;",
+                               oncopy = "return false;",
+                               oncut = "return false;",
+
+                           })
+                                    @*@Html.TextBoxFor(a => a.struckOff, new { id = "struckOff", @maxlength = "15" })*@</div>
+<div class="clearfix"></div>
+<div class="col-md-2">Reason Of Leaving</div>
+<div class="col-md-4"> @Html.TextAreaFor(a => a.reasonFrSchoolLeav, new { id = "reasonFrSchoolLeav", @maxlength = "200" })</div>
+<div class="clearfix"></div>
+<div class="col-md-2"></div>
+    <div class="col-md-4">
+        @*<input type="submit" name="Update Result" value="Update Result" formaction="Update_Result" formmethod="post" />*@
+    <input type="submit" id="TCRequestDone" onclick="return formVal();" value="Generate TC" />  @*<input type="submit" id="btncancel" formaction="adminresultpage" value="Cancel" />*@
+    @*<input type="button" value="CANCEL" onclick="javascript:document.location.href='@Url.Action("TCRequest", "School")'" />*@
+    @*<a href="javascript:void(0);" onclick="history.go(-1);" class="btn">CANCEL</a>*@
+    <input type="button" value="CANCEL" onclick="javascript:document.location.href='@Url.Action("TCRequest", "TC")'" />
+</div>
+
+
+        
+    </div>
+</div>
+
+}
+
+@{
+    if (ViewData["TCStatus"] != null)
+    {
+        if (ViewData["TCStatus"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("TC Generated Successfully Done.");
+                document.location.href = '@Url.Action("TCRequest/" + ViewData["SCHL"], "TC")';
+
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("TC Not Generated.");
+                history.go(-1);
+            </script>
+        }
+    }
+
+}
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#txtstruckOff").datepicker({           
+            dateFormat: "dd/mm/yy",
+             changeMonth: true,
+        changeYear: true,
+        maxDate: '0',
+        //maxDate: '10/08/2016',
+        yearRange: "2014:2020"
+        });
+    });
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function formVal()
+    {
+        var dispatchNo = document.getElementById('dispatchNo').value;
+        if (dispatchNo == "") {
+            alert("Enter dispatch no.");
+            document.getElementById('dispatchNo').focus();
+            return false;
+        }
+        var attendanceTot = document.getElementById('attendanceTot').value;
+        if (attendanceTot == "") {
+            alert("Enter attendance Total.");
+            document.getElementById('attendanceTot').focus();
+            return false;
+        }
+        var attendancePresnt = document.getElementById('attendancePresnt').value;
+        if (attendancePresnt == "") {
+            alert("Enter attendance Total.");
+            document.getElementById('attendancePresnt').focus();
+            return false;
+        }
+        var txtstruckOff = document.getElementById("txtstruckOff");
+        if (txtstruckOff.value == "") {
+            alert("Enter Struck Off Date");
+            document.getElementById("txtstruckOff").focus();
+            return false;
+        }
+    }   
+</script>

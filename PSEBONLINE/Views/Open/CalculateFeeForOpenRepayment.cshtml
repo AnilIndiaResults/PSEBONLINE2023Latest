@@ -1,0 +1,603 @@
+﻿@model PSEBONLINE.Models.FeeOpenModel
+@{
+    ViewBag.Title = "CalculateFee";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+
+<section class="content-header">
+    <h1>Calculate Fee of Application Number : @Session["SCHL"].ToString()</h1>
+    <ol class="breadcrumb">
+        <li><a href="/open/Applicationstatus/@Session["SCHL"].ToString()"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">Calculate Fee</li>
+      
+    </ol>
+</section>
+<div id="dialogOnline" style="display: none">
+    <span class="rqf">Click OK button to do Online Payment through Credit Card, Debit Card, Net Banking etc of any bank otherwise click Cancel button.</span>
+</div>
+
+@{
+
+
+    using (Html.BeginForm("ProcessCheckedItems", "Open", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+    {
+        <div class="box">
+            <div class="row">
+
+                <div class="" style="overflow:auto;height:400px;">
+                    Count : @Model.feeopenList.Count
+                    <table class="table table-bordered">
+                        <thead>
+
+                            <tr class="active-tr">
+                                <th>Select</th>
+                                <th>std_id</th>
+                                <th>Appno</th>
+                                <th>Add SubFee</th>
+                                <th>Late Fee</th>
+                                <th>HardCopyCertificateFee</th>
+                                <th>Late Fee</th>
+                                <th>ProsFee</th>
+                                <th>RegConti</th>
+                                <th>Admission Fee</th>
+
+                                <th>Total Fee</th>
+
+                                <th>Exam Reg Fee</th>
+                                <th>Exam Late Fee</th>
+                                <th>Exam Total Fee</th>
+                                <th>Exam PrSub Fee</th>
+                                <th>Exam AddSub Fee</th>
+                                <th>Total Fee Now</th>
+                                <th>last paid Fee</th>
+                                <th>Total Fee To Pay</th>
+
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            @{
+                                var std_id = "";
+                                var AppNo = "";
+                                var FeeCode = "";
+                                var FeeCat = "";
+                                var FORM = "";
+                                var EndDate = "";
+                                //var BankLastDate = "";
+                                var LateFee = 0;
+                                var ProsFee = 0;
+                                var RegConti = 0;
+                                var RegContiCat = "";
+                                var AdmissionFee = 0;
+                                var AddSubFee = 0;
+                                var NoAddSub = 0;
+                                var TotalFee = 0;
+                                var TotalFeesInWords = "";
+
+                                var ExamRegFee = 0;
+                                var ExamLateFee = 0;
+                                var ExamTotalFee = 0;
+                                var ExamNOAS = 0;
+                                var ExamNOPS = 0;
+                                var ExamPrSubFee = 0;
+                                var ExamAddSubFee = 0;
+                                var ExamStartDate = "";
+                                var ExamEndDate = "";
+                                var ExamBankLastDate = "";
+                                var HardCopyCertificateFee = 0;
+                                var lastpaidFee = 0;
+                                var totalCalculatedFee = 0;
+                                var total_Fee_To_Pay = 0;
+
+                                var count = 0;
+                                var noCount = 0;
+                                var noCountval = "";
+
+
+                                foreach (var Data in Model.feeopenList)
+                                {
+                                    noCount++;
+                                    noCountval = "selectedItems" + noCount;
+                                    count = Model.feeopenList.Count;
+
+                                    std_id = Data.AppNo;
+                                    AppNo = Data.Appno_std_id;
+                                    AdmissionFee = Data.AdmissionFee;
+                                    AddSubFee = Data.AddSubFee;
+                                    ProsFee = Data.ProsFee;
+                                    LateFee = Data.LateFee;
+                                    TotalFee = Data.TotalFee;
+                                    HardCopyCertificateFee = Data.HardCopyCertificateFee;
+                                    ExamRegFee = Data.ExamRegFee;
+                                    ExamAddSubFee = Data.ExamAddSubFee;
+                                    ExamPrSubFee = Data.ExamPrSubFee;
+                                    ExamLateFee = Data.ExamLateFee;
+                                    ExamTotalFee = Data.ExamTotalFee;
+
+
+                                    FeeCode = Data.FeeCode;
+                                    FeeCat = Data.FeeCat;
+                                    FORM = Data.FORM;
+                                    EndDate = Data.EndDate;
+                                    //BankLastDate += Data.BankLastDate;
+                                    LateFee = Data.LateFee;
+                                    ProsFee = Data.ProsFee;
+                                    RegConti = Data.RegConti;
+                                    RegContiCat = Data.RegContiCat;
+                                    AdmissionFee = Data.AdmissionFee;
+                                    AddSubFee = Data.AddSubFee;
+                                    NoAddSub = Data.NoAddSub;
+                                    TotalFee = Data.TotalFee;
+                                    TotalFeesInWords = Data.TotalFeesInWords;
+
+                                    ExamRegFee = Data.ExamRegFee;
+                                    ExamLateFee = Data.ExamLateFee;
+                                    ExamTotalFee = Data.ExamTotalFee;
+                                    ExamNOAS = Data.ExamNOAS;
+                                    ExamNOPS = Data.ExamNOPS;
+                                    ExamPrSubFee = Data.ExamPrSubFee;
+                                    ExamAddSubFee = Data.ExamAddSubFee;
+                                    ExamStartDate = Data.ExamStartDate;
+                                    ExamEndDate = Data.ExamEndDate;
+                                    //ExamBankLastDate += Data.ExamBankLastDate;
+                                    HardCopyCertificateFee = Data.HardCopyCertificateFee;
+                                    lastpaidFee = Data.lastPaidFee;
+                                    totalCalculatedFee = TotalFee + ExamTotalFee;
+                                    total_Fee_To_Pay = totalCalculatedFee - lastpaidFee;
+                                    if (total_Fee_To_Pay > 0)
+                                    {
+
+
+                                    <tr>
+                                        <td align="center">
+                                            <input type="checkbox" id='@noCountval'  onchange="calculateSum(this.id)" name="selectedItems" value="@TotalFee-@ExamTotalFee-@AppNo-@AdmissionFee-@LateFee-@ProsFee-@AddSubFee-@RegConti-@ExamRegFee-@ExamLateFee-@lastpaidFee" />
+                                        </td>
+                                        <td align="center">@AppNo</td>
+                                        <td align="center">@AddSubFee</td>
+                                        <td align="center">@LateFee</td>
+                                        <td align="center">@HardCopyCertificateFee</td>
+                                        <td align="center">@LateFee</td>
+                                        <td align="center">@ProsFee</td>
+                                        <td align="center">@RegConti</td>
+                                        <td align="center">@AdmissionFee</td>
+
+                                        <td align="center">@TotalFee</td>
+
+                                        <td align="center">@ExamRegFee</td>
+                                        <td align="center">@ExamLateFee</td>
+                                        <td align="center">@ExamTotalFee</td>
+                                        <td align="center">@ExamPrSubFee</td>
+                                        <td align="center">@ExamAddSubFee</td>
+                                        <td align="center">@totalCalculatedFee</td>
+                                        <td align="center">@lastpaidFee</td>
+                                        <td align="center">@total_Fee_To_Pay</td>
+
+
+                                    </tr>
+
+                                    }
+                                }
+
+
+
+
+
+
+                            }
+
+
+                        </tbody>
+                    </table>
+
+
+
+
+                </div>
+
+
+                <div class="text-center">  <a data-toggle="modal" data-target="#myModal1"><button>Payment</button></a></div>
+
+
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            @Html.HiddenFor(Model => Model.selectedItems, new { id = "hdselectedItems" })
+                            @Html.HiddenFor(Model => Model.sum, new { id = "hdsum" })
+                            Total Calculated Fee   <input type="text" class="form-control" id="sum" readonly />
+                            Total Candidate  <input type="text" class="form-control" id="totCount" readonly />
+                            
+                            <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <table>
+                                    <tr>
+                                        <td><span>@Html.RadioButtonFor(Model => Model.feeopenData.BankCode, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span></td>
+
+
+                                        <td>
+                                            <span>@Html.RadioButtonFor(Model => Model.feeopenData.BankCode, "302", new { id = "ATOM" }) <img src="~/Images/PNSB.jpg" alt="ATOM" width="150" /></span>
+                                        </td>
+                                    </tr>
+
+                                    <tr > <td class="text-center">
+                                              <button type="button" id="submitForm">Submit</button>
+                                          </td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+
+
+
+
+
+
+@{
+    if (ViewData["SelectBank"] != null)
+    {
+        if (ViewData["SelectBank"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+    alert("Please Select Bank ");
+    window.location.href = '@Url.Action("CalculateFee", "Open")';
+            </script>
+
+        }
+    }
+
+
+    if (ViewData["result"] != null)
+    {
+
+        if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Challan Not Generated, Plz Try Again");
+                $('#Main1').show();
+                $('#loading1').empty();
+            </script>
+
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Challan Already Exists");
+                $('#Main1').show();
+                $('#loading1').empty();
+            </script>
+
+        }
+        else if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+    alert("Challan Generated Successfully Bank ");
+    $('#Main1').show();
+    $('#loading1').empty();
+    //window.location.href = '@Url.Action("GenerateChallaan", "Open", new { Id = @ViewBag.ChallanNo })';
+            </script>
+
+        }
+        else if (ViewData["result"].ToString() == "20")
+        {
+            <script type="text/javascript" language="javascript">
+    alert('@ViewBag.Message');
+    $('#Main1').show();
+    $('#loading1').empty();
+            </script>
+
+        }
+
+    }
+}
+
+
+
+
+<script type="text/javascript">
+    //Start Payment
+    $("#btnPaymentHOD").click(function () {
+        var HOD = document.getElementById("HOD").checked;
+
+
+        if (HOD == false) {
+            alert("Please Select Any Bank");
+            return false;
+        }
+        else {
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to Final Submit ?");
+            return true;
+        }
+
+    });
+</script>
+
+
+<script type="text/javascript">
+
+    $("#btnPayment").click(function () {
+
+        var SBPa = document.getElementById("HDFC").checked;
+
+
+        if (SBPa == false) {
+            alert("Please Select Any Bank For Online Payment");
+            return false;
+        }
+        else {
+
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to do online payment?");
+            $('#dialogOnline').dialog('open');
+            return true;
+        }
+
+    });
+    $(function () {
+        $("#dialogOnline").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to do online payment?",
+            width: 400,
+            height: 220,
+            buttons: {
+                "OK": function () {
+                    // $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $('#myForm').submit();
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $('#loading1').empty("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    $("#btnPayment").click(function () {
+
+        var SBPa = document.getElementById("HDFC").checked;
+        var PNBa = document.getElementById("ATOM").checked;
+
+        if (SBPa == false && PNBa == false) {
+            alert("Please Select Any Bank For Online Payment");
+            return false;
+        }
+        else {
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to do online payment?");
+            $('#dialogOnline').dialog('open');
+            return true;
+        }
+
+    });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $("#submitForm").click(function (e) {
+            e.preventDefault();
+             var bankCodehdfc = '301';
+          
+            var SBPa = document.getElementById("HDFC").checked;
+            var PNBa = document.getElementById("ATOM").checked;
+
+            if(SBPa == false && PNBa == false) {
+                alert("Please Select Any Bank For Online Payment");
+                return false;
+            }
+
+            if (SBPa == true) {
+                bankCodehdfc = "301"
+            }
+            if (PNBa == true) {
+                bankCodehdfc = "302"
+            }
+
+
+            // Serialize the form data
+
+            var formData = $("#selectedItems").serialize();
+            
+            //var selectedItems = $("input[name='selectedItems']:checked").map(function () {
+            //    return $(this).val();
+            //}).get();
+            
+            $('#hdselectedItems').val(formData);
+            $('#hdsum').val(sum);
+
+            alert("Are you sure to Final Submit ?");
+            $('#myForm').submit();
+            // Submit the form using AJAX
+            @*$.ajax({
+                type: "POST",
+                url: "@Url.Action("ProcessCheckedItems", "Open")",
+                data: { selectedItems: selectedItems, bankCode: bankCodehdfc },
+                success: function (response) {
+                    alert("Challan Re-Generated Successfully & Your Challan ID is " + response);
+
+                },
+                error: function (error) {
+                    // Handle errors if any
+                    console.log(error);
+                }
+            });*@
+        });
+    });
+</script>
+
+<script>
+    //$(document).ready(function () {
+    //   $('#selectedItems').change(function () {
+    //        console.log("ckecked");
+    //        calculateSum();
+    //    });
+    var totalFee = 0;
+    var ExamTotalFee = 0;
+    var lastpaidFee = 0;
+    var sum = 0;
+    var totalCount = 0;
+    function calculateSum(id) {
+
+        var selId = "#" + id
+            
+         
+        /* if ($("input[name='selectedItems']:checked"))*/
+
+      
+        if ($(selId).is(':checked'))
+            {
+               
+                // Split the values based on '-' and calculate the sum
+            var values = JSON.parse("[" + $(selId).val().split('-') + "]");
+                  
+                 //var values = $('#selectedItems').val().split('-');
+              
+               
+              
+                
+            
+                    console.log("values.length", values.length);
+                
+                    totalFee += parseFloat(values[0]) || 0;
+                    ExamTotalFee += parseFloat(values[1])|| 0;
+                    lastpaidFee += parseFloat(values[10]) || 0;
+
+
+
+                
+                    
+                sum = totalFee + ExamTotalFee;
+                sum = sum - lastpaidFee;
+                totalCount++;
+                   
+            $('#sum').val(sum);
+            $('#totCount').val(totalCount);
+            } else {
+            $('#sum').val('');
+            $('#totCount').val('');
+            }
+        }
+   // });
+</script>
+
+
+@*
+    <script type="text/javascript">
+
+        function Send(k) {
+            // alert('regenaret start');
+            var txtChallanNo = '#txtChallanNo-' + k;
+            //  alert("Start  Re-Generate Challan " + txtChallanNo);
+
+            var SBIa = document.getElementById("SBI-" + k).checked;
+            var PNBa = document.getElementById("PNB-" + k).checked;
+            var BCODE = "";
+            if (SBIa == false && PNBa == false) {
+                alert("Please Select Any Bank");
+                return false;
+            }
+            else if (SBIa == true && PNBa == true) {
+                alert("Please Select Only 1 Bank Either SBI or PNB");
+                document.getElementById("SBI-" + k).checked = false;
+                document.getElementById("PNB-" + k).checked = false;
+                return false;
+            }
+            else {
+                if (document.getElementById("SBI-" + k).checked == true) { BCODE = "204"; }
+                else if (document.getElementById("PNB-" + k).checked == true) { BCODE = "202"; }
+                else { BCODE = ""; }
+            }
+
+            if (BCODE == "") {
+                alert('Please Select Bank')
+                return false;
+            }
+            else if ($('#txtChallanNo-' + k).val() == "") {
+                $('#txtChallanNo-' + k).addClass("input-validation-error");
+                return false;
+            }
+            else {
+                //  alert('Now Re-Generate Challan of :' + $('#txtChallanNo-' + k).val())
+                // $('#Main1').hide();
+                $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/jqReGenerateChallaanNew",
+                    data: '{ChallanId:"' + $('#txtChallanNo-' + k).val() + '", BCODE:"' + BCODE + '" }',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: OnSuccess,
+                    failure: function (response) {
+                        alert(response);
+                        $('#loading1-' + k).empty();
+                    }
+                });
+                function OnSuccess(response) {
+                    if (response.dee == "1") {
+                        alert("Challan Re-Generated Successfully & Your Challan ID is " + response.chid);
+                        $("#myModal-" + k).hide();
+                        $('#loading1-' + k).empty();
+                        window.open("/Open/GenerateChallaan?Id=" + response.chid, "_blank");
+                    }
+                    else {
+                        alert("Failure, Please Try Again.");
+                        $('#loading1-' + k).empty();
+                    }
+                }
+            }
+        }
+
+    </script>*@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

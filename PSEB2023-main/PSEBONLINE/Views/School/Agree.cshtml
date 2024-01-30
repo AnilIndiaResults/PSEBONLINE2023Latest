@@ -1,0 +1,53 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+@using (Html.BeginForm("CheckAgree", "School", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <h1>
+        INA Guidelines For Examination - Session @if (Session["Session"] != null)
+        {@Session["Session"].ToString()}
+        else { Response.Redirect("~/Login"); }
+    </h1>
+<div class="row">
+    <div class="col-md-9">
+  <h4>
+    Instructions</h4></div> 
+    <div class="col-md-3 text-right"> <a class="btn" href="@ViewBag.Dpdf" target="_blank">Download/Print Instructions</a></div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        @if (Session["CCEClass"] != null)
+        {
+            if (Session["CCEClass"].ToString() == "S")
+            {
+                <iframe src="../../PDF/12th_CCE.pdf" class="col-lg-12 col-md-12 col-sm-12 iframeh"></iframe>
+            }
+            else if (Session["CCEClass"].ToString() == "M")
+            {
+                <iframe src="../../PDF/10th_CCE.pdf" class="col-lg-12 col-md-12 col-sm-12 iframeh"></iframe>
+            }
+			else if (Session["CCEClass"].ToString() == "MG")
+            {
+                <iframe src="../../PDF/TheoryElectiveSubjectMatric.pdf" class="col-lg-12 col-md-12 col-sm-12 iframeh"></iframe>
+            }
+        }
+
+    </div>
+<div class="clearfix"></div>
+<div class="col-md-12">    
+        <p>
+        @Html.RadioButtonFor(model => model.Agree, "Agree", new { id = "Agree", @checked = "true" }) <span class="kdsfont">Ìè× ÓÚÕÌ¼ ÕÙ </span> (I Agree)
+        @Html.RadioButtonFor(model => model.Agree, "NotAgree", new { id = "NotAgree", }) <span class="kdsfont">Ìè× ÓÚÕÌ¼ ÅÕÛ× ÕÙ</span> (I do not Agree)
+    </p>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-center">
+       <input type="submit"  id="Submit" value="Submit" /> 
+       
+        <a href="/School/CCE_Grading_Portal" class="btn">Back</a>  
+    </div>
+
+    </div>
+
+}

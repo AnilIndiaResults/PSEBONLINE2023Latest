@@ -1,0 +1,91 @@
+﻿@model PSEBONLINE.Models.DMModel
+@{
+    ViewBag.Title = "GenerateChallaan";
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+}
+<script language="javascript" type="text/javascript">
+         function Printme() {
+             document.getElementById("aback").style.visibility = "hidden";
+             document.getElementById("btnPrint").style.visibility = "hidden";
+             document.getElementById("btnclose").style.visibility = "hidden";
+             window.print();
+             document.getElementById("aback").style.visibility = "visible";
+             document.getElementById("btnPrint").style.visibility = "visible";
+             document.getElementById("btnclose").style.visibility = "visible";
+         }
+</script>
+
+    <div  class="table-responsive" id="divall">
+        <a href="/DM/CompleteChallanDetails" class="btn">Back</a>
+        <table style="width:100%;border:none" class="kdsfont">
+            <tr>
+                <td>Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</td>
+            </tr>
+            <tr>
+                <td>ÉØÏðÒÛ× Óñè»Û ÓÛ.ÓÛ.¥Û. ÓØÐ @DateTime.Now.Year ÂØ °ÐØÅ</td>
+            </tr>
+            <tr>
+                <td>@Model.UserName , @Model.DistName , @Model.OfficeName </td>
+                <td>ÚÆñâ¶ ÚÌ¼Û : Print Date</td>
+                <td>@DateTime.Now.ToString("dd/MM/yyyy")</td>
+            </tr>
+            <tr>
+                <td>°ÐØÅ Åâ : Challan No @Model.DairyNo</td>
+                <td>Challan Date : °ÐØÅ ÚÌ¼Û @Model.DairyDate.ToString()</td>
+            </tr>
+            <tr>
+                <th>Ð¾Û Åâ</th>
+                <th>¸ØÚ¥ÏÛ Åâ</th>
+                <th>Ó¨ÞÐ ÂØ ÅØ ¤¼ã ¨ï¸</th>
+                <th>¸ÛÆÞ ÚÒó° ²ÌðÙ ¨ÏÒØ¦Ý» ÂÛ ÚÌ¼Û</th>
+                <th>ÚÒÓÖãÓÖ ¨ÁÅ</th>               
+            </tr>
+            <tr>
+                <th>Sr.No</th>
+                <th>Diary No</th>
+                <th>Name of School with School Code</th>
+                <th>Deposit date</th>
+                <th>Remarks</th>
+            </tr>
+@{
+    if (ViewBag.TotalCount > 0)
+    {
+        int Count = 0;
+        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+        {
+            var RNo = Model.StoreAllData.Tables[0].Rows[i]["RNo"].ToString();
+            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+            var FullSchoolNameE = Model.StoreAllData.Tables[0].Rows[i]["FullSchoolNameE"].ToString();
+            var RDate = Model.StoreAllData.Tables[0].Rows[i]["RDate"].ToString();
+            var Remarks = Model.StoreAllData.Tables[0].Rows[i]["Remarks"].ToString();
+            Count = Count + 1;
+            <tr>
+                <td>@Count</td>
+                <td>@RNo</td>
+                <td>@FullSchoolNameE, @SCHL</td>
+                <td>@RDate</td>
+                <td>@Remarks</td>
+            </tr>
+
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="5">
+                @Html.Raw("Record Not Found")
+            </td>
+        </tr>
+    }
+}
+           
+            <tr>
+                <td>Signature of Dealing Clerk/Sr. Assistant</td>
+                <td>Signature of District Manager</td>
+            </tr>
+            <tr>
+                <td>ÓÉâÄ¼ ¨ÐÏ¨/ÓÛÅÛ. ÓÕØÚ¥¨ Âã ÕÓ¼ØªÖÏ</td>
+                <td>Ú²ÐØ ÌèÐã²Ï Âã ÕÓ¼ØªÖÏ</td>
+            </tr>               
+        </table>
+    </div>

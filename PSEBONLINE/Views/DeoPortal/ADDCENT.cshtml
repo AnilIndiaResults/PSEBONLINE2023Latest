@@ -1,0 +1,339 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+<h1>Add Center</h1>
+<p style="display:none;">
+    Welcome: @if (Session["NAME"] != null)
+    {@Session["NAME"].ToString()}
+    else { Response.Redirect("~/DeoPortal/Index"); }
+</p>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+@using (Html.BeginForm("ADDCENT", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <input type="text" id="chkImportid" name="chkImportid" value="@ViewBag.impid" style="display:none;" />
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2"><label>Total : @ViewBag.TotalCount1</label></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2">
+                    @Html.DropDownList("SelDist", new SelectList(ViewBag.Dist, "Value", "Text"), "--Select District---", new { @class = "", onchange = "deechange()" })
+                    <span id="reqsession" style="color:red;display:none;">Select One</span>
+
+                </div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> SelectList = new List<SelectListItem>();
+                        SelectList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        SelectList.Add(new SelectListItem { Text = "Centre Code", Value = "1" });
+                        SelectList.Add(new SelectListItem { Text = "Centre Name", Value = "2" });
+                        SelectList.Add(new SelectListItem { Text = "Building Name", Value = "3" });
+                        SelectList.Add(new SelectListItem { Text = "CCode", Value = "4" });
+                    }
+
+                    @Html.DropDownList("Category", SelectList, new { id = "Category" })
+
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                    <span id="reqsellist" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-1"><input type="Submit" value="Search" name="cmd" onclick="return dee()" /></div>
+            </fieldset>
+        </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-right" style="padding-bottom:4px"><input type="button" value="Back" onclick="history.go(-1);" />
+@*<input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("ClusterList", "DeoPortal")'" />*@
+<input type="Submit" value="ADD SELECTED CENTER TO THIS BLOCK" name="cmd" onclick="return valform()" /></div>
+<div class="clearfix"></div>
+
+            <div class="col-md-12">
+                <table class="table table-bordered" id="t01">
+                    <tbody>
+                        <tr class="active-tr">
+                            <th>Block Code</th>
+                            <th>Block Name</th>
+                            <th>Block Building Code</th>
+                            <th>Centre Count</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCountCluster > 0)
+                            {
+
+                                <tr>
+                                    <td>@ViewBag.ClusterCode</td>
+                                    <td>@ViewBag.ClusterName</td>
+                                    <td>@ViewBag.Address</td>
+                                    <td>@ViewBag.centrecnt</td>
+                                </tr>
+
+                            }
+
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="t01">
+                        <tbody>
+                            <tr class="active-tr">
+                                <th>S.No</th>
+                                <th>Centre</th>
+                                <th>SCHL</th>
+                                <th>Centre Name</th>
+                                <th>Building Name</th>
+                                <th>District</th>
+                                <th>CCODE</th>
+                                @*<th>Action</th>*@
+                                <th><input type="checkbox" id="select_all" />Check All</th>
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    if (ViewBag.pagesize == 1)
+                                    {
+                                        Count = 0;
+                                    }
+                                    else
+                                    {
+                                        Count = 10 * (ViewBag.pagesize - 1);
+                                    }
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var Center = Model.StoreAllData.Tables[0].Rows[i]["CENT"].ToString();
+                                        var CenterName = Model.StoreAllData.Tables[0].Rows[i]["ECENTRE"].ToString();
+                                        var SCHL = Model.StoreAllData.Tables[0].Rows[i]["cschl"].ToString();
+                                        var Buildingname = Model.StoreAllData.Tables[0].Rows[i]["SCHOOLE"].ToString() + "" + Model.StoreAllData.Tables[0].Rows[i]["Blocke"].ToString();
+                                        var District = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                                        var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+
+
+                                        Count = Count + 1;
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@Center</td>
+                                            <td>@SCHL</td>
+                                            <td>@CenterName</td>
+                                            <td>@Buildingname</td>
+                                            <td>@District</td>
+                                            <td>@CCODE</td>
+
+                                            <td>
+                                                <input type="checkbox" value="@SCHL" name="CenterName" class="checkbox" />
+                                                @*<input id="chkidHF" name="@Model.chkidList[i].Name" type="hidden" value="@Model.chkidList[i].id" />
+                                                    @Html.CheckBoxFor(m => m.chkidList[i].Selected, new { Style = "vertical-align:3px", @class = "checkbox" })*@
+                                            </td>
+                                        </tr>
+                                        if (d == ViewBag.TotalCount)
+                                        {
+                                            <tr>
+                                                <td colspan="10">
+
+                                                    Page @ViewBag.pagesize of @ViewBag.pn
+
+                                                    &nbsp;
+
+                                                    @if (ViewBag.pagesize == 1)
+
+                                                    {
+                                                        @:<<
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @:< Prev
+                                                        @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                        if (ViewBag.pn > ViewBag.pagesize)
+                                                        {
+                                                            @Html.ActionLink("Next >", "ADDCENT", new { page = ViewBag.pagesize + 1 })
+
+                                                            @Html.Raw("&nbsp;");
+
+                                                            @Html.ActionLink(">>", "ADDCENT", new { page = ViewBag.pn })
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (TempData["CenterListSelDist"] != null)
+                                                        {
+                                                            string str1 = TempData.Peek("CenterListSelDist").ToString();
+                                                            string str2 = TempData.Peek("CenterListSelectList").ToString();
+                                                            string str3 = TempData.Peek("CenterListSearchString").ToString();
+                                                            //string str4 = TempData.Peek("ImportData10thClassSession").ToString();
+                                                            TempData["CenterListSelDist"] = str1;
+                                                            TempData["CenterListSelectList"] = str2;
+                                                            TempData["CenterListSearchString"] = str3;
+                                                            // TempData["ImportData10thClassSession"] = str4;
+                                                        }
+                                                        @Html.ActionLink("<<", "ADDCENT", new { page = 1 })
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @Html.ActionLink("< Prev", "ADDCENT", new { page = ViewBag.pagesize - 1 })
+                                                        @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                        if (ViewBag.pn > ViewBag.pagesize)
+                                                        {
+                                                            @Html.ActionLink("Next >", "ADDCENT", new { page = ViewBag.pagesize + 1 })
+
+                                                            @Html.Raw("&nbsp;");
+
+                                                            @Html.ActionLink(">>", "ADDCENT", new { page = ViewBag.pn })
+                                                        }
+
+                                                    }
+
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10">
+                                            @ViewBag.Message
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+
+
+
+                    <p>Total Records(Filtered): @ViewBag.TotalCount1</p>
+                </div>
+            </div>
+        </div>
+        }
+        @{
+            if (TempData["result"] != null)
+            {
+                if (TempData["result"].ToString() == "1")
+                {
+                    <script type="text/javascript" language="javascript">
+                        var impcn = @TempData["TotImported"];
+                        //alert(impcn);
+                        alert(impcn+" Records Imported Successfully");
+                        window.location.href = '@Url.Action("ClusterList", "DeoPortal")';
+                    </script>}
+                else if (TempData["result"].ToString() == "0")
+                {
+                    <script type="text/javascript" language="javascript">
+                        alert("Data Not Imported");
+                    </script>
+                }
+                else if (TempData["result"].ToString() == "-1")
+                {
+                    <script type="text/javascript" language="javascript">
+                        alert("Data not saved..plz try again");
+                    </script>
+                }
+            }
+        }
+        <script type="text/javascript">
+            $(function () {
+                $("#select_all").change(function () {
+                    //"select all" change
+                    var status = this.checked; // "select all" checked status
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+                        this.checked = status; //change ".checkbox" checked status
+                    });
+                });
+
+                //uncheck "select all", if one of the listed checkbox item is unchecked
+                $('.checkbox').change(function () { //".checkbox" change
+
+                    //alert($(this).val());
+                    if (this.checked == false) { //if this item is unchecked
+                        $("#select_all")[0].checked = false; //change "select all" checked status to false
+                    }
+                });
+                $("#isr").click(function () {
+
+                    var favorite = [];
+
+                    $.each($("input[name='sport']:checked"), function () {
+
+                        favorite.push($(this).val());
+
+                    });
+
+                    alert("IDs are: " + favorite.join(", "));
+                    $.getJSON("../ImportData/SomeActionMethod", { id: favorite.join(", ") },
+            function (data) {
+                alert("Jay");
+                alert(data.foo);
+                alert(data.baz);
+            }
+        );
+
+                });
+            });
+        </script>
+<script>
+    function valform()
+    {        
+        var chks = document.getElementsByName('CenterName');
+        var hasChecked = false;
+        for (var i = 0; i < chks.length; i++) {
+            if (chks[i].checked) {
+                hasChecked = true;
+                break;
+            }
+        }
+        if (hasChecked == false) {
+            alert("Please Select Atleast One CheckBox For Import Staff and related Staff Duty Type");
+            document.getElementById('select_all').focus();
+            return false;
+        }
+
+    }
+    function dee()
+    {        
+        var SelDist = document.getElementById("SelDist");
+        if (SelDist.value == "" || SelDist.value == "0")
+        {
+            alert("Please Select District");
+            SelDist.focus();
+            return false;
+        }
+        var Category = document.getElementById("Category");
+        if (Category.value == "" || Category.value == "0")
+        {
+            alert("Please Select Category");
+            Category.focus();
+            return false;
+        }
+        var SStr = document.getElementById("SearchString");
+        if (SStr.value == "" || SStr.value == "0")
+        {
+            alert("Please Enter Search String");
+            SStr.focus();
+            return false;
+        }
+    }
+</script>

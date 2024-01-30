@@ -1,0 +1,243 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    //Layout = "~/Views/Shared/_Headerdeo.cshtml";
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<h1>District Educational Officer Profile Details</h1>
+@using (Html.BeginForm("DeoProfileDetails", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        @{
+            if (Session["deoFlag"].ToString() == "0")
+            {
+                <table>
+                    <tr style="background-color:#000000">
+                        <td style="font-size:17px;">
+                            <span class="redc">Without update District Education Officer profile, you cannot proceed further,. Fields marked with * are mandatory.</span>
+                        </td>
+                    </tr>                    
+                </table>
+            }
+        }
+
+        <div class="col-md-6 text-left">User Name: @Session["USER"].ToString() </div>
+            <div class="col-md-6 text-right">
+                District Code/Name: (@Session["Dist"].ToString()) @if (Session["NAME"] != null) 
+                   
+                {
+
+                    @Session["DISTNM"].ToString();
+                }
+                else { Response.Redirect("~/DeoPortal/Index"); }
+            </div>
+        <hr />
+        <div class="clearfix"></div>
+        <div class="col-md-4">D.E.O. Name <span class="redc">*</span> @Html.TextBoxFor(m => m.NAME, new { id = "NAME", @maxlength = "50" })</div>
+        <div class="clearfix"></div>    
+        <div class="col-md-4">Email ID <span class="redc">*</span> @Html.TextBoxFor(m => m.mailid, new { id = "mailid", @maxlength = "50" })</div>   
+        <div class="col-md-4">Mobile No.<span class="redc">*</span> @Html.TextBoxFor(m => m.Mobile, new { id = "Mobile", @maxlength = "10", onkeypress = "return isNumberKey(event);" })</div>
+        <div class="col-md-4">STD Code/Phone No.
+        <div class="row">
+        <div class="col-md-4">@Html.TextBoxFor(m => m.STD, new { id = "STD", @maxlength = "5", onkeypress = "return isNumberKey(event);" })</div>        
+        <div class="col-md-8">@Html.TextBoxFor(m => m.PHONE, new { id = "PHONE", @maxlength = "10", onkeypress = "return isNumberKey(event);" })</div>
+            </div></div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 1 <span class="redc">*</span> @Html.TextBoxFor(m => m.PNAME1, new { id = "PNAME1", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 1 <span class="redc">*</span>@Html.DropDownList("PDESI1", new SelectList(ViewBag.PDESIOne, "Value", "Text"), "--Select Designation One---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No. 1 <span class="redc">*</span> @Html.TextBoxFor(m => m.PMOBILE1, new { id = "PMOBILE1", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 2 @Html.TextBoxFor(m => m.PNAME2, new { id = "PNAME2", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 2 @Html.DropDownList("PDESI2", new SelectList(ViewBag.PDESITwo, "Value", "Text"), "--Select Designation Two---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No. 2 @Html.TextBoxFor(m => m.PMOBILE2, new { id = "PMOBILE2", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 3 @Html.TextBoxFor(m => m.PNAME3, new { id = "PNAME3", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 3 @Html.DropDownList("PDESI3", new SelectList(ViewBag.PDESIThree, "Value", "Text"), "--Select Designation Three---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No.3 @Html.TextBoxFor(m => m.PMOBILE3, new { id = "PMOBILE3", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 4 @Html.TextBoxFor(m => m.PNAME4, new { id = "PNAME4", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 4 @Html.DropDownList("PDESI4", new SelectList(ViewBag.PDESIFour, "Value", "Text"), "--Select Designation Four---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No. 4 @Html.TextBoxFor(m => m.PMOBILE4, new { id = "PMOBILE4", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">Other Person Name 5 @Html.TextBoxFor(m => m.PNAME5, new { id = "PNAME5", @maxlength = "50" })</div>
+        <div class="col-md-4">Designation 5 @Html.DropDownList("PDESI5", new SelectList(ViewBag.PDESIFive, "Value", "Text"), "--Select Designation Five---", new { @class = "" }) </div>
+        <div class="col-md-4">Mobile No. 5 @Html.TextBoxFor(m => m.PMOBILE5, new { id = "PMOBILE5", @maxlength = "10" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-center tbp">
+            <input type="submit" value="Update & Next" onclick="return valForm();" />
+            @*<input type="button" value="View" onclick="return valForm();" />
+            <input type="button" value="Reset" onClick="this.form.reset()" />*@
+            <input type="button" value="Back" onclick="history.go(-1);" />
+        </div>
+    </div>
+}
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Updated Successfully");
+                window.location.href = '@Url.Action("DeoHome", "DeoPortal")';
+            </script>}
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Data Already Exist");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Data not saved..plz try again");
+            </script>
+        }
+    }
+}
+<script type="text/javascript">
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+<script type="text/javascript">
+    function valForm()
+    {
+
+       
+        var NAME = document.getElementById("NAME");
+        var Emailid = document.getElementById("mailid");
+        var mob = document.getElementById("Mobile");
+        
+        
+        
+        var PNAME1 = document.getElementById("PNAME1");
+        var PDESI1 = document.getElementById("PDESI1");
+        var PMOBILE1 = document.getElementById("PMOBILE1");
+        //var std = document.getElementById("STD");
+        //var phone = document.getElementById("PHONE");
+       
+        var landLine = "^[0-9]\d{2,4}-\d{6,8}$";
+      
+        if (NAME.value == "") {
+            alert("Please Enter D.E.O. Name");
+            NAME.focus();
+            return false;
+        }       
+      
+        if (Emailid.value == "") {
+            alert("Enter your EmailID ");
+            Emailid.focus();
+            return false;
+        }
+        if (!ValidateEmail($("#mailid").val())) {
+            alert("Enter valid Email Address!");
+            Emailid.focus();
+            return false;
+        }
+        if (mob.value == "") {
+            alert("Enter Mobile Number");
+            mob.focus();
+            return false;
+        }
+        if (mob.value != "") {
+            if (mob.value.length != 10) {
+
+                alert("Please Enter 10 digits Mobile Number");
+                mob.focus();
+                return false;
+            }
+            else {
+                var Number = document.getElementById('Mobile').value;
+                var IndNum = /^[0]?[789]\d{9}$/;
+
+                if (!IndNum.test(Number)) {
+                    alert("invalid Number");
+                    mob.focus();
+                    return false;
+                }
+
+            }
+        }
+
+        if (PNAME1.value == "") {
+            alert("Please Enter Other Person Name 1");
+            PNAME1.focus();
+            return false;
+        }
+        if (PDESI1.value == "") {
+            alert("Please Enter Designation 1 ");
+            PDESI1.focus();
+            return false;
+        }
+        if (PMOBILE1.value == "") {
+            alert("Please Enter Mobile no. 1 ");
+            PMOBILE1.focus();
+            return false;
+        }
+
+        //if (std.value == "") {
+        //    alert("Enter your Your STD CODE ");
+        //    std.focus();
+        //    return false;
+        //}       
+        //if (std.value != "") {
+        //    if (std.value.length != 5) {
+
+        //        alert("Please Enter 5 digits Landline Number");
+        //        std.focus();
+        //        return false;
+        //    }
+        //}
+        
+        //if (phone.value == "") {
+        //    alert("Enter your Your Landline Phone Number ");
+        //    phone.focus();
+        //    return false;
+        //}
+       
+        //if (phone.value != "") {
+        //    //if (phone.value.length != 7) {
+
+        //    //    alert("Please Enter 7 digits Landline Number");
+        //    //    phone.focus();
+        //    //    return false;
+        //    //}
+        //    if (!landLine.Test(document.getElementById("PHONE").value)) {
+        //        alert("Phone/Landline number invalid")
+        //        phone.focus();
+        //        return false;
+        //    }
+          
+        //}
+      
+           
+        //-------------
+
+        return true;
+    }
+   
+    function ValidateEmail(emailID) {
+        var expr = /[A-Z0-9._%+-]@@[A-Z0-9.-]+\.[A-Z]{2,4}/igm;;
+        return expr.test(emailID);
+    }  
+
+</script>

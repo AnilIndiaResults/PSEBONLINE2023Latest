@@ -1,0 +1,187 @@
+﻿@model PSEBONLINE.Models.MigrateSchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>School Migration</h1>
+@using (Html.BeginForm("SchoolRegProcess", "MigrateSchool", FormMethod.Post, new { id = "RegEntry", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total School <label>@ViewBag.TotalCount</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-2">
+                        Select District:  @Html.DropDownList("SelDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "-- ALL---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text"), "--All---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" maxlength="7" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-4">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" /> 
+                        @*<input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" />*@
+                        <input type="button" value="Reset" onClick="this.form.reset()" />
+                        <input type="button" value="Migration List" onclick="javascript:document.location.href='@Url.Action("MigrationRec", "MigrateSchool")'" />
+                        @*<input type="button" name="MigrationList" value="Migration List" formaction="MigrationList" />*@
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>SCHL</th>
+                    <th>IDNO</th>
+                    <th>SCHOOL NAME</th>
+                    <th>DISTRICT</th>
+                    <th>STATUS</th>                  
+                    <th>ACTIONS</th>
+
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+
+                            var SCHl = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                            var schlName = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();                            
+                            var distName = Model.StoreAllData.Tables[0].Rows[i]["DISTE"].ToString();
+                            var status = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                            <tr>
+                                <td>
+                                    @SCHl
+                                </td>
+                                <td>
+                                    @IDNO
+                                </td>
+                                <td>
+                                    @schlName
+                                </td>
+                                <td>
+                                    @distName
+                                </td>
+                                <td>
+                                    @status
+                                </td>
+                                
+                                <td>
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+                                                <li>@Html.ActionLink("Reg Entry", "RegEntryview", new { id = (SCHl)}, new { Class = "", title = "Student Registration Entries by School" })</li>
+                                                <li>@Html.ActionLink("Allot RegNo", "AllotRegNo", new { id = (SCHl) }, new { Class = "", title = "Student Registration Entries by School" })</li>
+                                               
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+
+                            </tr>
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+@*<div class="row">
+    <div class="col-md-12 text-center" style="padding:15px 0">
+        <input type="button" value="Add New Records" onclick="javascript:document.location.href='@Url.Action("N1Form", "RegistrationPortal")'" />
+        <input type="button" value="Rough Report" onclick="javascript:document.location.href='@Url.Action("RoughReport", "RegistrationPortal", new { Form = "N1" })'" />
+        <input type="button" value="Student Verification Form" onclick="javascript:document.location.href='@Url.Action("StudentVerificationForm", "RegistrationPortal", new { Form = "N1" })'">
+        <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("N1Form", "RegistrationPortal" )'" />
+    </div>
+</div>*@
+
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function formVal()
+    {
+        var AdminType = '@Session["AdminType"]';
+        //alert(AdminType);
+        var result = document.getElementById('SelDist').value;
+        if (result == '' && AdminType.toUpperCase()!= "ADMIN") {
+            alert("Select District");
+            document.getElementById('SelDist').focus();
+            return false;
+        }
+        var schlList1 = document.getElementById('SelList').value;
+        if (schlList1 == '') {
+            alert("Select SearchBy");
+            document.getElementById('SelList').focus();
+            return false;
+        }
+        //var result = document.getElementById('SelDist').value;
+        //var schlList1 = document.getElementById('SelList').value;
+        //if (result == '' && schlList1 == '') {
+        //    alert("Select any dist or searchby for search");
+        //    document.getElementById('SelDist').focus();
+        //    return false;
+        //}
+        var schlList = document.getElementById('SelList').value;
+        if (schlList != '') {
+            var SchlCode = document.getElementById("SearchString");
+            if (SchlCode.value == "" || SchlCode.value == "0") {
+                alert("Enter School Code");
+                document.getElementById("SearchString").focus();
+                return false;
+            }
+        }
+        else {
+            document.getElementById("SearchString").value = "";
+        }
+
+        //    var obtMark = document.getElementById("ObtainedMarks");
+        //    if (obtMark.value == "" || obtMark.value == "0") {
+        //        alert("Enter obtaining Mark");
+        //        obtMark.focus();
+        //        return false;
+        //    }
+        //}
+
+    }
+
+
+
+</script>
+
+

@@ -1,0 +1,844 @@
+﻿@model PSEBONLINE.Models.FeeHomeViewModel
+@{
+    ViewBag.Title = "FinalReport";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<style type="text/css">
+    .nbox{border:0 !important;color:#000 !important;display:inline-block;box-shadow:none !important;text-align:left !important;padding:0 !important;margin:0 !important;font-weight:bold !important;width:74% !important}
+    /*tbody:first-of-type { background-color: #eee !important; page-break-after: always;page-break-before: always;}*/
+        body,td {font-size: 12px;font-weight:normal}
+        .brackh{page-break-after: always;page-break-before: always;}
+        .brack{page-break-after: always;page-break-before: always;}.sfont td{font-size:10px;font-weight:bold}
+</style>
+<link rel="stylesheet" href="https://registration.pseb.ac.in/Content/Print-4L.css" />
+@if (Session["SchlE"] != null)
+{ }
+else
+{
+    Response.Redirect("~/Login");
+}
+<h1 class="noprint">
+    Final Report : Session @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+    else { Response.Redirect("~/Login"); }
+</h1>
+
+
+@*<iframe id="iframeConsumptionReport" width="100%" height="500" src="~/RoughReport.aspx" style=" border:none; padding:0; margin:0;"></iframe>*@
+@using (Html.BeginForm("FinalReport", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12 text-right noprint">
+            <input type="button" value="Print" class="btn" onclick="window.print()" />
+            <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div width="100%" border="1" class="sfont">
+                                @{
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        int Count = 0;
+                                        int secandFormCnt = 0;
+                                        int hcnt = 0;
+                                        int gpcnt = 0;
+                                        string wformnm = "";
+                                        string gpnm = "";
+                                        string stdsec = "";
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            var GroupName = Model.StoreAllData.Tables[0].Rows[i]["GroupName"].ToString();
+                                            var formName = Model.StoreAllData.Tables[0].Rows[i]["Form_name"].ToString();
+                                            var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                                            var cat = Model.StoreAllData.Tables[0].Rows[i]["catg"].ToString();
+                                            var cls = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                            var SCHl = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+
+
+                                            //var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                                            //var SCHlName = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                                            //var REGNO = Model.StoreAllData.Tables[0].Rows[i]["Registration_Num"].ToString();
+                                            //var stdid = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                                            //var Cname = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                            //var CnameP = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name_P"].ToString();
+                                            //var Fname = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                            //var FnameP = Model.StoreAllData.Tables[0].Rows[i]["Father_Name_P"].ToString();
+                                            //var Mname = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                            //var MnameP = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name_P"].ToString();
+                                            //var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                            //var LOT = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                                            //var GEN = Model.StoreAllData.Tables[0].Rows[i]["gender"].ToString();
+                                            //var reli = Model.StoreAllData.Tables[0].Rows[i]["Religion"].ToString();
+                                            //var caste = Model.StoreAllData.Tables[0].Rows[i]["Caste"].ToString();
+
+                                            //var address = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+                                            //var mob = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                            //var aadhar = Model.StoreAllData.Tables[0].Rows[i]["Aadhar_num"].ToString();
+                                            //var StdPhoto = Model.StoreAllData.Tables[0].Rows[i]["CandPhoto"].ToString();
+                                            //var stdSign = Model.StoreAllData.Tables[0].Rows[i]["CandSign"].ToString();
+                                            //var NamDetailsE = Model.StoreAllData.Tables[0].Rows[i]["NamDetailsE"].ToString();
+                                            //var NamDetailsP = Model.StoreAllData.Tables[0].Rows[i]["NamDetailsP"].ToString();
+                                            //var CurrentClassDetails = Model.StoreAllData.Tables[0].Rows[i]["CurrentClassDetails"].ToString();
+
+                                            //var BPL = Model.StoreAllData.Tables[0].Rows[i]["Belongs_BPL"].ToString();
+                                            //var Epunid = Model.StoreAllData.Tables[0].Rows[i]["E_punjab_Std_id"].ToString();
+                                            //var DA = Model.StoreAllData.Tables[0].Rows[i]["Differently_Abled"].ToString();
+                                            //var DP = Model.StoreAllData.Tables[0].Rows[i]["DP"].ToString();
+                                            //var WW = Model.StoreAllData.Tables[0].Rows[i]["wantwriter"].ToString();
+
+                                            //var BoardRoll = Model.StoreAllData.Tables[0].Rows[i]["Board_Roll_Num"].ToString();
+                                            //var Mon = Model.StoreAllData.Tables[0].Rows[i]["Month"].ToString();
+                                            //var Year = Model.StoreAllData.Tables[0].Rows[i]["Year"].ToString();
+                                            //var PersonalInformation = Model.StoreAllData.Tables[0].Rows[i]["PersonalInformation1"].ToString();
+                                            //var PI = PersonalInformation.Replace("/", " : ");
+                                            //var admdate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                                            //var lot = Model.StoreAllData.Tables[0].Rows[i]["lot"].ToString();
+                                            //var PrevClassInfo = Model.StoreAllData.Tables[0].Rows[i]["PreviousClassInformation"].ToString();
+                                            //var PCI = PrevClassInfo.Replace("/", ":");
+                                            //var FullAddress = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+                                            //var SubjectList = Model.StoreAllData.Tables[0].Rows[i]["SubjectList"].ToString();
+                                            //var Roll = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                                            //var EpunjabStdid = Model.StoreAllData.Tables[0].Rows[i]["E_punjab_Std_id"].ToString();
+
+                                            //var AWREGNO = Model.StoreAllData.Tables[0].Rows[i]["AWRegisterNo"].ToString();
+                                            //var AdmissionNo = Model.StoreAllData.Tables[0].Rows[i]["Admission_Num"].ToString();
+                                            //var AdmissionDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+
+                                            //var stydyMedium = Model.StoreAllData.Tables[0].Rows[i]["CandStudyMedium"].ToString();
+                                            //var NSQF = Model.StoreAllData.Tables[0].Rows[i]["NSQF_SUB"].ToString();
+                                            //var cd = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString();
+                                            //var ud = Model.StoreAllData.Tables[0].Rows[i]["UpdatedDate"].ToString();
+                                            var MD = Model.StoreAllData.Tables[0].Rows[i]["MatricDetails"].ToString();
+                                            var Sublist = Model.StoreAllData.Tables[0].Rows[i]["SubjectList"].ToString();
+
+                                            if ((i == 0) || (wformnm != @formName) || (stdsec != @sec) || (hcnt == 4))
+                                            {
+                                                hcnt = 0;
+                                                //---------------------Header Start-------------------------//
+                                                <table width="100%" border="1" class="" style="page-break-after: verso;page-break-before: always;height:164px;">
+                                                    <thead>
+                                                        <tr>
+                                                            <td colspan="2" style="border-right:0 !important;border-bottom:0 !important">&nbsp;<span class="kdsfont">Ó¨ÞÐ ÂØ ¨ë¸</span> : @ViewBag.SCHL</td>
+                                                            <td colspan="3" rowspan="2" align="center" class="kdsfont" style="border-left:0 !important;border-right:0 !important;font-size:18px;font-weight:normal !important">
+                                                                <span style="font-size:28px">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span><br />
+                                                                <span>ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û(ÏÚ²Ó¶ÏãÓÖÅ /¨â¶ÛÚÅ¦Þ¥ãÓÖÅ) ÓèÓÖÅ <span>@Session["Session"].ToString()</span> (Final Report)</span>
+                                                                @*@if (Session["FormName"].ToString() == "N1" || Session["FormName"].ToString() == "N2" || Session["FormName"].ToString() == "N3")
+                                                                      {
+                                                                          <span>ÅïÒÜ ÓÖñã»Û Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û(ÏÚ²Ó¶ÏãÓÖÅ /¨â¶ÛÚÅ¦Þ¥ãÓÖÅ) ÓèÓÖÅ 2017 - 2018(Final Print)</span>
+                                                                      }
+                                                                      @if (Session["FormName"].ToString() == "M1" || Session["FormName"].ToString() == "M2")
+                                                                      {
+                                                                          <span>ÂÓÒÛ× ÓÖñã»Û Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û(ÏÚ²Ó¶ÏãÓÖÅ /¨â¶ÛÚÅ¦Þ¥ãÓÖÅ) ÓèÓÖÅ 2017 - 2018(Final Print)</span>
+                                                                      }
+
+                                                                    @if(Session["FormName"].ToString()=="E1" || Session["FormName"].ToString() == "E2")
+                                                                    {
+                                                                        <span>Ú¬¤ØÏÒÛ× ÓÖñã»Û Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û(ÏÚ²Ó¶ÏãÓÖÅ /¨â¶ÛÚÅ¦Þ¥ãÓÖÅ) ÓèÓÖÅ 2017 - 2018(Rough Print) </span>
+                                                                    }
+                                                                      @if (Session["FormName"].ToString() == "T1" || Session["FormName"].ToString() == "T2")
+                                                                      {
+                                                                          <span>ÉØÏðÒÛ× ÓÖñã»Û Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û(ÏÚ²Ó¶ÏãÓÖÅ /¨â¶ÛÚÅ¦Þ¥ãÓÖÅ) ÓèÓÖÅ 2017 - 2018(Rough Print) </span>
+                                                                      }*@
+                                                            </td>
+                                                            <td colspan="2" style="border-left:0 !important;border-bottom:0 !important;text-align:right"><span class="kdsfont">ÚÆñâ¶ ¨ÏÅ ÂÛ ÚÌ¼Û</span> : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2" style="border-right:0 !important;border-top:0 !important">&nbsp;<span class="kdsfont">ÔÅØª¼Û ÅâÉÏ</span> : @ViewBag.IDNO</td>
+                                                            <td colspan="2" style="border-left:0 !important;border-top:0 !important;text-align:right"><span class="kdsfont">ÇØÏÌ Åâ</span> : @formName&nbsp;</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="7" style="font-size:12px;padding:3px 0">&nbsp;<span class="kdsfont" style="font-size:22px;">Ó¨ÞÐ ÂØ ÅÙ/Ú²ÐðØ</span> : @ViewBag.SSE / <span class="kdsfont" style="font-size:22px;">@ViewBag.SSP</span></td>
+                                                        </tr>
+                                                        <tr style="background-color:#dfdfdf !important">
+                                                            <td width="9%">&nbsp;<span class="kdsfont">Ð¾Û Åâ.</span></td>
+                                                            <td width="11%">&nbsp;<span class="kdsfont">¤ÄØÏ ÅâÉÏ</span></td>
+                                                            <td width="32%">&nbsp;<span class="kdsfont">¨è¶Ø¬ÏÛ</span></td>
+                                                            <td width="21%">&nbsp;<span class="kdsfont">ÂØ.ªØ. ÏÚ². Åâ. : ÂØªÐØ Åâ. : ÂØªÐØ ÚÌ¼Û</span></td>
+                                                            <td width="7%">&nbsp;<span class="kdsfont">²Ø¼Û</span></td>
+                                                            <td width="13%">&nbsp;<span class="kdsfont">¤è×¶ÏÛ : ¤Æ¸ã¶ ÂÛ ÚÌ¼Û</span></td>
+                                                            <td rowspan="3" width="7%" style="text-align:center;vertical-align:top">&nbsp;<span class="kdsfont">Çë¶ë×</span></td>
+                                                        </tr>
+                                                        <tr style="background-color:#dfdfdf !important">
+                                                            <td>&nbsp;<span class="kdsfont">Ó¶Þ¸è×¶ ¤Ø¥Û. ¸Û.</span></td>
+                                                            <td>&nbsp;<span class="kdsfont">¥Û-Æâ²ØÉ ¤Ø¥Û.¸Û.</span></td>
+                                                            <td>&nbsp;<span class="kdsfont">ÚÆ±ÐÛ Ôñã»Û Âã ÒãÏÒã ÉëÏ¸ : ÏëÐ ÅâÉÏ : ÓèÔÅ : Ó¨ÞÐ ÂØ ÅÙ (¨ë¸)</span></td>
+                                                            <td>&nbsp;
+                                                            @if (formName == "N1" || formName == "N2" || formName == "N3" || formName == "M1" || formName == "M2")
+                                                           {
+
+                                                           }
+                                                           else
+                                                           {
+                                                                <span class="kdsfont">ÌèÚ¶ñ¨ ÆØÓ ¨ÏÅ Âã ÒãÏÒã </span>
+                                                            }
+                                                            </td>
+                                                            @*<td>&nbsp;<span class="kdsfont">
+                                                                    @if (Session["FormName"].ToString() == "E1" || Session["FormName"].ToString() == "E2" || Session["FormName"].ToString() == "T1" || Session["FormName"].ToString() == "T2")
+                                                                     {
+                                                                        <span>ÌèÚ¶ñ¨ ÆØÓ ¨ÏÅ Âã ÒãÏÒã </span>
+                                                                     }
+                                                                    else
+                                                                    { }
+                                                                    </span>
+                                                                </td>*@@*show only 11th & 12th*@
+                                                                <td>&nbsp;<span class="kdsfont">ÄÏÌ</span></td>
+                                                                <td>&nbsp;<span class="kdsfont">Æ¾Ø¥Û ÂØ ÌØÚÄ¤Ì</span></td>
+                                                            </tr>
+                                                            <tr style="background-color:#dfdfdf !important">
+                                                                <td>&nbsp;<span class="kdsfont">ÏëÐ Åâ./Óè¨ÓÖÅ</span></td>
+                                                                <td>&nbsp;<span class="kdsfont">²ÅÌ ÚÌ¼Û</span></td>
+                                                                <td>&nbsp;<span class="kdsfont">Candidate's / Father's / Mother's Name</span></td>
+                                                                <td>&nbsp;<span class="kdsfont">ÚÒÐóª» ÓÌÏóÁØ (Æñ¼ÛÓÖ¼¼Ø) : ÉÛ.ÆÛ.¤èÐ</span></td>
+                                                                <td>&nbsp;<span class="kdsfont">ÚÐâ¬</span></td>
+                                                                <td>&nbsp;<span class="kdsfont">NSQF ÚÒÓÖØ</span></td>
+                                                            </tr>
+                                                            <tr style="background-color:#dfdfdf !important">
+                                                                <td>&nbsp;<span class="kdsfont">ÏÚ². ÅâÉÏ</span></td>
+                                                                <td>&nbsp;<span class="kdsfont">ÏÚ².ÂÛ ÚÌ¼Û : Ðï¶ Åâ</span></td>
+                                                                <td>&nbsp;<span class="kdsfont">ÆñÛÚª¤ØÏÁÛ/ÚÆ¼Ø/ÌØ¼Ø ÂØ ÅÙ (Æâ²ØÉÛ)</span></td>
+                                                                <td colspan="3">&nbsp;<span class="kdsfont">ÆñÛÚª¤ØÏÁÛ ÂØ ®Ï ÂØ Æ¼Ø  (ÌëÉØ¥ÛÐ ÅâÉÏ)</span></td>
+                                                                <td>&nbsp;<span class="kdsfont">ÕÓ¼ØªÏ</span></td>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
+                                                //----------------------------Headers End------------//
+                                            }
+                                            if ((i == 0) || (wformnm != @formName) || (stdsec != @sec))
+                                            {
+                                                secandFormCnt = 0;
+                                            }
+                                            if ((gpnm != @GroupName) || (hcnt == 0))
+                                            {
+                                             <table width="100%" border="0" class="sfont" style="border-left:1px solid #000!important;border-right:1px solid #000!important;">
+                                                <tr>
+                                                    <td>&nbsp;Group : @GroupName</td>
+                                                </tr>
+                                            </table>
+                                            }
+
+                                            gpnm = Model.StoreAllData.Tables[0].Rows[i]["GroupName"].ToString();
+                                            wformnm = Model.StoreAllData.Tables[0].Rows[i]["Form_name"].ToString();
+                                            stdsec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                                            Count = i + 1;
+                                            //gpcnt = gpcnt + 1;
+
+                                            hcnt = hcnt + 1;
+                                            secandFormCnt = secandFormCnt + 1;
+                                                <table width="100%" border="1">
+                                                    <tr>
+                                                        @*<td width="10%">&nbsp;@hcnt</td>*@
+                                                        <td width="9%">&nbsp;@secandFormCnt</td>
+                                                        <td width="11%">&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["Aadhar_num"].ToString()</td>
+                                                        <td width="32%">&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["catg"].ToString()</td>                                                        
+                                                        <td width="21%">&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["AWRegisterNo"].ToString() : @Model.StoreAllData.Tables[0].Rows[i]["Admission_Num"].ToString() : @Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString()</td>
+                                                        <td width="7%">&nbsp; @Model.StoreAllData.Tables[0].Rows[i]["Caste"].ToString()</td>
+                                                        <td width="13%">&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString() : @Model.StoreAllData.Tables[0].Rows[i]["UpdatedDate"].ToString()</td>
+                                                        <td width="7%" rowspan="3" style="text-align:center;vertical-align:top;padding-top:10px">                                                           
+                                                            @if (Convert.ToInt32(Session["Session"].ToString().Substring(0, 4)) < 2017)
+                                                            {
+                                                                <img src="https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/@Model.StoreAllData.Tables[0].Rows[i]["CandPhoto"].ToString()" style="background-color:#000!important;padding:1px !important" alt="Photo" height="60px" width="60px" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/Upload2023/@Model.StoreAllData.Tables[0].Rows[i]["CandPhoto"].ToString()" style="background-color:#000!important;padding:1px !important" alt="Photo" height="60px" width="60px" />
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString()</td>
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["E_punjab_Std_id"].ToString()</td>                                                        
+                                                        <td><div class="pdnl" style="font-size:10px;line-height:11px">@Model.StoreAllData.Tables[0].Rows[i]["PreviousClassInformation"].ToString().Replace("/", ":")</div></td>
+                                                        <td>&nbsp;@if (formName == "N1" || formName == "N2" || formName == "N3" || formName == "M1" || formName == "M2")
+                                                      {
+
+                                                      }
+                                                      else
+                                                      {
+                                                            <span>@MD</span>
+                                                        }
+                                                        </td>
+                                                        @*<td>&nbsp;
+                                                            @if (Session["FormName"].ToString() == "E1" || Session["FormName"].ToString() == "E2" || Session["FormName"].ToString() == "T1" || Session["FormName"].ToString() == "T2")
+                                                            {<span>@MD</span>}
+                                                            else { }
+                                                            </td>*@
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["Religion"].ToString()</td>
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["CandStudyMedium"].ToString()</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString() / @Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString()</td>
+                                                        <td>
+                                                            &nbsp;
+                                                            @Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString()
+
+                                                        </td>
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["NamDetailsE"].ToString()</td>                                                      
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["Differently_Abled"].ToString() (@Model.StoreAllData.Tables[0].Rows[i]["DP"].ToString() %) : @Model.StoreAllData.Tables[0].Rows[i]["wantwriter"].ToString() : @Model.StoreAllData.Tables[0].Rows[i]["Belongs_BPL"].ToString()</td>
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["gender"].ToString()</td>
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["NSQF_SUB"].ToString()</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;@Model.StoreAllData.Tables[0].Rows[i]["Registration_Num"].ToString()</td>
+                                                        <td>&nbsp;@ViewBag.regdt : @ViewBag.lot</td>
+                                                        <td>&nbsp;<span class="kdsfont">@Model.StoreAllData.Tables[0].Rows[i]["NamDetailsP"].ToString()</span></td>                                                       
+                                                        <td colspan="3"><div class="pdnl">@Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString() (@Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString())</div></td>
+                                                        <td style="text-align:center;vertical-align:top;padding-top:2px">
+                                                            @if (Convert.ToInt32(Session["Session"].ToString().Substring(0, 4)) < 2017)
+                                                            {
+                                                                <img src="https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/@Model.StoreAllData.Tables[0].Rows[i]["CandSign"].ToString()" alt="Signature" style="background-color:#000!important;padding:1px !important" height="20px" width="60px" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/Upload2023/@Model.StoreAllData.Tables[0].Rows[i]["CandSign"].ToString()" alt="Signature" style="background-color:#000!important;padding:1px !important" height="20px" width="60px" />
+                                                            }
+                                                            </td>
+                                                    </tr>
+                                                    <tr>
+                                                        @if (formName == "N1" || formName == "N2" || formName == "N3" || formName == "E1" || formName == "E2")
+                                                        {
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>&nbsp;Subject List</td>
+                                                            <td colspan="6">&nbsp;@Sublist</td>
+                                                        }
+                                                    </tr>
+                                                    @*@if (@Session["FormName"].ToString() == "N1" || @Session["FormName"].ToString() == "N2" || @Session["FormName"].ToString() == "N3")
+                                                    {
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td>&nbsp;Subject List</td>
+                                                            <td colspan="6">&nbsp;@Sublist</td>
+                                                        </tr>
+                                                    }*@
+                                                </table>
+                                                
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <p>@ViewBag.Message</p>
+                                    }
+                                }
+                                            </div>
+                    @*01*@
+                    <table border="0" width="100%" class="tprint brack noshow">
+                        <tr>
+                            <td width="64%" valign="top" align="center">
+                                <div style="border:1px solid #000">
+                                    <table width="98%">
+                                        <tr>
+                                            <td colspan="3" valign="top">
+                                                <table width="100%" border="0">
+                                                    <tr>
+                                                        <td width="10%" valign="top" style="padding-top:4px"><img src="~/Images/Printlogo.jpg" width="40px" height="40px" alt="PSEB" /></td>
+                                                        <td width="80%" style="text-align:center;font-size:28px;vertical-align:top;padding-top:10px" class="kdsfont">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</td>
+                                                        <td width="10%"></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"><b>School Name :</b> @ViewBag.SSE</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"><b><span class="kdsfont">Ó¨ÞÐ ÂØ ÅØÌ</span> :</b> <span class="kdsfont">@ViewBag.SSP</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><b>School Code / <span class="kdsfont">Ó¨ÞÐ ÂØ ¨ë¸</span> :</b> @ViewBag.SCHL</td>
+                                            <td style="text-align:right"><b>ID No. / <span class="kdsfont">ÔÅØª¼Û ÅâÉÏ ¬ï</span> :</b> @ViewBag.IDNO &nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" style="line-height:16px;">
+                                                <span class="kdsfont">¼ÓÂÛ¨</span> :-<br />
+                                                <span class="kdsfont" style="padding-left:40px">
+                                                    ¼ÓÂÛ¨ ¨Û¼Ø ²ÙÂØ Õè Ú¨ ÏÚ²Ô¶ÏãÔÅ / ¨â¶ÛÚÅ¦ÞãÔÅ ÚÏ¶ÏÅÙ ÚÒó° ÊÏã ÓØÏã ÒãÏÒã ÂØªÐØ ªØÏ² ÏÚ²ÖÓ¶Ï ¤ÅÝÓØÏ ÓÕÛ ÊÏã ÕÅ ¤¼ã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂØ ÂØªÐØ ÉëÏ¸ ÒÐë×
+                                                    ²ØÏÛ ÂØªÐØ ÕÂØÚ¥¼Ø ÌÝ¼ØÉ¨ ¨Û¼Ø Ú¬¤Ø Õè ¢ ÚÏ¶ÏÅ ÂÛ ¨ØÆÛ Âã ÅØÐ ÉëÏ¸ ÂÇ¼Ï ÒóÐë× ²ØÏÛ ÕÂØÚ¥¼Ù ÌÝ¼ØÉ¨ Ðë¾Û×Âã ÂÓ¼ØÒã² ¤¼ã É»ÂÛ ÇÛÓ ( ²ÝÏÌØÅØ , ²ã ÕëÒã ) ÂØ Éè×¨
+                                                    °ÐØÅ ÅóÁÛ ¨Ï¨ã Êã²ã ²Ø ÏÕã ÕÅ ¢ Ú¨Óã ¼ÏÝó¶Û / ¬Ð¼Û / Éè×¨ °ÐØÅ ²Ù Ðë¾Û×Âã ÂÓ¼ØÒã²Ö ÆÞÏã ÅØ Õë» ÂÛ ÓÞÏ¼ ÚÒó° ÉëÏ¸ ÅÞâ ÓÉâÄ¼ Ó¨ÞÐ Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂØ ÏÚ²ÖÓ¶ÏãÔÅ ÅâÉÏ
+                                                    ÏóÂ ¨ÏÅ ÂØ ÆÞÏØ Õó¨ ÕëÒã¬Ø ¢ ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ Ú¬»¼Û , É»ÂÛ ÇÛÓ ¤¼ã °ÐØÅ Âã ÒãÏÒã Õã· ÚÐªã ¤ÅÝÓØÏ ÕÅ :
+                                                </span><br />
+                                                <span class="kdsfont">ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ¨ÝóÐ Ú¬»¼Û ¤¼ã ¨ÝóÐ É»ÂÛ ÇÛÓ Âã ÒãÏÒã :</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" style="font-size:24px;padding:10px 0"><span class="kdsfont" style="font-size:24px;">Éè×¨ °ÐØÅ Âã ÒãÏÒã</span>:-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">Éè×¨ ÂØ ÅØÌ</span></td>
+                                            <td width="50%">: @ViewBag.bcode / @ViewBag.bank</td>
+                                            <td rowspan="6" style="text-align:center">
+                                                <div style="border:1px solid #000;height:100px" class="kdsfont"></div>
+                                                <span class="kdsfont">Ó¨ÞÐ ÌÝóªÛ Âã ÕÓ¼ØªÏ (Ó¨ÞÐ ÂÛ ÌëÕÏ)</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">°ÐØÅ ÅâÉÏ</span></td>
+                                            <td>: @ViewBag.challanid</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><span class="kdsfont">°ÐØÅ ²ÌØ ¨ÏÒØ§Ý» ÂÛ ÚÌ¼Û</span>: @ViewBag.Depositdt</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">Ó¨ÞÐ ÌÝóªÛ ÂØ ÅÙ</span></td>
+                                            <td>: @ViewBag.Principal</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">Ó¨ÞÐ ÂØ ÇëÅ Åâ</span></td>
+                                            <td>: @ViewBag.phno</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">ÌëÉØ¥ÛÐ Åâ</span></td>
+                                            <td>: @ViewBag.mob</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3">
+                                                <div style="border:2px solid #000 !important;padding:0 10px;margin-bottom:5px;margin-top:10px">
+                                                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                                                        <tr>
+                                                            <td colspan="2" style="text-align:center"><span class="kdsfont" style="background-color:#000 !important;color:#fff !important;padding:2px 12px">ÂÇ¼ÏÛ ÒÏ¼ë× Ð¥Û</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <span class="kdsfont">¼ÓÂÛ¨</span> :-<br /><span class="kdsfont" style="padding-left:40px">
+                                                                    ¼ÓÂÛ¨ ¨Û¼Ø ²ÙÂØ Õè Ú¨ ¦Ý¨¼ ÂÏ² ÒãÏÚÒ¤Ø ¤ÅÝÓØÏ ÚÏ¶ÏÅ ÇØÏÌ, Éè×¨ °ÐØÅ ÂÛ ¨ØÆÛ ¤¼ã Ðë¾ÛÂã ÂÓ¼ØÒã² (Ú²Òã× Ú¨ N2, M2, E2 Ö¤¼ã T2 ¤ØÚÂ Ð¥Û
+                                                                    Ðë¾Û×Âã ÂÓ¼ØÒã²) ÆñØÆ¼ ¨Ï Ð¥ã ÕÅ¢ ÅØÐ ÅóÁÛ Éè×¨ °ÐØÅ Âã ÒãÏÒã ¦Ý¨¼ ¤ÅÝÓØÏ ÓÕÛ ÕÅ¢<br />
+                                                                    ÇØÏÌ ÆñØÆ¼ ¨ÏÅ ÂÛ ÚÌ¼Û
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2" style="height:60px"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50%">&nbsp;<span class="kdsfont">ÓÉâÄ¼ ¨ÏÌ°ØÏÛ Âã ÕÓ¼ØªÏ</span></td>
+                                                            <td width="50%" style="text-align:right"><span class="kdsfont">Ú²ÐðØ ÌèÅã²Ï/Ú¸Æ¶Û ÌèÅã²Ï<br />Ú²ÐðØ ªã¼ÏÛ ÂÇ¼Ï</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2" style="height:10px"></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            <td width="1%"></td>
+                            <td width="35%" valign="top" align="center">
+                                <div style="border:1px solid #000">
+                                    <table width="98%">
+                                        <tr>
+                                            <td><span class="kdsfont">Ðï¶ Åâ</span>: @ViewBag.lot</td>
+                                            <td style="text-align:right;"><span class="kdsfont">(Æ.Ó.Ó.É. ¨ØÆÛ)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="text-align:center;padding:5px 0"><span class="kdsfont">ÇÛÓÙ ÂØ ÒãÏÒØ</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="padding-bottom:10px">
+                                                <table width="100%" border="1">
+                                                    <tr style="background-color:#dfdfdf !important">
+                                                        <td>&nbsp;<span class="kdsfont">ÇØÏÌ</span></td>
+                                                        <td>&nbsp;<span class="kdsfont">¨ÝóÐ ÆñÛÚª¤ØÏÁÛ</span></td>
+                                                        <td>&nbsp;<span class="kdsfont">ÇÛÓ Æñ¼Û ÆñÛÚª¤ØÏÁÛ</span></td>
+                                                        <td>&nbsp;<span class="kdsfont">¨ÝóÐ ÇÛÓ</span></td>
+                                                    </tr>
+                                                    @{
+                                                        var grandPrice = 0;
+                                                        if (ViewBag.table2Count == "1")
+                                                        {
+                                                            int Count = 0;
+                                                            for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                                                            {
+                                                                var formname = Model.StoreAllData.Tables[2].Rows[i]["Form_name"].ToString();
+                                                                var totstd = Model.StoreAllData.Tables[2].Rows[i]["totcandidate"].ToString();
+                                                                var regfee = Model.StoreAllData.Tables[2].Rows[i]["RegFeePerstd"].ToString();
+                                                                var totprice = Model.StoreAllData.Tables[2].Rows[i]["Totprice"].ToString();
+                                                                grandPrice = Convert.ToInt32(grandPrice) + Convert.ToInt32(totprice);
+                                                                Count = i + 1;
+                                                                <tr>
+                                                                    <td>&nbsp;@formname</td>
+                                                                    <td>&nbsp;@totstd</td>
+                                                                    <td>&nbsp;@regfee</td>
+                                                                    <td>&nbsp;@totprice</td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    }
+
+                                                    <tr>
+                                                        <td colspan="4">&nbsp;<span class="kdsfont">¨ÝóÐ ÇÛÓ</span>: <span style="font-weight:bold">@grandPrice/- <input type="text" id="TotalFeesInWords1" class="nbox" value="@grandPrice" readonly="readonly" /></span></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><span class="kdsfont">ÚÆñâ¶ ÚÌ¼Û</span>:- @DateTime.Now.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    </table>
+                    @*02*@
+                    <table border="0" width="100%" class="tprint brack noshow">
+                        <tr>
+                            <td width="64%" valign="top" align="center">
+                                <div style="border:1px solid #000">
+                                    <table width="98%">
+                                        <tr>
+                                            <td colspan="3" valign="top">
+                                                <table width="100%" border="0">
+                                                    <tr>
+                                                        <td width="10%" valign="top" style="padding-top:4px"><img src="~/Images/Printlogo.jpg" width="40px" height="40px" alt="PSEB" /></td>
+                                                        <td width="80%" style="text-align:center;font-size:28px;vertical-align:top;padding-top:10px" class="kdsfont">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</td>
+                                                        <td width="10%"></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"><b>School Name :</b> @ViewBag.SSE</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"><b><span class="kdsfont">Ó¨ÞÐ ÂØ ÅØÌ</span> :</b> <span class="kdsfont">@ViewBag.SSP</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><b>School Code / <span class="kdsfont">Ó¨ÞÐ ÂØ ¨ë¸</span> :</b> @ViewBag.SCHL</td>
+                                            <td style="text-align:right"><b>ID No. / <span class="kdsfont">ÔÅØª¼Û ÅâÉÏ ¬ï</span> :</b> @ViewBag.IDNO &nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" style="line-height:16px;">
+                                                <span class="kdsfont">¼ÓÂÛ¨</span> :-<br />
+                                                <span class="kdsfont" style="padding-left:40px">
+                                                    ¼ÓÂÛ¨ ¨Û¼Ø ²ÙÂØ Õè Ú¨ ÏÚ²Ô¶ÏãÔÅ / ¨â¶ÛÚÅ¦ÞãÔÅ ÚÏ¶ÏÅÙ ÚÒó° ÊÏã ÓØÏã ÒãÏÒã ÂØªÐØ ªØÏ² ÏÚ²ÖÓ¶Ï ¤ÅÝÓØÏ ÓÕÛ ÊÏã ÕÅ ¤¼ã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂØ ÂØªÐØ ÉëÏ¸ ÒÐë×
+                                                    ²ØÏÛ ÂØªÐØ ÕÂØÚ¥¼Ø ÌÝ¼ØÉ¨ ¨Û¼Ø Ú¬¤Ø Õè ¢ ÚÏ¶ÏÅ ÂÛ ¨ØÆÛ Âã ÅØÐ ÉëÏ¸ ÂÇ¼Ï ÒóÐë× ²ØÏÛ ÕÂØÚ¥¼Ù ÌÝ¼ØÉ¨ Ðë¾Û×Âã ÂÓ¼ØÒã² ¤¼ã É»ÂÛ ÇÛÓ ( ²ÝÏÌØÅØ , ²ã ÕëÒã ) ÂØ Éè×¨
+                                                    °ÐØÅ ÅóÁÛ ¨Ï¨ã Êã²ã ²Ø ÏÕã ÕÅ ¢ Ú¨Óã ¼ÏÝó¶Û / ¬Ð¼Û / Éè×¨ °ÐØÅ ²Ù Ðë¾Û×Âã ÂÓ¼ØÒã²Ö ÆÞÏã ÅØ Õë» ÂÛ ÓÞÏ¼ ÚÒó° ÉëÏ¸ ÅÞâ ÓÉâÄ¼ Ó¨ÞÐ Âã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂØ ÏÚ²ÖÓ¶ÏãÔÅ ÅâÉÏ
+                                                    ÏóÂ ¨ÏÅ ÂØ ÆÞÏØ Õó¨ ÕëÒã¬Ø ¢ ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ Ú¬»¼Û , É»ÂÛ ÇÛÓ ¤¼ã °ÐØÅ Âã ÒãÏÒã Õã· ÚÐªã ¤ÅÝÓØÏ ÕÅ :
+                                                </span><br />
+                                                <span class="kdsfont">ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ¨ÝóÐ Ú¬»¼Û ¤¼ã ¨ÝóÐ É»ÂÛ ÇÛÓ Âã ÒãÏÒã :</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" style="font-size:24px;padding:10px 0"><span class="kdsfont" style="font-size:24px;">Éè×¨ °ÐØÅ Âã ÒãÏÒã</span>:-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">Éè×¨ ÂØ ÅØÌ</span></td>
+                                            <td width="50%">: @ViewBag.bcode / @ViewBag.bank</td>
+                                            <td rowspan="6" style="text-align:center">
+                                                <div style="border:1px solid #000;height:100px" class="kdsfont"></div>
+                                                <span class="kdsfont">Ó¨ÞÐ ÌÝóªÛ Âã ÕÓ¼ØªÏ (Ó¨ÞÐ ÂÛ ÌëÕÏ)</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">°ÐØÅ ÅâÉÏ</span></td>
+                                            <td>: @ViewBag.challanid</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><span class="kdsfont">°ÐØÅ ²ÌØ ¨ÏÒØ§Ý» ÂÛ ÚÌ¼Û</span>: @ViewBag.Depositdt</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">Ó¨ÞÐ ÌÝóªÛ ÂØ ÅÙ</span></td>
+                                            <td>: @ViewBag.Principal</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">Ó¨ÞÐ ÂØ ÇëÅ Åâ</span></td>
+                                            <td>: @ViewBag.phno</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="kdsfont">ÌëÉØ¥ÛÐ Åâ</span></td>
+                                            <td>: @ViewBag.mob</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3">
+                                                <div style="border:2px solid #000 !important;padding:0 10px;margin-bottom:5px;margin-top:10px">
+                                                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                                                        <tr>
+                                                            <td colspan="2" style="text-align:center"><span class="kdsfont" style="background-color:#000 !important;color:#fff !important;padding:2px 12px">ÂÇ¼ÏÛ ÒÏ¼ë× Ð¥Û</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <span class="kdsfont">¼ÓÂÛ¨</span> :-<br /><span class="kdsfont" style="padding-left:40px">
+                                                                    ¼ÓÂÛ¨ ¨Û¼Ø ²ÙÂØ Õè Ú¨ ¦Ý¨¼ ÂÏ² ÒãÏÚÒ¤Ø ¤ÅÝÓØÏ ÚÏ¶ÏÅ ÇØÏÌ, Éè×¨ °ÐØÅ ÂÛ ¨ØÆÛ ¤¼ã Ðë¾ÛÂã ÂÓ¼ØÒã² (Ú²Òã× Ú¨ N2, M2, E2 Ö¤¼ã T2 ¤ØÚÂ Ð¥Û
+                                                                    Ðë¾Û×Âã ÂÓ¼ØÒã²) ÆñØÆ¼ ¨Ï Ð¥ã ÕÅ¢ ÅØÐ ÅóÁÛ Éè×¨ °ÐØÅ Âã ÒãÏÒã ¦Ý¨¼ ¤ÅÝÓØÏ ÓÕÛ ÕÅ¢<br />
+                                                                    ÇØÏÌ ÆñØÆ¼ ¨ÏÅ ÂÛ ÚÌ¼Û
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2" style="height:60px"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50%">&nbsp;<span class="kdsfont">ÓÉâÄ¼ ¨ÏÌ°ØÏÛ Âã ÕÓ¼ØªÏ</span></td>
+                                                            <td width="50%" style="text-align:right"><span class="kdsfont">Ú²ÐðØ ÌèÅã²Ï/Ú¸Æ¶Û ÌèÅã²Ï<br />Ú²ÐðØ ªã¼ÏÛ ÂÇ¼Ï</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2" style="height:10px"></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            <td width="1%"></td>
+                            <td width="35%" valign="top" align="center">
+                                <div style="border:1px solid #000">
+                                    <table width="98%">
+                                        <tr>
+                                            <td><span class="kdsfont">Ðï¶ Åâ</span>: @ViewBag.lot</td>
+                                            <td style="text-align:right;"><span class="kdsfont">(Ó¨ÞÐ ¨ØÆÛ)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="text-align:center;padding:5px 0"><span class="kdsfont">ÇÛÓÙ ÂØ ÒãÏÒØ</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="padding-bottom:10px">
+                                                <table width="100%" border="1">
+                                                    <tr style="background-color:#dfdfdf !important">
+                                                        <td>&nbsp;<span class="kdsfont">ÇØÏÌ</span></td>
+                                                        <td>&nbsp;<span class="kdsfont">¨ÝóÐ ÆñÛÚª¤ØÏÁÛ</span></td>
+                                                        <td>&nbsp;<span class="kdsfont">ÇÛÓ Æñ¼Û ÆñÛÚª¤ØÏÁÛ</span></td>
+                                                        <td>&nbsp;<span class="kdsfont">¨ÝóÐ ÇÛÓ</span></td>
+                                                    </tr>
+                                                    @{
+                                                var grandPrice02 = 0;
+                                                if (ViewBag.table2Count == "1")
+                                                {
+                                                    int Count = 0;
+                                                    for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                                                    {
+                                                        var formname = Model.StoreAllData.Tables[2].Rows[i]["Form_name"].ToString();
+                                                        var totstd = Model.StoreAllData.Tables[2].Rows[i]["totcandidate"].ToString();
+                                                        var regfee = Model.StoreAllData.Tables[2].Rows[i]["RegFeePerstd"].ToString();
+                                                        var totprice = Model.StoreAllData.Tables[2].Rows[i]["Totprice"].ToString();
+                                                        grandPrice02 = Convert.ToInt32(grandPrice02) + Convert.ToInt32(totprice);
+                                                        Count = i + 1;
+                                            <tr>
+                                                <td>&nbsp;@formname</td>
+                                                <td>&nbsp;@totstd</td>
+                                                <td>&nbsp;@regfee</td>
+                                                <td>&nbsp;@totprice</td>
+                                            </tr>
+                                                    }
+                                                }
+                                                    }
+
+                                                    <tr>
+                                                        <td colspan="4">
+                                                            &nbsp;<span class="kdsfont">¨ÝóÐ ÇÛÓ</span>:@grandPrice02/-
+                                                            <input type="text" id="TotalFeesInWords2" class="nbox" value="@grandPrice02" readonly="readonly" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><span class="kdsfont">ÚÆñâ¶ ÚÌ¼Û</span>:- @DateTime.Now.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    </table>
+                    @*03*@
+                    <table border="0" width="100%" class="tprint brack noshow">
+                        <tr><td colspan="3">&nbsp;</td></tr>
+                        <tr>
+                            <td width="64%" valign="top" align="center">
+                                <div style="border:1px solid #000">
+                                    <table width="98%" class="brack">
+                                        <tr>
+                                            <td colspan="4" style="text-align:center;line-height:18px;font-size:16px">
+                                                <br />
+                                                <span style="font-size:20px;font-weight:bold">Punjab School Education Board</span>
+                                                <br />Regular School Branch<br />(<span>@Session["Session"].ToString()</span> )
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" style="text-align:right;font-weight:bold">Lot No - @ViewBag.lot</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" style="font-size:16px;font-weight:bold;text-align:left;line-height:22px;padding-bottom:8px">
+                                                To<br />
+                                                &nbsp;&nbsp;&nbsp;&nbsp;Secretary,<br />
+                                                &nbsp;&nbsp;&nbsp;&nbsp;Punjab School Education Board,<br />
+                                                &nbsp;&nbsp;&nbsp;&nbsp;S.A.S. Nagar (Mohali)<br />
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td width="22%"><b>School Code / <span class="kdsfont">Ó¨ÞÐ ÂØ ¨ë¸</span></b></td>
+                                            <td width="50%">: @ViewBag.SCHL</td>
+                                            <td width="17%"><b>ID No. / <span class="kdsfont">ÔÅØª¼Û ÅâÉÏ</span></b></td>
+                                            <td width="11%">: @ViewBag.IDNO</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>District Code / Name</b></td>
+                                            <td colspan="3">: @ViewBag.DC / @ViewBag.DN</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>School Name</b></td>
+                                            <td colspan="3">: @ViewBag.SSE</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b><span class="kdsfont">Ó¨ÞÐ ÂØ ÅØÌ</span></b></td>
+                                            <td colspan="3">: <span class="kdsfont">@ViewBag.SSP</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" style="font-size:13px;font-weight:bold;padding-top:6px">Form Wise Summary</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4">
+                                                <table width="100%" border="1">
+                                                    <tr style="background-color:#dfdfdf !important">
+                                                        <td>&nbsp;<span class="kdsfont">ÇØÏÌ</span></td>
+                                                        <td>&nbsp;<span class="kdsfont">¨ÝóÐ ÆñÛÚª¤ØÏÁÛ</span></td>
+                                                        <td>&nbsp;<span class="kdsfont">ÇÛÓ Æñ¼Û ÆñÛÚª¤ØÏÁÛ</span></td>
+                                                        <td>&nbsp;<span class="kdsfont">¨ÝóÐ ÇÛÓ</span></td>
+                                                    </tr>
+                                                    @{
+                                                var grandPrice03 = 0;
+                                                if (ViewBag.table2Count == "1")
+                                                {
+                                                    int Count = 0;
+                                                    for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                                                    {
+                                                        var formname = Model.StoreAllData.Tables[2].Rows[i]["Form_name"].ToString();
+                                                        var totstd = Model.StoreAllData.Tables[2].Rows[i]["totcandidate"].ToString();
+                                                        var regfee = Model.StoreAllData.Tables[2].Rows[i]["RegFeePerstd"].ToString();
+                                                        var totprice = Model.StoreAllData.Tables[2].Rows[i]["Totprice"].ToString();
+                                                        grandPrice03 = Convert.ToInt32(grandPrice03) + Convert.ToInt32(totprice);
+                                                        Count = i + 1;
+                                            <tr>
+                                                <td>&nbsp;@formname</td>
+                                                <td>&nbsp;@totstd</td>
+                                                <td>&nbsp;@regfee</td>
+                                                <td>&nbsp;@totprice</td>
+                                            </tr>
+                                                    }
+                                                }
+                                                    }
+                                                    <tr>
+                                                        <td colspan="4">
+                                                            &nbsp;<span class="kdsfont">¨ÝóÐ ÇÛÓ</span>: @grandPrice03/-
+                                                            @*<label id="TotalFeesInWords" onload="toWords(@grandPrice03)"></label>*@
+                                                            @*<label>@Html.DisplayFor(a => a.TotalFeesInWords)</label>*@
+                                                            @*@Html.TextBoxFor(x => x.TotalFeesInWords , new { onClick = "toWords();" })*@
+                                                            @*<input type=text id="TotalFeesInWords" readonly="readonly" onclick="toWords(@grandPrice03)";/>*@
+                                                            @*<input type=text id="TotalFeesInWords" onload="toWords(@grandPrice03)";/>*@
+                                                            @*<p id="TotalFeesInWords" onload="toWords(@grandPrice03);" ></p>*@
+                                                            <input type="text" id="TotalFeesInWords" class="nbox" value="@grandPrice03" readonly="readonly" />
+                                                            @*<div id="abc">Only</div>*@
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" style="font-size:13px;font-weight:bold;padding-top:6px">Fee Details</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4">
+                                                <table width="100%" border="1">
+                                                    <tr>
+                                                        <td width="14%">&nbsp;Challan No.</td>
+                                                        <td width="17%">&nbsp;@ViewBag.challanid</td>
+                                                        <td width="19%">&nbsp;Challan Deposit Date</td>
+                                                        <td width="15%">&nbsp;@ViewBag.Depositdt</td>
+                                                        <td width="15%">&nbsp;Challan Amount</td>
+                                                        <td width="20%">&nbsp;@ViewBag.amt</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;Bank Name</td>
+                                                        <td colspan="3">&nbsp;@ViewBag.bcode / @ViewBag.bank</td>
+                                                        <td>&nbsp;Deposit At</td>
+                                                        <td>&nbsp;@ViewBag.branch</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" style="color:#cc0000;font-size:13px;padding-top:10px;font-weight:bold">Note : Paste This Slip on The Envelope.<br />&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            <td width="36%"></td>
+                        </tr>
+                    </table>
+        </div>
+        </div>
+
+                    }
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script type="text/javascript">
+        // code for one time initialization
+        // American Numbering System
+        var th = ['', 'thousand', 'million', 'billion', 'trillion'];
+        var dg = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+        var tn = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+        var tw = ['twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+       //alert(th);
+
+        window.onload=function() {
+            var s = document.getElementById("TotalFeesInWords").value;
+            //alert(s);
+            s = s.toString();
+            s = s.replace(/[\, ]/g, '');
+
+            if (s != parseFloat(s)) return 'not a number';
+            var x = s.indexOf('.');
+            if (x == -1) x = s.length;
+            if (x > 15) return 'too big';
+            var n = s.split('');
+            var str = '';
+            var sk = 0;
+            for (var i = 0; i < x; i++) {
+                if ((x - i) % 3 == 2) {
+                    if (n[i] == '1') {
+                        str += tn[Number(n[i + 1])] + ' ';
+                        i++;
+                        sk = 1;
+                    } else if (n[i] != 0) {
+                        str += tw[n[i] - 2] + ' ';
+                        sk = 1;
+                    }
+                } else if (n[i] != 0) {
+                    str += dg[n[i]] + ' ';
+                    if ((x - i) % 3 == 0) str += 'hundred ';
+                    sk = 1;
+                }
+                if ((x - i) % 3 == 1) {
+                    if (sk) str += th[(x - i - 1) / 3] + ' ';
+                    sk = 0;
+                }
+            }
+            if (x != s.length) {
+                var y = s.length;
+                str += 'point ';
+                for (var i = x + 1; i < y; i++) str += dg[n[i]] + ' ';
+            }
+            //alert(str);
+            document.getElementById("TotalFeesInWords").value = str;
+            document.getElementById("TotalFeesInWords1").value = str;
+            document.getElementById("TotalFeesInWords2").value = str;
+            //document.getElementById("abc").innerHTML = str;
+            //document.getElementById("TotalFeesInWords").focus();
+            return str.replace(/\s+/g, ' ');
+
+        }
+
+</script>
+

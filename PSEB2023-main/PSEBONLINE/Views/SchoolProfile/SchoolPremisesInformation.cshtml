@@ -1,0 +1,1330 @@
+﻿@model PSEBONLINE.Models.SchoolPremisesInformation
+@{
+    ViewBag.Title = "School Premises Information";
+    if (ViewBag.mod == null) { Layout = "~/Views/Shared/_Headerui.cshtml"; }
+    else { Layout = "~/Views/Shared/_Header.cshtml"; }
+
+}
+
+@if (Session["IsInfrastructureAllowed"] == null)
+{
+    Response.Redirect("~/Login");
+
+}
+
+<style type="text/css">
+    .widthe {
+        width: 25px;
+        height: 25px;
+        display: inline-block;
+    }
+    }
+    /*.widtha {display:inline-block}*/
+</style>
+<h1>Infrastructure, Exam Centre & other activities information of School</h1>
+@using (Html.BeginForm("SchoolPremisesInformation", "SchoolProfile", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+
+    DateTime d1 = DateTime.Today;//31/08/2018
+    DateTime d2 = DateTime.ParseExact("04/09/2018", "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+    <div class="row">
+        <div class="col-md-12 rqf">
+            Note :<br />
+            1. Columns marked with * are mandatory, fill required information in these columns<br />
+            2. Columns are not marked with * (star) and which are related to school are to be filled else keep left blank.<br />
+            3. Kindly "SAVE As DRAFT" required information of Mandatory Fields Before Final Submission.
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-5 text-left">
+            @if (ViewBag.SID == 0)
+            {
+                <h3 class="rqf">Final Submission Status : Pending</h3>
+            }
+            else if (ViewBag.SID != 0 && Model.IsFinalSubmit == 0)
+            {
+                <h3 class="rqf">
+                    Final Submission Status : In Process
+                    @if (ViewBag.IsFeeDateOver == 0)
+                    {<Br /><span class="text-info">(Final Submission Date Is Over)</span>}
+                </h3>
+
+            }
+            else if (string.IsNullOrEmpty(Model.ChallanId) && Model.IsFinalSubmit == 1)
+            {
+                <h3 class="rqf">Final Submission Status : Final Submitted</h3>
+            }
+            else if (Model.challanVerify == 0 && Model.IsFinalSubmit == 1)
+            {
+                <h3 class="rqf">Final Submission Status : Fee Not Verified</h3>
+            }
+            else if (Model.challanVerify == 1 && Model.IsFinalSubmit == 1)
+            {
+                <h3 class="rqf">Final Submission Status : Final Submitted</h3>
+            }
+        </div>
+        <div class="col-md-7 text-right">
+
+            @if (ViewBag.mod == null)
+            {
+
+                if (ViewBag.IsFinalSubmit == 0)
+                {
+
+                    <a href="/pdf/Rough-Performa.pdf" class="btn">Rough Performa</a>
+                    <input type="submit" name="submit" value="Save as Draft" id="Submit" formmethod="post" />
+
+                    if (ViewBag.IsFeeDateOver == 1)
+                    {
+                        if (d1 <= d2)
+                        {
+                            <input type="button" id="btnsubmit5" value="Final Submit" class="btn" onclick="return confirm('Final Submit Page is in under construction, will be available soon');" />
+                        }
+                        else
+                        {
+                            <a href="" data-toggle="modal" data-target="#myModal1-@ViewBag.SCHLCODE" class="btn">Final Submit</a>
+                        }
+                    }
+
+
+                    <a href="/SchoolProfile/SchoolPremisesInformationReport?SCHL=@ViewBag.SCHLCODE&UI=0" class="btn">Print Rough Report</a>
+                }
+                else if (ViewBag.IsFinalSubmit == 1 && string.IsNullOrEmpty(Model.ChallanId))
+                {
+                    <a href="/SchoolProfile/SchoolPremisesInformationReport?SCHL=@ViewBag.SCHLCODE&UI=1" class="btn">Print Final Report</a>
+                }
+                else if (ViewBag.IsFinalSubmit == 1 && !string.IsNullOrEmpty(Model.ChallanId))
+                {
+                    if (ViewBag.IsFinalSubmit == 1 && Model.challanVerify == 0)
+                    {
+                        <a href='@Url.Action("GenerateChallaan", "Home", new { ChallanId = Model.ChallanId })' class="btn">Print Challan</a>
+                    }
+
+                    if (Model.challanVerify == 1)
+                    {
+                        <a href="/SchoolProfile/SchoolPremisesInformationReport?SCHL=@ViewBag.SCHLCODE&UI=1" class="btn">Print Final Report</a>
+                    }
+                    else if (ViewBag.ExpireVDate == "1" && ViewBag.SID == 1 && ViewBag.IsFinalSubmit == 1 && Model.challanVerify == 0)
+                    {
+                        <button type="button" class="" data-toggle="modal" data-target="#myModal-@Model.ChallanId" onclick="return confirm('If you already deposited amount in Bank then please dont regenerate challan. Are you sure to Re-Generate Challan or Cancel?');">Re-Generate Challan</button>
+                        @* Re-Generate Challan *@
+                        <div class="modal fade" id="myModal-@Model.ChallanId" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Re-Generate Challan</h4>
+                                        <p style="text-align:center;font-size:18px;color:#f00">If you already deposit amount in Bank then please dont Re-Generate Challan. Are you sure to Re-Generate Challan or Cancel?</p>
+                                    </div>
+                                    <div class="modal-body">
+                                        <center> <input type="text" id="txtReChallanNo-@Model.ChallanId" name="txtReChallanNo" value="@Model.ChallanId" readonly /></center>
+                                        @if (ViewBag.AllowBanksCode == "205")
+                                        {<input name="PDSO-@Model.ChallanId" id="PDSO-@Model.ChallanId" type="radio" value="205" checked /><span>PSEB District Sub Office</span> }
+                                        else if (ViewBag.AllowBanksCode == "203")
+                                        {<input name="PDSO-@Model.ChallanId" id="PDSO-@Model.ChallanId" type="radio" value="203" checked /><span>PSEB HOD Office</span> }
+                                        else
+                                        { <span>No Bank Selected </span>}
+
+                                        @*<input name="PDSO-@Model.ChallanId" id="PDSO-@Model.ChallanId" type="radio" value="203" checked /><span>PSEB HOD Office</span>*@
+
+
+                                        @*<br /><span class="rqf">Challan will be Generate against  @ViewBag.AllowBanks with @ViewBag.totfee late fee till last date @ViewBag.eDate</span>*@
+                                        <input type="button" class="btn" value="Click here to Re-Generate Challan" id="btnSend" onclick="Send('@Model.ChallanId')" />
+                                        <div id="loading1-@Model.ChallanId"></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                <a href="/SchoolProfile/SchoolPremisesInformation" class="btn">Back</a>
+            }
+            else
+            {
+                <input type="submit" name="submit" value="Save as Draft" id="Submit" formmethod="post" />
+                <a href="/SchoolProfile/SchoolPremisesInformationReport?SCHL=@ViewBag.SCHLCODE&UI=0" class="btn">Print Rough Report</a>
+                <a href="/Admin/ViewSchoolPremisesInformation" class="btn">Back</a>
+            }
+
+
+            @* Final Submit and Fee Details*@
+            @if (ViewBag.SID == 1 && ViewBag.IsFinalSubmit == 0)
+            {
+                <div class="modal fade" id="myModal1-@ViewBag.SCHLCODE" role="dialog">
+                    <div class="modal-dialog" style="width:50%">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3 style="text-align:left">Fee Details of School : @ViewBag.SCHLCODE</h3>
+                            </div>
+                            <div class="modal-body">
+
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                        <td colspan="5" style="text-align:left"><span class="rqf">After final submission all records will be locked and after that you can not modify information. So are you ensure to final submit?</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" style="text-align:left">
+                                            @if (ViewBag.AllowBanksCode == "205")
+                                            {<label>@Html.RadioButton("PSEB District Sub Offices", "205", new { id = "PDSO", @checked = true })PSEB District Sub Offices</label><br />
+                                        }
+                                        else if (ViewBag.AllowBanksCode == "203")
+                                        {<label>@Html.RadioButton("PSEB HOD Office", "203", new { id = "PDSO", @checked = true })PSEB HOD Offices</label><br />
+                                    }
+
+
+
+                                            <span class="rqf">Challan will be Generate against  @ViewBag.AllowBanks with @ViewBag.totfee late fee till last date @ViewBag.eDate</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" style="text-align:center"><input type="submit" class="btn" value="Final Submit" id="btnsubmitfinal" name="submit" /></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+    <h4>SCHOOL INFORMATION</h4>
+    <div class="row">
+        <div class="col-md-2">School Name and District</div>
+        <div class="col-md-10"><label> @ViewBag.SCHLE</label></div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">
+            School Code<span class="rqf">*</span>
+        </div>
+        <div class="col-md-4">
+            <label>@Html.DisplayFor(m => m.SCHL, new { }) @Html.HiddenFor(m => m.SCHL)</label>
+        </div>
+        <div class="col-md-3">School Identity No (Issued by Aff. Branch) </div>
+        <div class="col-md-3"><label>@ViewBag.IDNO</label></div>
+    </div>
+    <div class="clearfix"></div>
+    <h4>SCHOOL & STAFF DETAILS</h4>
+    <div class="row">
+        <div class="col-md-10">
+            <span class="widthe">(1)</span>
+            Whether the school is receiving financial aid from any Govt./Semi Govt./Autonomous Body?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.SSD1, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-10">
+            <span class="widthe">(2)</span>
+            School campus area and property belongs to the Govt. or it is on rent or it is on lease or own property.<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.SSD2, new SelectList(ViewBag.PropertyStatusList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(3)</span>
+            Total No. of Teaching Staff in School <span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.SSD3, new { @maxlength = "7", onkeypress = "return isNumberKey(event);", })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(4)</span>
+            Total No. of Non-Teaching in school
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.SSD4, new { @maxlength = "7", onkeypress = "return isNumberKey(event);", })
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <h4>CAMPUS & BUILDING</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <span class="widthe">(5)</span>
+            <span class="widtha">Campus area (in sq. feet) (at site from where the school is presently running)<span class="rqf">*</span></span>
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB5, new { @maxlength = "7", onkeypress = "return isNumberKey(event);", })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(6)</span>
+            Built up area<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB6, new { @maxlength = "7", onkeypress = "return isNumberKey(event);", })
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(7)</span>
+            No. of  Floors (including ground floor)<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB7, new { @maxlength = "7", onkeypress = "return isNumberKey(event);", })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(8)</span>
+            Total Classrooms rooms on ground floor<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB8, new { @maxlength = "7", onkeypress = "return isNumberKey(event);", })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(9)</span>
+            Capacity of students on ground floor <span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB9, new { @maxlength = "7", onkeypress = "return isNumberKey(event);", })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(10)</span>
+            Total Classrooms rooms on first floor, if any
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB10, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(11)</span>
+            Capacity of students on first floor
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB11, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(12)</span>
+            Total Classrooms rooms on second floor, if any
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB12, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(13)</span>
+            Capacity of students on second floor
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB13, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(14)</span>
+            Total Classrooms rooms on third floor, if any
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB14, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(15)</span>
+            Capacity of students on third floor
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CB15, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(16)</span>
+            Whether the classrooms are adequate to meet the requirements of the students/subject teachers/co-curricular activities?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.CB16, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <h4>EXAM CENTRE DETAILS</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <span class="widthe">(17)</span>
+            If Examination Centre is built in school, then on which floor.(Exam Centre is Preferred on Ground Floor)
+        </div>
+        <div class="col-md-6">
+            @*@Html.DropDownListFor(m => m.ECD17, (MultiSelectList)ViewBag.PropertyFloorList, new { multiple = "multiple"})*@
+            @*@Html.DropDownListFor(m => m.ECD17, new SelectList(ViewBag.PropertyFloorList, "Value", "Text"), "--Select ---", new { })*@
+
+            @if (Model.PropertyFloorList != null)
+            {
+                for (int k = 0; k < Model.PropertyFloorList.Count(); k++)
+                {
+                    <div class="col-md-3">
+                        @Html.CheckBoxFor(m => m.PropertyFloorList[k].Selected)
+                        @Html.DisplayFor(m => m.PropertyFloorList[k].Text)
+                        @Html.HiddenFor(m => m.PropertyFloorList[k].Text)
+                        @Html.HiddenFor(m => m.PropertyFloorList[k].Value)
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(18)</span>
+            Total candidate capacity of Exam centre
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.ECD18, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(19)</span>
+            Number of rooms provided for exam centre(minimum candidates capacity 30 per room single bench single candidates
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.ECD19, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(20)</span>
+            Total No. of lecturer
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.ECD20, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+
+        <div class="col-md-4">
+            <span class="widthe">(21)</span>
+            Total No. of Master
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.ECD21, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(22)</span>
+            Total No. of Supervisory Staff for exam duty
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.ECD22, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+
+        <div class="col-md-4">
+            <span class="widthe">(23)</span>
+            Total No. of Single Benches
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.ECD23, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(24)</span>
+            Total No. of Double Benches
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.ECD24, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+
+        <div class="col-md-4">
+            <span class="widthe">(25)</span>
+            Is CCTV cameras facility available?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.ECD25, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <h4>CLASS WISE COUNT OF STUDENTS FOR SESSION @Session["Session"].ToString()</h4>
+    <div class="row">
+        <div class="col-md-2">
+            <span class="widthe">(26)</span>
+            1st  Class
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS26, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(27)</span>
+            2nd Class
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS27, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(28)</span>
+            3rd Class
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS28, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">
+            <span class="widthe">(29)</span>
+            4th Class
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS29, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+
+        <div class="col-md-2">
+            <span class="widthe">(30)</span>
+            5th Class
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS30, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(31)</span>
+            6th Class
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS31, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">
+            <span class="widthe">(32)</span>
+            7th Class
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS32, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(33)</span>
+            8th Class
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS33, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(34)</span>
+            9th Class
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS34, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">
+            <span class="widthe">(35)</span>
+            10th Gen.
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS35, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(36)</span>
+            10th NSQF
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS36, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(37)</span>
+            11th Class Hum.
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS37, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">
+            <span class="widthe">(38)</span>
+            11th Science
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS38, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(39)</span>
+            11th Commerce
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS39, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(40)</span>
+            11th Vocational/NSQF
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS40, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">
+            <span class="widthe">(41)</span>
+            12th Hum.
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS41, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+
+        <div class="col-md-2">
+            <span class="widthe">(42)</span>
+            12th Science
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS42, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-2">
+            <span class="widthe">(43)</span>
+            12th  Commerce
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS43, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">
+            <span class="widthe">(44)</span>
+            12th Vocational/NSQF
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CWS44, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <h4>COUNT OF SPORTS STUDENTS AT DIFFERENT LEVEL</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <span class="widthe">(45)</span>
+            Count of Sports Candidates (District Level)
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CSS45, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(46)</span>
+            Count of Sports Candidates (Zone Level)
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CSS46, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="col-md-4">
+            <span class="widthe">(47)</span>
+            Count of Sports Candidates(National Level)
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CSS47, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(48)</span>
+            Count of Sports Candidates(Inter National Level)
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CSS48, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <h4>PLAYGROUND </h4>
+    <div class="row">
+        <div class="col-md-4">
+            <span class="widthe">(49)</span>
+            Size(in sq. feet) of playground
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.PG49, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(50)</span>
+            Numbers of different games taken in school
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.PG50, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(51)</span>
+            Is equipments related to different games available in school?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.PG51, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(52)</span>
+            Number of Game Coaches
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.PG52, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(53)</span>
+            Whether playground(s) is/are part of the school campus?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.PG53, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(54)</span>
+            If no, distance between school campus and playgrounds.
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.PG54, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <h4>LIBRARY/FURNITURE </h4>
+    <div class="row">
+        <div class="col-md-4">
+            <span class="widthe">(55)</span>
+            Size(in sq. feet) of library
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LIB55, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(56)</span>
+            Whether the library has reading rooms for students/teachers?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.LIB56, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(57)</span>
+            Total No. of Books in Library
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LIB57, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(58)</span>
+            Total No. of different types of magazines
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LIB58, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(59)</span>
+            Total No. of different types of newspaper
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LIB59, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <h4>LABORATORIES </h4>
+    <div class="row">
+        <div class="col-md-4">
+            <span class="widthe">(60)</span>
+            Size(in sq. feet) of Science laboratories(For Matric students)
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LAB60, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(61)</span>
+            Capacity of Candidates for Science laboratories(For Matric students)
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LAB61, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(62)</span>
+            Size(in sq. feet) of Physics Lab, if any
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LAB62, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(63)</span>
+            Capacity of Candidates for Physics Lab
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LAB63, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(64)</span>
+            Size(in sq. feet) of Chemistry Lab, if any
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LAB64, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(65)</span>
+            Capacity of Candidates for Chemistry Lab
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LAB65, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(66)</span>
+            Size (in sq. feet) of Biology Lab, if any
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LAB66, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(67)</span>
+            Capacity of Candidates for Biology Lab
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.LAB67, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <h4>COMPUTER LAB </h4>
+    <div class="row">
+        <div class="col-md-4">
+            <span class="widthe">(68)</span>
+            Size(in sq. feet)  of Computer Lab
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CLAB68, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(69)</span>
+            Capacity of Total  Candidates in Computer Lab
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CLAB69, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(70)</span>
+            Total no. of Computers  in computer lab
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.CLAB70, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(71)</span>
+            Internet Facility available in Computer lab<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.CLAB71, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <h4>OTHER INFORMATION RELATED TO YOUR SCHOOL </h4>
+    <div class="row">
+        <div class="col-md-4">
+            <span class="widthe">(72)</span>
+            Is EDUSAT facility available in school<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH72, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(73)</span>
+            Is school having gated boundary or not<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH73, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(74)</span>
+            If any case is pending in court against the institution?(if yes, then attach copy)<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH74, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(75)</span>
+            Does your institute have transport facility as per Govt. rules & regulations?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH75, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(76)</span>
+            Does your institute pay salaries to employees as per affiliation regulation 7 (III) through a/c payee check?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH76, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(77)</span>
+            Is there air cooling facility in Classrooms?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH77, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(78)</span>
+            Are there any smart classrooms in school?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH78, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(79)</span>
+            Is Organize Parents/Teachers Meeting  in school ?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH79, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(80)</span>
+            R.O Drinking water facility?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH80, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(81)</span>
+            Separate toilet for boys& Girls?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH81, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(82)</span>
+            Play ground under institute premises reputation?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH82, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="col-md-4">
+            <span class="widthe">(83)</span>
+            Display board for special candidates facilities?<span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.OTH83, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <span class="widthe">(84)</span>
+            Enter Your School UDISE Code <span class="rqf">*</span>
+        </div>
+        <div class="col-md-2">
+            @Html.TextBoxFor(a => a.UDISECODE, new { @maxlength = "11", onkeypress = "return isNumberKey(event);", })
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-center">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CREATEDDATE)
+        @if (ViewBag.IsFinalSubmit == 0)
+        {
+            <a href="/pdf/Rough-Performa.pdf" class="btn">Rough Performa</a>
+            <input type="submit" name="submit" value="Save as Draft" id="Submit" formmethod="post" />
+
+
+            if (ViewBag.IsFeeDateOver == 1)
+            {
+                if (d1 <= d2)
+                {
+                    <input type="button" id="btnsubmit5" value="Final Submit" class="btn" onclick="return confirm('Final Submit Page is in under construction, will be available soon');" />
+                }
+                else
+                {
+                    <a href="" data-toggle="modal" data-target="#myModal1-@ViewBag.SCHLCODE" class="btn">Final Submit</a>
+                }
+            }
+            <a href="/SchoolProfile/SchoolPremisesInformationReport?SCHL=@ViewBag.SCHLCODE&UI=0" class="btn">Print Rough Report</a>
+        }
+        else if (ViewBag.IsFinalSubmit == 1 && string.IsNullOrEmpty(Model.ChallanId))
+        {
+            <a href="/SchoolProfile/SchoolPremisesInformationReport?SCHL=@ViewBag.SCHLCODE&UI=1" class="btn">Print Final Report</a>
+        }
+        else if (ViewBag.IsFinalSubmit == 1 && !string.IsNullOrEmpty(Model.ChallanId))
+        {
+            <a href='@Url.Action("GenerateChallaan", "Home", new { ChallanId = Model.ChallanId })' class="btn">Print Challan</a>
+            if (Model.challanVerify == 1)
+            {
+                <a href="/SchoolProfile/SchoolPremisesInformationReport?SCHL=@ViewBag.SCHLCODE&UI=1" class="btn">Print Final Report</a>
+            }
+        }
+
+        <a href="javascript:void(0);" class="btn" onclick="history.go(-1);">Back</a>
+
+
+    </div>
+    <div id="loading1"></div>
+}
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1" && ViewBag.mod == null)
+        {
+            <script type="text/javascript" language="javascript">
+                alert("School Premises Information Updated Successfully.");
+                     window.location.href = '@Url.Action("SchoolPremisesInformation", "SchoolProfile")';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "1" && ViewBag.mod == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("School Premises Information Updated Successfully.");
+                     window.location.href = '@Url.Action("ViewSchoolPremisesInformation", "Admin")';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Kindly Fill School Premises Information.");
+            </script>}
+        else if (ViewData["result"].ToString() == "5")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('Please fill required information in Mandatory Fields');
+            </script>}
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("School Premises Information Not Updated..Please Try Again");
+            </script>
+        }
+    }
+}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+
+
+<script>
+                        jQuery(document).ready(function () {
+                            jQuery('[data-confirm]').click(function (e) {
+                                if (!confirm(jQuery(this).attr("data-confirm"))) {
+                                    e.preventDefault();
+                                }
+                                else {
+
+                                        var isvalid = valForm();
+                                        if (isvalid == false) {
+                                            alert('Please fill required information in Mandatory Fields');
+                                            return;
+                                        }
+                                        //else {
+                                        //    goFinal();
+                                        //}
+                                }
+                            });
+                        });
+
+
+                        function valForm() {
+                            var SSD1 = document.getElementById("SSD1");
+                            if (SSD1.value == "" || SSD1.value == "0") {
+                                SSD1.focus();
+                                return false;
+                            }
+
+                            var SSD2 = document.getElementById("SSD2");
+                            if (SSD2.value == "" || SSD2.value == "0") {
+                                SSD2.focus();
+                                return false;
+                            }
+
+                            var SSD3 = document.getElementById("SSD3");
+                            if (SSD3.value == "" || SSD3.value == "0") {
+                                SSD3.focus();
+                                return false;
+                            }
+
+
+
+
+                            var CB5 = document.getElementById("CB5");
+                            if (CB5.value == "" || CB5.value == "0") {
+                                CB5.focus();
+                                return false;
+                            }
+
+
+                            var CB6 = document.getElementById("CB6");
+                            if (CB6.value == "" || CB6.value == "0") {
+                                CB6.focus();
+                                return false;
+                            }
+
+
+                            var CB7 = document.getElementById("CB7");
+                            if (CB7.value == "" || CB7.value == "0") {
+                                CB7.focus();
+                                return false;
+                            }
+
+                            var CB8 = document.getElementById("CB8");
+                            if (CB8.value == "" || CB8.value == "0") {
+                                CB8.focus();
+                                return false;
+                            }
+                            var CB9 = document.getElementById("CB9");
+                            if (CB9.value == "" || CB9.value == "0") {
+                                CB9.focus();
+                                return false;
+                            }
+
+
+                            var CB16 = document.getElementById("CB16");
+                            if (CB16.value == "" || CB16.value == "0") {
+                                CB16.focus();
+                                return false;
+                            }
+
+
+                            var ECD25 = document.getElementById("ECD25");
+                            if (ECD25.value == "" || ECD25.value == "0") {
+                                ECD25.focus();
+                                return false;
+                            }
+
+
+                            var PG51 = document.getElementById("PG51");
+                            if (PG51.value == "" || PG51.value == "0") {
+                                PG51.focus();
+                                return false;
+                            }
+
+
+                            var PG53 = document.getElementById("PG53");
+                            if (PG53.value == "" || PG53.value == "0") {
+                                PG53.focus();
+                                return false;
+                            }
+
+
+                            var LIB56 = document.getElementById("LIB56");
+                            if (LIB56.value == "" || LIB56.value == "0") {
+                                LIB56.focus();
+                                return false;
+                            }
+
+
+                            var CLAB71 = document.getElementById("CLAB71");
+                            if (CLAB71.value == "" || CLAB71.value == "0") {
+                                CLAB71.focus();
+                                return false;
+                            }
+
+
+                            var OTH72 = document.getElementById("OTH72");
+                            if (OTH72.value == "" || OTH72.value == "0") {
+                                OTH72.focus();
+                                return false;
+                            }
+
+
+                            var OTH73 = document.getElementById("OTH73");
+                            if (OTH73.value == "" || OTH73.value == "0") {
+                                OTH73.focus();
+                                return false;
+                            }
+
+                            var OTH74 = document.getElementById("OTH74");
+                            if (OTH74.value == "" || OTH74.value == "0") {
+                                OTH74.focus();
+                                return false;
+                            }
+
+                            var OTH75 = document.getElementById("OTH75");
+                            if (OTH75.value == "" || OTH75.value == "0") {
+                                OTH75.focus();
+                                return false;
+                            }
+
+                            var OTH76 = document.getElementById("OTH76");
+                            if (OTH76.value == "" || OTH76.value == "0") {
+                                OTH76.focus();
+                                return false;
+                            }
+
+                            var OTH77 = document.getElementById("OTH77");
+                            if (OTH77.value == "" || OTH77.value == "0") {
+                                OTH77.focus();
+                                return false;
+                            }
+
+                            var OTH78 = document.getElementById("OTH78");
+                            if (OTH78.value == "" || OTH78.value == "0") {
+                                OTH78.focus();
+                                return false;
+                            }
+
+                            var OTH75 = document.getElementById("OTH75");
+                            if (OTH75.value == "" || OTH75.value == "0") {
+                                OTH75.focus();
+                                return false;
+                            }
+
+                            var OTH79 = document.getElementById("OTH79");
+                            if (OTH79.value == "" || OTH79.value == "0") {
+                                OTH79.focus();
+                                return false;
+                            }
+
+                            var OTH75 = document.getElementById("OTH75");
+                            if (OTH75.value == "" || OTH75.value == "0") {
+                                OTH75.focus();
+                                return false;
+                            }
+
+                            var OTH80 = document.getElementById("OTH80");
+                            if (OTH80.value == "" || OTH80.value == "0") {
+                                OTH80.focus();
+                                return false;
+                            }
+
+                            var OTH81 = document.getElementById("OTH81");
+                            if (OTH81.value == "" || OTH81.value == "0") {
+                                OTH81.focus();
+                                return false;
+                            }
+
+                            var OTH82 = document.getElementById("OTH82");
+                            if (OTH82.value == "" || OTH82.value == "0") {
+
+                                OTH82.focus();
+                                return false;
+                            }
+
+                            var OTH83 = document.getElementById("OTH83");
+                            if (OTH83.value == "" || OTH83.value == "0") {
+                                OTH83.focus();
+                                return false;
+                            }
+
+                            var UDISECODE = document.getElementById("UDISECODE");
+                            if (UDISECODE.value == "") {
+                                UDISECODE.focus();
+                                return false;
+                            }
+
+                            return true;
+
+                        }
+
+
+                        @*function goFinal() {
+
+                                //post
+                                if ('@ViewBag.SCHLCODE' == "" || '@ViewBag.SCHLCODE' == null) {
+                                    alert("Not Submitted, Please Try Again");
+                                }
+                                else {
+                                    $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                                    $.post("/SchoolProfile/JqSchoolPremisesInformationFinalSubmit", { "SCHL": '@ViewBag.SCHLCODE' },
+                                        function (data) {
+                                            $('#loading1').empty();
+                                            if (data.status == "0" || data.status == "-1") {
+                                                alert("Final Submit Failure, Please Try Again");
+                                            }
+                                            else if (data.status == "-2" || data.status == "5") {
+                                                alert('Please SAVE As DRAFT required information of Mandatory Fields Before Final Submission');
+                                            }
+                                            else if (data.status == "1") {
+                                                alert("Final Submit Successfully");
+                                                  window.location.href = '/SchoolProfile/SchoolPremisesInformationReport?SCHL=@ViewBag.SCHLCODE&UI=1';
+                                            }
+                                            else {
+                                                alert("Final Submit Failure : " + data.status);
+                                            }
+                                        });
+                                }
+    }*@
+
+</script>
+<script type="text/javascript">
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function isNumberKeyGreaterThanZero(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if ((charCode >= 49 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            if (charCode == 48) { alert("Invalid Number...Enter Greater Than Zero!!"); }
+            else { alert("Invalid character...Enter Only Number!!"); }
+            return false;
+        }
+    }
+
+
+</script>
+
+
+
+
+<script type="text/javascript">
+
+    function Send(k) {
+       // alert('Regenerate Start');
+        var txtReChallanNo = '#txtReChallanNo-' + k;
+       //   alert("Start  Re-Generate Challan " + txtReChallanNo);
+
+        var SBIa = document.getElementById("PDSO-" + k).checked;
+        @*alert("SBIa " + SBIa);      
+        alert('@ViewBag.AllowBanksCode');*@
+        var BCODE = "";
+       if (SBIa == false || @ViewBag.AllowBanksCode == "") {
+            alert("Please Select Any Bank");
+            return false;
+        }
+        else {
+           // alert("SBIa.value " + SBIa.value);
+            //if (document.getElementById("PDSO-" + k).checked == true) { BCODE = "205"; }
+            //else { BCODE = "205"; }
+            BCODE = @ViewBag.AllowBanksCode;
+        }
+       
+        if (BCODE == "" || BCODE == "undefined") {
+            alert('Please Select Bank')
+            return false;
+        }
+        else if ($('#txtReChallanNo-' + k).val() == "") {
+            $('#txtReChallanNo-' + k).addClass("input-validation-error");
+            return false;
+        }
+        else {
+            //  alert('Now Re-Generate Challan of :' + $('#txtChallanNo-' + k).val())
+            // $('#Main1').hide();
+            $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Home/jqReGenerateChallaanNew",
+                data: '{ChallanId:"' + $('#txtReChallanNo-' + k).val() + '", BCODE:"' + BCODE + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response);
+                    $('#loading1-' + k).empty();
+                }
+            });
+            function OnSuccess(response) {
+                if (response.dee == "1") {
+                    alert("Challan Re-Generated Successfully & Your Challan ID is " + response.chid);
+                    $("#myModal-" + k).hide();
+                    $('#loading1-' + k).empty();
+                    window.open("/Home/GenerateChallaan?ChallanId=" + response.chid, "_blank");
+                }
+                else {
+                    alert("Failure, Please Try Again.");
+                    $('#loading1-' + k).empty();
+                }
+            }
+        }
+    }
+
+</script>
+

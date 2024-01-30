@@ -1,0 +1,1227 @@
+﻿@model PSEBONLINE.Models.MigrateSchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+@*<h1>Registration Number Allotment process For (N2 / M2 /E2 / T2)</h1>*@
+<h1> Document Verification Report of Other Board Candidates, Session <b>@Session["Session"]</b></h1>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+</style>
+@using (Html.BeginForm("AllotRegNo", "MigrateSchool", FormMethod.Post, new { id = "Migrate", enctype = "multipart/form-data" }))
+{
+    <fieldset style="margin-bottom:15px">
+        <legend>List Of School Candidate's (Session <b>@Session["Session"]</b>)</legend>
+        <form id="myForm">
+            <div class="row">
+                <div class="col-md-2">
+                    Total Student<label>@ViewBag.TotalCount</label>
+                </div>
+                <div class="col-md-2">
+                    School Code <label>@ViewBag.schlCode</label>
+                    @*@Html.HiddenFor(a => a.SchlCode, new { id = "SchlCode", @ReadOnly = "ReadOnly" })*@
+                    @Html.Hidden("SchlCode", (string)ViewBag.schlCode)
+                </div>
+                <div class="col-md-2">
+                    School ID <label>@ViewBag.schlID</label>
+                </div>
+                <div class="col-md-6">
+                    School Name <label>@ViewBag.schlName</label>
+                </div>
+            </div>
+            <div class="clearefix"></div>
+            <div class="row">
+                <div class="col-md-2">
+                    Select Action:  @Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), new { @class = "" })
+                </div>
+
+                <div class="col-md-2">
+                    Select Form:  @Html.DropDownList("SelForm", new SelectList(ViewBag.MyForm, "Value", "Text", ViewBag.SelectedForm), "--All---", new { @class = "" })
+
+                </div>
+                <div class="col-md-2">
+                    Select Lot No:  @Html.DropDownList("SelLot", new SelectList(ViewBag.MyLot, "Value", "Text", ViewBag.SelectedLot), "--All---", new { @class = "" })
+
+                </div>
+                <div class="col-md-2">
+                    Filter By:  @Html.DropDownList("SelFilter", new SelectList(ViewBag.MyFilter, "Value", "Text", ViewBag.SelectedFilter), "Select", new { @class = "" })
+
+                </div>
+                <div class="col-md-4">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request[" SearchString"]" />
+                </div>
+            </div>
+            <div class="clearefix"></div>
+            <div class="row">
+                <div class="col-md-4">
+                    Select Document Verifying Employee:  @Html.DropDownList("SelEmp", new SelectList(ViewBag.AllEmpList, "Value", "Text", ViewBag.SelectedEmp), "--All Employee---", new { @class = "" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <br />
+                    @*<input type="submit" value="Search" onclick="return formVal();" />*@
+                    <input type="submit" value="Search" />
+                    <a href="/MigrateSchool/AllotRegNo/@ViewBag.schlCode" class="btn">Back</a>
+                    @*<a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a>*@
+                </div>
+
+            </div>
+        </form>
+    </fieldset>
+
+
+}
+<div id="loading1"></div>
+<div class="clearfix"></div>
+<div class="row" id="divMain1">
+    <div class="col-md-3">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="col-md-3"> <a href="/MigrateSchool/ViewOtherBoardAdditionalDocumentsDateWise/SCHL" target="_blank" class="btn">View Uploaded Documents By Schl </a></div>
+    <div class="col-md-6 text-right">
+        @*<input type="submit" value="Approved" id="btnApproved" />*@
+        @*<input type="submit" value="Allot RegNo" id="btnsubmit" />*@
+        <input type="submit" value="Allot RegNo" id="btndescrepancy" />
+        @Html.ActionLink("View Allot Reg. No.", "ViewAllotRegNo", new { id = ((string)ViewBag.schlCode) }, new { @class = "btn" })
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="5%">ID</th>
+                    <th width="5%">S.No.</th>
+                    <th width="5%">Form</th>
+                    <th width="5%">Reg.No.</th>
+                    <th width="35%">Name/Fname/Mname</th>
+                    <th width="5%">DOB</th>
+                    @*<th width="5%">Gender</th>
+                        <th width="7%">Adm Date</th>
+                        <th width="7%">Fee</th>
+                        <th width="4%">Lot</th>*@
+                    <th width="10%">Error Code</th>
+                    <th width="5%">All <input type="checkbox" id="selectall" /></th>
+                    <th width="13%">Manual</th>
+                    <th width="13%">Remarks</th>
+                    <th width="10%">Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                            // var Sno = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                            var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                            var Std_Sub = Model.StoreAllData.Tables[0].Rows[i]["StdSub"].ToString();
+                            var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                            var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                            var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                            var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                            //var RegDate = Model.StoreAllData.Tables[0].Rows[i]["REGDATE"].ToString();
+                            var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["REGFEE"].ToString();
+                            var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+
+
+                            var ProofCertificate = Model.StoreAllData.Tables[0].Rows[i]["ProofCertificate"].ToString();
+                            var ProofNRICandidates = Model.StoreAllData.Tables[0].Rows[i]["ProofNRICandidates"].ToString();
+                            var IsNRICandidate = Model.StoreAllData.Tables[0].Rows[i]["IsNRICandidate"].ToString();
+                            var StudentUniqueId = Model.StoreAllData.Tables[0].Rows[i]["StudentUniqueId"].ToString();
+                            var schlDist = Model.StoreAllData.Tables[0].Rows[i]["SCHLDIST"].ToString();
+                            var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            if (Class == "1") { Model.ErrorList = ViewBag.ErrorList9; }
+                            if (Class == "2") { Model.ErrorList = ViewBag.ErrorList10; }
+                            if (Class == "3") { Model.ErrorList = ViewBag.ErrorList11; }
+                            if (Class == "4") { Model.ErrorList = ViewBag.ErrorList12; }
+                            if (Class == "5") { Model.ErrorList = ViewBag.ErrorList5; }
+                            if (Class == "8") { Model.ErrorList = ViewBag.ErrorList8; }
+                            //if (Class == "5" || Class == "8" || Class == "1" || Class == "2" || Class == "3" || Class == "4") { Model.ErrorList = ViewBag.ErrorList27; }
+                            var IsDocumentUpdatedBySchool = Model.StoreAllData.Tables[0].Rows[i]["IsDocumentUpdatedBySchool"].ToString();
+                            var DocumentApprovedDetails = Model.StoreAllData.Tables[0].Rows[i]["DocumentApprovedDetails"].ToString();
+                            var IsDocumentApproved = Model.StoreAllData.Tables[0].Rows[i]["IsDocumentApproved"].ToString();
+                            //var VerifyingPerson = Model.StoreAllData.Tables[0].Rows[i]["VerifyingPerson"].ToString();
+                            // Count = i + 1;
+                            Count = Count + 1;
+                            <tr>
+                                <td>
+                                    @stdid
+                                   
+                                </td>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @FormName
+                                </td>
+                                <td>
+                                    @RegNo
+                                    <br /><span class="rqf">@IsDocumentUpdatedBySchool</span>
+                                </td>
+                                <td>
+                                    @FullName
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                               
+
+                                <td class="ktm">
+                                    @*Error Code*@
+
+                                    @foreach (var names in @Model.ErrorList)
+                                    {
+                                        var checkBoxId = names.Text;
+                                        var tdId = "td" + names.Text;
+                                        <table width="100%" class="ktm">
+                                            <tr>
+                                                @*
+                                                    <td width="5px"></td>*@
+                                                <td id="@tdId" class="ktm" title="@names.Value">
+                                                    <input type="checkbox" id="cbfd^@stdid^@names.Text" class="chkclass" value="@checkBoxId" />
+                                                    @names.Text
+                                                </td>
+                                            </tr>
+
+                                        </table>
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if (DocumentApprovedDetails.ToUpper() == "Pending".ToUpper())
+                                        {
+                                            <input type="checkbox" class="checkbox" id="cb-@stdid" value="@stdid" />
+                                        }
+                                        else
+                                        { 
+                                            
+                                            @*<span class="rqf">@DocumentApprovedDetails</span>*@
+                                        
+                                        }                                   
+                                    }
+                                </td>
+
+                                <td>
+                                    <a href="javascript:void(0);" onclick="call(@stdid)">Manual Regno</a>
+                                    <input type="text" id="txtregno-@stdid" maxlength="30" style="display:none;" /><br />
+                                    <img src="~/Images/tick_icon.png" width="30px" onclick="rhupdate(@stdid)" id="updateit-@stdid" style="display:none;" />
+                                    <img src="~/Images/cancel_icon.png" width="30px" onclick="rhcancel(@stdid)" id="cancelit-@stdid" style="display:none;" />
+                                </td>
+                                <td>
+                                    <input type="text" id="txtremarks-@stdid" maxlength="100" />
+                                </td>
+                                <td>
+
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+                                                <li> <a data-toggle="modal" data-target="#myModalDocument-@stdid">View Document By School</a></li>
+                                                <li> <a data-toggle="modal" data-target="#myModalAddDocument-@stdid">View/Add Document By Admin</a></li>
+												@if(FormName == "E2" || FormName == "T2")
+													{
+													 
+                                        <li><a target="_blank" class="btn" href="/Admin/CommanFormView/@encrypt.QueryStringModule.Encrypt(stdid)?formNM=@FormName">View Form</a></li>
+													}
+													
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="myModalDocument-@stdid" role="dialog">
+                                        <div class="modal-dialog" style="width:50%">
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h3>View Document Uploaded By School <br /><span class="rqf">Student Id : @stdid </span> </h3>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-lg-4"><br />Proof Certificate</div>
+                                                        <div class="col-lg-8">
+                                                            @if (!string.IsNullOrEmpty(ProofCertificate))
+                                                            {
+                                                                if (FormName == "F2" || FormName == "A2")
+                                                                {
+
+                                                                    <br /><a href="https://psebdata.s3.ap-south-1.amazonaws.com/@ProofCertificate" class="btn" target="_blank">Click here to View</a>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <br /><a href="https://psebdata.s3.ap-south-1.amazonaws.com/@ProofCertificate" class="btn" target="_blank">Click here to View</a>
+                                                                }
+                                                            }
+                                                        </div>
+                                                        @*<div class="col-lg-6"><input type="file" id="DocProofCertificate-@stdid" onchange="CheckDocProofCertificate(this)" />   </div>*@
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                    <div class="row">
+                                                        <div class="col-lg-4"><br />NRI Certificate</div>
+                                                        <div class="col-lg-8">
+                                                            @if (!string.IsNullOrEmpty(ProofNRICandidates))
+                                                            {
+                                                                if (FormName == "F2" || FormName == "A2")
+                                                                {
+
+                                                                    <br /> <a href="https://psebdata.s3.ap-south-1.amazonaws.com/@ProofNRICandidates" class="btn" target="_blank">Click here to View</a>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <br /> <a href="https://psebdata.s3.ap-south-1.amazonaws.com/@ProofNRICandidates" class="btn" target="_blank">Click here to View</a>
+                                                                }
+                                                            }
+                                                        </div>
+                                                        @*<div class="col-lg-6"><input type="file" id="DocProofNRICandidates-@stdid" onchange="CheckDocProofNRICandidates(this)" />   </div>*@
+                                                    </div>
+                                                    @*<div class="clearfix"></div>
+        <div class="row">
+            <div class="col-lg-6"></div>
+            <div class="col-lg-6">
+                <input type="button" class="btn" value="Submit" id="btnDocument" onclick="sendDocument(@d,'@stdid','@StudentUniqueId','@FormName','@schlDist')" />
+            </div>
+        </div>*@
+
+                                                    <div id="loading2-@stdid"></div>
+
+                                                    <div class="clearefix"></div>
+                                                    
+                                                    <h3>View Uploaded Documents By School</h3>
+                                                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                        <tr>
+                                                            <td colspan="4">
+                                                                <table width="100%" id="view-@stdid">
+                                                                    <tr class="active-tr">
+                                                                        <th width="30%">Submitted On</th>
+                                                                        <th width="20%">Document</th>                                                                        
+                                                                    </tr>
+                                                                    @{
+                                                                        for (int h = 0; h < Model.StoreAllData.Tables[4].Rows.Count; h++)
+                                                                        {
+                                                                            var eDid = Model.StoreAllData.Tables[4].Rows[h]["Did"].ToString();
+                                                                            var eStdid = Model.StoreAllData.Tables[4].Rows[h]["Stdid"].ToString();
+                                                                            var Filepath = Model.StoreAllData.Tables[4].Rows[h]["Filepath"].ToString();
+                                                                            var SubmitOn = Model.StoreAllData.Tables[4].Rows[h]["SubmitOn"].ToString();
+
+                                                                            if (stdid == eStdid)
+                                                                            {
+                                                                                <tr id="trs-@d-@eDid">
+                                                                                    <td>@SubmitOn</td>
+                                                                                    <td>
+                                                                                        @{
+                                                                                            if (FormName == "F2" || FormName == "A2")
+                                                                                            {
+                                                                                                <a href="https://psebdata.s3.ap-south-1.amazonaws.com/@Filepath" class="btn" target="_blank">Download</a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                               <a href="https://psebdata.s3.ap-south-1.amazonaws.com/@Filepath" class="btn" target="_blank">Download</a>
+                                                                                            }
+                                                                                        }
+                                                                                    </td>                                                                                   
+                                                                                </tr>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+
+                                                    </table>
+                                                   
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    @*Add Document*@
+
+                                <div class="modal fade" id="myModalAddDocument-@stdid" role="dialog">
+                                    <div class="modal-dialog" style="width:70%">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h3>Add/View Document Uploaded By User <span class="rqf">Student Id : @stdid </span></h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-lg-4">Add Document</div>
+                                                    <div class="col-lg-8"><input type="file" id="DocAddDocument-@stdid" onchange="CheckDocAddDocument(this)" />   </div>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="row">
+                                                    <div class="col-lg-4">Enter Remarks</div>
+                                                    <div class="col-lg-8">
+                                                        <input type="text" id="RemarksAddDocument-@stdid" maxlength="100" />
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="row">
+                                                    <div class="col-lg-6"></div>
+                                                    <div class="col-lg-6">
+                                                        <input type="button" class="btn" value="Submit" id="btnAddDocument" onclick="addDocumentByUser(@d,'@stdid','@StudentUniqueId','@FormName','@schlDist')" />
+                                                    </div>
+                                                </div>
+                                                <div id="loadingAdd-@stdid"></div>
+
+
+                                                <div class="clearefix"></div>
+                                                <h3>View Uploaded Documents</h3>
+                                                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                    <tr>
+                                                        <td colspan="4">
+                                                            <table width="100%" id="view-@stdid">
+                                                                <tr class="active-tr">
+                                                                    <th width="30%">Submitted On</th>
+                                                                    <th width="20%">Document</th>
+                                                                    <th width="50%">Remarks</th>
+                                                                </tr>
+                                                                @{
+                                                                    for (int h = 0; h < Model.StoreAllData.Tables[3].Rows.Count; h++)
+                                                                    {
+                                                                        var eDid = Model.StoreAllData.Tables[3].Rows[h]["Did"].ToString();
+                                                                        var eStdid = Model.StoreAllData.Tables[3].Rows[h]["Stdid"].ToString();
+                                                                        var Filepath = Model.StoreAllData.Tables[3].Rows[h]["Filepath"].ToString();
+                                                                        var Remarks = Model.StoreAllData.Tables[3].Rows[h]["Remarks"].ToString();
+                                                                        var SubmitOn = Model.StoreAllData.Tables[3].Rows[h]["SubmitOn"].ToString();
+
+                                                                        if (stdid == eStdid)
+                                                                        {
+                                                                            <tr id="trs-@d-@eDid">
+
+                                                                                <td>@SubmitOn</td>
+                                                                                <td> <a href="https://psebdata.s3.ap-south-1.amazonaws.com/@Filepath" class="btn" target="_blank">Download</a></td>
+                                                                                <td>@Remarks</td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+
+                                                </table>
+
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                </td>
+                            </tr>
+
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                        Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {@:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp = ViewBag.pagesize + 1;
+                                                <a href="~/MigrateSchool/AllotRegNo?id=@ViewBag.schlCode&page=@dp">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/MigrateSchool/AllotRegNo?id=@ViewBag.schlCode&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var dp = ViewBag.pagesize - 1;
+                                            <a href="~/MigrateSchool/AllotRegNo?id=@ViewBag.schlCode&page=1"><<</a>
+                                            @Html.Raw("&nbsp;");
+                                            <a href="~/MigrateSchool/AllotRegNo?id=@ViewBag.schlCode&page=@dp">< Prev</a>
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp1 = ViewBag.pagesize + 1;
+                                                <a href="~/MigrateSchool/AllotRegNo?id=@ViewBag.schlCode&page=@dp1">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/MigrateSchool/AllotRegNo?id=@ViewBag.schlCode&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<script type="text/javascript">
+    function CheckDocProofCertificate(input) {
+
+        var stdid = input.id.split('-')[1];
+
+
+        if (typeof ($("#DocProofCertificate-" + stdid)[0].files) != "undefined") {
+
+            var ext = $('#DocProofCertificate-' + stdid).val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#DocProofCertificate-' + stdid).val('');
+                return false;
+            }
+            var size = parseFloat($(("#DocProofCertificate-" + stdid)[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#DocProofCertificate-' + stdid).val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#DocProofCertificate-' + stdid).val('');
+                }
+            }
+        }
+
+    }
+
+    function CheckDocProofNRICandidates(input) {
+
+        var stdid = input.id.split('-')[1];
+
+        if (typeof ($("#DocProofNRICandidates-" + stdid)[0].files) != "undefined") {
+
+            var ext = $('#DocProofNRICandidates-' + stdid).val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#DocProofNRICandidates-' + stdid).val('');
+                return false;
+            }
+            var size = parseFloat($("#DocProofNRICandidates-" + stdid)[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#DocProofNRICandidates-' + stdid).val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#DocProofNRICandidates-' + stdid).val('');
+                }
+            }
+        }
+
+    }
+
+    function CheckDocAddDocument(input) {
+        var stdid = input.id.split('-')[1];
+        if (typeof ($("#DocAddDocument-" + stdid)[0].files) != "undefined") {
+
+            var ext = $('#DocAddDocument-' + stdid).val().split('.').pop().toLowerCase();
+
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#DocAddDocument-' + stdid).val('');
+                return false;
+            }
+            var size = parseFloat($("#DocAddDocument-" + stdid)[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#DocAddDocument-' + stdid).val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#DocAddDocument-' + stdid).val('');
+                }
+            }
+        }
+
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // alert("ready");
+        $('.checkbox').change(function () { //".checkbox" change
+            var id = $(this).val();
+            //alert($(this).val());
+            //alert('id : ' + id);
+
+            if (this.checked == false) { //if this item is unchecked
+                $("#selectall")[0].checked = false; //change "select all" checked status to false
+                $('#txtremarks-' + id).prop("required", false);
+                $('#txtremarks-' + id).removeClass("input-validation-error");
+
+            }
+            else {
+                var remarks = $('#txtremarks-' + id).val();
+                if (remarks == '') {
+                    $('#txtremarks-' + id).addClass("input-validation-error");
+                }
+            }
+        });
+
+        $("#selectall").change(function () {
+            //alert(1);
+            //"select all" change
+            var status = this.checked; // "select all" checked status
+            var arr = [];
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                var id = this.id;
+                // alert(id);
+                this.checked = status; //change ".checkbox" checked status
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                var j = 0;
+                var k = 0;
+                //cb-stdid
+                for (var i = 3; i < arr.length; i++) {
+                    if (arr[i] == '-') {
+                        k++;
+                        continue;
+                    }
+                    if (k == 0) {
+                        arrid += arr[i];
+                    }
+                    j++;
+                }
+                //alert(dtype);
+                for (var k = 3 + j + 5; k < arr.length; k++) {
+                    arrcast += arr[k];
+                }
+
+            });
+        });
+        // End select all
+
+        //Start Allot Descrepancy
+        $("#btndescrepancy").click(function () {
+           // alert("Submit " + @ViewBag.SelectedAction);
+            var selEmp = $("#SelEmp").val();
+
+            var remarksAll = "";
+            var chkdee = "";
+            var storeid = "";
+            var storeid1 = "";
+            var storechkid = "";
+            var storescid = "";
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                var id = this.id;
+                // alert("stdid= "+ id);
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                var arrcast = "";
+                var j = 0;
+                for (var i = 3; i < arr.length; i++) {
+                    if (arr[i] == '-') {
+                        break;
+                    }
+                    arrid += arr[i];
+                }
+                if (this.checked) {
+                    //alert('arrid: ' + arrid);
+                    var remarks = $('#txtremarks-' + arrid).val();
+                    //if (remarks == '') {
+                    //    //alert('Enter Remarks');
+                    //    remarksAll = "1";
+                    //    $('#txtremarks-' + arrid).addClass("input-validation-error");
+                    //    return false;
+                    //}
+
+
+                    $('.chkclass:checked').each(function () {
+                        var id1 = this.id;
+                        // var val1 = $(this).val();
+                        // alert("ErrId"+ id1);
+                        var ids1 = this.id.split('^')[1];// stdid
+                        // alert("ids1 : " + ids1);
+                        var ids2 = this.id.split('^')[2];// errid
+                        // alert("ids2 : " + ids2);
+                        var arr1 = [];
+                        arr1 = id1;
+                        var arrid1 = "";
+                        var j = 0;
+                        arrid1 += ids2;
+
+                        if (this.checked) {
+                            if (ids1 == arrid) {
+                                storeid1 += arrid1 + ",";
+                            }
+                        }
+                    });
+                    storeid1 = storeid1.slice(0, -1)
+                    // alert(storeid1);
+                    //455651(1,2,)/103559(9,19,),
+
+                    storeid += arrid + "(" + storeid1 + ")" + "^" + "(" + remarks + ")" + "$";
+                    storeid1 = "";
+                }
+            });
+
+            //if (remarksAll != "") {
+            //    alert("Please Enter Remarks of All Selected Records.");
+            //}
+            //else
+            if (storeid == "") {
+                alert("Please Select Records For Reg No Allotment.");
+            }
+            else if (selEmp == "" || selEmp == "0") {
+                alert("Please Select Document Verification Employee");
+                $("#SelEmp").focus();
+            }
+            else if (storeid != "") {
+
+
+
+                // alert('Now Allot:' + storeid)
+                $('#divMain1').hide();
+                $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                $.ajax({
+                    type: "POST",
+                    url: "/MigrateSchool/JqAllotRegNo", // this for calling the web method function in cs code.
+                    // data: '{storeid:"' + storeid + '" }',// user name or email value
+                    data: '{storeid:"' + storeid + '",Action:"' + @ViewBag.SelectedAction + '",selEmp:"' + selEmp + '" }',// user name or email value  //
+                        contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                                success: OnSuccess,
+                                    failure: function (response) {
+                                        alert(response);
+                                        $('#divMain1').show();
+                                        $('div#loading1').empty();
+                                    }
+            });
+        function OnSuccess(response) {
+            if (response.dee == "") {
+                alert("Something Went Wrong, Please Try Again.");
+                $('#divMain1').show();
+                $('div#loading1').empty();
+            }
+            else {
+                window.location.href = '/MigrateSchool/AllotRegNo/@ViewBag.schlCode';
+                alert("Registration Number Alloted Successfully");
+                $('#divMain1').show();
+                $('div#loading1').empty();
+
+            }
+
+        }
+    }
+
+            });
+
+            //End  Allot Descrepancy
+
+
+
+
+
+
+         //Start Approved
+        $("#btnApproved").click(function () {
+           // alert("Submit " + @ViewBag.SelectedAction);
+            var selEmp = $("#SelEmp").val();
+
+            var remarksAll = "";
+            var chkdee = "";
+            var storeid = "";
+            var storeid1 = "";
+            var storechkid = "";
+            var storescid = "";
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                var id = this.id;
+                // alert("stdid= "+ id);
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                var arrcast = "";
+                var j = 0;
+                for (var i = 3; i < arr.length; i++) {
+                    if (arr[i] == '-') {
+                        break;
+                    }
+                    arrid += arr[i];
+                }
+                if (this.checked) {
+                    storeid += arrid + ",";
+                    //  alert(storeid);
+                }
+            });
+
+            //if (remarksAll != "") {
+            //    alert("Please Enter Remarks of All Selected Records.");
+            //}
+            //else
+            if (storeid == "") {
+                alert("Please Select Records For Approved Candidate.");
+            }
+            else if (selEmp == "" || selEmp == "0") {
+                alert("Please Select Document Verification Employee");
+                $("#SelEmp").focus();
+            }
+            else if (storeid != "") {
+                
+                // alert('Now Allot:' + storeid)
+                $('#divMain1').hide();
+                $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                $.ajax({
+                    type: "POST",
+                    url: "/MigrateSchool/JqApprovedOtherBoardDocumentStudent", // this for calling the web method function in cs code.
+                    // data: '{storeid:"' + storeid + '" }',// user name or email value
+                    data: '{storeid:"' + storeid + '",Action:"1",selEmp:"' + selEmp + '" }',// user name or email value  //
+                        contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                                success: OnSuccess,
+                    failure: function (response) {
+                        alert(response);
+                        $('#divMain1').show();
+                        $('div#loading1').empty();
+                    }
+            });
+        function OnSuccess(response) {
+            if (response.dee == "") {
+                alert("Something Went Wrong, Please Try Again.");
+                $('#divMain1').show();
+                $('div#loading1').empty();
+            }
+            else if (response.dee == "-1") {
+                alert("Failure, Please Try Again.");
+                $('#divMain1').show();
+                $('div#loading1').empty();
+            }
+            else {
+                window.location.href = '/MigrateSchool/AllotRegNo/@ViewBag.schlCode';
+                alert("Approved Successfully");
+                $('#divMain1').show();
+                $('div#loading1').empty();
+
+            }
+
+        }
+    }
+
+            });
+
+            //End  Approved
+        });
+
+
+    function sendDocument(k, id, StudentUniqueId,FormName,schlDist) {
+        //alert(id);
+        //alert(StudentUniqueId);
+        var DocProofCertificate = $('#DocProofCertificate-' + id).get(0);
+        var DocProofNRICandidates = $('#DocProofNRICandidates-' + id).get(0);
+        var filesPC = DocProofCertificate.files;
+        var filesNRI = DocProofNRICandidates.files;
+
+        // Create FormData object
+        var fileData = new FormData();
+        fileData.append('DocProofCertificate', filesPC[0]);
+        fileData.append('DocProofNRICandidates', filesNRI[0]);
+        fileData.append('stdid', id);
+        fileData.append('formName', FormName);
+        fileData.append('schlDist', schlDist);
+        fileData.append('StudentUniqueId', StudentUniqueId);
+
+        //alert('Uploading');
+        $("#loading2" + id).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+
+        $.ajax({
+            url: '/Master/JqUpdateOtherBoardDocuments',
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: fileData,
+            success: function (response) {
+                $("#loading2" + id).empty();
+                if (response.oid == 1) {
+                    alert("Other Board Documents Updated Successfully");
+                    $('#myModalDocument-' + id).modal('hide');
+                }
+                else {
+                    alert(response.msg);
+                }
+
+            },
+            error: function (err) {
+                $("#loading2" + id).empty();
+                alert("Other Board Documents Updated Failure");
+                $('#myModalDocument-' + id).modal('hide');
+            }
+        });
+
+    }
+
+
+
+    function addDocumentByUser(k, id, StudentUniqueId, FormName, schlDist) {
+       // alert(id);
+        //alert(StudentUniqueId);
+        var DocAddDocument = $('#DocAddDocument-' + id).get(0);
+        var filesPC = DocAddDocument.files;
+       // alert(DocAddDocument.files.length);
+        if (DocAddDocument.files.length == 0) {
+            alert("Please Select File");
+            $('#DocAddDocument-' + id).addClass("input-validation-error");
+            return false;
+        }
+        else { $('#DocAddDocument-' + id).removeClass("input-validation-error");}
+
+        var remarksAddDocument = $('#RemarksAddDocument-' + id).val();
+        if (remarksAddDocument == "") {
+            alert("Please enter Remarks");
+            $('#RemarksAddDocument-' + id).addClass("input-validation-error");
+            return false;
+        }
+        else { $('#RemarksAddDocument-' + id).removeClass("input-validation-error"); }
+
+        var DocAddDocument = $('#DocAddDocument-' + id).get(0);
+        var filesPC = DocAddDocument.files;
+        // Create FormData object
+        var fileData = new FormData();
+        fileData.append('DocAddDocument', filesPC[0]);
+        fileData.append('stdid', id);
+        fileData.append('formName', FormName);
+        fileData.append('schlDist', schlDist);
+        fileData.append('StudentUniqueId', StudentUniqueId);
+        fileData.append('Remarks', remarksAddDocument);
+
+        //alert('Uploading');
+        $("#loadingAdd" + id).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+
+        $.ajax({
+            url: '/Master/JqUpdateOtherBoardDocumentsByAdminUser',
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: fileData,
+            success: function (response) {
+                $("#loadingAdd" + id).empty();
+                if (response.oid == 1) {
+                    alert("Document Added Successfully");
+                    $('#myModalAddDocument-' + id).modal('hide');
+                    window.location.href = '/MigrateSchool/AllotRegNo/@ViewBag.schlCode';
+                }
+                else {
+                    alert(response.msg);
+                }
+
+            },
+            error: function (err) {
+                $("#loadingAdd" + id).empty();
+                alert("Document Added Failure");
+                $('#myModalAddDocument-' + id).modal('hide');
+            }
+        });
+
+    }
+
+</script>
+
+
+<script type="text/javascript">
+
+    function call(recordid, e) {
+        $('#txtregno-' + recordid).slideDown("slow");
+        $('#updateit-' + recordid).slideDown("slow");
+        $('#cancelit-' + recordid).slideDown("slow");
+    }
+
+    function rhcancel(id) {
+        var quant1 = $('#txtregno-' + id).val();
+        $('#txtregno-' + id).val(quant1);
+        $('#updateit-' + id).slideUp("slow");
+        $('#cancelit-' + id).slideUp("slow");
+        $('#txtregno-' + id).slideUp("slow");
+    }
+
+
+    function rhupdate(id) {
+        var value = $('#txtregno-' + id).val();
+        var remarks = $('#txtremarks-' + id).val();
+        var selEmp = $("#SelEmp").val();
+        if (selEmp == "" || selEmp == "0") {
+            alert("Please Select Document Verification Employee");
+            $("#SelEmp").focus();
+            return false;
+        }
+        if (value == '') {
+            alert("Invalid Registration Number.");
+            $('#txtregno-' + id).addClass("input-validation-error");
+            return false;
+        }
+        //else if (remarks == '') {
+        //    alert("Enter Remarks.");
+        //    $('#txtremarks-' + id).addClass("input-validation-error");
+        //    return false;
+        //}
+        else {
+            $('#txtregno-' + id).removeClass("input-validation-error");
+            $('#updateit-' + id).slideUp("slow");
+            $('#txtregno-' + id).slideUp("slow");
+            $('#cancelit-' + id).slideUp("slow");
+            $.post("/MigrateSchool/JqAllotManualRegNo", { "stdid": id, "regno": value, "remarks": remarks, "selEmp": selEmp},
+                function (data) {
+                    // alert('check status');
+                    //alert(data.status);
+                    if (data.status == "0" || data.status == "-1") {
+                        alert("Manual Registration Number Alloted Failure, Please Try Again");
+                    }
+                    //else if (data.status == "5") {
+                    //    alert("Enter Remark is mandatory");
+                    //}
+                    else {
+                        window.location.href = '/MigrateSchool/AllotRegNo/@ViewBag.schlCode';
+                        alert("Manual Registration Number Alloted Successfully");
+
+                    }
+                    //  $('#divMain').show();
+                    // $('div#loading').empty();
+                });
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        var value = document.getElementById('SelFilter').value;
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0'
+                //maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+    var form = $("#searchform").serialize();
+    $("#btnNext").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Next',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#btnPrevious").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Previous',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#SelFilter").change(function () {
+        var value = document.getElementById('SelFilter').value;
+        $('#SearchString').val('');
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0'
+                //maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+
+    });
+
+</script>
+
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+@* Start Disable CTRL/F12/RightClick By Rohit *@
+@*<script type="text/javascript">
+        $(document).ready(function () {
+            //////////CTRL Key and F12 disable code////////////////////////
+            document.onkeypress = function (event) {
+                event = (event || window.event);
+                if (event.keyCode == 123) {
+                    alert('F12 key not allowed');
+                    return false;
+                }
+                else if (event.keyCode == 17) {
+                    alert('ctrl key not allowed');
+                    return false;
+                }
+            }
+            document.onmousedown = function (event) {
+                event = (event || window.event);
+                if (event.keyCode == 123) {
+                    alert('F12 key not allowed');
+                    return false;
+                }
+                else if (event.keyCode == 17) {
+                    alert('ctrl key not allowed');
+                    return false;
+                }
+            }
+            document.onkeydown = function (event) {
+                event = (event || window.event);
+                if (event.keyCode == 123) {
+                    alert('F12 key not allowed');
+                    return false;
+                }
+                else if (event.keyCode == 17) {
+                    alert('ctrl key not allowed');
+                    return false;
+                }
+            }
+
+            /////////////////////Right Click Disable///////////////////////
+
+            var isNS = (navigator.appName == "Netscape") ? 1 : 0;
+            if (navigator.appName == "Netscape") document.captureEvents(Event.MOUSEDOWN || Event.MOUSEUP);
+            function mischandler() {
+                return false;
+            }
+            function mousehandler(e) {
+                var myevent = (isNS) ? e : event;
+                var eventbutton = (isNS) ? myevent.which : myevent.button;
+                if ((eventbutton == 2) || (eventbutton == 3)) {
+                    alert('right click not allowed');
+                    return false;
+                }
+            }
+            document.oncontextmenu = mischandler;
+            document.onmousedown = mousehandler;
+            document.onmouseup = mousehandler;
+
+
+
+        });
+    </script>*@
+@* End Disable CTRL/F12/RightClick By Rohit*@
+
+
+

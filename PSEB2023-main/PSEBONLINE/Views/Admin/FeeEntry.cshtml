@@ -1,0 +1,455 @@
+﻿@model PSEBONLINE.Models.FeeModels
+
+@{
+    ViewBag.Title = "FeeEntry";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+
+@using (Html.BeginForm("FeeEntry", "Admin", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+<h2>Fee Details Entry</h2>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">              
+                <tr>
+                    <td width="28%">Upload Excel File in Pre-Defined Format :
+                    <br /><a download="" href="~/PDF/FeeMasterStructure.xls" class="btn">Click Here to Download Sample File</a></td>
+                    <td>
+                        @Html.TextBoxFor(m => m.file, new { id = "file", type = "file" })</td>
+                    <td>
+                        <input type="submit" name="cmd" value="Upload" onclick="return valFile();" />                       
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" align="center">OR</td>
+                </tr>
+                <tr>
+                    <td>Fee Category <span class="rqf">*</span></td>
+                    <td width="60%">
+                        @Html.DropDownListFor(m => m.FeeCode, new SelectList(ViewBag.FeeCodeList, "Value", "Text"), "--Select Fee Category--", new { id = "FeeCode", @class = "", @onchange = "GetSelectStatus(this)" })
+                    </td>
+                        <td width="12%">
+                        <input type="submit" value="Search"  name="cmd" onclick="return valSearch();" /></td>
+                    
+                </tr>
+                <tr id="trForm" style="display:none">
+                    <td>Form Name<span class="rqf">*</span></td>
+                    <td colspan="2">
+                        @Html.DropDownListFor(m => m.FORM, new SelectList(ViewBag.FormNameList, "Value", "Text"), new { id = "FormName", @class = "" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>Start Date<span class="rqf">*</span></td>
+                    <td colspan="2">
+                   @Html.TextBoxFor(m => m.StartDate, new
+                   {
+                       id = "StartDate",
+                       @class = "date",
+                       @maxlength = "10",
+                       onpaste = "return false;",
+                       oncopy = "return false;",
+                       oncut = "return false;",
+                     //  onkeypress = "javascript: return false;",
+                       @readonly = "readonly"
+                   })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>End Date<span class="rqf">*</span></td>
+                    <td colspan="2">
+                        @Html.TextBoxFor(m => m.EndDate, new
+                   {
+                       id = "EndDate",
+                       @class = "date",
+                       @maxlength = "10",
+                       onpaste = "return false;",
+                       oncopy = "return false;",
+                       oncut = "return false;",
+                      // onkeypress = "javascript: return false;",
+                       @readonly = "readonly"
+                   })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Bank Last Date<span class="rqf">*</span></td>
+                    <td colspan="2">
+                   @Html.TextBoxFor(m => m.BankLastDate, new
+                   {
+                       id = "BankLastDate",
+                       @class = "date",
+                       @maxlength = "10",
+                       onpaste = "return false;",
+                       oncopy = "return false;",
+                       oncut = "return false;",
+                      // onkeypress = "javascript: return false;",
+                       @readonly = "readonly"                     
+                   })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Fee (In Rs.)<span class="rqf">*</span></td>
+                    <td colspan="2">@Html.TextBoxFor(m => m.Fee, new { id = "Fee", @maxlength = "8", onkeypress = "return isNumberKey(event);"})</td>
+                </tr>
+
+                <tr>
+                    <td>Late Fee (In Rs.)<span class="rqf">*</span></td>
+                    <td colspan="2">@Html.TextBoxFor(m => m.LateFee, new { id = "LateFee", @maxlength = "8", onkeypress = "return isNumberKey(event);" })</td>
+                </tr>               
+                <tr>
+                    <td>Choose Type<span class="rqf">*</span></td>
+                    <td colspan="2">
+                        @Html.RadioButtonFor(m => m.Type, "Admin", new { id = "Admin" })<content>Admin</content>
+                        @Html.RadioButtonFor(m => m.Type, "User", new { id = "User" })<content>User</content>
+                    </td>
+                </tr>               
+                <tr>
+                    <td>Choose Module<span class="rqf">*</span></td>
+                    <td colspan="2">
+                        @Html.RadioButtonFor(m => m.RP, "R", new { id = "R" })<content>Regular</content>
+                        @Html.RadioButtonFor(m => m.RP, "P", new { id = "P" })<content>Private</content>
+                        @Html.RadioButtonFor(m => m.RP, "A", new { id = "A" })<content>Punjabi Additional</content>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Select Bank<span class="rqf">(Multiple)*</span> </td>
+                    <td colspan="2">
+                        @Html.DropDownList("SelectedSession", (MultiSelectList)ViewBag.BankCodeList, new { multiple = "multiple", id = "ddlBank" })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Active/InActive<span class="rqf">*</span></td>
+                    <td colspan="2">
+                        @Html.RadioButtonFor(m => m.IsActive, "1", new { id = "Active", @checked = "checked" })<content>Active</content>
+                        @Html.RadioButtonFor(m => m.IsActive, "0", new { id = "InActive" })<content>In-Active</content>                       
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2"><input type="submit" value="Save"  name="cmd"  onclick="return valForm();" /> <a href="/Admin/FeeEntry"  class="btn">Reset</a>
+                    </td>
+                </tr>
+            </table>
+            </div></div></div>
+            }
+
+
+
+            <div class="row" id="divall">
+                <div class="col-md-12">Total:  @ViewBag.TotalCount</div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="t01">
+                            <tr class="active-tr">
+                                <th>S.No</th>                                
+                                <th>Form</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Bank Last Date</th>
+                                <th>Fee</th>
+                                <th>LateFee</th>
+                                <th>TotFee</th>
+                                <th>Allow Banks</th>
+                                <th>Module</th>
+                                <th>Action</th>
+                            </tr>
+                            @{
+
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        var ID = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                                        var Form = Model.StoreAllData.Tables[0].Rows[i]["Form"].ToString();
+                                        var sDate = Model.StoreAllData.Tables[0].Rows[i]["sDate"].ToString();
+                                        var eDate = Model.StoreAllData.Tables[0].Rows[i]["eDate"].ToString();
+                                        var BankLastdate = Model.StoreAllData.Tables[0].Rows[i]["BankLastdate"].ToString();
+                                        var fee = Model.StoreAllData.Tables[0].Rows[i]["fee"].ToString();
+                                        var latefee = Model.StoreAllData.Tables[0].Rows[i]["latefee"].ToString();
+                                        var totfee = Model.StoreAllData.Tables[0].Rows[i]["totfee"].ToString();
+                                        var AllowBanks = Model.StoreAllData.Tables[0].Rows[i]["AllowBanks"].ToString();
+                                        var RP = Model.StoreAllData.Tables[0].Rows[i]["Module"].ToString();
+                                        int Count = i + 1;
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@Form</td>
+                                            <td>@sDate</td>
+                                            <td>@eDate</td>
+                                            <td>@BankLastdate</td>
+                                            <td>@fee</td>
+                                            <td>@latefee</td>
+                                            <td>@totfee</td>
+                                            <td>@AllowBanks</td>
+                                            <td>@RP</td>
+                                            <td>                                           
+                                                <a href='@Url.Action("FeeEntry", "Admin", new { id = ID  })' onclick="return confirm('You are sure to modify this?');">
+                                                    <img src="/Images/Edit_Icon.png" width="25" title="Modify" />
+                                                </a>                                            
+                                            </td>                                           
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8">
+                                            @ViewBag.Message
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            @{
+                if (ViewData["result"] != null)
+                {
+                    if (ViewData["result"].ToString() == "0")
+                    {
+                        <script type="text/javascript" language="javascript">
+                            alert("Fee not saved..plz try again");
+                        </script>
+                    }
+                    else if (ViewData["result"].ToString() == "-1")
+                    {
+                        <script type="text/javascript" language="javascript">
+                            alert("Fee Already Exist");
+                        </script>
+                    }
+                    else if (ViewData["result"].ToString() == "20")
+                    {
+                        <script type="text/javascript" language="javascript">
+                            alert("Please Select Bank");
+                        </script>
+                    }
+                    else if (ViewData["result"].ToString() == "11")
+                    {
+                        <script type="text/javascript" language="javascript">
+                            alert("All Fees Uploaded Successfully");
+                        </script>
+                    }
+                    else if (ViewData["result"].ToString() == "12")
+                    {
+                        <script type="text/javascript" language="javascript">
+                            alert("Data Not Found in File ");
+                        </script>
+                    }
+                    else if (ViewData["result"].ToString() == "13")
+                    {
+                        <script type="text/javascript" language="javascript">
+                            alert("Upload only .xls File ");
+                        </script>
+                    }
+                    else
+                    {
+                        <script type="text/javascript" language="javascript">
+                            alert("Fee Saved Successfully");
+                        </script>
+                    }
+                }
+            }
+
+
+            <script type="text/javascript">
+
+                $(document).ready(function () {
+
+                    $(".date").datepicker({
+                        dateFormat: "mm/dd/yy",
+                        changeMonth: true,
+                        changeYear: true,
+                        yearRange: "2017:2018"
+                    });
+                });
+
+                function ValidateAlpha(evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                }
+                function isNumberKey(evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    }
+                }
+
+                $(document).ready(function () {                   
+                    var ddlFeeCode = document.getElementById("FeeCode").value;                   
+                     if (ddlFeeCode != 20) {
+                        $('#trForm').hide();
+                    }
+                    else {
+                        $('#trForm').show();
+                    }
+                });
+
+                function GetSelectStatus(selNum1) {                  
+                    var selectedText = selNum1.options[selNum1.selectedIndex].innerHTML;
+                    var value = selNum1.value;                  
+                    if (value != 20) {
+                        $('#trForm').hide();
+                    }
+                    else {
+                        $('#trForm').show();
+                    }
+                }
+
+            </script>
+
+
+
+
+<script type="text/javascript">
+                $(document).ready(function () {
+                    $('input[type=file]').change(function () {
+                        var val = $(this).val().toLowerCase();
+                        var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+                        if (!(regex.test(val))) {
+                            $(this).val('');
+                            alert('Please select only .xls file format');
+                        }
+                    });
+                });
+
+</script>
+
+<script type="text/javascript">
+
+                function valFile() {                    
+                    var file = document.getElementById("file");                  
+                    if (file.value == "") {
+                        alert("Please Select file");
+                        file.focus();
+                        return false;
+                    }
+                }
+
+
+
+                function valSearch() {
+                    var FeeCode = document.getElementById("FeeCode");
+                    if (FeeCode.value == "") {
+                        alert("Please Enter FeeCode");
+                        FeeCode.focus();
+                        return false;
+                    }
+                    //  alert(1);
+                    if (FeeCode.value == 20) {
+                        var FormName = document.getElementById("FormName");
+                      //  alert(FormName.value);
+                        if (FormName.value == "0" || FormName.value == "") {
+                            alert("Select FormName");
+                            FormName.focus();
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+
+    function valForm() {
+        var FeeCode = document.getElementById("FeeCode");
+        if (FeeCode.value == "") {
+            alert("Please Enter FeeCode");
+            FeeCode.focus();
+            return false;
+        }
+      //  alert(1);
+        if (FeeCode.value == 20) {
+            var FormName = document.getElementById("FormName");            
+            if (FormName.value == "0" || FormName.value == "") {
+                alert("Select FormName");
+                FormName.focus();
+                return false;
+            }
+        }
+      //  alert(2);
+        var StartDate = document.getElementById("StartDate");
+        if (StartDate.value == "" || StartDate.value == "0") {
+            alert("Please Select Start Date");
+            StartDate.focus();
+            return false;
+        }
+        var EndDate = document.getElementById("EndDate");
+        if (EndDate.value == "" || EndDate.value == "0") {
+            alert("Please Select End Date");
+            EndDate.focus();
+            return false;
+        }
+        var BankLastDate = document.getElementById("BankLastDate");
+        if (BankLastDate.value == "" || BankLastDate.value == "0") {
+            alert("Please Select Bank Last Date");
+            BankLastDate.focus();
+            return false;
+        }
+
+        var Fee = document.getElementById("Fee");
+        if (Fee.value == "") {
+            alert("Please Enter Fee");
+            Fee.focus();
+            return false;
+        }
+
+        var LateFee = document.getElementById("LateFee");
+        if (LateFee.value == "") {
+            alert("Please Enter LateFee");
+            LateFee.focus();
+            return false;
+        }
+
+
+        
+        
+        var Admin = document.getElementById("Admin").checked;
+        var User = document.getElementById("User").checked;     
+        if (Admin == false && User==false) {
+            alert("Please Select User Type");
+            return false;
+        }
+
+        var R = document.getElementById("R").checked;
+        var P = document.getElementById("P").checked;
+        var A = document.getElementById("A").checked;        
+        if (R == false && P == false && A == false) {
+            alert("Please Select Module");
+            return false;
+        }
+
+        var ddlBank = document.getElementById("ddlBank");
+        //alert("Bank" + ddlBank.value);
+        if (ddlBank.value == "" || ddlBank.value == "0") {
+            alert("Please select Bank");
+            ddlBank.focus();
+            return false;
+        }
+
+        var Active = document.getElementById("Active").checked;
+        var InActive = document.getElementById("InActive").checked;
+        if (Active == false && InActive == false) {
+            alert("Please Select Active/InActive");
+            return false;
+        }
+        
+        return true;
+    }
+
+</script>

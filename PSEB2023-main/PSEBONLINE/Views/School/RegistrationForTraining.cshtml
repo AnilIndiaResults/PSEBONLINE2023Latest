@@ -1,0 +1,231 @@
+﻿@model PSEBONLINE.Models.RegistrationForTraining
+@{
+    ViewBag.Title = "RegistrationForTraining";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>Registration For Training</h1>
+<p style="text-align:center;font-size:24px;color:#f00">Registration Closed</p>
+    @using (Html.BeginForm("RegistrationForTraining", "School", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <div class="row" style="display:none">          
+            <div class="col-md-3">
+                School Code <span class="rqf">*</span>
+                <label>@ViewBag.schl.ToString()</label>
+                <span style="color:red;display:none">@Html.ValidationMessageFor(model => model.schl)</span><span id="lblStatus"></span>
+            </div>
+            <div class="col-md-3">
+                Principal Name <span class="rqf">*</span>
+                <label>@ViewBag.PrincipalName.ToString()</label>
+                <span style="color:red;display:none">@Html.ValidationMessageFor(model => model.PrincipalName)</span>
+            </div>
+            <div class="col-md-3">
+                School Mobile <span class="rqf">*</span>
+                <label>@ViewBag.SchoolMobile.ToString()</label>
+                <span style="color:red;display:none">@Html.ValidationMessageFor(model => model.SchoolMobile)</span>
+            </div>          
+            <div class="clearfix"></div>
+            @*<p id="p1" style="text-align:center;font-size:16px;color:#f00">Fill the information to get Registration/Continuation Training for @Session["Session"].ToString() in P.S.E.B</p>*@       
+           <div class="col-md-12">
+               <div class="row">
+                   <fieldset style="margin-bottom:15px">
+                       <legend class="rqf">Fill The Information to get Registration/Continuation Training For @Session["Session"].ToString() in P.S.E.B</legend>
+                       <div class="col-md-3">
+                           School Representative <span class="rqf">*</span> @Html.TextBoxFor(model => model.SchoolRepresentative)@*<div style="color:red">@Html.ValidationMessageFor(model => model.SchoolRepresentative)</div>*@
+                       </div>
+                       <div class="col-md-3">
+                           Designation <span class="rqf">*</span> @Html.TextBoxFor(model => model.Designation)@*<div style="color:red">@Html.ValidationMessageFor(model => model.Designation)</div>*@
+                       </div>
+                       <div class="col-md-3">
+                           Mobile No. <span class="rqf">*</span> @Html.TextBoxFor(model => model.cpmobile, new { id = "cpmobile", onkeypress = "return validateNumber(event)" }) <div style="color:red">@Html.ValidationMessageFor(model => model.cpmobile)</div>
+                       </div>
+                       <div class="col-md-3">
+                           Email ID <span class="rqf">*</span> @Html.TextBoxFor(model => model.cpemail) <div style="color:red">@Html.ValidationMessageFor(model => model.cpemail)</div>
+                       </div>
+
+                       <div class="clearfix"></div>
+                       <div class="col-md-12">
+                           @*@if (ViewBag.SchoolRepresentative == "" || ViewBag.SchoolRepresentative == null)
+                {<input type="submit" value="Save" name="cmd" onclick="return formVal();" /> }
+                else
+                {}*@
+                           @*<input type="submit" value="Save" name="cmd" onclick="return formVal();" />*@
+                           <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Index", "Home", new { })'" />
+                       </div>
+                   </fieldset>
+               </div>
+           </div>
+            
+</div>
+<div class="clearfix"></div>
+        <div class="row" style="display:none">      
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="t01" class="table table-bordered">
+                        <tr class="active-tr">
+                            <th>Sr No.</th>
+                            <th>School Representative</th>
+                            <th>Designation</th>
+                            <th>Mobile</th>
+                            <th>Email</th>
+                            <th>Submit Date</th>   
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int Count = 0;
+                                for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                                {
+                                    var Id = Model.StoreAllData.Tables[2].Rows[i]["Id"].ToString();
+                                    var Name = Model.StoreAllData.Tables[2].Rows[i]["Name"].ToString();
+                                    var Designation = Model.StoreAllData.Tables[2].Rows[i]["Designation"].ToString();
+                                    var Mobile = Model.StoreAllData.Tables[2].Rows[i]["Mobile"].ToString();
+                                    var Email = Model.StoreAllData.Tables[2].Rows[i]["Email"].ToString();
+                                    var CreatedDate = Model.StoreAllData.Tables[2].Rows[i]["CreatedDate"].ToString();
+                                    Count = Count + 1;
+                                    <tr>
+                                        <td>@Count</td>
+                                        <td>@Name</td>
+                                        <td>@Designation</td>
+                                        <td>@Mobile</td>
+                                        <td>@Email</td>
+                                        <td>@CreatedDate</td>                                                                                               
+                                    </tr>                                  
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>                   
+                </div>
+            </div>
+        </div>
+                            }
+
+    @{
+        if (ViewData["result"] != null)
+        {
+            if (ViewData["result"].ToString() != "")
+            {
+                if (ViewData["result"].ToString() == "1")
+                {
+                    <script type="text/javascript" language="javascript">
+                      alert("Submit SuccessFully");
+                    window.location.href = '@Url.Action("RegistrationForTraining", "School")';
+                    </script>}
+                else if (ViewData["result"].ToString() == "10")
+                {
+                    <script type="text/javascript" language="javascript">
+                      alert("Please Fill All Fields");                  
+                    </script>}
+                else
+                {
+                    <script type="text/javascript" language="javascript">
+                        alert("Submit Failure, Please Try Again");
+                    </script>
+                }
+            }
+        }
+    }
+
+    <script src="Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+@*<script>
+    $(document).ready(function () {
+       // alert('ready');
+        var val = '@ViewBag.SchoolRepresentative';
+       // alert('val : ' + val);
+        if (val == "" || val == null) {          
+            $("#SchoolRepresentative").prop("readonly", false);
+            $("#Designation").prop("readonly", false);
+            $("#cpmobile").prop("readonly", false);
+            $("#cpemail").prop("readonly", false);
+            $('#SchoolRepresentative').removeClass("input-validation-error");
+            $('#Designation').removeClass("input-validation-error");
+            $('#cpmobile').removeClass("input-validation-error");
+            $('#cpemail').removeClass("input-validation-error");
+        }
+        else {
+             
+            $("#SchoolRepresentative").prop("readonly", true);
+            $("#Designation").prop("readonly", true);
+            $("#cpmobile").prop("readonly", true);
+            $("#cpemail").prop("readonly", true);
+            $('#SchoolRepresentative').addClass("input-validation-error");
+            $('#Designation').addClass("input-validation-error");
+            $('#cpmobile').addClass("input-validation-error");
+            $('#cpemail').addClass("input-validation-error");
+        }
+    });
+
+</script>*@
+<script type="text/javascript">
+
+
+             function validateNumber(event) {
+             var key = window.event ? event.keyCode : event.which;
+         var c = $("#cpmobile").val();
+           if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 37 || event.keyCode === 39)
+           {
+             return true;
+         }
+           if (key < 48 || key > 57)
+           {
+             return false;
+         }
+           if (c.length > 9)
+           {
+             return false;
+         }
+           else return true;
+         }
+
+         function formVal() {
+             //    alert('check formVal');
+             var SchoolRepresentative = document.getElementById('SchoolRepresentative').value;
+             //alert("SchoolRepresentative" + SchoolRepresentative);
+             var Designation = document.getElementById('Designation').value;
+             //alert("Designation" + Designation);
+             var cpmobile = document.getElementById('cpmobile').value;
+             //alert("cpmobile" + cpmobile);         
+             var cpemail = document.getElementById('cpemail').value;
+             //alert("cpemail" + cpemail);
+
+             if (SchoolRepresentative == '') {
+                 alert("Enter School Representative.");
+                 document.getElementById('SchoolRepresentative').focus();
+                 return false;
+             }
+             else if (Designation == '') {
+                 alert("Enter Designation");
+                 document.getElementById('Designation').focus();
+                 return false;
+             }
+             else if (cpmobile == '') {
+                 alert("Enter Mobile");
+                 document.getElementById('cpmobile').focus();
+                 return false;
+             }
+             else if (cpemail == '') {
+                 alert("Enter Email Id ");
+                 document.getElementById('cpemail').focus();
+                 return false;
+             }
+             else {
+                 return true;
+             }
+         }
+    </script>
+   
+
+

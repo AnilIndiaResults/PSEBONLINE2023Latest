@@ -1,0 +1,1351 @@
+﻿@model PSEBONLINE.Models.PunAddModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+    .keyboardInputInitiator {
+        display: inline-block;
+        float: inherit;
+    }
+
+    .keyboardInput {
+        display: inline-block;
+        float: inherit;
+    }
+
+    .ntxt {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+        color: #555;
+        font-weight: 400;
+        line-height: inherit;
+        margin-bottom: 6px;
+        padding: 0px 6px;
+        width: 100% !important;
+        text-transform: uppercase;
+        height: 40px;
+    }
+
+    .keyboardInput {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+        color: #555;
+        font-weight: 400;
+        line-height: inherit;
+        margin-bottom: 6px;
+        padding: 0px 6px;
+        width: 80% !important;
+        text-transform: uppercase;
+        height: 40px;
+    }
+</style>
+@if (Session["OROLL"] == null || Session["OROLL"].ToString() == "")
+{ Response.Redirect("~/PunAdd/PunAddExamination"); }
+<div class="container KDBG">
+    <h1>Matric Exam For Punjabi Additional,(@Html.DisplayFor(m => m.batch)-@Html.DisplayFor(m => m.batchYear))</h1>
+    @using (Html.BeginForm("PunAddConfirmation", "PunAdd", FormMethod.Post, new { id = "refno", enctype = "multipart/form-data" }))
+    {
+        <form name="myForm">
+            @{
+                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                {<div class="row text-center"><h3>&nbsp;&nbsp; View Page</h3></div>}
+                else
+                {<div class="row text-center"><h3>&nbsp;&nbsp; Modify Page</h3></div>}
+            }
+            <div class="row">
+                <div class="col-md-12" style="padding-bottom:15px">
+                    <span class="kdsfont">
+                        Ú¥Õ ÇØÏÌ ÌèÚ¶ñ¨ ÓÖñã»Û ÂÛ Æâ²ØÉÛ ÒØÄÞ ÚÒÓÖØ ÂÛ ÆñÛÚª¤Ø Âã» Ð¥Û Õè¢ ÇØÏÌ ÚÒó° ÚÂó¼ã ÓØÏã ¨ØÐÌ ÊÏã ²Ø»¢ ÒãÏÚÒ¤Ù ÂÛ ¤è×¶ÏÛ ÆÞÏã ÚÄ¤ØÅ ÅØÐ ¤ØÆ»ã ÌèÚ¶ñ¨ Âã ÓÏ¶ÛÚÇ¨ã¶ ÚÒó° ÂÏ² ÒãÏÚÒ¤Ø ¤ÅÝÓØÏ ¨Û¼Û ²ØÒã¢ <span style="font-size:24px">Ú¥Ó ¼ë× Ú¥ÐØÒØ Ú¥Õ ÒÛ ÚÄ¤ØÅ ÚÒó° ÏóÚª¤Ø ²ØÒã Ú¨ ¤â¬Ïã²ÖÛ ¼ë× Æâ²ØÉÛ ÚÒó° ¨âÅÒÏ²ÖÅ ÂÛ ÓÝÚÒÄØ ÚÓÏÇ ¼ÝÕØ¸Û ÓÕØÚ¥¼Ø Ð¥Û ÚÂó¼Û ¬¥Û Õè, ²ã¨Ï ¨âÅÒÏ²ÖÅ ÂïÏØÅ Æâ²ØÉÛ Âã ÒãÏÒã ÓÕÛ ¨âÅÒÏ¶ ÅÕÛ× ÕâÝÂã ¼Ù Ú¥Ó ÅÞâ Æâ²ØÉÛ ÒØÐã ªØÅã Âã ÅØÐ Ðó¬ã ¨Û-ÉëÏ¸ ¼ë× ·Û¨ ¨Û¼Ø ²ØÒã¢ Æâ²ØÉÛ Âã ÒãÏÚÒ¤Ø ÚÒó° ÒÛ Õë¥Û ¬Ð¼Û Ð¥Û Ú²âÌãÒØÏÛ ¼ÝÕØ¸Û ÕëÒã¬Û, Ú¥Ó Ð¥Û ÓÉÚÌ¶ ¨ÏÅ ¼ë× ÆÚÕÐÙ ÓØÏã ÒãÏÚÒ¤Ù ÅÞâ °èó¨ ¨ÏÅØ Í¨ÛÅÛ É»ØÚ¥¤Ø ²ØÒã¢</span> 
+                    </span>
+					<span><a href="/PDF/PressNote_July2021.pdf" style="font-size:20px;color:red" target="_blank"> Click here for More Details</a></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">Reference Number</div>  <div class="col-md-4">@Html.TextBoxFor(a => a.refNo, new { id = "refNo", @ReadOnly = "ReadOnly" })</div>
+                @{
+                    var Cat1 = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                    var FormStatus3 = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+                }
+                <div class="col-md-2">Batch Month/ Year</div>
+                <div class="col-md-2">
+                    @Html.TextBoxFor(a => a.batch, new { id = "batch", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-2">
+                    @Html.TextBoxFor(a => a.batchYear, new { id = "batchYear", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-2">Exam Type</div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.Exam_Type, new { id = "Exam_Type", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-2">Category</div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.category, new { id = "category", @ReadOnly = "ReadOnly" })
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <h4>Old Class Details</h4>
+            <div class="row">
+                <div class="col-md-2">Matric Board <span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @{
+                        List<SelectListItem> Board = new List<SelectListItem>();
+                        Board.Add(new SelectListItem { Text = "---Select Board--", Value = "0" });
+                        Board.Add(new SelectListItem { Text = "CBSE BOARD", Value = "CBSE BOARD" });
+                        Board.Add(new SelectListItem { Text = "P.S.E.B BOARD", Value = "P.S.E.B BOARD" });
+                        Board.Add(new SelectListItem { Text = "I.C.S.E BOARD", Value = "ICSE BOARD" });
+                        Board.Add(new SelectListItem { Text = "HARYANA BOARD", Value = "HARYANA BOARD" });
+                        Board.Add(new SelectListItem { Text = "HIMACHAL BOARD", Value = "HIMACHAL BOARD" });
+                        Board.Add(new SelectListItem { Text = "J&K BOARD", Value = "J&K BOARD" });
+                        Board.Add(new SelectListItem { Text = "RAJASTHAN BOARD", Value = "RAJASTHAN BOARD" });
+                        Board.Add(new SelectListItem { Text = "OTHER BOARD", Value = "OTHER BOARD" });
+                    }
+                    @{
+                        if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                        {
+                            @Html.TextBoxFor(a => a.Board, new { @ReadOnly = "ReadOnly" })
+                        }
+                        else
+                        {
+                            @Html.DropDownList("Board", Board, new { id = "Board" })
+                        }
+                    }
+
+                </div>
+                <div class="col-md-6">
+                    @{
+                        if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2")
+                        {
+                            <div class="row" id="Other_Boarda">
+                                <div class="col-md-4">Board Name</div>
+                                <div class="col-md-8">@Html.TextBoxFor(m => m.Other_Board, new { id = "Other_Board", @ReadOnly = "ReadOnly" })</div>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="row" id="Other_Boarda">
+                                <div class="col-md-4">Board Name</div>
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(m => m.Other_Board, new { id = "Other_Board", @maxlength = "150", placeholder = "Enter Other Board Name" })
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Result Details</div>
+                <div class="col-md-2">
+                    @Html.TextBoxFor(a => a.Result, new { id = "Result", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-2">
+                    @{
+                        if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                        {
+                            @Html.TextBoxFor(a => a.MatricMarks, new { id = "MatricMarks", @ReadOnly = "ReadOnly" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(a => a.MatricMarks, new { id = "MatricMarks", })
+                        }
+                    }
+
+                </div>
+                <div class="col-md-2">Session/Year</div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.Session, new { id = "Session", @ReadOnly = "ReadOnly" })
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-2">Roll Number</div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(a => a.OROLL, new { id = "OROLL", @ReadOnly = "ReadOnly" })
+                </div>
+
+                @*<div class="col-md-1">Result</div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(a => a.Result, new { id = "Result", @ReadOnly = "ReadOnly" })</div>*@
+            </div>
+            <h4>Candidate Personal Details</h4>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        @{
+                            if (Model.StoreAllData.Tables[0].Rows[0]["boardnm"].ToString() == "P.S.E.B BOARD")
+                            {
+                                <div class="col-md-3">Registration No.</div>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(a => a.RegNo, new { id = "RegNo" })
+                                </div>
+                            }
+
+                        }
+
+
+                        @{
+                            var FormStatus = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+                            ViewBag.tt = FormStatus;
+                            if (FormStatus == "1" || FormStatus == "2" || FormStatus == "3")
+                            {
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Candidate Name</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.Candi_Name, new { @ReadOnly = "ReadOnly" })</div>
+                                <div class="col-md-5">@Html.TextBoxFor(a => a.Pname, new { @ReadOnly = "ReadOnly", @class = "kdsfont" })</div>
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Father's Name</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.Father_Name, new { @ReadOnly = "ReadOnly" })</div>
+                                <div class="col-md-5">@Html.TextBoxFor(a => a.PFname, new { @ReadOnly = "ReadOnly", @class = "kdsfont" })</div>
+
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Mother's Name</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.Mother_Name, new { @ReadOnly = "ReadOnly" })</div>
+                                <div class="col-md-5">@Html.TextBoxFor(a => a.PMname, new { @ReadOnly = "ReadOnly", @class = "kdsfont" })</div>
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Date Of Birth</div>
+                                @*<div class="col-md-4">@Html.TextBoxFor(a => a.DOB, new { @ReadOnly = "ReadOnly" })</div>*@
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.DOB, new { @ReadOnly = "ReadOnly" })</div>
+
+
+
+                            }
+                            else
+                            {
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Candidate Name</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.Candi_Name, new { @class = "ntxt" })</div>
+                                <div class="col-md-5 kdsfont">
+                                    @Html.TextBoxFor(a => a.Pname, new
+                               {
+                                   id = "Pname",
+                                   @class = "keyboardInput",
+                                   onKeyPress = "javascript:convertThis(event)",
+                                   onpaste = "return false;",
+                                   oncopy = "return false;",
+                                   oncut = "return false;",
+                                   onclick = "toggleKBMode1(event)",
+                                   lang = "pa"
+                               })
+                                </div>
+
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Father's Name</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.Father_Name, new { @class = "ntxt" })</div>
+                                <div class="col-md-5 kdsfont">
+                                    @Html.TextBoxFor(a => a.PFname, new
+                               {
+                                   id = "PFname",
+                                   @class = "keyboardInput",
+                                   onKeyPress = "javascript:convertThis(event)",
+                                   onpaste = "return false;",
+                                   oncopy = "return false;",
+                                   oncut = "return false;",
+                                   onclick = "toggleKBMode1(event)",
+                                   lang = "pa"
+                               })
+                                </div>
+
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Mother's Name</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.Mother_Name, new { @class = "ntxt" })</div>
+                                <div class="col-md-5 kdsfont">
+                                    @Html.TextBoxFor(a => a.PMname, new
+                               {
+                                   id = "PMname",
+                                   @class = "keyboardInput",
+                                   onKeyPress = "javascript:convertThis(event)",
+                                   onpaste = "return false;",
+                                   oncopy = "return false;",
+                                   oncut = "return false;",
+                                   onclick = "toggleKBMode1(event)",
+                                   lang = "pa"
+                               })
+                                </div>
+
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Date Of Birth</div>
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(a => a.DOB, new
+                               {
+                                   id = "DOB",
+                                   @readonly = "readonly",
+                                   @maxlength = "10",
+                                   //onkeypress = "javascript: return false;",
+                                   onpaste = "return false;",
+                                   oncopy = "return false;",
+                                   oncut = "return false;"
+
+                                   //onkeydown = "return false;"
+                               })
+                                </div>
+
+
+                            }
+
+                        }
+
+
+
+
+                        @*<div class="clearfix"></div>
+        <div class="col-md-3">Date Of Birth</div>
+        <div class="col-md-9">@Html.TextBoxFor(a => a.DOB, new { id = "DOB", })</div>*@
+
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Email ID</div>
+                        @{
+                            if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                            {
+                                <div class="col-md-9">@Html.TextBoxFor(a => a.emailID, new { id = "emailID", @ReadOnly = "ReadOnly", @maxlength = "50" })</div>
+                            }
+                            else
+                            {
+                                <div class="col-md-9">@Html.TextBoxFor(a => a.emailID, new { id = "emailID", @maxlength = "50" })</div>
+                            }
+                        }
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Mobile No.</div>
+                        @{
+                            if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                            {
+                                <div class="col-md-9">@Html.TextBoxFor(a => a.mobileNo, new { id = "mobileNo", @ReadOnly = "ReadOnly", @maxlength = "10" })</div>
+                            }
+                            else
+                            {
+                                <div class="col-md-9">@Html.TextBoxFor(a => a.mobileNo, new { id = "mobileNo", @maxlength = "10" })</div>
+                            }
+                        }
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Gender</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> Gender = new List<SelectListItem>();
+                                Gender.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                                Gender.Add(new SelectListItem { Text = "Male", Value = "Male" });
+                                Gender.Add(new SelectListItem { Text = "Female", Value = "Female" });
+                                Gender.Add(new SelectListItem { Text = "Transgender", Value = "Transgender" });
+                            }
+                            @{
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+                                    @Html.TextBoxFor(a => a.Gender, new { @ReadOnly = "ReadOnly" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("Gender", Gender, new { id = "Gender" })
+                                }
+                            }
+
+                        </div>
+                        <div class="col-md-1">Caste</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> CastList = new List<SelectListItem>();
+                                CastList.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                CastList.Add(new SelectListItem { Text = "General", Value = "General" });
+                                CastList.Add(new SelectListItem { Text = "BC", Value = "BC" });
+                                CastList.Add(new SelectListItem { Text = "OBC", Value = "OBC" });
+                                CastList.Add(new SelectListItem { Text = "SC(R&O)", Value = "SC(R&O)" });
+                                CastList.Add(new SelectListItem { Text = "SC(M&B)", Value = "SC(M&B)" });
+                                //CastList.Add(new SelectListItem { Text = "SC", Value = "SC" });
+                                CastList.Add(new SelectListItem { Text = "ST", Value = "ST" });
+                                CastList.Add(new SelectListItem { Text = "Others", Value = "Others" });
+                            }
+                            @{
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+                                    @Html.TextBoxFor(a => a.CastList, new { @ReadOnly = "ReadOnly" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("CastList", CastList, new { id = "CastList" })
+                                }
+                            }
+
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Area</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> Area = new List<SelectListItem>();
+                                Area.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                                Area.Add(new SelectListItem { Text = "Rural", Value = "Rural" });
+                                Area.Add(new SelectListItem { Text = "Urban", Value = "Urban" });
+                            }
+                            @{
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+                                    @Html.TextBoxFor(a => a.Area, new { @ReadOnly = "ReadOnly" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("Area", Area, new { id = "Area" })
+                                }
+                            }
+
+
+                            @*@Html.DropDownList("MyDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--Select---", new { @class = "" })*@
+                        </div>
+                        <div class="col-md-1">Religion</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> Relist = new List<SelectListItem>();
+                                Relist.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                Relist.Add(new SelectListItem { Text = "Hindu", Value = "Hindu" });
+                                Relist.Add(new SelectListItem { Text = "Muslim", Value = "Muslim" });
+                                Relist.Add(new SelectListItem { Text = "Sikh", Value = "Sikh" });
+                                Relist.Add(new SelectListItem { Text = "Christian", Value = "Christian" });
+                                Relist.Add(new SelectListItem { Text = "Others", Value = "Others" });
+
+                            }
+                            @{
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+                                    @Html.TextBoxFor(a => a.Relist, new { @ReadOnly = "ReadOnly" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("Relist", Relist, new { id = "Relist" })
+                                }
+                            }
+
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Differently Abled</div>
+                        <div class="col-md-9">
+                            @{
+                                List<SelectListItem> phyChal = new List<SelectListItem>();
+                                //phyChal.Add(new SelectListItem { Text = "N.A.", Value = "N.A." });
+                                //phyChal.Add(new SelectListItem { Text = "Blind/Visually Impaired", Value = "Blind/VisuallyImpaired" });
+                                //phyChal.Add(new SelectListItem { Text = "Deaf and Dumb/Hearing", Value = "Deaf and Dumb/Hearing" });
+                                //phyChal.Add(new SelectListItem { Text = "Others", Value = "Others" });
+
+                                phyChal.Add(new SelectListItem { Text = "N.A.", Value = "N.A." });
+                                phyChal.Add(new SelectListItem { Text = "Blindness", Value = "Blindness" });
+                                phyChal.Add(new SelectListItem { Text = "Low-Vision", Value = "Low-Vision" });
+                                phyChal.Add(new SelectListItem { Text = "Leprosy Cured Person", Value = "Leprosy Cured Person" });
+                                phyChal.Add(new SelectListItem { Text = "Hearing Imparment (deaf and hard of hearing)", Value = "Hearing Imparment (deaf and hard of hearing)" });
+                                phyChal.Add(new SelectListItem { Text = "Locomotor Disability", Value = "Locomotor Disability" });
+                                phyChal.Add(new SelectListItem { Text = "Dwarfism", Value = "Dwarfism" });
+                                phyChal.Add(new SelectListItem { Text = "Intellectual Disability", Value = "Intellectual Disability" });
+                                phyChal.Add(new SelectListItem { Text = "Mental Illness", Value = "Mental Illness" });
+                                phyChal.Add(new SelectListItem { Text = "Autism Spectrum Disorder", Value = "Autism Spectrum Disorder" });
+                                phyChal.Add(new SelectListItem { Text = "Cerebral Palsy", Value = "Cerebral Palsy" });
+                                phyChal.Add(new SelectListItem { Text = "Muscular Dystrophy", Value = "Muscular Dystrophy" });
+                                phyChal.Add(new SelectListItem { Text = "Chronic Neurological Conditions", Value = "Chronic Neurological Conditions" });
+                                phyChal.Add(new SelectListItem { Text = "Specific Learning Disabilities", Value = "Specific Learning Disabilities" });
+                                phyChal.Add(new SelectListItem { Text = "Multiple Sclerosis", Value = "Multiple Sclerosis" });
+                                phyChal.Add(new SelectListItem { Text = "Speech and Language disability", Value = "Speech and Language disability" });
+                                phyChal.Add(new SelectListItem { Text = "Thalassemia", Value = "Thalassemia" });
+                                phyChal.Add(new SelectListItem { Text = "Hemophilia", Value = "Hemophilia" });
+                                phyChal.Add(new SelectListItem { Text = "Sickle Cell disease", Value = "Sickle Cell disease" });
+                                phyChal.Add(new SelectListItem { Text = "Multiple Disabilities including deafblindness", Value = "Multiple Disabilities including deafblindness" });
+                                phyChal.Add(new SelectListItem { Text = "Acid Attack victim", Value = "Acid Attack victim								" });
+                                phyChal.Add(new SelectListItem { Text = "Parkinsons disease", Value = "Parkinsons disease" });
+                            }
+
+                            @{
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+                                    @Html.TextBoxFor(a => a.phyChal, new { @ReadOnly = "ReadOnly" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("phyChal", phyChal, new { id = "phyChal", onchange = "getval(this);" })
+                                }
+                            }
+
+                            @*@Html.DropDownList("DA", new SelectList(@ViewBag.DA, "Value", "Text"), new { id = "DA", onchange = "getval(this);" })*@
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">
+                            Do you want Hard Copy of Certificate?<sup style="color:red;font-size:15px;">*</sup>
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(model => model.IsHardCopyCertificate, (List<SelectListItem>)ViewBag.YesNoList, "--Select--", new { required = "required" })
+                            @*@Html.HiddenFor(model => model.IsHardCopyCertificate)*@
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+
+
+
+
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            Upload Colored Photo
+
+                            @{
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+
+                                }
+                                else
+                                {
+                                    @Html.TextBoxFor(a => a.std_Photo, new { id = "std_Photo", type = "file", onchange = "findSizeAndPreview(this)" })
+                                    <span class="rqf">*Photo Size 5 to 50 KB (.JPG ONly)</span>
+                                }
+                            }
+
+                        </div>
+
+                        <div class="col-md-4"><img src="@ViewBag.Photo" class="img-responsive" alt="Photo" id="imgPhoto" /></div>
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-8">
+                            <br />
+                            Upload Signature
+                            @{
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+
+                                }
+                                else
+                                {
+                                    @Html.TextBoxFor(a => a.std_Sign, new { id = "std_Sign", type = "file", onchange = "findSizeAndPreviewSign(this)" })
+                                    <span class="rqf">*Signature Size 1 to 50 KB  (.JPG ONly)</span>
+                                }
+                            }
+
+                        </div>
+                        <div class="col-md-4"><br /><img src="@ViewBag.sign" class="img-responsive" alt="Signature" id="imgSign" /></div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="clearfix"></div>
+            <h4>Address Details</h4>
+            <div class="row">
+                <div class="clearfix"></div>
+
+
+                @{
+                    //var OROLL = Model.StoreAllData.Tables[0].Rows[0]["roll"].ToString();
+                    var FormStatus1 = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+                    //var ChallanNo = Model.StoreAllData.Tables[0].Rows[0]["challanid"].ToString();
+                    if (FormStatus1 == "1" || FormStatus1 == "2" || FormStatus1 == "3")
+                    {
+                        <div class="col-md-2">Address<span class="rqf">*</span></div>
+                        <div class="col-md-10">@Html.TextBoxFor(a => a.address, new { @ReadOnly = "ReadOnly" })</div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Landmark</div>
+                        <div class="col-md-10">@Html.TextBoxFor(a => a.landmark, new { @ReadOnly = "ReadOnly" })</div>
+                        <div class="col-md-2">Block<span class="rqf">*</span></div>
+                        <div class="col-md-2">@Html.TextBoxFor(a => a.block, new { @ReadOnly = "ReadOnly" })</div>
+
+                        @*<div class="col-md-1">District<span class="rqf">*</span></div>
+                            <div class="col-md-2">@Html.TextBoxFor(a => a.SelDist, new { @ReadOnly = "ReadOnly" })</div>
+                            <div class="col-md-1">Tehsil<span class="rqf">*</span></div>
+                            <div class="col-md-2">@Html.TextBoxFor(a => a.tehsil, new { @ReadOnly = "ReadOnly" })</div>*@
+                        <div class="col-md-1">District<span class="rqf">*</span></div>
+                        <div class="col-md-2">@Html.DropDownList("SelDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+                        <div class="col-md-1">Tehsil<span class="rqf">*</span></div>
+                        <div class="col-md-2">@Html.DropDownList("tehsil", new SelectList(ViewBag.MyTehsil, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+                    }
+                    else
+                    {
+                        <div class="col-md-2">Address<span class="rqf">*</span></div>
+                        <div class="col-md-10">@Html.TextBoxFor(a => a.address, new { placeholder = "Enter Your Address", @maxlength = "500" })</div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Landmark</div>
+                        <div class="col-md-10">@Html.TextBoxFor(a => a.landmark, new { placeholder = "Enter Near Landmark", @maxlength = "50" })</div>
+                        <div class="col-md-2">Block<span class="rqf">*</span></div>
+                        <div class="col-md-2">@Html.TextBoxFor(a => a.block, new { placeholder = "Enter Your Block", @maxlength = "200" })</div>
+
+                        <div class="col-md-1">District<span class="rqf">*</span></div>
+                        <div class="col-md-2">@Html.DropDownList("SelDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--Select---", new { @class = "" })</div>
+                        <div class="col-md-1">Tehsil<span class="rqf">*</span></div>
+                        <div class="col-md-2">@Html.DropDownList("tehsil", new SelectList(ViewBag.MyTehsil, "Value", "Text"), "--Select---", new { @class = "" })</div>
+                    }
+                }
+
+
+                <div class="col-md-1">
+                    Pin Code<span class="rqf">*</span>
+                </div>
+                <div class="col-md-1">
+                    @{
+                        if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                        {
+                            @Html.TextBoxFor(a => a.pinCode, new { @ReadOnly = "ReadOnly" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(a => a.pinCode, new { id = "pinCode", @maxlength = "6", onpaste = "return false;", oncopy = "return false;", oncut = "return false;", onkeypress = "return isNumberKey(event);" })
+                        }
+                    }
+
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <h4>Upload Documents</h4>
+            <div class="row">
+                <div class="col-md-2">Matriculation Pass Certificate<span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @if (!string.IsNullOrEmpty(Model.EligibilityDoc1) && (Model.FormStatus == "2" || Model.FormStatus == "3"))
+                    {                        
+                        @Html.HiddenFor(a => a.EligibilityDoc1)
+                    <a href="/Upload/Upload2023/@Model.EligibilityDoc1" target="_blank" class="btn">Download Document</a>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.EligibilityDoc1) && (Model.FormStatus == "0" || Model.FormStatus == "1"))
+                    {
+                        @Html.TextBoxFor(a => a.EligibilityDoc1, new { type = "file", @onchange = "CheckDocFile1(this)" })
+                        @Html.HiddenFor(a => a.EligibilityDoc1)<span class="rqf">(Upload only PDF , Size limit upto 1MB)</span>
+                                                               <a href="/Upload/Upload2023/@Model.EligibilityDoc1" target="_blank" class="btn">Download Document</a>
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(a => a.EligibilityDoc1, new { @required = "required", type = "file", @onchange = "CheckDocFile1(this)" })
+                        @Html.HiddenFor(a => a.EligibilityDoc1)<span class="rqf">(Upload only PDF , Size limit upto 1MB)</span>
+                    }
+
+
+                </div>
+                <div class="col-md-2">Photo Identity Proof <span style="font-weight:bold;color:darkred">(Aadhar Card,Voter Card,Pan Card,Driving License)</span><span class="rqf">*</span></div>
+                <div class="col-md-4">
+                    @if (!string.IsNullOrEmpty(Model.EligibilityDoc2) && (Model.FormStatus == "2" || Model.FormStatus == "3"))
+                    {
+                        @Html.HiddenFor(a => a.EligibilityDoc2)
+                        <a href="/Upload/Upload2023/@Model.EligibilityDoc2" target="_blank" class="btn">Download Document</a>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.EligibilityDoc2) && (Model.FormStatus == "0" || Model.FormStatus == "1"))
+                    {
+                    @Html.TextBoxFor(a => a.EligibilityDoc2, new { type = "file", @onchange = "CheckDocFile2(this)" })
+                    @Html.HiddenFor(a => a.EligibilityDoc2)<span class="rqf">(Upload only PDF , Size limit upto 1MB)</span>
+                    <a href="/Upload/Upload2023/@Model.EligibilityDoc2" target="_blank" class="btn">Download Document</a>
+                    }
+                    else
+                    {
+
+                    @Html.TextBoxFor(a => a.EligibilityDoc2, new { @required = "required", type = "file", @onchange = "CheckDocFile2(this)" })
+                    @Html.HiddenFor(a => a.EligibilityDoc2)<span class="rqf">(Upload only PDF , Size limit upto 1MB)</span>
+                    }
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <h4>Subject Details</h4>
+            <div class="row">
+
+                @{
+                    var Cat = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                    var Class = Model.StoreAllData.Tables[0].Rows[0]["class"].ToString();
+                    var Sub1 = Model.StoreAllData.Tables[0].Rows[0]["Rsub1"].ToString();
+                    var Sub2 = Model.StoreAllData.Tables[0].Rows[0]["Rsub2"].ToString();
+
+                    if (Cat == "A" && Class == "10")
+                    {
+                        <div class="col-md-2">Subject-1</div>
+                        <div class="col-md-4">
+
+                            @{
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "0" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+                                    @Html.TextBoxFor(a => a.MatricSub, new { id = "MatricSub", @ReadOnly = "ReadOnly" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("MatricSub", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                                }
+                            }
+
+                        </div>
+                        <div class="col-md-2">Subject-2</div><div class="col-md-4">
+                            @{
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "0" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+                                    @Html.TextBoxFor(a => a.MatricSub2, new { id = "MatricSub2", @ReadOnly = "ReadOnly" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("MatricSub2", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                                }
+                            }
+
+                        </div>
+                    }
+
+                }
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center tbp">
+                @{
+                    @Html.HiddenFor(s=>s.Class)
+                    var OROLL = Model.StoreAllData.Tables[0].Rows[0]["roll"].ToString();
+                    //var FormStatus = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+                    var ChallanNo = Model.StoreAllData.Tables[0].Rows[0]["challanid"].ToString();
+                    var ChallanVerify = Model.StoreAllData.Tables[0].Rows[0]["verified"].ToString();
+                    var ChallanExpdate = Model.StoreAllData.Tables[0].Rows[0]["ExpireVDate"].ToString();
+
+                    if (FormStatus == "0")
+                    {
+                        <input value="Update" type="submit" onclick="return formVal();" />
+                        <input value="Reset" type="button" onclick="javascript:document.location.href='@Url.Action("PunAddConfirmation", "PunAdd")'" />
+                        <input type="button" value="Logout" onclick="javascript:document.location.href='@Url.Action("PunAddExamination", "PunAdd")'" />
+                    }
+                    else if (FormStatus == "1")
+                    {
+                        <input value="Edit" type="button" title="Edit Application" onclick="javascript:document.location.href='@Url.Action("PunAddConfirmationEdit", "PunAdd")'" />
+                        @*<input value="Final Submit" type="button" title="Final Submit" onclick="javascript:document.location.href='@Url.Action("FinalSubmit", "PunAdd")'" />*@
+                        <input value="Final Submit" type="button" title="Final Submit" onclick="return val()" />
+                        <input type="button" value="Logout" onclick="javascript:document.location.href='@Url.Action("PunAddExamination", "PunAdd")'" />
+                    }
+                    else if (FormStatus == "2" && ChallanVerify != "1")
+                    {
+                        <input value="Proceed to Pay Online" type="button" onclick="javascript:document.location.href='@Url.Action("PaymentForm", "PunAdd")'" />
+                        @*<input value="Generate Challan" type="button" title="Generate Challan" onclick="javascript:document.location.href='@Url.Action("PaymentForm", "PunAdd")'" />*@
+                        @*<input value="Print Application Form" type="button" onclick="javascript:document.location.href='@Url.Action("PunAddFinalPrint", "PunAdd")'" />*@
+                        <input type="button" value="Logout" onclick="javascript:document.location.href='@Url.Action("PunAddExamination", "PunAdd")'" />
+                    }
+                    @*else if (FormStatus == "2" && ChallanNo != ""  && ChallanVerify == "1")
+                        {
+                            <input value="Enter Fee Deposit Details" type="button" title="Enter Fee Deposit Details" onclick="javascript:document.location.href='@Url.Action("FeeDepositDetails", "Home", new { id = @ChallanNo })'" />
+                            <input value="Print Challan" type="button" title="Print Challan" onclick="javascript:document.location.href='@Url.Action("GenerateChallaan", "PunAdd")'" />
+                                <input value="Print Application Form" type="button" onclick="javascript:document.location.href='@Url.Action("PunAddFinalPrint", "PunAdd")'" />
+                                <input type="button" value="Logout" onclick="javascript:document.location.href='@Url.Action("PunAddExamination", "PunAdd")'" />
+
+                            }*@
+                    else if (FormStatus == "3")
+                    {
+                        <input value="Print Application Form" type="button" onclick="javascript:document.location.href='@Url.Action("PunAddFinalPrint", "PunAdd")'" />
+                        <input type="button" value="Logout" onclick="javascript:document.location.href='@Url.Action("PunAddExamination", "PunAdd")'" />
+                    }
+                }
+            </div>
+
+            @{
+                var OROLLN = Model.StoreAllData.Tables[0].Rows[0]["roll"].ToString();
+                var FormStatusN = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+                var ChallanNoN = Model.StoreAllData.Tables[0].Rows[0]["challanid"].ToString();
+                var ChallanVerifyN = Model.StoreAllData.Tables[0].Rows[0]["verified"].ToString();
+                var ChallanExpdateN = Model.StoreAllData.Tables[0].Rows[0]["ExpireVDate"].ToString();
+
+                if (ChallanExpdate == "0" && ChallanVerifyN == "1")
+                {
+                    <div class="clearfix"></div>
+                }
+
+            }
+
+        </form>
+    }
+</div>
+@{
+
+    if (ViewData["Status"] != null)
+    {
+        var result = ViewData["Status"].ToString();
+
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Refrence No. Successfully Generated.  Kindly Check your Email and Mobile No.: ");
+            </script>
+        }
+
+        else if (result == "2")
+        {
+
+            <script type="text/javascript" language="javascript">
+                alert("Refrence No. Already Generated.  Kindly Check your Email and Mobile No. : ");
+                document.location.href = '@Url.Action("PunAddConfirmation/"+ ViewData["refno"], "PunAdd")';
+            </script>
+        }
+        ///// For After Inserted Confurmation Data
+        else if (result == "3")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("All Data Inserted Successfully.");
+                document.location.href = '@Url.Action("PunAddConfirmation/" + ViewData["refno"], "PunAdd")';
+            </script>
+        }
+        else if (result == "ERR")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Failure to Update");                
+            </script>
+        }
+    }
+
+    if (ViewData["SelectPhotoSign"] != null)
+    {
+        if (ViewData["SelectPhotoSign"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Photo & Sign");
+            </script>
+
+        }
+    }
+
+    if (ViewData["SelectGender"] != null)
+    {
+        if (ViewData["SelectGender"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Gender");
+            </script>
+
+        }
+    }
+    if (ViewData["SelectCast"] != null)
+    {
+        if (ViewData["SelectCast"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Cast");
+            </script>
+
+        }
+    }
+    if (ViewData["SelectArea"] != null)
+    {
+        if (ViewData["SelectArea"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Area");
+            </script>
+
+        }
+    }
+    if (ViewData["SelectRelist"] != null)
+    {
+        if (ViewData["SelectRelist"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Religion");
+            </script>
+
+        }
+    }
+    if (ViewData["Selectaddress"] != null)
+    {
+        if (ViewData["Selectaddress"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Enter Your Address");
+            </script>
+
+        }
+    }
+
+    if (ViewData["SelectDist"] != null)
+    {
+        if (ViewData["SelectDist"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select District & Tehsil");
+            </script>
+
+        }
+    }
+
+    if (ViewData["SelectPin"] != null)
+    {
+        if (ViewData["SelectPin"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Enter Pin Code");
+            </script>
+
+        }
+    }
+
+
+
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var selectedVal = $("#Board").val();
+        if (selectedVal == "OTHER BOARD") {
+            $('#Other_Board').show();
+            $('#Other_Boarda').show();
+        }
+        else {
+            $('#Other_Board').hide();
+            $('#Other_Boarda').hide();
+        }
+
+
+    $("#Board").change(function () {
+        var selectedVal = $("#Board").val();
+        if (selectedVal == "OTHER BOARD") {
+            $('#Other_Board').show();
+            $('#Other_Boarda').show();
+
+        }
+        else {
+            $('#Other_Board').hide();
+            $('#Other_Boarda').hide();
+        }
+    });
+        $('#Candi_Name').change(function () {
+            var selectedText = { text: $("#Candi_Name").val() };
+            var cname = document.getElementById('Candi_Name').value;
+            var cnameP = document.getElementById('Pname').value;
+            if (cnameP == "") {
+                $.ajax({
+                    url: '@Url.Action("getPunjabiName", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedText),
+                    success: function (result) {
+                        //  alert("Candidate Name: " + result);
+                        $('#Pname').val(result);
+                    }
+                });
+            }
+        });
+
+        $('#Father_Name').change(function () {
+            var selectedText = { text: $("#Father_Name").val() };
+            var Father_Name_P = { text1: $("#PFname").val() };
+            var fname = document.getElementById('Father_Name').value;
+            var fnameP = document.getElementById('PFname').value;
+            if (fnameP == "") {
+
+                $.ajax({
+                    url: '@Url.Action("getPunjabiName", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedText),
+                    success: function (result) {
+                        //  alert("Father Name: " + result);
+                        $('#PFname').val(result);
+                    }
+                });
+            }
+        });
+
+        $('#Mother_Name').change(function () {
+            var selectedText = { text: $("#Mother_Name").val() };
+            var mname = document.getElementById('Mother_Name').value;
+            var mnameP = document.getElementById('PMname').value;
+            if (mnameP == "") {
+                $.ajax({
+                    url: '@Url.Action("getPunjabiName", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedText),
+                    success: function (result) {
+                        //  alert("Mother Name: " + result);
+                        $('#PMname').val(result);
+                    }
+                });
+            }
+        });
+
+        if (@ViewBag.tt !="1" && @ViewBag.tt !="2" && @ViewBag.tt !="3") {
+            $("#DOB").datepicker({
+
+
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10yr',
+                //maxDate: '10/08/2016',
+                yearRange: "1950:2019"
+
+            });
+        }
+
+
+        $("#SelDist").change(function () {
+            var selectedDIST = { DIST: $("#SelDist").val() };
+            //var selectedText = $(this).find("option:selected").text();
+            // document.getElementById("hidText").value = selectedText;
+            //alert(document.getElementById("hidText").value);
+            $.ajax({
+                url: '@Url.Action("GetTehID", "PunAdd")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedDIST),
+                success: function (States) {
+                    //alert(StatesList);
+                    //document.getElementById("Address").value = StatesList;
+                    $("#tehsil").empty();
+
+                    $.each(States, function (i, TehList) {
+                        $("#tehsil").append('<option value="'
+                           + TehList.Value + '">'
+                           + TehList.Text + '</option>');
+                    });
+                    if (TehList.success) {
+
+                        //document.getElementById("MName").value = data.result;
+                        // $("#TextBoxID").val(data.result.MName);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        });
+    });
+
+
+    function getval(sel) {
+        if (sel.value != "N.A.") {
+            document.getElementById("wantWriter").style.display = "block";
+        }
+        else {
+            document.getElementById("wantWriter").disabled = true;
+            document.getElementById("rdoWantWriterY").checked = false;
+            document.getElementById("rdoWantWriterN").checked = true;
+            document.getElementById("wantWriter").style.display = "none";
+        }
+    }
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function formVal() {
+        //if (document.getElementById("rdoWantWriter").checked == false) {
+        //    alert('Choose Yes/No');
+        //    document.getElementById("rdoWantWriter").focus();
+        //    return false;
+        //}
+
+
+
+        //var txtSelExamDist = document.getElementById('SelExamDist').value;
+        //if (txtSelExamDist == '--Select---' || txtSelExamDist == null || txtSelExamDist == '') {
+        //    alert("Select Exam District");
+        //    document.getElementById('SelExamDist').focus();
+        //    return false;
+        //}
+        var txtBoard = document.getElementById("Board");
+        var Other_Board = document.getElementById("Other_Board");
+
+        if (txtBoard.value == "" || txtBoard.value == "0") {
+            alert("Select Board.");
+            txtBoard.focus();
+            return false;
+        }
+        if (txtBoard.value == "OTHER BOARD" && Other_Board.value == "") {
+            alert("Enter Other Board Name.");
+            Other_Board.focus();
+            return false;
+        }
+        var CandiName = document.getElementById("Candi_Name").value;
+        if (CandiName == "") {
+            alert("Enter Name");
+            document.getElementById("Candi_Name").focus();
+            return false;
+        }
+        var Father_Name = document.getElementById("Father_Name").value;
+        if (Father_Name == "") {
+            alert("Enter Father Name");
+            document.getElementById("Father_Name").focus();
+            return false;
+        }
+        var Mother_Name = document.getElementById("Mother_Name").value;
+        if (Mother_Name == "") {
+            alert("Enter Mother Name");
+            document.getElementById("Mother_Name").focus();
+            return false;
+        }
+
+        var txtstd_Photo = document.getElementById('std_Photo').value;
+        var txtimgPhoto = document.getElementById('imgPhoto').src;
+
+        var fullPath = document.getElementById("imgPhoto").src;
+        var filename = fullPath.replace(/^.*[\\\/]/, '');
+        var ext = filename.substr(filename.lastIndexOf('.') + 1);
+        if (ext == '') {
+            alert("Select Photo");
+            document.getElementById('std_Photo').focus();
+            return false;
+        }
+
+        var txtstd_Sign = document.getElementById('std_Sign').value;
+        var txtimgSign = document.getElementById('imgSign').src;
+
+        var fullPath1 = document.getElementById("imgSign").src;
+        var filename1 = fullPath1.replace(/^.*[\\\/]/, '');
+        var ext1 = filename.substr(filename1.lastIndexOf('.') + 1);
+        if (filename1 == '') {
+            alert("Select Signature");
+            document.getElementById('std_Sign').focus();
+            return false;
+        }
+        var txtDOB = document.getElementById("DOB").value;
+        if (txtDOB == "") {
+            alert("Enter DOB");
+            document.getElementById("DOB").focus();
+            return false;
+        }
+        var txtemailID = document.getElementById("emailID").value;
+        if (txtemailID == "") {
+            alert("Enter email ID");
+            document.getElementById("emailID").focus();
+            return false;
+        }
+        var txtmobileNo = document.getElementById("mobileNo").value;
+        if (txtmobileNo == "" || txtmobileNo.value.length != 10) {
+            alert("Enter mobile No");
+            document.getElementById("mobileNo").focus();
+            return false;
+        }
+        var txtGender = document.getElementById('Gender').value;
+        if (txtGender == '0') {
+            alert("Select Gender");
+            document.getElementById('Gender').focus();
+            return false;
+        }
+
+        var txtCastList = document.getElementById('CastList').value;
+        if (txtCastList == '0') {
+            alert("Select Cast List");
+            document.getElementById('CastList').focus();
+            return false;
+        }
+
+        var txtArea = document.getElementById('Area').value;
+        if (txtArea == '0') {
+            alert("Select Area");
+            document.getElementById('Area').focus();
+            return false;
+        }
+
+        var txtRelist = document.getElementById('Relist').value;
+        if (txtRelist == '0') {
+            alert("Select Religion");
+            document.getElementById('Relist').focus();
+            return false;
+        }
+
+       
+        var IsHardCopyCertificate = document.getElementById("IsHardCopyCertificate").value;
+        if (IsHardCopyCertificate == "" || IsHardCopyCertificate == '0') {
+            alert("Select Hard Copy of Certificate");
+            document.getElementById("IsHardCopyCertificate").focus();
+            return false;
+        }
+
+
+        //var txtChoice1 = document.getElementById('Choice1').value;
+        //var txtChoice2 = document.getElementById('Choice2').value;
+        //if (txtChoice1 == '') {
+        //    alert("Enter Exam Centre1");
+        //    document.getElementById('Choice1').focus();
+        //    return false;
+        //}
+        //if (txtChoice2 == '') {
+        //    alert("Enter Exam Centre2");
+        //    document.getElementById('Choice2').focus();
+        //    return false;
+        //}
+
+        var txtaddress = document.getElementById('address').value;
+        if (txtaddress == '') {
+            alert("Enter address");
+            document.getElementById('address').focus();
+            return false;
+        }
+
+        var txtMyDist = document.getElementById('SelDist').value;
+        if (txtMyDist == '--Select---' || txtMyDist == null || txtMyDist == '') {
+            alert("Select District");
+            document.getElementById('SelDist').focus();
+            return false;
+        }
+        var txtMyTeh = document.getElementById('tehsil').value;
+        if (txtMyTeh == '0' || txtMyTeh == null || txtMyTeh == '') {
+            alert("Select Tehsil");
+            document.getElementById('tehsil').focus();
+            return false;
+        }
+        var txtpinCode = document.getElementById('pinCode').value;
+        if (txtpinCode == '') {
+            alert("Enter pin code");
+            document.getElementById('pinCode').focus();
+            return false;
+        }
+
+        //var txtsub1 = document.getElementById('MatricSub').value;
+        //if (txtsub1 == '0' || txtsub1 == null || txtsub1 == '') {
+        //    alert("Select subject1");
+        //    document.getElementById('MatricSub').focus();
+        //    return false;
+        //}
+        //var txtsub2 = document.getElementById('MatricSub2').value;
+        //var txtcat = document.getElementById('category').value;
+        //if (document.getElementById('MatricSub').value == document.getElementById('MatricSub2').value && txtcat == 'Additional subject') {
+        //    alert("subject not to be same.");
+        //    document.getElementById('MatricSub2').focus();
+        //    return false;
+        //}
+
+
+
+    }
+
+
+    function findSizeAndPreview(input) {
+        if (typeof ($("#std_Photo")[0].files) != "undefined") {
+
+            var size = parseFloat($("#std_Photo")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 50) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#imgPhoto').attr('src', e.target.result);
+
+                }
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#std_Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+
+
+            }
+        }
+
+    }
+    function findSizeAndPreviewSign(input) {
+        if (typeof ($("#std_Sign")[0].files) != "undefined") {
+
+            var size = parseFloat($("#std_Sign")[0].files[0].size / 1024).toFixed(2);
+            // alert(size);
+            if (parseInt(size) >= 1 && parseInt(size) <= 50) {
+                var filerdrS = new FileReader();
+                filerdrS.onload = function (e) {
+                    $('#imgSign').attr('src', e.target.result);
+
+                }
+                filerdrS.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 1) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#std_Sign').val('');
+                    ('#imgSign').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#Sign').val('');
+                    ('#imgSign').hide();
+                }
+
+            }
+        }
+
+    }
+    function val()
+    {
+     if (!window.confirm("Are you Sure to Final Submit. Once Final Submitted you will not able to make any kind of changes in Application ?")) {
+            return false;
+     }
+        else {
+            document.location.href = '@Url.Action("FinalSubmit", "PunAdd")';
+        }
+    }
+</script>
+
+
+<script type="text/javascript">
+    function CheckDocFile1(input) {
+        if (typeof ($("#EligibilityDoc1")[0].files) != "undefined") {
+
+            var ext = $('#EligibilityDoc1').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#EligibilityDoc1').val('');
+                return false;
+            }
+            var size = parseFloat($("#EligibilityDoc1")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#EligibilityDoc1').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#EligibilityDoc1').val('');
+                }
+            }
+        }
+
+    }
+
+
+    function CheckDocFile2(input) {
+        if (typeof ($("#EligibilityDoc2")[0].files) != "undefined") {
+
+            var ext = $('#EligibilityDoc2').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#EligibilityDoc2').val('');
+                return false;
+            }
+            var size = parseFloat($("#EligibilityDoc2")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#EligibilityDoc2').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#EligibilityDoc2').val('');
+                }
+            }
+        }
+
+    }
+</script>

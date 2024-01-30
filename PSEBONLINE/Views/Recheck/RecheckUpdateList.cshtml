@@ -1,0 +1,248 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Recheck Update List";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4L.css" />
+<style type="text/css">
+    .tprint td {
+        padding: 4px 4px;
+        line-height: 14px;
+        font-weight: normal;
+    }
+    body {
+        font-size: 11px;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1 class="noprint">Rechecking Result Matriculation/Senior Secondary 2022</h1>
+@using (Html.BeginForm("RecheckUpdateList", "Recheck", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12 noprint">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Search By @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text"), "--Select---", new { @class = "", id = "SelList", onchange = "deechange()" })
+                    <span id="reqsellist" style="color:red;display:none;">Select One</span>
+                </div>
+                <div class="col-md-3">
+                    Enter <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                    <span id="reqsstring" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="Submit" value="Search" name="cmd" onclick="return valForm();" />
+                    <input type="submit" name="Reset" value="Reset" formaction="" formmethod="post" />
+                </div>				
+            </fieldset>
+        </div>
+		 @*<div class="clearfix"></div> 
+		<div class="col-md-12 noprint" style="text-align:left"><h3 class="rqf">Note: Only for Rechecking Result and ReEvaluation Result will be live soon.</h3></div>*@  
+        <div class="clearfix"></div> 
+        <div class="col-md-12 noprint" style="text-align:right"><input type="button" value="Print" class="btn" onclick="window.print()" /></div>  
+        <div class="clearfix"></div>      
+        <div class="col-md-12">
+            <div style="border:1px solid #fff !important;display:block">
+                <table border="1" width="100%" class="tprint">                   
+                    @{
+                        if (ViewBag.TotalCount >= 1)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            int varRTI = 0;
+
+                            <thead>
+                                <tr>
+                                    <td style="border-right:0 !important"><img src="~/Images/Printlogo.jpg" alt="PSEB" height="60px" width="60px" /></td>
+                                    <td colspan="4" style="text-align:center;border-left:0 !important;border-right:0 !important;line-height:20PX">
+                                        @{
+                                            string s = null;
+                                            var lot = Model.StoreAllData.Tables[0].Rows[0]["refno"].ToString();
+                                            var str = lot.Substring(0, 2);
+                                            var maxNum = Convert.ToInt32(lot.Substring(3,2));
+                                            //var maxNum = Convert.ToInt32(1);
+                                            // @maxNum;
+                                            if (@str.Contains("12"))
+                                            {
+                                                if (maxNum == 3)
+                                                {
+                                                    s = ViewBag.IsRecheck + " Recheck Senior Secondary Result, March 2022";
+                                                }
+                                                else if (maxNum == 9)
+                                                { s = ViewBag.IsRecheck + " Recheck Senior Secondary Result, September 2022"; }
+                                                else if (maxNum == 6)
+                                                { s = ViewBag.IsRecheck + " Recheck Senior Secondary Result, June 2020"; }
+                                                else if (maxNum == 8)
+                                                { s = ViewBag.IsRecheck + " Recheck Senior Secondary Result, August 2020"; }
+                                                else
+                                                { s = ViewBag.IsRecheck + " Recheck Senior Secondary Result, September 2022"; }
+                                            }
+                                            else
+                                               if (maxNum == 3)
+                                            { s = ViewBag.IsRecheck + " Recheck Matriculation Result, March 2022"; }
+                                            else if (maxNum == 6)
+                                            { s = ViewBag.IsRecheck + " Recheck Matriculation Result, June 2020"; }
+                                            else if (maxNum == 8)
+                                            { s = ViewBag.IsRecheck + " Recheck Matriculation Result, August 2020"; }
+                                            else
+                                            { s = ViewBag.IsRecheck + " Recheck Matriculation Result, September 2022"; }
+                                        }                                           
+                                        <span style="font-size:28px;font-weight:bold">Punjab School Education Board</span><br />
+                                        <span style="font-size:20px;">@s</span>
+                                    </td>
+                                    <td align="right" style="border-left:0 !important">@*Roll No:- @ViewBag.lot<br />*@Print Date: @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                                </tr>
+                                <tr class="active-tr">
+                                    <th width="10%">Sl. No.</th>                                  
+                                    <th width="10%">Ref. No.</th>
+                                    <th width="20%">Roll No. / Dist. Name</th>
+                                    <th width="30%">Name / Fname</th>
+                                    <th width="20%">Subject / Sub Code @*/ Updated Date*@</th>                                 
+                                    @*<th width="15%">Fee Detail<br />Amt. / Chaln ID / Verify Dt.</th>*@                                 
+                                    <th width="10%">
+                                        Recheck Status
+                                        @*Action / Date*@
+                                    </th>
+                                </tr>
+                            </thead>
+
+                                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                            {
+                                                d = d + 1;
+                                                var id = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                                var updStatus = Model.StoreAllData.Tables[0].Rows[i]["updStatus"].ToString();
+                                                var updStatusFS = Model.StoreAllData.Tables[0].Rows[i]["updStatusFS"].ToString();
+                                                var CSrNo = Model.StoreAllData.Tables[0].Rows[i]["CSrNo"].ToString();
+                                                var Sset = Model.StoreAllData.Tables[0].Rows[i]["set"].ToString();
+                                                var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                                                var Rollnum = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                                                var name = Model.StoreAllData.Tables[0].Rows[i]["name"].ToString() + '/' + Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                                                var subC = Model.StoreAllData.Tables[0].Rows[i]["subcode"].ToString();
+                                                var subnm = Model.StoreAllData.Tables[0].Rows[i]["subnm"].ToString();
+                                                var subjects = subnm + '/' + subC;
+                                                var Obtmarks = Model.StoreAllData.Tables[0].Rows[i]["obtmrk"].ToString();
+                                                var Feedetils = Model.StoreAllData.Tables[0].Rows[i]["feedetail"].ToString();
+                                                var BagC = Model.StoreAllData.Tables[0].Rows[i]["bag"].ToString();
+                                                var BarC = Model.StoreAllData.Tables[0].Rows[i]["bar"].ToString();
+                                                var BagBarCode = BarC + '/' + BagC;
+                                                var BagidSet = Model.StoreAllData.Tables[0].Rows[i]["bagidset"].ToString();
+                                                var RollSet = Model.StoreAllData.Tables[0].Rows[i]["rollset"].ToString();
+                                                var isRTI = Model.StoreAllData.Tables[0].Rows[i]["isRTI"].ToString();
+                                                var updtFSDate = Model.StoreAllData.Tables[0].Rows[i]["updtFSDate"].ToString();
+                                                if (isRTI == "True")
+                                                {
+                                                    varRTI = 1;
+                                                }
+                                                Count = Count + 1;
+
+                                <tr>
+                                    <td style="height:35PX">                                      
+                                        @Count
+                                    </td>                                   
+                                    <td>
+                                        @refno
+                                    </td>
+
+                                    <td>
+                                        @Rollnum
+                                    </td>
+                                    <td>
+                                        @name
+                                    </td>
+                                    <td>
+                                        @subjects @*/ @updtFSDate*@
+                                    </td>                                   
+                                    @*<td>
+                                        @Feedetils
+                                    </td>*@                             
+                                    @if (updStatus == "True" && updStatusFS == "True")
+                                    {
+                                        <td>
+                                            <span style="color:#047807">Changed @*/ @updtFSDate*@</span> 
+                                        </td>
+                                    }
+                                    else if (updStatus == "False" && updStatusFS == "True")
+                                    {
+                                        <td>
+                                            <span style="color:#cc0000">No Changed @*/ @updtFSDate*@</span>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <span style="color:#ff6a00">In Process</span>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                            if (varRTI == 1)
+                            {
+                                <tr>
+                                    <td colspan="8">
+                                        <table width="100%" border="0">
+                                            <tr>
+                                                <td style="text-align:center;font-size:18px"><br />ਪੰਜਾਬ ਸਕੂਲ ਸਿੱਖਿਆ ਬੋਰਡ</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:14px">ਵਿਸ਼ਾ :  ਉੱਤਰ ਪੱਤਰੀ ਵੇਖਣ ਲਈ  ਅਪਲਾਈ ਕੀਤੇ ਰੀਚੈਕਿੰਗ ਕੇਸਾਂ ਸਬੰਧੀ|</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:14px;line-height:24px"><div style="padding-left:36px">ਨਤੀਜਾ ਆਨ-ਲਾਈਨ ਜਾਰੀ ਹੋਣ ਦੀ ਮਿਤੀ ਤੋਂ ਦੋ ਹਫਤੇ ਅੰਦਰ ਪ੍ਰੀਖਿਆਰਥੀ ਕਿਸੇ ਵੀ ਕੰਮ ਕਾਜ ਵਾਲੇ ਦਿਨ ਮੁੱਖ ਦਫਤਰ, ਪੰਜਾਬ ਸਕੂਲ ਸਿੱਖਿਆ ਬੋਰਡ, ਮੋਹਾਲੀ ਦੀ ਕੰਡਕਟ ਸ਼ਾਖਾ ਵਿੱਚ ਸਵੇਰ 9:00 ਵਜੇ ਤੋਂ ਸ਼ਾਮ 5:00 ਵਜੇ ਤੱਕ ਆਪਣੀ ਉੱਤਰ ਪੱਤਰੀ ਚੈੱਕ ਕਰ ਸਕਦਾ ਹੈ ਅਤੇ ਬਣਦੀ ਫੀਸ ਜਮ੍ਹਾਂ ਕਰਵਾਉਣ ਉਪਰੰਤ ਉਸਦੀ ਫੋਟੋ ਕਾਪੀ ਲੈ ਸਕਦਾ ਹੈ|</div></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align:right;font-size:14px;line-height:24px">
+                                                    ਸਹੀ/-<br />
+                                                    ਸਹਾਇਕ ਸਕੱਤਰ<br />
+                                                    ਕੰਡਕਟ ਸ਼ਾਖਾ<br />
+                                                </td>
+                                            </tr>
+                                        </table>
+
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+                </div>
+            </div>
+        </div>
+
+}
+<script>
+    function valForm() {
+        var formList = document.getElementById("SelList");
+        var SearchString = document.getElementById("SearchString");
+        if (formList.value == "" || formList.value == "0") {
+            alert("Select Search By");
+            formList.focus();
+            return false;
+        }
+        else if (formList.value == "1" && SearchString.value == "") {
+            alert("Enter Roll Number");
+            SearchString.focus();
+            return false;
+        }
+        else if (formList.value == "2" && SearchString.value == "") {
+            alert("Enter Ref Number");
+            SearchString.focus();
+            return false;
+        }
+    }
+
+</script>

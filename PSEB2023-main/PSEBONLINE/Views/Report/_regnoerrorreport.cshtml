@@ -1,0 +1,52 @@
+﻿@model PSEBONLINE.Models.ReportModel
+<h1 style="text-align:center">Punjab School Education Board<br />
+<span style="font-size:16px;color:#333">Registration no. alloted status of other Board/State candidates for Session @Session["Session"]</span></h1>
+<table class="table table-bordered" id="tformwise">
+    <tr class="active-tr">
+        <th>Form</th>
+        <th>Total</th>
+        <th>Alloted</th>
+        <th>Pending</th>
+        <th>Error</th>
+        <th>Descrepancy</th>
+        <th>Pending Document Approved</th>
+        <th>Document Approved</th>
+    </tr>
+    @{
+        if (ViewBag.TotalCount > 0)
+        {
+            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+            {
+                var form_name = Model.StoreAllData.Tables[0].Rows[i]["form_name"].ToString();
+                var Total = Model.StoreAllData.Tables[0].Rows[i]["Total"].ToString();
+                var Alloted = Model.StoreAllData.Tables[0].Rows[i]["Alloted"].ToString();
+                var Pending = Model.StoreAllData.Tables[0].Rows[i]["Pending"].ToString();
+                var Error = Model.StoreAllData.Tables[0].Rows[i]["Error"].ToString();
+                var Descrepancy = Model.StoreAllData.Tables[0].Rows[i]["Descrepancy"].ToString();
+                var PendingDocumentApproved = Model.StoreAllData.Tables[0].Rows[i]["PendingDocumentApproved"].ToString();
+                var DocumentApproved = Model.StoreAllData.Tables[0].Rows[i]["DocumentApproved"].ToString();
+                <tr>
+                        <td>
+                            &nbsp;
+                            <input type="button" id="btnDataDownload" value="@form_name" onclick="javascript:document.location.href='@Url.Action("RegnoErrorSummaryDownloadData", "Master", new { FormName = @form_name })'" />
+                        </td>
+                    <td>@Total</td>
+                    <td> @Alloted</td>
+                    <td> @Pending</td>
+                    <td> @Error</td>
+                    <td> @Descrepancy</td>
+                    <td> @PendingDocumentApproved</td>
+                    <td> @DocumentApproved</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">
+                    @ViewBag.Message
+                </td>
+            </tr>
+        }
+    }
+</table>

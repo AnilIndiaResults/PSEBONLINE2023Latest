@@ -1,0 +1,398 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    ViewBag.Title = "ViewRegNo";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+
+<h1 style="display:none">
+    View Registration of N2/M2/E2/T2 of Session @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+    else { Response.Redirect("~/Login"); }
+</h1>
+
+
+@using (Html.BeginForm("ViewRegNo", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row" style="display:none">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total Students <label>@ViewBag.TotalCount</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-2">
+                        Select Form:  @Html.DropDownList("SelForm", new SelectList(ViewBag.MyForm, "Value", "Text", ViewBag.SelectedForm), "--All---", new { @class = "" })
+                    </div>
+                    <div class="col-md-2">
+                        Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+
+                    </div>
+                    <div class="col-md-3">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" />
+                        <a href="/RegistrationPortal/ViewRegNo" class="btn">Reset</a>
+                        <button type="button" class="btn" data-toggle="modal" data-target="#myModal">View Error List</button>
+                        @* <input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" />
+                            <input type="button" name="Reset" id="Reset" value="Reset" />*@
+
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row" style="display:none">
+    <div class="col-md-12">
+        <div class="table-responsive" id="printtbl">
+            <table width="100%" border="0" class="printtxt">
+                <tr>
+                    <td style="border:0;text-align:center;" colspan="2">
+                        <span style="font-size:32px">Punjab School Education Board</span><br />
+                        <span style="font-size:18px;line-height:24px">Print Registration of N2/M2/E2/T2 of Session 2016-2017</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:left"><b>School Name/Code :</b> @Session["FullSchoolNameE"]  [ @Session["SCHL"] ]</td>
+                    <td style="text-align:right"><b>Date :</b> @DateTime.Now.ToString("dd-MM-yyyy")</td>
+                </tr>
+                <tr>
+                    <td colspan="2" height="5px"></td>
+                </tr>
+            </table>
+            <table class="table table-bordered">
+                <tr class="active-tr">
+                    <th>Id</th>
+                    <th>Form</th>
+                    <th>Unique Id</th>
+                    <th>Reg. No.</th>
+                    <th>Admission Date</th>
+                    <th>Candidate Name</th>
+                    <th>Father's Name</th>
+                    <th>Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Lot</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var form = Model.StoreAllData.Tables[0].Rows[i]["form_name"].ToString();
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                            var regNum = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                            var admDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                            var canName = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                            var Fname = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                            var Mname = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var LOT = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                            int Count = i + 1;
+                <tr>
+                    <td>
+                        @Count
+                    </td>
+                    <td>
+                        @form
+                    </td>
+                    <td>
+                        @stdid
+                    </td>
+                    <td>
+                        @regNum
+                    </td>
+                    <td>
+                        @admDate
+                    </td>
+                    <td>
+                        @canName
+                    </td>
+                    <td>
+                        @Fname
+                    </td>
+                    <td>
+                        @Mname
+                    </td>
+                    <td>
+                        @DOB
+                    </td>
+                    <td>
+                        @LOT
+                    </td>
+                </tr>
+                        }
+                    }
+                    else
+                    {
+                <tr>
+                    <td colspan="8">
+                        @ViewBag.Message
+                    </td>
+                </tr>
+                    }
+                }
+            </table>
+
+
+
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-center">
+        <input id="printdiv" type="submit" value="Print" onclick="printContent('printtbl')" />
+
+    </div>
+
+
+
+</div>
+
+
+
+<div id="list">
+<h1>
+    List of Reg. No. Error Codes @if (Session["Session"] != null)
+    {@Session["Session"].ToString()}
+    else { Response.Redirect("~/Login"); }
+</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <table id="tblerror" style="width:100%" class="table-bordered">
+            @{
+                if (ViewBag.TotalCount > 0)
+                {
+                    for (int s = 0; s < Model.StoreAllData.Tables[1].Rows.Count; s++)
+                    {
+                        var Error_Code = Model.StoreAllData.Tables[1].Rows[s]["Error_Code"].ToString();
+                        var Error_desc = Model.StoreAllData.Tables[1].Rows[s]["Error_desc"].ToString();
+                        var Error_list = Error_Code + " - " + Error_desc;
+                        var FORM = Model.StoreAllData.Tables[1].Rows[s]["FORM"].ToString();
+                        <tr>
+                            <td>
+                                @Error_list
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </table>
+    </div>
+    </div>
+    </div>
+  <div class="container">
+        <div class="modal fade" id="myModal" role="dialog" style="display:none">
+            <div class="modal-dialog" style="display:none">
+                <div class="modal-content" style="display:none">
+                    <div class="modal-header">
+                        <span style="font-size:24px">Error List</span>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <table id="tblerror" style="width:100%" class="table-bordered">
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    for (int s = 0; s < Model.StoreAllData.Tables[1].Rows.Count; s++)
+                                    {
+                                        var Error_Code = Model.StoreAllData.Tables[1].Rows[s]["Error_Code"].ToString();
+                                        var Error_desc = Model.StoreAllData.Tables[1].Rows[s]["Error_desc"].ToString();
+                                        var Error_list = Error_Code + " - " + Error_desc;
+                                        var FORM = Model.StoreAllData.Tables[1].Rows[s]["FORM"].ToString();
+                            <tr>
+                                <td>
+                                    @Error_list
+                                </td>
+                            </tr>
+                                }
+}
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('#myModal').modal('hide');
+        });
+    </script>
+
+
+
+    <script>
+        function printContent(el) {
+            //alert('print' +  el );
+            var restorepage = document.body.innerHTML;
+            var printcontent = document.getElementById(el).innerHTML;
+            document.body.innerHTML = printcontent;
+            window.print();
+            document.body.innerHTML = restorepage;
+        }
+        function ShowErrorList(el) {
+            alert(el);
+            $(el).dialog("open");
+        }
+    </script>
+
+    @*<script type="text/javascript">
+        $(document).ready(function ()
+        {
+            $("#btnErrorList").click(function ()
+            {
+                alert(1);
+                $("#dverrorlist").dialog("open");
+              //  $("#dverrorlist").Show();
+            });
+        });
+        </script>*@
+
+    <script>
+        $(document).ready(function () {
+            var value = document.getElementById('SelectItem').value;
+
+            if (value == 5) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10Y',
+
+                });
+
+            }
+            else if (value == 2 || value == 3 || value == 4) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+        });
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            if (value == 5) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10Y',
+
+                });
+
+            }
+            else if (value == 2 || value == 3 || value == 4) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+    </script>
+    <script type='text/javascript'>
+        var isCtrl = false;
+        document.onkeyup = function (e) {
+            if (e.which == 17)
+                isCtrl = false;
+        }
+        //document.onkeydown=function(e)
+        //{
+        //if(e.which == 17)
+        //isCtrl=true;
+        //if ((e.which == 85)) //85 for Ctrl+U, For Copy= (e.which == 67) && (isCtrl == true)
+        //{
+        //   return false;
+        // }
+        //}
+        var isNS = (navigator.appName == "Netscape") ? 1 : 0;
+        if (navigator.appName == "Netscape") document.captureEvents(Event.MOUSEDOWN || Event.MOUSEUP);
+        function mischandler() {
+            return false;
+        }
+        function mousehandler(e) {
+            var myevent = (isNS) ? e : event;
+            var eventbutton = (isNS) ? myevent.which : myevent.button;
+            if ((eventbutton == 2) || (eventbutton == 3)) return false;
+        }
+        document.oncontextmenu = mischandler;
+        document.onmousedown = mousehandler;
+        document.onmouseup = mousehandler;
+    </script>

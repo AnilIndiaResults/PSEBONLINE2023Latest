@@ -1,0 +1,375 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    ViewBag.Title = "School Correction Details";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+@*<script src="~/Scripts/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/dataTables.bootstrap4.min.js"></script>*@
+<!-- #endregion -->
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modal");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+    $('form').live("submit", function () {
+        ShowProgress();
+    });
+</script>
+<h1>School Correction Details</h1>
+
+
+@*<div class="row">
+    <div class="col-md-12 noprint">
+        @using (Html.BeginForm("SchoolCorrectionAllRecord", "RegistrationPortal", FormMethod.Post, new { id = "searchform" }))
+        {
+            if (Model != null)
+            {
+                <fieldset style="margin-bottom:15px">
+                    <legend>Search</legend>
+                    <div class="col-md-2">@Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                    <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                    <div class="col-md-2"><br /><input type="submit" value="Search" class="btn" /></div>
+                </fieldset>
+            }
+        }
+    </div>
+
+</div>
+<div class="clearfix"></div>*@
+
+<div class="row">
+    <div class="col-lg-12 text-right">
+        <input type="submit" value="Reject Selected Records" id="btnsave" name="cmd" />
+    </div>
+    <div class="col-md-12">
+
+        <div class="clearfix"></div>
+        @*<div class="clearfix"></div>
+        <h4>Correction Details</h4>*@
+        <div class="table-responsive">
+            
+            
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+
+                    <table id="example" class="display table table-bordered" style="width:100%">
+                        <thead>
+                            <tr class="active-tr">
+                                <th width="5%">Serial No.</th>
+                                <th width="8%">Class</th>
+                                <th width="8%">Correction Id</th>
+                                <th width="5%">Student Id</th>
+                                <th width="10%">Correction Field</th>
+                                <th width="20%">Old Value</th>
+                                <th width="20%">New Value</th>
+                                <th width="10%">Lot</th>
+                                <th width="10%">Status<input type="checkbox" id="selectallN" />All Reject</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                if (ViewBag.TotalCountadded > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    for (int i = 0; i < Model.Correctiondata.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var CorrectionId = Model.Correctiondata.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                        var Class = Model.Correctiondata.Tables[0].Rows[i]["Class"].ToString();
+                                        var stdid = Model.Correctiondata.Tables[0].Rows[i]["std_id"].ToString();
+                                        var CorrectionType = Model.Correctiondata.Tables[0].Rows[i]["cortype"].ToString();
+                                        var OldValue = Model.Correctiondata.Tables[0].Rows[i]["OldValue"].ToString();
+                                        var NewValue = Model.Correctiondata.Tables[0].Rows[i]["NewValue"].ToString();
+                                        var Lot = Model.Correctiondata.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                                        var AWS_URL = System.Configuration.ConfigurationManager.AppSettings["AWSURL"].ToString();
+                                        if (CorrectionType == "Sign" || CorrectionType == "Photo")
+                                        {
+                                            if (OldValue.Contains("https") || OldValue.Contains("OPEN"))
+                                            {
+                                                OldValue = AWS_URL + OldValue;
+                                            }
+                                            else if (!OldValue.Contains("https"))
+                                            {
+                                                OldValue = AWS_URL + OldValue;
+                                            }
+
+                                            if (!NewValue.Contains("https"))
+                                            {
+                                                NewValue = AWS_URL + NewValue;
+                                            }
+
+
+
+                                        }
+                                        var Status = Model.Correctiondata.Tables[0].Rows[i]["Status"].ToString();
+                                        var FirmCorrectionLot = Model.Correctiondata.Tables[0].Rows[i]["FirmCorrectionLot"].ToString();
+                                        var Remark = Model.Correctiondata.Tables[0].Rows[i]["Remark"].ToString();
+                                        var StatusOn = Model.Correctiondata.Tables[0].Rows[i]["StatusOn"].ToString().Split(' ')[0];
+                                        Count = Count + 1;
+                                        <tr>
+                                            <td>
+                                                @Count
+                                            </td>
+                                            <td>
+                                                @Class
+                                            </td>
+                                            <td>
+                                                @CorrectionId
+                                            </td>
+                                            <td>
+                                                @stdid
+                                            </td>
+                                            <td>
+                                                @CorrectionType
+                                            </td>
+                                            @if (@CorrectionType == "Photo")
+                                            {
+                                                <td>
+                                                    <img src="@OldValue" class="" style="max-width:30%" alt="Photo Not Found" id="OldValuePS" />
+                                                </td>
+                                                <td>
+                                                    <img src="@NewValue" class="" style="max-width:30%" alt="Photo Not Found" id="NewValuePS" />
+                                                </td>
+                                            }
+                                            else if (@CorrectionType == "Sign")
+                                            {
+                                                <td>
+                                                    <img src="@OldValue" class="" style="max-width:30%" alt="Sign Not Found" id="OldValuePS" />
+                                                </td>
+                                                <td>
+                                                    <img src="@NewValue" class="" style="max-width:30%" alt="Sign Not Found" id="NewValuePS" />
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                if (CorrectionType.Contains("_Punjabi"))
+                                                {
+                                                    <td class="kdsfont">
+                                                        @OldValue
+                                                    </td>
+                                                    <td class="kdsfont">
+                                                        @NewValue
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        @OldValue
+                                                    </td>
+                                                    <td>
+                                                        @NewValue
+                                                    </td>
+                                                }
+
+                                            }
+                                            <td>
+                                                @Lot
+                                            </td>
+                                            <td>
+                                                <div class="cart">
+                                                    @{
+                                                        if (FirmCorrectionLot == "" && @Status == "")
+                                                        {
+                                                            <div style="color:red" title="school Correction is pending"><b>Pending</b></div>
+                                                            <input type="checkbox" id="cbn-@CorrectionId" class="checkboxN" name="AllChkIdN" value="@CorrectionId" /> <span>Reject</span>
+                                                            <input type="text" id="txtremarks-@CorrectionId" maxlength="100" placeholder="Enter Remarks" style="display:none;" />
+                                                            <br />
+                                                        }
+                                                        else if (FirmCorrectionLot != "" && @Status == "Y")
+                                                        {
+                                                            <div style="color:forestgreen" title="Correction successfully updated"><b>Updated</b></div>
+                                                        }
+                                                        else if (@Status == "N")
+                                                        {
+                                                            <div style="color:firebrick" title="Correction is Rejected after verifivation"><b title="@Remark">Rejected</b></div>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <div style="color:indigo" title="Due to some verification Correction is under process "><b>Under Process</b></div>
+                                                        }
+                                                    }
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8">
+                                            @ViewBag.Message2
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-12 text-center">
+            <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            <input type="submit" value="Exit" formaction="ExitCorrection" />
+
+        </div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // alert("ready");
+
+        // Reject
+        $('.checkboxN').change(function () { //".checkbox" change
+            var ischk = this.checked;
+            if (this.checked == false) { //if this item is unchecked
+                $("#selectallN")[0].checked = false; //change "select all" checked status to false
+                $('#txtremarks-' + this.value).slideUp("slow");
+                $('#txtremarks-' + this.value).prop('required', false);
+            } else {
+                $('#txtremarks-' + this.value).slideDown("slow");
+                $('#txtremarks-' + this.value).prop('required', true);
+            }
+        });
+
+
+
+        // Reject
+        $("#selectallN").change(function () {
+            var status = this.checked; // "select all" checked status
+            var j = 0
+            //alert("2");
+            $('.checkboxN').each(function () {
+                var id = this.id;
+                var val = this.value;
+                $("input[name='AllChkIdN']")[j].checked = status;
+                if (status == true) {
+                    $('#txtremarks-' + this.value).slideDown("slow");
+                    $('#txtremarks-' + this.value).prop('required', true);
+                }
+                else {
+                    $('#txtremarks-' + this.value).slideUp("slow");
+                    $('#txtremarks-' + this.value).prop('required', false);
+                }
+                j++;
+
+            });
+        });
+
+        // End select all
+
+
+
+        //Start Save Data
+        $("#btnsave").click(function () {
+            var isvalid = true;
+            if (isvalid == true) {
+                var chkdee = "";
+                var storeid = "";
+                var pageid = "";
+                var pageid = "";
+                var storeid1 = "";
+                var storechkid = "";
+                var storescid = "";
+                var chkRemarks = "";
+                var remarksid = "";
+
+                $('.checkboxN').each(function () {
+                    var id = this.id;
+                    // alert("Page= " + id);
+                    var val = this.value;
+                    //alert("Page value= " + rval);
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var arrcast = "";
+                    var j = 0;
+
+                    if (this.checked) {
+                        var value1 = $('#txtremarks-' + val).val();
+                        if (value1 == "") {
+                            chkRemarks = "Enter Remarks";
+                        }
+                        else {
+                            pageid += val + ",";
+                            remarksid += val + "(" + value1 + ")" + ",";
+                        }
+
+                    }
+                });
+
+                if (storeid == "" && pageid == "") {
+                    if (chkRemarks != "") {
+                        alert("Please Enter Remarks in All Reject Corrections .");
+                        return;
+                    }
+                    else {
+                        alert("Please Select Atleast 1 Correction for Reject .");
+                        return;
+                    }
+                }
+                else {
+                    // alert('Now Save Accept :' + storeid);
+                    // alert('Now Save Reject :' + pageid);
+                    $('#divMain1').hide();
+                    $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $.post("/School/CorrLotAcceptReject", { "correctionType": "1", "correctionLot": "1", "acceptid": "R", "rejectid": pageid.slice(0, -1), "removeid": "", "remarksid": remarksid.slice(0, -1) },
+                        function (data) {
+                            $('#loading1').empty();
+                            // alert('data.status  = ' + data.status);
+                            if (data.status == "1") {
+                                alert("Rejected Successfully");
+                                // window.location.href = '/Admin/FirmSchoolCorrection';
+                            }
+                            else {
+                                alert("Failure, Please Try Again.");
+                            }
+                        });
+                }
+            }// if true close
+        });
+
+        //End  Save Data
+
+    });
+
+</script>
+
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 25,
+            "order": [[0, 'asc']],
+            language: {
+                searchPlaceholder: "Search By Student Id,Correction Id, Correction Lot"
+            },
+        })
+    });
+</script>

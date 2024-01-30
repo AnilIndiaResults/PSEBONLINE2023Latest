@@ -1,0 +1,262 @@
+﻿
+
+
+
+
+@model PSEBONLINE.Models.AssociateModel
+@{ ViewBag.Title = "Building Safety Certificate Details";
+    Layout = "~/Views/Shared/_Headerui.cshtml"; }
+@using (Html.BeginForm("RoomDetails", "AssociateCommuni", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">@Html.Partial("_AssociateHeading")</div>
+        <div class="clearfix"></div>
+        <div class="col-md-3">
+            @Html.Partial("_AssociateMenu")
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-12"><h4>Room Details</h4></div>
+                <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Total Entry</th>
+                                <th scope="col"></th>
+                                <th scope="col">Total Rooms</th>
+                                <th scope="col"></th>
+                                <th scope="col">
+                                    Total Covered Area (Sq. Ft.)
+                                </th>
+
+                                <th scope="col">
+                                </th>
+                                <th scope="col">
+                                </th>
+                                <th scope="col">
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <th scope="col">Sr No.</th>
+                                <th scope="col">Room Type</th>
+                                <th scope="col">Floor Names</th>
+                                <th scope="col">Height</th>
+                                <th scope="col">
+                                    Width
+                                </th>
+
+                                <th scope="col">
+                                    Quantity
+                                </th>
+                                <th scope="col">
+                                    Area (Sq. Ft.)
+
+                                </th>
+                                <th scope="col">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RoomDetailsModelList != null)
+                            {
+                                foreach (var room in Model.RoomDetailsModelList)
+                                {
+                                    <tr>
+                                        <td>@room.Id</td>
+                                        <td>@room.RoomType</td>
+                                        <td>@room.FloorName</td>
+                                        <td>@room.Height</td>
+                                        <td>@room.width</td>
+                                        <td>@room.Quantity</td>
+                                        <td>@room.Area</td>
+                                        <td> @Html.ActionLink("Delete", "DeleteRoomDetails", @room.Id)</td>
+
+
+                                    </tr>
+                                }
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div class="col-md-12">
+                    <div class="col-md-3">&nbsp Room Type<span class="rqf">*</span></div>
+                    <div class="col-md-5">@Html.DropDownListFor(a => a.RoomDetailsModel.RoomType, new SelectList(ViewBag.roomtype, "Value", "Text", ViewBag.Selectedroomtype), "---Select ---", new { @required = "required", @class = "" })</div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="col-md-3">&nbsp Floor Name<span class="rqf">*</span></div>
+                    <div class="col-md-5">@Html.DropDownListFor(a => a.RoomDetailsModel.FloorName, new SelectList(ViewBag.floorName, "Value", "Text", ViewBag.SelectedfloorName), "---Select ---", new { @required = "required", @class = "" })</div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="col-md-3">
+                        &nbsp Height (Sq. Ft.)
+                        <span class="rqf">*</span>
+                    </div>
+                    <div class="col-md-5">
+
+                         @Html.TextBoxFor(a => a.RoomDetailsModel.Height, new { @required = "required", @id = "height", @class = "form-control", @oninput = "this.value = this.value.replace(/[^0-9]/g, '');", @onkeydown = "handleKeyDown(event, 'height')" })
+                        @*<input type="text" asp-for="@Model.RoomDetailsModel.Height" value="" class="form-control" placeholder="Height" name="Height">*@
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="col-md-3">
+                        &nbsp Width (Sq. Ft.)
+                        <span class="rqf">*</span>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.TextBoxFor(a => a.RoomDetailsModel.width, new { @required = "required", @id = "width", @class = "form-control", @oninput = "this.value = this.value.replace(/[^0-9]/g, '');", @onkeydown = "handleKeyDown(event, 'width')" })
+                        @*<input type="text" asp-for="@Model.RoomDetailsModel.width" value="" class="form-control" placeholder="width" name="width">*@
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-12">
+                    <div class="col-md-3">
+                        &nbsp Quantity
+                        <span class="rqf">*</span>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.TextBoxFor(a => a.RoomDetailsModel.Quantity, new { @required = "required", @id = "quantity", @oninput = "this.value = this.value.replace(/[^0-9]/g, '');", @class = "form-control", @onkeydown = "handleKeyDown(event, 'quantity')" })
+
+                        @* <input type="text" asp-for="@Model.RoomDetailsModel.Quantity" value="" class="form-control" placeholder="Quantity" name="Quantity">*@
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-12">
+                    <div class="col-md-3">
+                        &nbsp Area
+                        <span class="rqf">*</span>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.TextBoxFor(a => a.RoomDetailsModel.Area, new { @required = "required", @class = "form-control", @readonly = "readonly", @id = "area" })
+                        @Html.HiddenFor(a => a.RoomDetailsModel.SCHL, new {  @class = "form-control" })
+
+                        @* <input type="text" asp-for="@Model.RoomDetailsModel.Area" value="" class="form-control" placeholder="Area" name="Area">*@
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-12">
+
+                    <div class="col-md-10 text-center">
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                        @*@Html.ActionLink("Save", "SaveRoomDetails")*@
+                        @*<button @Html.ActionLink("DisplayText", "Index", "Home", class="btn btn-primary">Save</button>*@
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+        </div>
+    </div>
+}
+
+
+@{ if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">alert("Submit SuccessFully..");</script>
+            }
+            else
+            {
+                <script type="text/javascript" language="javascript">alert("Submit Failure, Please Try Again");</script>
+            }
+        }
+    } }
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<script>
+    $(document).ready(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            showButtonPanel: false,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2016:2019',
+            maxDate: new Date(),
+            inline: true
+        });
+        // $(".date").datepicker().datepicker("setDate", new Date());
+    });</script>
+
+
+<script>
+    function handleKeyDown(event, field) {
+        if (event.keyCode === 13) {
+            event.preventDefault(); // Prevent form submission
+            calculateArea(field);
+            return false; // Cancel further event propagation
+        }
+    }
+
+    function calculateArea(field) {
+
+
+        debugger
+
+        var height = parseFloat(document.getElementById("height").value);
+        var width = parseFloat(document.getElementById("width").value);
+        var quantity = parseInt(document.getElementById("quantity").value);
+        var totalArea = (height * width) * quantity;
+        document.getElementById('area').value = totalArea.toFixed(2); // Assuming 2 decimal places
+
+        // Display or use the totalArea as needed
+
+    }
+</script>
+
+
+@{ if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                    window.location.href = '@Url.Action("RoomDetails", "AssociateCommuni", new { id = Model.RoomDetailsModel.SCHL })';
+                </script>
+            }
+            else if (ViewData["result"].ToString() == "DUP")
+            {
+                <script type="text/javascript" language="javascript">alert("Already Exist");</script>
+            }
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                                            //alert('ViewBag.Mesaage');</script>
+            }
+
+        }
+    } }
+
+
+
+
+
+
+
+
+
+

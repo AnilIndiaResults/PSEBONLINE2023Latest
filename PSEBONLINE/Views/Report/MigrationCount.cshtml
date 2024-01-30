@@ -1,0 +1,59 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "Migration Count";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<style type="text/css">
+    td{font-size:11px;padding:1px;vertical-align:top}
+</style>
+<link rel="stylesheet" href="http://registration.pseb.ac.in/Content/Print-4P.css" />
+<h1 class="noprint">Migration Count</h1>
+@using (Html.BeginForm("MigrationCount", "Report", FormMethod.Post, new { id = "searchform" }))
+{
+<div class="row">
+    <div class="col-md-12 text-right noprint">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        @if (ViewBag.TotalCount > 0)
+        {
+            <table style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px" border="1">
+                <tr>
+                    <td style="border-right:0 !important">
+                        <div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div>
+                    </td>
+                    <td style="font-size:14px;text-align:center;line-height:22px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px;">
+                        <span style="font-size:28px">Punjab School Education Board</span>
+                        <br />
+                        <span>@*Class*@Form wise Count of Candidates for School to School Migration, (@Session["Session"].ToString().Trim())</span>
+                    </td>
+                    <td width="15%" style="border-left:0 !important" align="right">Print Date : @DateTime.Today.ToString("dd/MM/yyyy") &nbsp;</td>
+                </tr>
+                <tr>
+                    @*<td width="15%" align="center"><b>Class Name</b></td>*@
+                    <td width="15%" align="center"><b>Form Name</b></td>
+                    <td colspan="2" width="85%" align="center"><b>Count of Candidates</b></td>
+                </tr>
+
+                @{
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        var cls = Model.StoreAllData.Tables[0].Rows[i]["form_name"].ToString();
+                        var cnt = Model.StoreAllData.Tables[0].Rows[i]["cnt"].ToString();
+                        <tr>
+                            <td width="15%" align="center">@cls</td>
+                            <td colspan="2" width="85%" align="center">@cnt</td>
+                        </tr>
+                    }
+                }
+            </table>
+        }
+        <p style="height:160px"></p>
+
+    </div>
+    <div class="col-md-2"></div>
+</div>
+}

@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "GenerateChallan";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>Generate Challan</h1>
+<div class="row" id="divall">
+    <div class="col-md-12">
+        <a href="/DM/Home" class="btn">Back</a>.
+        <a href="/DM/GenerateChallan/S" class="btn">View All Received Senior C.C.E</a>  @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") 
+       <a href="/DM/GenerateChallan/M" class="btn">View All Received Matric C.C.E </a>@Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") 
+          
+            <div class="table-responsive">
+                @{
+                    if (ViewData["ReceiveStatus"] != null)
+                    {
+                        if (ViewData["ReceiveStatus"].ToString() == "1")
+                        {
+                            <table class="table table-bordered" id="t01">
+                                <tr class="active-tr">
+                                    <th>School Code</th>
+                                    <th>School Name</th>
+                                    <th>Receiving Number</th>
+                                    <th>Receiving Date</th>
+                                    <th>Remarks</th>                                   
+                                </tr>
+                                @{
+
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            var schl = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
+                                            var FullSchoolNameE = Model.StoreAllData.Tables[0].Rows[i]["FullSchoolNameE"].ToString();
+                                            var Rno = Model.StoreAllData.Tables[0].Rows[i]["Rno"].ToString();
+                                            var Rdate = Model.StoreAllData.Tables[0].Rows[i]["Rdate"].ToString();
+                                            var Remarks = Model.StoreAllData.Tables[0].Rows[i]["Remarks"].ToString();
+                                            int Count = i + 1;
+                                            <tr>
+                                                <td align="center">@schl</td>
+                                                <td align="center">@FullSchoolNameE</td>
+                                                <td align="center">@Rno</td>
+                                                <td align="center">@Rdate</td>
+                                                <td align="center">@Remarks</td>                                            
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                      <tr>
+                                       <td colspan="8">
+                                                  @Html.Raw("Record Not Found")
+                                       </td>
+                                       </tr>
+                                    }
+                                }
+                            </table>
+                           }
+          }
+
+                }
+
+
+                                @{
+                                    if (ViewData["ReceiveStatus"] != null)
+                                    {
+                                        if (ViewData["ReceiveStatus"].ToString() == "1")
+                                        {
+                                            if (Model.StoreAllData.Tables[0].Rows.Count > 0)
+                                            {
+                                            <form method="post" action="/DM/GenerateChallan/@ViewBag.SearchId" id="filterForm">
+                                                <input type="Submit" value="Generate Challan" name="cmd" />
+                                              </form>
+                                                }
+
+                                            }
+                                        }
+                                    }
+
+</div>
+        </div>
+    </div>

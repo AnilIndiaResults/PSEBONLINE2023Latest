@@ -1,0 +1,357 @@
+﻿@model PSEBONLINE.Models.SelfDeclarations
+@{
+    Layout = "~/Views/Shared/_HeaderSelf.cshtml";
+}
+
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script type="text/javascript">
+        window.setInterval(function () {
+            var current = new Date();
+            var expiry = new Date("July 21, 2021 23:59:59")
+            if (current.getTime() > expiry.getTime()) {
+                $('.hideint').hide();
+            } else if (current.getTime() < expiry.getTime()) {
+                $('.hideint').show();
+            }
+        }, 0);
+
+    window.setInterval(function () {
+        var current = new Date();
+        var expiry = new Date("Oct 17, 2020 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideintAS').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideintAS').show();
+        }
+    }, 0);
+    </script>
+
+    <div id="loading1"></div>
+@{ 
+    if (Model.CAT.ToLower() == "Additional".ToLower())
+    {
+    <h1 style="display:none;">Self declaration by candidate who is unsatisfied with their March 2021 Result (Additional Subject Only) </h1>
+    }
+    else { 
+<h3> Self declaration by candidate who unsatisfied with their March 2021 Result (Middle & Matriculation Only) </h3>
+    }
+}
+
+    
+    <div>
+        <p style="color:#cc0000;font-weight:bold;font-size:20px;">
+        <a href="/PDF/SelfDeclarationforNotSatisfiedResult.pdf" target="_blank">Click Here to Download Self Declaration Format</a></p>
+    </div>
+    <div class="container KDBG">
+
+        @using (Html.BeginForm("SelfDeclarationCandidateDetails", "SelfDeclaration", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+        {
+            <h4>Candidate Details</h4>
+            <div class="row">
+                <div class="col-md-3">Exam Type</div>
+                <div class="col-md-3">
+                    @{
+                        string RP = string.Empty;
+                        if (Model.CAT.ToLower() == "Additional".ToLower())
+                        {
+                            RP = "Additional Subject";
+                        }
+                        else if (Model.RP == "P")
+                        {
+                            RP = "Private" + "(" + Model.CAT.ToString() + ")";
+                        }
+                        else if (Model.RP == "O")
+                        {
+                            RP = "Open";
+                        }
+                        else if (Model.RP == "R")
+                        {
+                            RP = "Regular";
+                        }
+
+                    }
+                    @Html.TextBox("RP1", RP, new { @ReadOnly = "ReadOnly" })
+                    @Html.HiddenFor(m => m.RP)
+                    @Html.HiddenFor(m => m.CAT)
+                </div>
+                <div class="col-md-3">Roll Number</div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(a => a.Roll, new { @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-3">
+                    @if (Model.CAT.ToLower() == "Additional".ToLower())
+                    {
+                    <span>Reference Number</span>
+                    }
+                    else
+                    {<span>Registration Number</span>}                   
+
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(a => a.RegNo, new { @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-3">Class</div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(a => a.Class, new { @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-3">Candidate Name</div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(a => a.Name, new { @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-3">Father's Name</div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(a => a.FName, new { @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-3">Mother's Name</div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(a => a.MName, new { @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-3">Result Details</div>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(a => a.Resultdtl, new { @ReadOnly = "ReadOnly" })
+                </div>
+            </div>
+
+
+            <h4>Enter Details</h4>
+            if (Model.IsFinalSubmit == 1)
+            {
+                <div class="row">
+
+                    <div class="col-md-3">View Signed Self Declaration <span style="color:red">*</span></div>
+                    <div class="col-md-3">
+                        <a href="/Upload/@Model.SelfDeclarationDocument" target="_blank" class="btn">View Document</a>
+                    </div>
+                    <div class="col-md-3">Remark's</div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(a => a.Remarks, new { @ReadOnly = "ReadOnly" })
+                    </div>
+                </div>
+            }
+            else
+            {<div class="row">
+
+                    <div class="col-md-3">Upload Signed Self Declaration <span style="color:red">*</span></div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(a => a.SelfDeclarationDocument, null, new { id = "SelfDeclarationDocument", type = "file", @onchange = "CheckSelfDeclarationDocument(this)" })
+
+                        @if (!string.IsNullOrEmpty(Model.SelfDeclarationDocument))
+                        {
+                            <br /><a href="/Upload/@Model.SelfDeclarationDocument" target="_blank" class="btn">View Document</a>
+                                  <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <input id="btnSubmit" type="submit" name="cmd" value="Update" class="btn" />
+                        }
+                    </div>
+                    <div class="col-md-3">Enter Remark's <span style="color:red">*</span></div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(a => a.Remarks, new { @required = "required" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <br />
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3">
+                        @Html.HiddenFor(m => m.SelfDeclarationId)
+
+                        @{
+                            if (Model.CAT.ToLower() == "Additional".ToLower())
+                            {
+
+                                if (Model.SelfDeclarationId == 0)
+                                {
+                                    <span class="hideintAS">
+                                        <input id="btnSubmit" type="submit" name="cmd" value="Submit" class="btn" onclick="return valForm();" />
+                                    </span>
+                                }
+
+                                else
+                                {
+                                    <span class="hideintAS">
+                                        <input id="btnFinalSubmit" type="button" name="cmd" value="Proceed to Final Submit" class="btn" />
+                                    </span>
+
+                                }
+                            }
+                            else
+                            {
+
+                                if (Model.SelfDeclarationId == 0)
+                                {
+                                    <span class="hideint">
+                                        <input id="btnSubmit" type="submit" name="cmd" value="Submit" class="btn" onclick="return valForm();" />
+                                    </span>
+                                }
+
+                                else
+                                {
+                                    <span class="hideint">
+                                        <input id="btnFinalSubmit" type="button" name="cmd" value="Proceed to Final Submit" class="btn" />
+                                    </span>
+
+                                }
+                            }
+
+                        }
+
+
+                    </div>
+                </div>}
+
+        }
+    </div>
+
+
+
+    @{
+        if (ViewData["resultIns"] != null)
+        {
+            if (ViewData["resultIns"].ToString() == "F")
+            {
+                <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                    <span class="rqf">Final Submit Successfully</span>
+                </div>
+            }
+            else if (ViewData["resultIns"].ToString() == "S")
+            {
+                <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                    <span class="rqf">Submit Successfully</span>
+                </div>
+            }
+            else if (ViewData["resultIns"].ToString() == "M")
+            {
+                <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                    <span class="rqf">Updated Successfully</span>
+                </div>
+            }
+            else if (ViewData["resultIns"].ToString() == "0")
+            {
+                <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                    <span class="rqf">Failure to Submit</span>
+                </div>
+            }
+            else if (ViewData["resultIns"].ToString().ToLower().Contains("error"))
+            {
+                <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                    <span class="rqf">@ViewData["resultIns"]</span>
+                </div>
+            }
+        }
+    }
+
+    <script type="text/javascript">
+        $(function () {
+            $("#dPending").dialog({
+                modal: true,
+                title: "Alert",
+                width: 400,
+                height: 250,
+                buttons: {
+                    "OK": function () {
+                        $(this).dialog("close");
+                    },
+                }
+            });
+        });
+    </script>
+
+    <div id="dialogOnline" style="display: none">
+        <span class="rqf">Click OK button to do Final Submit otherwise click Cancel button.</span>
+    </div>
+    <script type="text/javascript">
+
+        $("#btnFinalSubmit").click(function () {
+
+
+            @*alert('@Model.SelfDeclarationDocument');
+            alert('@Model.SelfDeclarationId');*@
+
+
+        if (document.getElementById("Remarks").value == "") {
+            alert("Please Enter Remarks");
+            return false;
+        }
+        else if ('@Model.SelfDeclarationId' != 0 && '@Model.SelfDeclarationDocument' == "")
+        {
+        alert("Please Upload Signed Self Declaration");
+        return false;
+        }
+        else {
+
+        $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+        alert("Are you sure to do Final Submit?");
+        $('#dialogOnline').dialog('open');
+        return true;
+        }
+
+        });
+        $(function () {
+        $("#dialogOnline").dialog({
+        modal: true,
+        autoOpen: false,
+        title: "Are you sure to do Final Submit, After that data will be locked for any changes?",
+        width: 400,
+        height: 220,
+        buttons: {
+        "OK": function () {
+        // $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+        $('#myForm').submit();
+
+        },
+        Cancel: function () {
+        $('#loading1').empty("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+        $(this).dialog("close");
+        }
+        }
+        });
+        });
+
+
+        </script>
+
+        <script type="text/javascript">
+
+            function valForm() {
+                if (document.getElementById("Remarks").value == "") {
+                    alert("Please Enter Remarks");
+                    return false;
+                }
+                else if (document.getElementById("SelfDeclarationDocument").files.length == 0) {
+                    alert("Please Upload Signed Self Declaration");
+                    return false;
+                }
+            }
+
+
+            function CheckSelfDeclarationDocument(input) {
+                if (typeof ($("#SelfDeclarationDocument")[0].files) != "undefined") {
+
+                    var ext = $('#SelfDeclarationDocument').val().split('.').pop().toLowerCase();
+                    if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                        alert('Only .pdf format file allowed ');
+                        $('#SelfDeclarationDocument').val('');
+                        return false;
+                    }
+                    var size = parseFloat($("#SelfDeclarationDocument")[0].files[0].size / 1024).toFixed(2);
+                    if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                        var filerdr = new FileReader();
+                        filerdr.readAsDataURL(input.files[0]);
+                    }
+                    else {
+                        if (parseInt(size) <= 5) {
+                            alert("Your file size is too Small that is " + size + " KB.");
+                            $('#SelfDeclarationDocument').val('');
+                        }
+                        if (parseInt(size) > 1024) {
+                            alert("Your file size is too large that is " + size + " KB.");
+                            $('#SelfDeclarationDocument').val('');
+                        }
+                    }
+                }
+
+            }
+        </script>

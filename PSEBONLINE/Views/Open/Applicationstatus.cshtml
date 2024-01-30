@@ -1,0 +1,313 @@
+﻿@model PSEBONLINE.Models.OpenUserLogin
+
+@{
+    ViewBag.Title = "Applicationstatus";
+    Layout = "~/Views/Shared/_HeaderOPEN.cshtml";
+}
+<style type="text/css">
+    #ac-wrapper {
+        background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1001;
+    }
+    .f24 {
+        font-size: 20px;
+        padding-bottom: 10px;
+    }
+     #popwrapper {
+        background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1001;
+    }
+    #popup {
+        background: #fff none repeat scroll 0 0;
+        border: 5px solid #f1f1f1;
+        border-radius: 25px;
+        box-shadow: 0 0 3px 3px #64686e;
+        padding: 30px 10px;
+        display:block;
+        margin-top:150px;
+        font-size: 20px;
+        line-height: 32px;
+        width: 360px;
+    }
+    .danger {
+        color: rgba(0, 0, 0, 0.5);
+    }
+    .danger-r {
+        color: red;
+    }
+    .red {color: red;
+    }
+    .green {
+        color: green;
+    }
+</style>
+<script type="text/javascript">
+    //function PopUp(hideOrshow) {
+    //    if (hideOrshow == 'hide') document.getElementById('ac-wrapper').style.display = "none";
+    //    else document.getElementById('ac-wrapper').removeAttribute('style');
+    //}
+    //window.onload = function () {
+    //    setTimeout(function () {
+    //        PopUp('show');
+    //    }, 0);
+    //}
+    $(document).ready(function () {
+        if (localStorage.getItem('popState') != 'shown') {
+            $("#popwrapper").delay(0).fadeIn();
+           localStorage.setItem('popState', 'shown')
+        }
+        $('#pclose').click(function (e) // You are clicking the close button
+        {
+            $('#popwrapper').fadeOut(); // Now the pop up is hiden.
+        });        
+    });
+
+</script>
+<section class="content-header">
+    @if (ViewBag.Class == "12")
+    {
+    <h1>Application Status - Open School Sr. Secondary (Session : @Session["Session"].ToString())</h1>
+
+    }
+    else
+                   
+    {<h1>Application Status - Open School Matric (Session : @Session["Session"].ToString())</h1> }
+
+    @*<ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#"></a></li>
+            <li class="active"></li>
+        </ol>*@
+</section>
+
+@if (ViewBag.notValidForChallan != null)
+{
+    <script>
+                alert("You cannot generate challan because you have not provided either photo,signature or some details correctly.  Missing Fields : " + '@ViewBag.notValidForChallan');
+    </script>
+}
+
+<div class="box">
+    @*Click on below link to Proceed<br />*@
+
+    <div class="row">
+        <div class="col-md-12"><h1>Step-I : Fill up the Personal & Subject Details</h1></div>
+        <div class="clearfix"></div>
+        <div class="col-md-1 text-right">
+            @if (ViewBag.subStatus != null)
+            {
+                if (ViewBag.payStatus == "0")
+                {
+                    <i class="fa fa-file-o f24 green"></i>
+                }
+                else
+                {
+                    <i class="fa fa-file-o f24 danger"></i>
+                }
+            }
+        </div>
+        <div class="col-md-11 text-left">
+            @if (ViewBag.subStatus != null)
+            {
+                if (ViewBag.payStatus == "0")
+                {
+                    @Html.ActionLink("Click Here to Modify Login Information", "ModifyLogin", "Open", new { id = @Model.APPNO.ToString() }, (ViewBag.subStatus == "0") ? new { @style = "color:red;" } : new { @style = "color:green;" })
+
+                }
+                else
+                {
+                    <span class="danger">Click Here to Modify Login Information</span>
+                }
+            }
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="col-md-1 text-right">
+            @if (ViewBag.regStatus != null)
+            {
+                if (ViewBag.regStatus == "0")
+                {
+                    <i class="fa fa-file-o f24 green"></i>
+                }
+                else
+                {
+                    <i class="fa fa-file-o f24 danger"></i>
+                }
+            }
+        </div>
+        <div class="col-md-11 text-left">
+            @if (ViewBag.payStatus != null)
+            {
+                if (ViewBag.payStatus == "0")
+                {
+                    @Html.ActionLink("Click Here to Fill Application Form", "Registration", "Open", new { }, (ViewBag.regStatus == "0") ? new { @style = "color:red;" } : new { @style = "color:green;" })
+
+                }
+                else
+                {
+                    <span class="danger">Click Here to Fill Application Form</span>
+                }
+            }
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-1 text-right">
+            @if (ViewBag.subStatus != null)
+            {
+                if (ViewBag.regStatus == "0")
+                {
+                   <i class="@(ViewBag.subStatus == "0" ? "fa fa-book f24 red" : "fa fa-book f24 green")"></i>
+                }
+                else
+                {
+                    <i class="fa fa-book f24 danger"></i>
+
+                }
+            }
+        </div>
+        <div class="col-md-11 text-left">
+            @if (ViewBag.payStatus != null)
+            {
+                if (ViewBag.payStatus == "0")
+                {
+                    if (ViewBag.regStatus == "1")
+                    {
+                        @Html.ActionLink("Click Here to Fill Subject Details", "Subjects", "Open", new { }, (ViewBag.subStatus == "0") ? new { @style = "color:red;" } : new { @style = "color:green;" })
+                    }
+                    else
+                    {
+                        <span style="color:grey;">Click Here to Fill Subject Details</span>
+                    }
+                }
+                else
+                {
+                    <span style="color:grey;">Click Here to Fill Subject Details</span>
+                }
+            }
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-1 text-right"><span style="@(ViewBag.subStatus == "1" ? "display:block" : "display:none")"><i class="fa fa-file f24 green"></i></span> </div>
+        <div class="col-md-11 text-left"><span style="@(ViewBag.subStatus == "1" ? "display:block" : "display:none")">@Html.ActionLink("Click Here to View Application Form", "ViewRegistration", "Open", new { Id = @Model.APPNO.ToString() }, new { @style = "color:green;" })</span></div>
+        <div class="col-md-11  text-left" style="@(ViewBag.CorrectEntryOpen == "1" ? "display:block" : "display:none")">
+            @Html.ActionLink("Click Here to Upload Photo Sign", "UploadPhotoSign", "Open", new { Id = @Model.APPNO.ToString() }, new { @style = "color:red" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12"><h1>Step-II : Payment Option</h1></div>
+        <div class="clearfix"></div>
+        <div class="col-md-1 text-right">
+            @if (ViewBag.payStatus != null)
+            {
+                if (ViewBag.payStatus == "0")
+                {
+                    <i class="fa fa-inr f24 danger"></i>
+                }
+                else
+                {
+                    <i class="@(ViewBag.payStatus == "0" ? "fa fa-inr f24 red" : "fa fa-inr f24 green")"></i>
+                }
+            }
+        </div>
+        <div class="col-md-11 text-left">
+            @if (ViewBag.subStatus == "1")
+            {
+                @Html.ActionLink("Click Here to View Payment & Generate Challan", "CalculateFee", "Open", new { Id = @Model.APPNO.ToString() }, ViewBag.payStatus == "0" ? new { @style = "color:red;" } : new { @style = "color:green;" })
+            }
+            else
+            {
+                <span style="color:grey">
+                    Click Here to View Payment & Generate Challan
+                </span>
+            }
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="col-md-12"><br />&nbsp;<h1>Step-III : Study Centre & Print Acknowledgement/Registration Slip</h1></div>
+        <div class="clearfix"></div>
+        <div class="col-md-1 text-right">
+            @if (ViewBag.CentreStatus != null)
+            {
+                if (ViewBag.payStatus == "1" && Session["payVerify"].ToString() == "1" && ViewBag.CenterStatus == "0")
+                {
+                    <i class="fa fa-leanpub f24 danger-r"></i>
+                }
+                else
+                {
+                    <i class="fa fa-leanpub f24 green"></i>
+                }
+            }
+            else
+            {
+                <i class="fa fa-leanpub f24 danger"></i>
+            }
+        </div>
+        <div class="col-md-11">
+            @if ((ViewBag.CentreStatus != null && ViewBag.CentreStatus == "0") && (ViewBag.payStatus != null && ViewBag.payStatus == "1") && (Session["payVerify"] != null && Session["payVerify"].ToString() == "1"))
+            {
+                @Html.ActionLink("Click Here to Choose Study Centre", "Study_Center", "Open", new { }, new { @style = "color:red;" })
+            }
+            else
+            {
+                @Html.ActionLink("Click Here to View Study Centre", "Study_Center", "Open", new { }, (Session["payVerify"].ToString() == "0") ? new { @style = "color:grey;" } : new { @style = "color:green;" })
+            }
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-1 text-right">
+            @if ((ViewBag.CentreStatus != null && ViewBag.CentreStatus == "1") && (ViewBag.payStatus != null && ViewBag.payStatus == "1") && (Session["payVerify"] != null && Session["payVerify"].ToString() == "1"))
+            {
+                <i class="fa fa-cloud-download f24 green"></i>
+            }
+            else
+            {
+                <i class="fa fa-cloud-download f24 danger"></i>
+            }
+
+        </div>
+        <div class="col-md-11">
+            @if ((ViewBag.CentreStatus != null && ViewBag.CentreStatus == "1") && (ViewBag.payStatus != null && ViewBag.payStatus == "1") && (Session["payVerify"] != null && Session["payVerify"].ToString() == "1"))
+            {
+                @Html.ActionLink("Click Here to Download Acknowledgement Slip of Application Form", "ApplicationForm", "Open", new { Id = @Model.APPNO.ToString() }, new { @style = "color:green" })
+            }
+            else
+            {
+                <span style="color:grey;">
+                    Click here to Download Acknowledgement Slip of Application Form
+                </span>
+            }
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+@*<div id="dvsh">
+    <div id="ac-wrapper" style='display: none'>onclick="PopUp('hide')"
+        <div id="popup">*@
+<div style="display:none" id="popwrapper">
+    <center>
+        <div id="popup">
+            <p><span style="float:right"><a href="#" id="pclose"><img alt="Close" src="/Images/close_button.png" title="Close" /></a></span></p>            
+            You have Successfully Signin.<br />Your Application No. is:- <span class="rqf"> @Model.APPNO.ToString()</span>
+        </div>
+    </center>
+    </div>
+    @*</div>
+            </div>
+        </div>*@
+
+    @*<script>
+            function preventBack() { window.history.forward(); }
+            setTimeout("preventBack()", 0);
+            window.onunload = function () { null };
+        </script>*@

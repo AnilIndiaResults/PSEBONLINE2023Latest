@@ -1,0 +1,350 @@
+﻿@model PSEBONLINE.Models.FeeHomeViewModel
+@{
+    ViewBag.Title = "Exam Calculate Fee";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>Exam Calculate Fee</h1>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+
+
+<div class="row" id="divall">
+    <div class="col-md-12">
+        <fieldset>
+            <legend>Search</legend>
+            @using (Html.BeginForm("ExamCalculateFeeByDate", "Home", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+            {
+                <form id="myForm">
+                    <div class="col-md-2">
+                        Enter School Code @Html.TextBoxFor(m => m.schl, new
+{
+ id = "schl",
+ @maxlength = "7",
+ required = "required",
+ @placeholder = "Enter School Code"
+})
+                    </div>
+                    <div class="col-md-3">
+                        Select Type
+                        @{
+                            List<SelectListItem> catgilist = new List<SelectListItem>();
+
+                            catgilist.Add(new SelectListItem { Text = "Matric Regular Calculate Fee", Value = "M" });
+                            catgilist.Add(new SelectListItem { Text = "Senior Regular Calculate Fee", Value = "S" });
+                            catgilist.Add(new SelectListItem { Text = "Matric Open Calculate Fee", Value = "MO" });
+                            catgilist.Add(new SelectListItem { Text = "Senior Open Calculate Fee", Value = "SO" });
+                        }
+                        @Html.DropDownListFor(m => m.formSelected, catgilist, new { id = "ddlcategory" })
+                    </div>
+                    <div class="col-md-3">
+                        Select Exam Fee Date  @Html.TextBoxFor(m => m.dateSelected, new
+                    {
+                        id = "SearchString",
+                        @placeholder = "Exam Fee Date",
+                        @class = "date1",
+                        @maxlength = "10",
+                        onpaste = "return false;",
+                        oncopy = "return false;",
+                        oncut = "return false;",
+                        required = "required"
+                    })
+                    </div>
+                    <div class="col-md-3">
+                        Select Student Insert Date  @Html.TextBoxFor(m => m.insertDate, new
+                    {
+                        id = "insertDate",
+                        @class = "date1",
+                        @maxlength = "10",
+                        onpaste = "return false;",
+                        oncopy = "return false;",
+                        oncut = "return false;",
+                        @placeholder = "Select Student Insert Date"
+                    })
+                    </div>
+                    <div class="col-md-1">
+                        <br />
+                        <input type="submit" value="Search" id="btnsubmit" />
+                        @*<a href="~/Home/ExamCalculateFeeByDate" class="btn">Reset</a>*@
+                    </div>
+                </form>
+                <div class="clearfix"></div>
+            }
+        </fieldset>
+        <p>
+            @{
+                if (ViewData["FeeStatus"] != null)
+                {
+                    if (ViewData["FeeStatus"].ToString() == "1")
+                    {
+                    <p style="color:#cc0000">
+                        This Fee is Valid Upto date @Html.DisplayFor(m => m.EndDate)
+                    </p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "3")
+                {
+                    <p style="color:#cc0000">@ViewBag.Message</p>
+                }
+            }
+            }
+            </p>
+            <div class="table-responsive">
+
+                @{
+                    if (ViewData["FeeStatus"] != null)
+                    {
+                        if (ViewData["FeeStatus"].ToString() == "1")
+                        {
+
+                            <table class="table table-bordered" id="t01">
+                                <tr class="active-tr">
+                                    <th>Form</th>
+                                    <th>No. Of Students</th>
+                                    <th>Fee</th>
+                                    <th>No of Add Sub</th>
+                                    <th>AddSubFee</th>
+                                    <th>No of Pr Sub</th>
+                                    <th>PracFee</th>
+                                    <th>Late fee</th>
+                                    <th>Cert fee</th>
+                                    <th>Total Fees</th>
+                                </tr>
+                                @{
+
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        var StudentList = "";
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            var Form = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                            var NOS = Model.StoreAllData.Tables[0].Rows[i]["NOS"].ToString();
+                                            var fee = Model.StoreAllData.Tables[0].Rows[i]["fee"].ToString();
+                                            var AddSubFee = Model.StoreAllData.Tables[0].Rows[i]["AddSubFee"].ToString();
+                                            var NOAS = Model.StoreAllData.Tables[0].Rows[i]["NOAS"].ToString();
+                                            var PracFee = Model.StoreAllData.Tables[0].Rows[i]["PrSubFee"].ToString();
+                                            var NOPS = Model.StoreAllData.Tables[0].Rows[i]["NOPS"].ToString();
+                                            var latefee = Model.StoreAllData.Tables[0].Rows[i]["latefee"].ToString();
+                                            var TotalFees = Model.StoreAllData.Tables[0].Rows[i]["totfee"].ToString();
+                                            var HardCopyCertificateFee = Model.StoreAllData.Tables[0].Rows[i]["HardCopyCertificateFee"].ToString();                           
+                                            StudentList += Model.StoreAllData.Tables[0].Rows[i]["StudentList"].ToString() + ",";
+                                            int Count = i + 1;
+                                            <tr>
+                                                <td align="center">@Form</td>
+                                                <td align="center">@NOS</td>
+                                                <td align="center">@fee</td>
+                                                <td align="center">@NOAS</td>
+                                                <td align="center">@AddSubFee</td>
+                                                <td align="center">@NOPS</td>
+                                                <td align="center">@PracFee</td>
+                                                <td align="center">@latefee</td>
+                                                <td align="center">@HardCopyCertificateFee</td>
+                                                <td align="center">@TotalFees</td>
+                                            </tr>
+                                        }
+                                        Session["ExamFeeStudentListAdmin"] = StudentList.ToString();
+                                        <tr>
+                                            <td colspan="7">
+                                                <a href="" data-toggle="modal" data-target="#myModal1" class="btn">Click Here To View Candidate Wise Fee</a>
+                                            </td>
+                                            <td colspan="2" align="right">Total Fees : ₹  @Html.DisplayFor(m => m.TotalFeesInWords)  </td>
+                                        </tr>
+                                    }
+                                    @*else
+                                    {
+                                        <tr>
+                                            <td colspan="8">
+                                                @ViewBag.Message
+                                            </td>
+                                        </tr>
+                                    }*@
+                                }
+                            </table>
+                        }
+                    }
+
+                }
+
+                @using (Html.BeginForm("GenerateExamChallanByDate", "Home"))
+                {
+                    if (ViewData["FeeStatus"] != null)
+                    {
+                        if (ViewData["FeeStatus"].ToString() == "1")
+                        {
+                            @*@Html.RadioButtonFor(m => m.BankCode, "204", new { id = "SBI" })<span>&nbsp;&nbsp;&nbsp;</span><img src="~/Images/SBIbank.png" width="150" height="60" />
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            @Html.RadioButtonFor(m => m.BankCode, "202", new { id = "PNB" })<span>&nbsp;&nbsp;&nbsp;</span><img src="~/Images/PNBbank.gif" width="150" height="60" />*@
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            @Html.RadioButtonFor(m => m.BankCode, "203", new { id = "HOD" })<span>&nbsp;PSEB HOD&nbsp;&nbsp;</span><img src="~/Images/Slogo.jpg" width="150" height="60" /><br />
+
+                            @*@:Challan Generate Upto <input type="text" id="GenerateDate" name="GenerateDate" placeholder="Challan Valid Upto" value="@ViewBag.ValidDate" class="date1" required />*@
+
+
+
+
+                            @:LumsumFine <input type="text" id="lumsumfine" name="lumsumfine" placeholder="Enter LumSum Fine" maxlength="7" onkeypress="return isNumberKey(event)" required /><br />
+                            @:LumsumRemarks <textarea id="lumsumremarks" name="lumsumremarks" placeholder="Enter LumSum Remarks" required></textarea><br />
+                            @:Challan Valid Upto <input type="text" id="ValidDate" name="ValidDate" placeholder="Challan Valid Upto" value="@ViewBag.ValidDate" class="date1" required />
+                            <input type="submit" class="btn" id="btndee" OnClick="return confirm('You are going to Payment through Selected Bank. Are You Sure for It?');" />
+                        }
+                    }
+                }
+
+            </div>
+
+
+            @*Candidate Fee List*@
+
+            @if (Model != null && ViewBag.TotalCount != null)
+            {
+                if (ViewBag.SearchId == "M" || ViewBag.SearchId == "S")
+                {
+                    if (ViewBag.TotalCount > 0 && Model.StoreAllData.Tables[2].Rows.Count > 0)
+                    {
+                        <div class="container">
+                            <div class="modal fade" id="myModal1" role="dialog">
+                                <div class="modal-dialog" style="width:80%">
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h3><span style="color:#cc0000">Total Number of Students : @Model.StoreAllData.Tables[2].Rows.Count</span></h3>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <table id="t01" class="table table-bordered">
+                                                <tr class="active-tr">
+                                                    <th>Sr No</th>
+                                                    <th>Unique ID</th>
+                                                    @*<th>Name/Father's Name/Mother's Name</th>*@
+                                                    <th>Name of Student</th>
+                                                    <th>Class Section/RollNumber</th>
+                                                    <th>Form</th>
+                                                    <th>Fee</th>
+                                                    <th>No. of Add Sub</th>
+                                                    <th>Additional Fee</th>
+                                                    <th>No. of Pr Sub</th>
+                                                    <th>Practical  Fee </th>
+                                                    <th>Late Fee</th>
+                                                    <th>Cert Fee</th>
+                                                    <th>Total Fee</th>
+                                                </tr>
+                                                @{
+                                                    int Count = 0;
+                                                    for (int k = 0; k < Model.StoreAllData.Tables[2].Rows.Count; k++)
+                                                    {
+                                                        var std_id = Model.StoreAllData.Tables[2].Rows[k]["reg16id"].ToString();
+                                                        //var FullName = Model.StoreAllData.Tables[2].Rows[k]["FullName"].ToString();
+                                                        var form_name = Model.StoreAllData.Tables[2].Rows[k]["form_name"].ToString();
+                                                        var Fee = Model.StoreAllData.Tables[2].Rows[k]["Fee"].ToString();
+                                                        var AddSubFee = Model.StoreAllData.Tables[2].Rows[k]["AddSubFee"].ToString();
+                                                        var PracFee = Model.StoreAllData.Tables[2].Rows[k]["PrSubFee"].ToString();
+                                                        var add_sub_count = Model.StoreAllData.Tables[2].Rows[k]["NOAS"].ToString();
+                                                        var prac_sub_count = Model.StoreAllData.Tables[2].Rows[k]["NOPS"].ToString();
+                                                        var LateFee = Model.StoreAllData.Tables[2].Rows[k]["latefee"].ToString();
+                                                        var TotFee = Model.StoreAllData.Tables[2].Rows[k]["Totfee"].ToString();
+                                                        var HardCopyCertificateFee = Model.StoreAllData.Tables[2].Rows[k]["HardCopyCertificateFee"].ToString();
+
+                                                        var cnm = Model.StoreAllData.Tables[2].Rows[k]["candi_name"].ToString();
+                                                        var Section = Model.StoreAllData.Tables[2].Rows[k]["Section"].ToString();
+                                                        var classroll = Model.StoreAllData.Tables[2].Rows[k]["classroll"].ToString();
+                                                        Count = Count + 1;
+                                                        <tr>
+                                                            <td>@Count</td>
+                                                            <td>@std_id</td>
+                                                            <td>@cnm</td>
+                                                            <td>@Section / @classroll</td>
+                                                            @*<td>@FullName</td>*@
+                                                            <td>@form_name</td>
+                                                            <td>@Fee</td>
+                                                            <td>@add_sub_count</td>
+                                                            <td>@AddSubFee</td>
+                                                            <td>@prac_sub_count</td>
+                                                            <td>@PracFee</td>
+                                                            <td>@LateFee</td>
+                                                            <td>@HardCopyCertificateFee</td>
+                                                            <td>@TotFee</td>
+                                                        </tr>
+
+                                                    }
+                                                }
+
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                }
+            }
+        </div>
+     <div class="clearfix"></div>
+  <div class="col-md-12 text-center">
+   <a href="~/Home/ExamCalculateFeeByDate" class="btn">Back</a>    
+    </div></div>
+<script src="Scripts/jquery-1.7.1.min.js"></script>
+<script>
+    function validateNumber1(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $("#schl").val();
+        if (event.keyCode === 8 || event.keyCode === 46
+        || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c.length > 6) {
+            return false;
+        }
+
+        else return true;
+
+
+    }
+
+    $(document).ready(function () {
+        //alert("Jay");
+        $("#btndee").click(function () {           
+            var flag = 0;
+            var c = $("#lumsumfine").val();
+            if (c == "") {
+                $("#lumsumfine").addClass("input-validation-error");
+                flag = 1;
+                //return false;
+            }
+            if (c != "") {
+                $("#lumsumfine").removeClass("input-validation-error");
+            }
+            var d = $("#lumsumremarks").val();
+            if (d == "") {
+                $("#lumsumremarks").addClass("input-validation-error");
+                flag = 1;
+                //return false;
+            }
+            if (d != "") {
+                $("#lumsumremarks").removeClass("input-validation-error");
+            }
+
+            var v = $("#ValidDate").val();
+            if (v == "") {
+                $("#ValidDate").addClass("input-validation-error");
+                flag = 1;
+            }
+            if (flag == 1) {
+                return false;
+            }
+
+        });      
+      
+        $(".date1").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2019:' + (new Date().getFullYear())
+
+        });
+
+    });
+</script>
+

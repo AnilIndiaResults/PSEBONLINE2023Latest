@@ -1,0 +1,100 @@
+﻿@model PSEBONLINE.Models.PunAddModels
+@{
+    ViewBag.Title = "Admin Punjabi Additional ErrorListMIS";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>Admin Punjabi Additional ErrorListMIS</h1>
+@using (Html.BeginForm("AdminPunAddErrorListMIS", "PunAdd", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+{
+
+    <div class="row" style="padding-bottom:50px">
+        <div class="col-md-4">
+            Upload Error MIS File @Html.TextBoxFor(m => m.file, new { id = "MIS_FILE", type = "file", required = "required" })
+        </div>
+        <div class="col-md-2">
+            <br />
+            <input type="submit" value="Upload" onclick="return valForm();" />
+        </div>
+        <div class="col-md-6 text-right">
+            <br />
+            @*<a href="~/Bank/ErrorList" class="btn">Click Here to See ErrorList</a>*@
+            <a download="" href="~/PDF/PunAddErrorSample.xls" class="btn">Click Here to Download Sample File</a> 
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("AdminPunAddHome", "PunAdd", new { File = "Back" })    '" />
+            
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <h1>Important Instructions:</h1> 
+            <p style="padding-left:15px">
+                1) All Fields are compulsory.<br />
+                2) REFNO Must be of 11 Digits. <br />
+                3) ERRCODE Must be Same as in ErrorList <br />
+                4) STATUS Must be of YES or NO -> <span class="rqf"> YES: Assign error / NO: Remove Error </span> <br />                
+            </p>
+        </div>
+    </div>     
+    <div class="col-md-12">
+        <h1></h1>
+        <h1>   Punjabi Additional Error List  for Current Batch</h1>
+        @if (ViewBag.TotalCount > 0)
+        {
+            <table border="1" width="100%" id="t01" class="table table-bordered tprint">                
+                <tr class="active-tr">                   
+                    <td width="30%">&nbsp; Ref. No.</td>
+                    @*<td width="11%">&nbsp; Roll</td>*@
+                    <td width="22%">&nbsp;Error Code</td>
+                    <td width="11%">&nbsp;Error Status</td>
+                </tr>
+                @{                   
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                        var ErrCode = Model.StoreAllData.Tables[0].Rows[i]["ErrCode"].ToString();                                              
+                        <tr>
+                            <td>&nbsp; @refno</td>
+                            <td>&nbsp; @ErrCode</td>
+                            <td class="redc">&nbsp; Yes</td>                            
+                        </tr>
+
+
+                    }                   
+                }
+            </table>
+        }
+
+    </div>
+}
+
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+               // window.location.href = 'Url.Action("Welcome", "Bank")';
+            </script>}
+        else
+        {
+            <script type="text/javascript" language="javascript">
+               alert('@ViewBag.Message');
+            </script>}
+
+    }
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select only .xls file format');
+            }
+        });
+    });
+
+</script>

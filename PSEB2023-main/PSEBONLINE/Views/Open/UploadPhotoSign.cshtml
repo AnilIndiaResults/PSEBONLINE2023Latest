@@ -1,0 +1,135 @@
+﻿@model PSEBONLINE.Models.OpenUserLogin
+@{
+    ViewBag.Title = "UploadPhotoSign";
+    Layout = "~/Views/Shared/_HeaderOPEN.cshtml";
+}
+<h2>Upload Photo Sign</h2>
+@using (Html.BeginForm("UploadPhotoSign", "Open", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="box">
+        <div class="row"> 
+            <div class="col-md-12">
+                <h4>
+                    kindly Upload Clear Colored Photograph and Signature @*Upload Photo*@
+                </h4>
+            </div>
+            <div class="col-md-2"> Upload Photo<sup style="color:red;font-size:15px;">*</sup></div>
+            <div class="col-md-3">@Html.TextBox("Photo", null, null, new { id = "Photo", required= "required", type = "file", onchange = "findSizeAndPreview(this)" }) <span class="rqf">kindly Upload Clear Colored Photograph<br />*Photp Size 5 to 50 KB  (Only .JPG)</span></div>
+            <div class="col-md-1"><img src="@ViewBag.Photo" class="img-responsive" style="width:80px;border:1px solid #ccc" alt="Photo" id="imgPhoto" /></div>
+            <div class="col-md-2">Upload Signature<sup style="color:red;font-size:15px;">*</sup></div>
+            <div class="col-md-3">@Html.TextBox("Sign", null, null, new { id = "Sign", required = "required", type = "file", onchange = "findSizeAndPreviewSign(this)" }) <span class="rqf">kindly Upload Clear Signature<br />*Signature Size 1 to 50 KB   (Only .JPG)</span></div>
+            <div class="col-md-1"><img src="@ViewBag.Sign" class="img-responsive" style="height:30px;border:1px solid #ccc" alt="Signature" id="imgSign" /></div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center">
+                &nbsp;<br />
+                <input type="submit" value="Submit" class="btn" />
+            </div>
+
+        </div>
+    </div>
+                            }
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+              alert("Update Successfully ");
+              window.location.href = '@Url.Action("ViewRegistration", "Open", new { Id = @ViewBag.app_id })';
+            </script>}
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+            alert("Failure..plz try again");
+            </script>
+        }
+      
+    }
+}
+
+
+<script type="text/javascript">
+
+    function findSizeAndPreview(input) {
+        if (typeof ($("#Photo")[0].files) != "undefined") {
+
+            var ext = $('#Photo').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['jpg', 'jpeg']) == -1) {
+                alert('Only  .jpg and .jpeg format file allowed ');
+                $('#Photo').val('');
+                $('#imgPhoto').attr('src', '~/Images/NOSignature.jpg');
+                return false;
+            }
+
+            var size = parseFloat($("#Photo")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 50) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#imgPhoto').attr('src', e.target.result);
+
+                }
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#Photo').val('');
+                    $('#imgPhoto').attr('src', '~/Images/NOSignature.jpg');
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#Photo').val('');
+                    $('#imgPhoto').attr('src', '~/Images/NOSignature.jpg');
+                }
+
+
+            }
+        }
+
+    }
+
+    function findSizeAndPreviewSign(input) {
+        if (typeof ($("#Sign")[0].files) != "undefined") {
+
+            var ext = $('#Sign').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+                alert('Only .gif, .png, .jpg and .jpeg format file allowed ');
+                $('#Sign').val('');
+                $('#imgSign').attr('src', '~/Images/NOSignature.jpg');
+                return false;
+            }
+
+            var size = parseFloat($("#Sign")[0].files[0].size / 1024).toFixed(2);
+            // alert(size);
+            if (parseInt(size) >= 1 && parseInt(size) <= 50) {
+                var filerdrS = new FileReader();
+                filerdrS.onload = function (e) {
+                    $('#imgSign').attr('src', e.target.result);
+
+                }
+                filerdrS.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 1) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#Sign').val('');
+                    $('#imgSign').attr('src', '~/Images/NOSignature.jpg');
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#Sign').val('');
+                    $('#imgSign').attr('src', '~/Images/NOSignature.jpg');
+                }
+
+            }
+        }
+
+    }
+
+</script>

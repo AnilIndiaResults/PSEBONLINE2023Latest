@@ -1,0 +1,1421 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+
+
+
+    .btnback {
+        background-color: orangered;
+        -moz-user-select: none;
+        background-image: none;
+        border: 1px solid orangered;
+        border-radius: 4px;
+        color: #fff !important;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857;
+        margin-bottom: 0;
+        padding: 3px 12px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .btngo {
+        background-color: green !important;
+        -moz-user-select: none;
+        background-image: none;
+        border: 1px solid green !important;
+        border-radius: 4px;
+        color: #fff !important;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857;
+        margin-bottom: 0;
+        padding: 3px 12px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    #loading1 {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: 9999;
+        background: url("https://www.creditmutuel.fr/cmne/fr/banques/webservices/nswr/images/loading.gif") no-repeat center center rgba(255,255,255,0.6)
+    }
+
+
+    .tip {
+        display: inline;
+        position: relative
+    }
+
+        .tip:hover:after {
+            background: #333;
+            background: rgba(248,148,5,.9);
+            border-radius: 5px;
+            bottom: 26px;
+            color: #000;
+            content: attr(rel);
+            left: 20%;
+            padding: 5px 15px;
+            position: absolute;
+            white-space: pre-wrap;
+            z-index: 98;
+            font-family: Arial;
+            font-size: 12px;
+            text-align: justify;
+            width: 320px
+        }
+</style>
+
+
+@if (Session["UserName"] != null && Session["RoleType"].ToString() == "Admin") { }
+else { Response.Redirect("~/Admin"); }
+
+<h1>Add School Form</h1>
+
+<h4>School Identity Details</h4>
+
+@using (Html.BeginForm("Add_School", "School", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-4" style="display:none">
+            School Code @Html.TextBoxFor(a => a.SCHL, new { id = "SchoolCode", @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            ID No. @Html.RadioButtonFor(m => m.SameAsSchl, "Yes", new { id = "SameAsSchl" })   <span>Same As Schl</span>
+            <br />
+            @Html.TextBoxFor(a => a.idno, new { id = "IDNo", @maxlength = "10" })
+        </div>
+        <div class="col-md-4">
+            Study Center Code @Html.TextBoxFor(a => a.OCODE, new { id = "OCODE", @maxlength = "7", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="col-md-4">
+            Udise Code @Html.TextBoxFor(a => a.udisecode, new { id = "udisecode", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            Session
+            @Html.DropDownList("Session", new SelectList(ViewBag.SessionList, "Value", "Text", "2019-2020"), "--Select Session---", new { id = "Session", required = "Required" })
+
+        </div>
+        <div class="col-md-4">
+            School Type
+            @Html.DropDownList("USERTYPE", new SelectList(ViewBag.SchoolTypeList, "Value", "Text"), "--Select School Type---", new { id = "USERTYPE" })
+        </div>
+        <div class="col-md-4">
+            Class
+            @Html.DropDownList("CLASS", new SelectList(ViewBag.ClassTypeList, "Value", "Text"), "--Select Class---", new { id = "CLASS" })
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="col-md-4">
+            Status
+            @Html.DropDownList("Status", new SelectList(ViewBag.StatusList, "Value", "Text"), new { id = "Status", @readonly = "readonly" })
+        </div>
+        <div class="col-md-4">
+            Approved
+            @Html.DropDownList("Approved", new SelectList(ViewBag.YesNoList, "Value", "Text", "Y"), new { id = "Approved" })
+        </div>
+        <div class="col-md-4" style="display:none">
+            Verified  @Html.DropDownList("vflag", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { id = "vflag" })
+        </div>
+
+
+        <div class="col-md-4" style="display:none">
+            Password @Html.TextBoxFor(a => a.PASSWORD, new { id = "PASSWORD", @maxlength = "20", @class = "textnone" })
+        </div>
+        <div class="col-md-4">
+            Validity @Html.TextBoxFor(a => a.VALIDITY, new { @Value = "9999", id = "VALIDITY", @maxlength = "10", onkeypress = "return isNumberKey(event);" })
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-3">
+            School Area
+            @Html.DropDownList("AREA", new SelectList(ViewBag.AREAList, "Value", "Text"), "--Select---", new { id = "AREA", @maxlength = "50" })
+        </div>
+
+
+        <div class="col-md-3">
+            Lower Class  @Html.DropDownListFor(a => a.lclass, new SelectList(ViewBag.CountList, "Value", "Text"), new { id = "lclass" })
+        </div>
+        <div class="col-md-3">
+            Upper Class  @Html.DropDownListFor(a => a.uclass, new SelectList(ViewBag.CountList, "Value", "Text"), new { id = "uclass" })
+        </div>
+
+        <div class="col-md-3">
+            NSQF @Html.DropDownList("NSQF_flag", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+        </div>
+    </div>
+
+
+    <div class="clearfix"></div>
+    <h4>School Details(In English)</h4>
+    <div class="row">
+        <div class="col-md-12">
+            School Name @Html.TextBoxFor(a => a.SCHLE, new { id = "SCHLE", @maxlength = "100" })
+        </div>
+        <div class="col-md-6">
+            Station Name @Html.TextBoxFor(a => a.STATIONE, new { id = "STATIONE", @maxlength = "100" })
+        </div>
+        <div class="col-md-3">
+            District Code @*Distnm*@
+            @Html.DropDownList("DIST", new SelectList(ViewBag.DistEList, "Value", "Text"), "--Select District---", new { id = "MyDist", required = "Required" })
+            @*@Html.DropDownListFor(a => a.DISTE, (SelectList)ViewBag.ODISTE)*@
+            @*@Html.DropDownList("DistE", new SelectList(ViewBag.DistEList, "Value", "Text"), "--Select District---", new { })*@
+            @*@Html.DropDownList("DistName123", new SelectList(ViewBag.DistName, "Value", "Text"))*@
+        </div>
+        <div class="col-md-3">
+            @*DISTE*@
+            District  Name @Html.TextBoxFor(a => a.DISTE)
+        </div>
+        @*<div class="col-md-3">
+                Tehsil Name
+                @Html.DropDownListFor(a => a.Tehsile, new SelectList(ViewBag.MyTeh, "Value", "Text"), "--Select Tehsil---", new { id = "MyTeh", @class = "", required = "Required" })
+
+            </div>*@
+    </div>
+    <div class="clearfix"></div>
+
+    <h4>
+        School Details(In Punjabi)
+    </h4>
+    <div class="row">
+        <div class="col-md-12">
+            School Name @Html.TextBoxFor(a => a.SCHLP, new
+{
+id = "SCHLP",
+@class = "keyboardInput",
+onKeyPress = "javascript:convertThis(event)",
+onpaste = "return false;",
+oncopy = "return false;",
+oncut = "return false;",
+onclick = "toggleKBMode1(event)",
+lang = "pa"
+})
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-6">
+            Station Name @Html.TextBoxFor(a => a.STATIONP, new
+{
+id = "STATIONP",
+@class = "keyboardInput",
+onKeyPress = "javascript:convertThis(event)",
+onpaste = "return false;",
+oncopy = "return false;",
+oncut = "return false;",
+onclick = "toggleKBMode1(event)",
+lang = "pa"
+})
+        </div>
+        <div class="col-md-3">
+            District Code @*DISTNMPun*@
+            @Html.TextBoxFor(a => a.DISTNMPun, new { id = "MyDistp", required = "Required", @readonly = "readonly", @class = "kdsfont" })
+
+            @*@Html.DropDownListFor(a => a.DISTP, (SelectList)ViewBag.ODISTP)*@
+            @*@Html.DropDownList("DIST", new SelectList(ViewBag.DistPList, "Value", "Text"), "--Select District---", new { id= "MyDistp",  @class= "kdsfont", required = "Required" })*@
+            @*@Html.DropDownList("DistP", new SelectList(ViewBag.DistPList, "Value", "Text"), "--Select District---", new { })*@
+        </div>
+        <div class="col-md-3">
+            @*DISTP*@
+            District  Name @Html.TextBoxFor(a => a.DISTP, new
+{
+id = "DISTP",
+@class = "keyboardInput",
+onKeyPress = "javascript:convertThis(event)",
+onpaste = "return false;",
+oncopy = "return false;",
+oncut = "return false;",
+onclick = "toggleKBMode1(event)",
+lang = "pa"
+})
+            @*@Html.DropDownList("MyTeh", new SelectList(string.Empty, "Value", "Text"), "--Select---", new { @class = "" })*@
+        </div>
+        @*<div class="col-md-3">
+                Tehsil Name
+                @Html.TextBoxFor(a => a.Tehsilp, new { id = "MyTehP", required = "Required", @readonly = "readonly",@class= "kdsfont" })
+                @Html.DropDownList("TehsilP", new SelectList(ViewBag.MyTehP, "Value", "Text"), new { id = "MyTehP",@class= "kdsfont", required = "Required" })
+
+            </div>*@
+    </div>
+
+    <div class="clearfix"></div>
+    <h4>School Block/Cluster Details</h4>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-3">
+                    School Estd Year
+                    @Html.DropDownList("SchlEstd", new SelectList(ViewBag.EstalimentYearList, "Value", "Text"), "--Select Estd Year---", new { id = "SchlEstd" })
+                </div>
+
+                <div class="col-md-3">
+                    School Type
+
+                    @{
+                        List<SelectListItem> SchlTypeList = new List<SelectListItem>();
+                        SchlTypeList.Add(new SelectListItem { Text = "--Type Of Schl TypeList--", Value = "0" });
+                        SchlTypeList.Add(new SelectListItem { Text = "Co-Education", Value = "Co-Education" });
+                        SchlTypeList.Add(new SelectListItem { Text = "Boys", Value = "Boys" });
+                        SchlTypeList.Add(new SelectListItem { Text = "Girls", Value = "Girls" });
+                    }
+                    @Html.DropDownList("SchlType", SchlTypeList, new { id = "SchlType" })
+                </div>
+                <div class="col-md-3">
+                    Tehsil (In English)
+                    @Html.DropDownListFor(a => a.Tehsile, new SelectList(ViewBag.MyTeh, "Value", "Text"), "--Select Tehsil---", new { id = "MyTeh", @class = "" })
+
+
+                </div>
+                <div class="col-md-3">
+                    Tehsil (In Punjabi)
+                    @Html.TextBoxFor(a => a.Tehsilp, new { id = "MyTehP", @readonly = "readonly", @class = "kdsfont", @required = "required" })
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="col-md-3">
+                    Edu Block
+                    @Html.DropDownList("Edublock", new SelectList(ViewBag.MyEdublock, "Value", "Text"), "---Select Edublock---", new { @class = ""})
+                </div>
+                <div class="col-md-3">
+                    Edu Cluster
+                    @Html.DropDownList("EduCluster", new SelectList(ViewBag.MyEduCluster, "Value", "Text"), "---Select EduCluster---", new { @class = ""})
+                    <span id="lblStatusEduCluster"></span>
+                </div>
+
+                <div class="clearfix"></div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+    <h4>Class and Stream Details</h4>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="t01" class="table table-bordered">
+                        <tbody>
+                            <tr style="font-weight: bold;">
+                                <td align="center" colspan="1">
+                                    Primary
+                                </td>
+                                <td align="center" colspan="2">
+                                    <br />Middle<br />&nbsp;
+                                </td>
+                                <td align="center" colspan="2">
+                                    <br />Matric<br />&nbsp;
+                                </td>
+                            </tr>
+                            <tr style="font-weight: bold;">
+                                <td align="left" width="25%">
+                                    Regular
+                                </td>
+                                <td align="left" width="25%">
+                                    Regular
+                                </td>
+                                <td align="left" width="25%">
+                                    Open
+                                </td>
+                                <td align="left" width="25%">
+                                    Regular
+                                </td>
+                                <td align="left" width="25%">
+                                    Open
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="left">
+                                    <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblfifreg">
+                                        @Html.DropDownListFor(m => m.fifth, new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                    </span>
+                                </td>
+                                <td align="left">
+                                    <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmidreg">
+                                        @*@Html.DropDownListFor(a => a.middle, (SelectList)ViewBag.middle)*@
+                                        @Html.DropDownList("middle", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                    </span>
+                                </td>
+                                <td align="left">
+                                    @Html.DropDownList("omiddle", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                </td>
+                                <td align="left">
+                                    <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmatreg">
+                                        @Html.DropDownList("MATRIC", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                    </span>
+                                </td>
+                                <td align="left">
+                                    @Html.DropDownList("OMATRIC", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                    @*@Html.DropDownList("Ometric", omlist)*@
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                    <table id="t01" class="table table-bordered">
+                        <tr style="font-weight: bold;">
+                            <td align="center" colspan="1">
+                                Primary
+                            </td>
+                            <td align="center" colspan="2">
+                                Middle
+                            </td>
+                            <td align="center" colspan="2">
+                                Matric
+                            </td>
+                        </tr>
+                        @*School Type*@
+                        <tr>
+                            <td align="left">
+                                <span class="lblshow">
+                                    @Html.DropDownListFor(m => m.FIF_UTYPE, new SelectList(ViewBag.SubUserTypeList, "Value", "Text"), "--Select School Type---", new { })
+                                </span>
+                            </td>
+                            <td align="left" colspan="2">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmidreg">
+                                    @*@Html.DropDownListFor(a => a.middle, (SelectList)ViewBag.middle)*@
+                                    @Html.DropDownList("MID_UTYPE", new SelectList(ViewBag.SubUserTypeList, "Value", "Text"), "--Select School Type---", new { })
+                                </span>
+                            </td>
+                            <td align="left" colspan="2">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmatreg">
+                                    @Html.DropDownList("HID_UTYPE", new SelectList(ViewBag.SubUserTypeList, "Value", "Text"), "--Select School Type---", new { })
+                                </span>
+                            </td>
+
+                        </tr>
+                        @*Year*@
+                        <tr>
+                            <td align="left">
+                                <span class="lblshow">
+                                    @Html.DropDownListFor(m => m.FIF_YR, new SelectList(ViewBag.SchoolYear, "Value", "Text"), "--Select Year---", new { })
+                                </span>
+                            </td>
+                            <td align="left" colspan="2">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmidreg">
+                                    @*@Html.DropDownListFor(a => a.middle, (SelectList)ViewBag.middle)*@
+                                    @Html.DropDownList("MID_YR", new SelectList(ViewBag.SchoolYear, "Value", "Text"), "--Select Year---", new { })
+                                </span>
+                            </td>
+                            <td align="left" colspan="2">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmatreg">
+                                    @Html.DropDownList("HID_YR", new SelectList(ViewBag.SchoolYear, "Value", "Text"), "--Select Year---", new { })
+                                </span>
+                            </td>
+
+                        </tr>
+                        @*Section*@
+                        <tr>
+                            <td align="left">
+                                <span class="lblshow">
+                                    @Html.TextBoxFor(a => a.FIF_S)
+                                </span>
+                            </td>
+                            <td align="left" colspan="2">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmidreg">
+                                    @Html.TextBoxFor(a => a.MID_S)
+                                </span>
+                            </td>
+                            <td align="left" colspan="2">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmatreg">
+                                    @Html.TextBoxFor(a => a.HID_S)
+                                </span>
+                            </td>
+
+                        </tr>
+                        @*Id No*@
+                        <tr>
+                            <td align="left">
+                                @Html.TextBoxFor(a => a.FIF_NO, new { placeholder = "ID NO" })
+                            </td>
+                            <td align="left" colspan="2">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmidreg">
+                                    @Html.TextBoxFor(a => a.MID_NO, new { placeholder = "ID NO" })
+                                </span>
+                            </td>
+                            <td align="left" colspan="2">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmatreg">
+                                    @Html.TextBoxFor(a => a.HID_NO, new { placeholder = "ID NO" })
+                                </span>
+                            </td>
+                        </tr>
+
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6">
+                    <table id="t01" class="table table-bordered">
+                        <tbody>
+                            <tr style="font-weight: bold;">
+                                <td align="center" colspan="6">
+                                    Senior Secondary
+                                </td>
+                            </tr>
+                            <tr style="font-weight: bold;">
+                                <td align="center" colspan="6" style="width: 32%">
+                                    Regular
+                                </td>
+                            </tr>
+                            <tr style="font-weight: bold;">
+                                <td align="left">
+                                    Hum.
+                                </td>
+                                <td align="left">
+                                    Sci
+                                </td>
+                                <td align="left">
+                                    Comm.
+                                </td>
+                                <td align="left">
+                                    Voc.
+                                </td>
+                                <td align="left">
+                                    Tech.
+                                </td>
+                                <td align="left">
+                                    Agri.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="left">
+                                    <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsohum">@Html.DropDownList("HUM", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })</span>
+                                </td>
+                                <td align="left">
+                                    <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsosci">@Html.DropDownList("SCI", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })</span>
+                                </td>
+                                <td align="left">
+                                    <span class="lblshow" id="ct00_ContentPlaceHolder1_lblsocomm">@Html.DropDownList("COMM", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })</span>
+                                </td>
+                                <td align="left">
+                                    <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsovoc">@Html.DropDownList("VOC", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })</span>
+                                </td>
+                                <td align="left">
+                                    <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsotech"> @Html.DropDownList("TECH", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })</span>
+                                </td>
+                                <td align="left">
+                                    <span class="lblshow" id="ctl00_ContentPlaceHolder1_lvlsoagri">@Html.DropDownList("AGRI", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })</span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table id="t01" class="table table-bordered">
+                        <tbody>
+                            <tr style="font-weight: bold;">
+                                <td align="center" colspan="6">
+                                    <span class="lbl" id="ctl00_ContentPlaceHolder1_lblsensec">Senior Secondary</span>
+                                </td>
+                            </tr>
+                            <tr style="font-weight: bold;">
+                                <td align="center" colspan="6" style="width: 32%">
+                                    <span class="lbl" id="ctl00_ContentPlaceHolder1_lblopen">Open</span>
+                                </td>
+                            </tr>
+                            <tr style="font-weight: bold;">
+                                <td align="left">
+                                    Hum.
+                                </td>
+                                <td align="left">
+                                    Sci
+                                </td>
+                                <td align="left">
+                                    Comm.
+                                </td>
+                                <td align="left">
+                                    Voc.
+                                </td>
+                                <td align="left">
+                                    Tech.
+                                </td>
+                                <td align="left">
+                                    Agri.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="left">
+                                    @Html.DropDownList("OHUM", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                </td>
+                                <td align="left">
+
+                                    @Html.DropDownList("OSCI", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                </td>
+                                <td align="left">
+
+                                    @Html.DropDownList("OCOMM", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                </td>
+                                <td align="left">
+
+                                    @Html.DropDownList("OVOC", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                </td>
+                                <td align="left">
+                                    @Html.DropDownList("OTECH", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                </td>
+                                <td align="left">
+
+                                    @Html.DropDownList("OAGRI", new SelectList(ViewBag.YesNoList, "Value", "Text"), new { })
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+
+                    <table id="t01" class="table table-bordered">
+                        @*SchoolType*@
+                        <tr style="font-weight: bold;">
+                            <td align="left">
+                                Hum.
+                            </td>
+                            <td align="left">
+                                Sci
+                            </td>
+                            <td align="left">
+                                Comm.
+                            </td>
+                            <td align="left">
+                                Voc.
+                            </td>
+                            <td align="left">
+                                Tech.
+                            </td>
+                            <td align="left">
+                                Agri.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsohum">@Html.DropDownList("H_UTYPE", new SelectList(ViewBag.SubUserTypeList, "Value", "Text"), "--Select School Type---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsosci">@Html.DropDownList("S_UTYPE", new SelectList(ViewBag.SubUserTypeList, "Value", "Text"), "--Select School Type---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ct00_ContentPlaceHolder1_lblsocomm">@Html.DropDownList("C_UTYPE", new SelectList(ViewBag.SubUserTypeList, "Value", "Text"), "--Select School Type---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsovoc">@Html.DropDownList("V_UTYPE", new SelectList(ViewBag.SubUserTypeList, "Value", "Text"), "--Select School Type---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsotech"> @Html.DropDownList("T_UTYPE", new SelectList(ViewBag.SubUserTypeList, "Value", "Text"), "--Select School Type---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lvlsoagri">@Html.DropDownList("A_UTYPE", new SelectList(ViewBag.SubUserTypeList, "Value", "Text"), "--Select School Type---", new { })</span>
+                            </td>
+                        </tr>
+                        @*SchoolYear*@
+                        <tr>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsohum">@Html.DropDownList("HYR", new SelectList(ViewBag.SchoolYear, "Value", "Text"), "--Select Year---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsosci">@Html.DropDownList("SYR", new SelectList(ViewBag.SchoolYear, "Value", "Text"), "--Select Year---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ct00_ContentPlaceHolder1_lblsocomm">@Html.DropDownList("CYR", new SelectList(ViewBag.SchoolYear, "Value", "Text"), "--Select Year---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsovoc">@Html.DropDownList("VYR", new SelectList(ViewBag.SchoolYear, "Value", "Text"), "--Select Year---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsotech"> @Html.DropDownList("TYR", new SelectList(ViewBag.SchoolYear, "Value", "Text"), "--Select Year---", new { })</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lvlsoagri">@Html.DropDownList("AYR", new SelectList(ViewBag.SchoolYear, "Value", "Text"), "--Select Year---", new { })</span>
+                            </td>
+                        </tr>
+                        @*Section*@
+                        <tr>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsohum">@Html.TextBoxFor(a => a.H_S)</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsosci">@Html.TextBoxFor(a => a.S_S)</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ct00_ContentPlaceHolder1_lblsocomm">@Html.TextBoxFor(a => a.C_S)</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsovoc">@Html.TextBoxFor(a => a.V_S)</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblsotech">@Html.TextBoxFor(a => a.T_S)</span>
+                            </td>
+                            <td align="left">
+                                <span class="lblshow" id="ctl00_ContentPlaceHolder1_lvlsoagri">@Html.TextBoxFor(a => a.A_S)</span>
+                            </td>
+                        </tr>
+                        @*Id NO/NSQF*@
+                        <tr>
+                            <td align="left">ID NO.</td>
+                            <td align="left" colspan="5">
+                                @Html.TextBoxFor(a => a.SID_NO, new { placeholder = "ID NO" })
+                            </td>
+                        </tr>
+
+
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+
+    <h4>Examination Set</h4>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="t01" class="table table-bordered">
+                <tbody>
+                    <tr style="font-weight: bold;">
+                        <td align="center" colspan="2">
+                            Matric
+                        </td>
+                        <td align="center" colspan="2">
+                            Senior Secondary
+                        </td>
+                    </tr>
+                    <tr style="font-weight: bold;">
+                        <td align="left" width="25%">
+                            Regular
+                        </td>
+                        <td align="left" width="25%">
+                            Open
+                        </td>
+                        <td align="left" width="25%">
+                            Regular
+                        </td>
+                        <td align="left" width="25%">
+                            Open
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmidreg">
+                                @Html.DropDownListFor(a => a.MSET, new SelectList(ViewBag.SchoolSetMset, "Value", "Text"), new { })
+                            </span>
+                        </td>
+                        <td align="left">
+                            @Html.DropDownListFor(a => a.MOSET, new SelectList(ViewBag.SchoolSetMoset, "Value", "Text"), new { })
+                        </td>
+                        <td align="left">
+                            <span class="lblshow" id="ctl00_ContentPlaceHolder1_lblmatreg">
+                                @Html.DropDownListFor(a => a.SSET, new SelectList(ViewBag.SchoolSetSset, "Value", "Text"), new { })
+                            </span>
+                        </td>
+                        <td align="left">
+                            @Html.DropDownListFor(a => a.SOSET, new SelectList(ViewBag.SchoolSetSoset, "Value", "Text"), new { })
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+</div>
+
+<div class="clearfix"></div>
+                    <h4>Contact Details</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            Principal Name @Html.TextBoxFor(a => a.PRINCIPAL, new { id = "txtPrincipal", @maxlength = "50", onkeypress = "return ValidateAlpha(event);" })
+                        </div>
+                        <div class="col-md-4">
+                            Office Phone No. @*@Html.TextBoxFor(a => a.STDCODE, new { id = "txtstdCode", @maxlength = "12" })*@
+                            <div class="row">
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.STDCODE, new { id = "txtstdCode", @maxlength = "5", onkeypress = "return isNumberKey(event);" })</div>
+                                <div class="col-md-8">@Html.TextBoxFor(a => a.PHONE, new { id = "txtPhone", @maxlength = "7", onkeypress = "return isNumberKey(event);" })</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            Mobile No. @Html.TextBoxFor(a => a.MOBILE, new { id = "txtMob", @maxlength = "10", onkeypress = "return isNumberKey(event);" })
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-4">
+                            Registered Email @Html.TextBoxFor(a => a.EMAILID, new { id = "txtEMAILID", @class = "textnone" })
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-4">
+                            Other Person Name @Html.TextBoxFor(a => a.CONTACTPER, new { id = "txtOtherContactper", onkeypress = "return ValidateAlpha(event);" })
+                        </div>
+
+                        <div class="col-md-4">
+                            Other Mobile No. @Html.TextBoxFor(a => a.OtContactno, new { id = "txtOtherMob", @maxlength = "10", onkeypress = "return isNumberKey(event);" })
+                        </div>
+
+                        <div class="col-md-4">
+                            Mobile No. - 2 @Html.TextBoxFor(a => a.mobile2, new { id = "txtMob2", @maxlength = "10", onkeypress = "return isNumberKey(event);" })
+                        </div>
+                        <div class="clearfix"></div>
+
+                        <div class="col-md-12">
+                            Address (In English) @Html.TextBoxFor(a => a.ADDRESSE, new { id = "txtAddress" })
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-12">
+                            Address (In Punjabi)@Html.TextBoxFor(a => a.ADDRESSP, new
+{
+id = "ADDRESSP",
+@class = "keyboardInput",
+onKeyPress = "javascript:convertThis(event)",
+onpaste = "return false;",
+oncopy = "return false;",
+oncut = "return false;",
+onclick = "toggleKBMode1(event)",
+lang = "pa"
+})
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered" id="t03">
+                                <tr class="active-tr">
+                                    <td> Old Corr. No.</td>
+                                    <td> Remarks and Correction Details</td>
+                                    <td> Last Correction Date </td>
+                                </tr>
+                                <tr style="font-weight: bold;">
+                                    <td> @Html.DisplayFor(a => a.CorrectionNoOld, new { })</td>
+                                    <td>@Html.DisplayFor(a => a.RemarksOld, new { })</td>
+                                    <td> @Html.DisplayFor(a => a.RemarkDateOld, new { })</td>
+                                </tr>
+                                <tr>
+                                    <td>Correction Details</td>
+                                    <td colspan="2">
+                                        @Html.TextBoxFor(a => a.REMARKS, new { id = "txtRemarks", required = "Required" })
+                                        @*<textarea id="editor" name="editor" rows="" cols="75" dir="ltr"></textarea>*@
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            @*<input type="submit" value="Update School" id="Submit"  formmethod="post" onclick="location.href='@Url.Action("School_Modification_Form", "School")'" />*@
+                            <input type="submit" value="Add School" id="Submit" formmethod="post" onclick="return valForm();" />
+                            @*<input type="button" value="Cancel" id="Cancel" onclick="location.href='@Url.Action("Admin_School_Master", "School")'" />*@
+                            <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Cancel</a>
+
+                        </div>
+                    </div>
+                    }
+
+
+                    <script type="text/javascript">
+
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Success",
+            width: 450,
+            height: 250,
+            buttons: {
+                Close: function () {
+                    $(this).dialog("close");
+					  window.location.href = '@Url.Action("Admin_School_Master", "School")';
+                },
+                "OK": function () {
+                    window.location.href = '@Url.Action("Admin_School_Master", "School")';
+                },
+            }
+        });
+    });
+                    </script>
+
+                    @{
+                        if (ViewData["resultSMF"] != null)
+                        {
+                            if (ViewData["resultSMF"].ToString() == "1")
+                            {
+                                <div id="dPending" style="display: none;padding:30px 10px" align="center" class="kdsfont">
+                                    <span class="rqf">New School Code Alloted SuccessFully</span><br />
+                                    <span class="text-primary">School Code: @ViewData["resultStatus"].ToString()</span><br />
+                                    <span>Default Password: 12345</span><br />
+                                </div>
+                            }
+                            else if (ViewData["resultSMF"].ToString() == "0")
+                            {
+                                <script type="text/javascript" language="javascript">
+                                    alert("Data Not Saved..");
+                                </script>
+                            }
+                            else
+                            {
+                                <script type="text/javascript" language="javascript">
+                                    alert("Data not Added..plz try again");
+                                </script>
+                            }
+                        }
+                    }
+
+
+
+
+                    @*<script type="text/javascript">
+                    $(document).ready(function () {
+
+                        $("#MyDistp").change(function () {
+                            var selectedText = $(this).find("option:selected").text();
+
+                            document.getElementById("DISTP").value = selectedText;
+
+                        });
+                    });
+            </script>*@
+
+
+
+                    <script type="text/javascript">
+                        function ValidateAlpha(evt) {
+                            var keyCode = (evt.which) ? evt.which : evt.keyCode
+                            if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+                                alert("Only Characters Allowed!!");
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+
+                        }
+                        function isNumberKey(evt) {
+                            var charCode = (evt.which) ? evt.which : event.keyCode
+                            if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+                                return true;
+                            }
+                            else {
+                                alert("Invalid character...Enter Only Number!!");
+                                return false;
+                            }
+                        }</script>
+
+                    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#MyDist").change(function () {
+
+                var selectedDIST = { DIST: $("#MyDist").val() };
+                var selectedText = $(this).find("option:selected").text();
+                document.getElementById("DISTE").value = selectedText;
+                //alert(document.getElementById("hidText").value);
+                $.ajax({
+                    url: '@Url.Action("GetTehID", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedDIST),
+                    success: function (States) {
+                        $("#MyTeh").empty();
+
+                        $.each(States, function (i, TehList) {
+                            $("#MyTeh").append('<option value="'+ TehList.Value + '">'+ TehList.Text + '</option>');
+                         });
+                        if (TehList.success) {}
+                        else {alert('invalid ID' + data.success);}
+                    }
+                });
+
+                $.ajax({
+                    url: '@Url.Action("GetDistP", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedDIST),
+                    success: function (result) {
+                        //MyDistp,DISTP, TehsilP
+                       // alert(result);
+                        $("#DISTP").empty();
+                        $("#MyDistp").empty();
+                      //
+                        document.getElementById("MyDistp").value = document.getElementById("DISTP").value = result; //DistPText
+
+                        if (result.success) { }
+                        else {}
+                    }
+                });
+
+                // MyEdublock
+                  $.ajax({
+                    url: '@Url.Action("MyEdublock", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedDIST),
+                    success: function (States) {
+                        $("#Edublock").empty();
+
+                        $.each(States, function (i, MyEdublock) {
+                            $("#Edublock").append('<option value="' + MyEdublock.Value + '">' + MyEdublock.Text + '</option>');
+                         });
+                        if (MyEdublock.success) {}
+                        else {alert('invalid ID' + data.success);}
+                    }
+                });
+
+                   $("#Edublock").change(function () {
+                        //alert(123);
+                        var selectedBLOCK = { BLOCK: $("#Edublock").val() };
+                        $.ajax({
+                            url: '@Url.Action("GetEduCluster", "SchoolProfile")',
+                            type: 'Post',
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            data: JSON.stringify(selectedBLOCK),
+                            success: function (States) {
+
+                                $("#EduCluster").empty();
+                                $.each(States, function (i, EduClusterList) {
+                                    $("#EduCluster").append('<option value="'
+                                       + EduClusterList.Value + '">'
+                                       + EduClusterList.Text + '</option>');
+                                });
+                                if (EduClusterList.success) {
+                                }
+                                else {
+                                    alert('invalid ID' + data.success);
+                                }
+                            }
+                        });
+                    });
+
+
+                @*  DropDown Punjabi Dist
+
+                    $.ajax({
+                    url: '@Url.Action("GetTehIDP", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedDIST),
+                    success: function (States) {
+                        $("#MyTehP").empty();
+
+                        $.each(States, function (i, TehListP) {
+                            $("#MyTehP").append('<option value="'+ TehListP.Value + '">'+ TehListP.Text + '</option>');
+                        });
+                        if (TehListP.success) {}
+                        else {alert('Invalid ' + data.success);}
+                    }
+                });*@
+            });
+
+            $("#MyTeh").change(function () {
+               // alert('tehsil');
+                var selectedTeh = { Teh: $("#MyTeh").val() };
+               // alert(selectedTeh);
+                $.ajax({
+                    url: '@Url.Action("GetTehsilP", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedTeh),
+                    success: function (result1) {
+                        //MyDistp,DISTP, TehsilP
+                      //  alert(result1);
+                        $("#MyTehP").empty();
+                        document.getElementById("MyTehP").value = result1; //DistPText
+                        if (result1.success) { }
+                        else { }
+                    }
+                });
+
+            });
+        });
+                    </script>
+
+
+                    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#SCHLE').change(function () {
+                  var selectedText = { text: $("#SCHLE").val() };
+                var cname = document.getElementById('SCHLE').value;
+                var cnameP = document.getElementById('SCHLP').value;
+                if (cnameP == "") {
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                            //  alert("Candidate Name: " + result);
+                            $('#SCHLP').val(result);
+                        }
+                    });
+                }
+            });
+
+            $('#STATIONE').change(function () {
+                var selectedText = { text: $("#STATIONE").val() };
+                var cname = document.getElementById('STATIONE').value;
+                var cnameP = document.getElementById('STATIONP').value;
+                if (cnameP == "") {
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                            //  alert("Candidate Name: " + result);
+                            $('#STATIONP').val(result);
+                        }
+                    });
+                }
+            });
+
+            $('#txtAddress').change(function () {
+                var selectedText = { text: $("#txtAddress").val() };
+                var cname = document.getElementById('txtAddress').value;
+                var cnameP = document.getElementById('ADDRESSP').value;
+                if (cnameP == "") {
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                            //  alert("Candidate Name: " + result);
+                            $('#ADDRESSP').val(result);
+                        }
+                    });
+                }
+            });
+        });
+
+                    </script>
+
+                    <script type="text/javascript">
+                        function valForm() {
+
+                            //var txtSchoolCode = document.getElementById("SchoolCode");
+                            //if (txtSchoolCode.value == "") {
+                            //    alert("Enter School Code.");
+                            //    txtSchoolCode.focus();
+                            //    return false;
+                            //}
+
+                            //if (txtSchoolCode.value != "") {
+                            //    if (txtSchoolCode.value.length != 7) {
+
+                            //        alert("Please Enter 7 Digits School Code");
+                            //        txtSchoolCode.focus();
+                            //        return false;
+                            //    }
+                            //}
+                            var IDNo = document.getElementById("IDNo");
+                            var SameAsSchl = document.getElementById("SameAsSchl").checked;
+                          
+                            if (SameAsSchl == false) {
+                                if (IDNo.value == "") {
+                                    alert("Enter IDNo.");
+                                    IDNo.focus();
+                                    return false;
+                                }                             
+                            }
+                           
+                           
+
+                            if (IDNo.value != "") {
+                                if (IDNo.value.length != 7) {
+
+                                    alert("Please Enter 7 Digits ID No.");
+                                    IDNo.focus();
+                                    return false;
+                                }
+                            }
+
+                            var ddlSession = document.getElementById("Session");
+                            if (ddlSession.value == "0" || ddlSession.value == "") {
+                                alert("Select Session");
+                                ddlSession.focus();
+                                return false;
+                            }
+
+                            var ddlSchoolType = document.getElementById("USERTYPE");
+                            if (ddlSchoolType.value == "0" || ddlSchoolType.value == "") {
+                                alert("Select School Type");
+                                ddlSchoolType.focus();
+                                return false;
+                            }
+
+                            var ddlCLASS = document.getElementById("CLASS");
+                            if (ddlCLASS.value == "0" || ddlCLASS.value == "") {
+                                alert("Select CLASS");
+                                ddlCLASS.focus();
+                                return false;
+                            }
+
+                            var AREA = document.getElementById("AREA");
+                            if (AREA.value == "0" || AREA.value == "") {
+                                alert("Select AREA.");
+                                AREA.focus();
+                                return false;
+                            }
+
+
+                            var lclass = document.getElementById("lclass");
+                            if (lclass.value == "0" || lclass.value == "") {
+                                alert("Select Lower Class");
+                                lclass.focus();
+                                return false;
+                            }
+
+                            var uclass = document.getElementById("uclass");
+                            if (uclass.value == "0" || uclass.value == "") {
+                                alert("Select Upper Class");
+                                uclass.focus();
+                                return false;
+                            }
+
+                            var SCHLE = document.getElementById("SCHLE");
+                            if (SCHLE.value == "") {
+                                alert("Enter School  Name (English).");
+                                SCHLE.focus();
+                                return false;
+                            }
+
+                            var STATIONE = document.getElementById("STATIONE");
+                            if (STATIONE.value == "") {
+                                alert("Enter Station Name (English).");
+                                STATIONE.focus();
+                                return false;
+                            }
+
+                            var ddlMyDist = document.getElementById("MyDist");
+                            if (ddlMyDist.value == "0" || ddlMyDist.value == "") {
+                                alert("Select District English");
+                                ddlMyDist.focus();
+                                return false;
+                            }
+
+                            var DISTE = document.getElementById("DISTE");
+                            if (DISTE.value == "") {
+                                alert("Enter District English.");
+                                DISTE.focus();
+                                return false;
+                            }
+
+                            var SCHLP = document.getElementById("SCHLP");
+                            if (SCHLP.value == "") {
+                                alert("Enter School  Name (Punjabi).");
+                                SCHLP.focus();
+                                return false;
+                            }
+
+                            var STATIONP = document.getElementById("STATIONP");
+                            if (STATIONP.value == "") {
+                                alert("Enter Station Name (Punjabi).");
+                                STATIONP.focus();
+                                return false;
+                            }
+
+                            var ddlMyDistP = document.getElementById("MyDistp");
+                            if (ddlMyDistP.value == "0" || ddlMyDistP.value == "") {
+                                alert("Select District Punjabi");
+                                ddlMyDistP.focus();
+                                return false;
+                            }
+
+                            var DISTP = document.getElementById("DISTP");
+                            if (DISTP.value == "") {
+                                alert("Enter District Punjabi.");
+                                DISTP.focus();
+                                return false;
+                            }
+
+                            //var txtpri = document.getElementById("txtPrincipal");
+                            //if (txtpri.value == "") {
+                            //        alert("Enter Principal Name.");
+                            //        txtpri.focus();
+                            //        return false;
+                            //}
+
+
+                            //var txtstdCode = document.getElementById("txtstdCode");
+                            //if (txtstdCode.value == "") {
+                            //    alert("Enter Std Code");
+                            //    txtstdCode.focus();
+                            //    return false;
+                            //}
+
+                            if (txtstdCode.value != "") {
+                                if (txtstdCode.value.length <= 5 && txtstdCode.value.length >= 4) {
+
+                                }
+                                else {
+                                    alert("Please Enter 4 or 5 Std Code");
+                                    txtstdCode.focus();
+                                    return false;
+                                }
+                            }
+
+
+
+
+                            //var txtPhone = document.getElementById("txtPhone");
+                            //if (txtPhone.value == "") {
+                            //    alert("Enter Landline Number");
+                            //    txtPhone.focus();
+                            //    return false;
+                            //}
+
+                            if (txtPhone.value != "") {
+                                if (txtPhone.value.length <= 7 && txtPhone.value.length >= 6) {
+
+                                }
+                                else {
+                                    alert("Please Enter 6 or 7 digits Landline Number");
+                                    txtPhone.focus();
+                                    return false;
+                                }
+                            }
+
+
+
+                            //var txtMob = document.getElementById('txtMob')
+                            //if (txtMob.value == "") {
+                            //    alert("Please Enter Mobile Number");
+                            //    txtMob.focus();
+                            //    return false;
+                            //}
+
+                            if (txtMob.value != "") {
+                                if (txtMob.value.length != 10) {
+
+                                    alert("Please Enter 10 digits Mobile Number");
+                                    txtMob.focus();
+                                    return false;
+                                }
+                                else {
+                                    var Number = document.getElementById('txtMob').value;
+                                    var IndNum = /^[0]?[789]\d{9}$/;
+
+                                    if (!IndNum.test(Number)) {
+                                        alert("invalid Number");
+                                        txtMob.focus();
+                                        return false;
+                                    }
+
+                                }
+                            }
+
+                            var EMAILID = document.getElementById('txtEMAILID').value;
+                            if (EMAILID != "") {
+
+                                var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+                                if (!pattern.test(EMAILID)) {
+                                    alert("Invalid Email ID");
+                                    txtEMAILID.focus();
+                                    return false;
+                                }
+                            }
+
+                            //var op = document.getElementById("txtOtherContactper");
+                            //if (op.value == "") {
+                            //    alert("Enter Other Contact person");
+                            //        op.focus();
+                            //        return false;
+                            //    }
+
+                            ////, txtMob2
+                            //var txtOtherMob = document.getElementById('txtOtherMob');
+                            //if (txtOtherMob.value == "") {
+                            //    alert("Other Mobile No. ");
+                            //    txtOtherMob.focus();
+                            //    return false;
+                            //}
+                            if (txtOtherMob.value != "") {
+                                if (txtOtherMob.value.length != 10) {
+
+                                    alert("Please Enter 10 digits Mobile Number");
+                                    txtOtherMob.focus();
+                                    return false;
+                                }
+                                else {
+                                    var Number = document.getElementById('txtOtherMob').value;
+                                    var IndNum = /^[0]?[789]\d{9}$/;
+
+                                    if (!IndNum.test(Number)) {
+                                        alert("invalid Number");
+                                        txtOtherMob.focus();
+                                        return false;
+                                    }
+
+                                }
+                            }
+
+                            //var txtMob2 = document.getElementById('txtMob2');
+                            //if (txtMob2.value == "") {
+                            //    alert("Please Enter Second Mobile Number");
+                            //    txtMob2.focus();
+                            //    return false;
+                            //}
+                            if (txtMob2.value != "") {
+                                if (txtMob2.value.length != 10) {
+
+                                    alert("Please Enter 10 digits Mobile Number");
+                                    txtMob2.focus();
+                                    return false;
+                                }
+                                else {
+                                    var Number = document.getElementById('txtMob2').value;
+                                    var IndNum = /^[0]?[789]\d{9}$/;
+
+                                    if (!IndNum.test(Number)) {
+                                        alert("invalid Number");
+                                        txtMob2.focus();
+                                        return false;
+                                    }
+
+                                }
+                            }
+
+
+                            //if (document.getElementById("txtAddress").value.trim().length == 0) {
+                            //    alert('Enter Address (In English) ');
+                            //        document.getElementById("txtAddress").focus();
+                            //        return false;
+                            //    }
+
+                            //if (document.getElementById("ADDRESSP").value.trim().length == 0) {
+                            //    alert('Enter Address (In Punjabi)');
+                            //    document.getElementById("ADDRESSP").focus();
+                            //    return false;
+                            //}
+                            if (document.getElementById("txtRemarks").value.trim().length == 0) {
+                                alert('Enter Remarks');
+                                document.getElementById("txtRemarks").focus();
+                                return false;
+                            }
+
+                            return true;
+                        }
+
+                    </script>
+
+

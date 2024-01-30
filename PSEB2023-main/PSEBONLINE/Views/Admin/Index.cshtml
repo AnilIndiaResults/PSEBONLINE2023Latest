@@ -1,0 +1,109 @@
+﻿@model PSEBONLINE.Models.LoginModel
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<script>
+    document.write(unescape('%3Cstyle%20type%3D%22text/css%22%3E%0A.header_outer%20%7B%0A%20%20%20%20padding%3A%2010px%200%3B%0A%20%20%20%20background-color%3A%20%23001f40%3B%0A%20%20%20%20border-bottom%3A%204px%20solid%20%23a4d45a%3B%0A%7D%0A.kds-login%7Bbackground-color%3A%23a4d45a%3Bpadding%3A40px%2030px%3B%7D%0A.kds-lbtn%7B%0A%20%20%20%20border-radius%3A%2022px%20%21important%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20display%3A%20inline-block%3B%0A%20%20%20%20font-size%3A%2016px%20%21important%3B%0A%20%20%20%20font-weight%3A%20400%3B%0A%20%20%20%20line-height%3A%201.42857%3B%0A%20%20%20%20margin-bottom%3A%200%3B%0A%20%20%20%20padding%3A%206px%2024px%20%21important%3B%0A%20%20%20%20text-align%3A%20center%3B%0A%20%20%20%20vertical-align%3A%20middle%3B%0A%20%20%20%20white-space%3A%20nowrap%3B%0A%20%20%20%20background-color%3A%20%23456d08%20%21important%3B%0A%20%20%20%20border%3A2px%20solid%20%23568310%20%21important%3B%0A%20%20%20%20color%3A%20%23fff%3B%7D%0A%09fieldset%7Bborder-color%3A%23fff%20%21important%3Bmargin-bottom%3A10px%20%21important%7D%0A%09legend%7Bmargin-bottom%3A10px%20%21important%7D%0A%3C/style%3E'))
+</script>
+
+
+<div class="row">
+    <div class="col-md-7"><img src="images/kd-login.jpg" class="img-responsive" /></div>
+    <div class="col-md-5">
+        <form class="kds-login" name="Login_Form" method="post" action="">
+            <h3 class="form-signin-heading text-center">Admin Login Panel</h3>
+            <br />
+            <fieldset>
+                <legend>Admin Detail</legend>
+                @Html.TextBoxFor(m => m.username, new { placeholder = "Admin Id", @class = "form-control", required = "required", style = "text-transform: none;" })
+                @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Admin Password", required = "required", style = "text-transform: none;" })
+            </fieldset>
+            <fieldset>
+                <legend>Employee Detail</legend>
+                @Html.TextBoxFor(m => m.AdminEmployeeUserId, new { placeholder = "Employee Id ", @class = "form-control", required = "required", style = "text-transform: none;" })
+                @Html.PasswordFor(model => model.AdminEmployeePassword, new { @class = "form-control", placeholder = "Employee Password", required = "required", style = "text-transform: none;" })
+            </fieldset>
+            <fieldset>
+                <legend>Select Session</legend>
+                @Html.DropDownList("Session", new SelectList(ViewBag.SessionList, "Value", "Text"), "---Select Session---", new { @class = "form-control", required = "required", style = "text-transform: none;padding-left:0" })
+            </fieldset>
+            <div class="checkbox" id="remember">
+                <span>
+                    <input type="checkbox" value="remember-me"> Remember me
+                </span>
+            </div>
+            <div style="text-align:center;display:block">
+                <input type="submit" class="kds-lbtn" value="Login" />
+                </p>
+        </form>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Alert",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+    });
+</script>
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "2")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">The board has cancelled your Admin Login, So you cannot log in.</span>
+            </div>
+        }
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Incorrect Admin Login Details..<br /><br />  plz try again with correct credentials</span>
+            </div>
+
+        }
+        else if (ViewData["result"].ToString() == "EMP")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Incorrect Employee Login Details..<br /><br /> plz try again with correct credentials</span>
+            </div>
+
+        }
+        else if (ViewData["result"].ToString() == "ADMIN")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Incorrect Admin Login Details..<br /><br />  plz try again with correct credentials</span>
+            </div>
+
+        }
+        else if (ViewData["result"].ToString() == "BOTH")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Incorrect Admin and Employee Login Details..<br /><br />  plz try again with correct credentials</span>
+            </div>
+
+        }
+    }
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,326 @@
+﻿@model PSEBONLINE.Models.AssignmentofBooksforprinting
+@{
+    ViewBag.Title = "BooksForPrinting";
+    Layout = "~/Views/Shared/_BookSupplyLayout.cshtml";
+}
+<h1>Assignment Of Books For Printing</h1>
+@using (Html.BeginForm("BooksForPrinting", "BookSupply", FormMethod.Post, new { id = "Migrate", enctype = "multipart/form-data" }))
+{
+    <div id="divMain1">
+        <div class="row">
+            <div class="col-md-4">
+                Select Printer
+                @Html.DropDownListFor(m => m.PrinterId, new SelectList(ViewBag.SelPrinters, "Value", "Text", ViewBag.SelectedPrinter), "--Select Printers--", new { id = "selPrinter", @class = "", required = "required" })
+            </div>
+            <div class="col-md-4">
+                Select Book
+                @Html.DropDownListFor(m => m.BookId, new SelectList(ViewBag.SelBooks, "Value", "Text", ViewBag.SelectedBok), "--Select Book--", new { id = "selBook", required = "required" })
+            </div>
+            <div class="col-md-4">
+                Typeofbooks
+                @Html.DropDownListFor(m => m.Typeofbooks, new SelectList(ViewBag.selType, "Value", "Text", ViewBag.SelectedType), "--Select ---", new { id = "seltype1", required = "required" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-4">
+                QtyofBooksforprinting @Html.TextBoxFor(a => a.QtyofBooksforprinting, new { id = "QtyofBooksforprinting", @maxlength = "8", required = "required", onkeypress = "return isNumberKey(event);" })
+            </div>
+            <div class="col-md-4">
+                Date @Html.TextBoxFor(a => a.DateStamp, new { id = "DateStamp", required = "required", @maxlength = "10", @class = "date" })
+            </div>
+            
+            <div class="col-md-4">
+                Remarks @Html.TextBoxFor(a => a.Remarks, new { id = "Remarks", @maxlength = "100", required = "required" })
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                @if (ViewBag.Id.ToString() == "0")
+                {
+                    <input type="submit" value="Save" id="btnsave" onclick="return valForm();" />
+                }
+                else
+                {
+                    @Html.HiddenFor(a => a.IsActive)
+                    @Html.HiddenFor(a => a.Id)
+                    @Html.HiddenFor(a => a.TransId)
+                    <input type="submit" value="Update" id="btnUpdate" onclick="return UvalForm();" />
+                }
+                <a href="/BookSupply/ViewBooksForPrinting" class="btn">Reset</a>
+            </div>
+        </div>
+    </div>
+}
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1" && ViewBag.Id.ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data saved Successfully");
+                window.location.href = '/BookSupply/ViewBooksForPrinting';
+            </script>}
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Already Exist");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "1" && ViewBag.Id.ToString() != "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Updated Successfully");
+                window.location.href = '/BookSupply/ViewBooksForPrinting';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "11")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Updated.. Plz Try again");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "10")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Total Qty Of Books Must Be Match With No. Of Books To Be Printed ");
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Not Saved.. Plz Try again");
+            </script>
+        }
+    }
+}
+
+
+<div class="row">
+    <div class="col-md-12">Grid Total:  @ViewBag.TotalCount</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>Trans Id</th>
+                    <th>Printer</th>
+                    <th>BookName</th>
+                    <th>Qty</th>
+                    <th>BookType</th>
+                    <th>Lot</th>
+                    <th>Created Date</th>
+                    <th style="@(Session["BookSupplyType"].ToString() == "A"  ? "display:block" : "display:none")">Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var TransId = Model.StoreAllData.Tables[0].Rows[i]["TransId"].ToString();
+                            var PrinterId = Model.StoreAllData.Tables[0].Rows[i]["PrinterId"].ToString();
+                            var PrinterName = Model.StoreAllData.Tables[0].Rows[i]["PrinterName"].ToString();
+                            var BookId = Model.StoreAllData.Tables[0].Rows[i]["BookId"].ToString();
+                            var BookName = Model.StoreAllData.Tables[0].Rows[i]["BookName"].ToString();
+                            var QtyofBooksforprinting = Model.StoreAllData.Tables[0].Rows[i]["QtyofBooksforprinting"].ToString();
+                            var DateStamp = Model.StoreAllData.Tables[0].Rows[i]["DateStamp"].ToString();
+                            var Remarks = Model.StoreAllData.Tables[0].Rows[i]["Remarks"].ToString();
+                            var Lot = Model.StoreAllData.Tables[0].Rows[i]["Lot"].ToString();
+                            var Typeofbooks = Model.StoreAllData.Tables[0].Rows[i]["BookTypeName"].ToString();
+                            var CreatedDate = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString();
+                            var STATUS = Model.StoreAllData.Tables[0].Rows[i]["IsActive"].ToString().ToUpper() == "1" ? "ENABLE" : "DISABLE";
+
+                            Count = Count + 1;
+                <tr>
+                    <td>
+                        @Count
+                    </td>
+                    <td>
+                        @TransId
+                    </td>
+                    <td>
+                        @PrinterId/ @PrinterName
+                    </td>
+                    <td>
+                       @BookId/ @BookName
+                    </td>
+                    <td>
+                        @QtyofBooksforprinting
+                    </td>
+                    <td>
+                        @Typeofbooks
+                    </td>
+                    <td>
+                        @Lot
+                    </td>
+
+                    <td>
+                        @CreatedDate
+                    </td>
+                    <td style="@(Session["BookSupplyType"].ToString() == "A"  ? "display:block" : "display:none")">
+                        @if (Session["BookSupplyType"].ToString() == "A")
+                        {
+
+                            <a href='@Url.Action("UpdateMenuStatus", "BookSupply", new { id = TransId })' onclick="return confirm('You are sure to change this?');">
+                                <img title="Enable/Disable" src="@(STATUS.ToUpper() == "ENABLE" ? "/Images/enable.gif" : "/Images/disable.gif"  )" />
+                            </a>
+                            <span>&nbsp; &nbsp;</span>
+                            <a href='@Url.Action("BooksForPrinting", "BookSupply", new { id = TransId })' onclick="return confirm('You are sure to modify this?');">
+                                <img src="/Images/Edit_Icon.png" width="25" title="Modify" />
+                            </a>
+                        }
+                    </td>
+                </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @Html.Raw("Record Not Found")
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }</script>
+<script type="text/javascript">
+    $(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "2018:2019",
+            maxDate: 0
+        });
+    });
+</script>
+
+
+<script type="text/javascript">
+    function valForm() {
+        var selPrinter = document.getElementById("selPrinter");
+        if (selPrinter.value == "" || selPrinter.value == "0") {
+            alert("Please Select Printer");
+            selPrinter.focus();
+            return false;
+        }
+
+        var selBook = document.getElementById("selBook");
+        if (selBook.value == "" || selBook.value == "0") {
+            alert("Please Select Book");
+            selBook.focus();
+            return false;
+        }
+
+
+        var QtyofBooksforprinting = document.getElementById("QtyofBooksforprinting");
+        if (QtyofBooksforprinting.value == "") {
+            alert("Please Enter Qty Of Books For Printing");
+            QtyofBooksforprinting.focus();
+            return false;
+        }
+
+        var DateStamp = document.getElementById("DateStamp");
+        if (DateStamp.value == "") {
+            alert("Please Enter Date ");
+            DateStamp.focus();
+            return false;
+        }
+
+        var Remarks = document.getElementById("Remarks");
+        if (Remarks.value == "") {
+            alert("Please Enter Remarks ");
+            Remarks.focus();
+            return false;
+        }
+
+        var seltype1 = document.getElementById("seltype1");
+        if (seltype1.value == "" || seltype1.value == "0") {
+            alert("Please Select Type Of Books");
+            seltype1.focus();
+            return false;
+        }
+
+        return true;
+    }
+
+    function UvalForm() {
+
+        var selPrinter = document.getElementById("selPrinter");
+        if (selPrinter.value == "" || selPrinter.value == "0") {
+            alert("Please Select Printer");
+            selPrinter.focus();
+            return false;
+        }
+
+        var selBook = document.getElementById("selBook");
+        if (selBook.value == "" || selBook.value == "0") {
+            alert("Please Select Book");
+            selBook.focus();
+            return false;
+        }
+
+        var QtyofBooksforprinting = document.getElementById("QtyofBooksforprinting");
+        if (QtyofBooksforprinting.value == "") {
+            alert("Please Enter Qty Of Books For Printing");
+            QtyofBooksforprinting.focus();
+            return false;
+        }
+
+        var DateStamp = document.getElementById("DateStamp");
+        if (DateStamp.value == "") {
+            alert("Please Enter Date ");
+            DateStamp.focus();
+            return false;
+        }
+
+        var Remarks = document.getElementById("Remarks");
+        if (Remarks.value == "") {
+            alert("Please Enter Remarks ");
+            Remarks.focus();
+            return false;
+        }
+
+        var seltype1 = document.getElementById("seltype1");
+        if (seltype1.value == "" || seltype1.value == "0") {
+            alert("Please Select Type Of Books");
+            seltype1.focus();
+            return false;
+        }
+
+        return true;
+    }
+</script>
+

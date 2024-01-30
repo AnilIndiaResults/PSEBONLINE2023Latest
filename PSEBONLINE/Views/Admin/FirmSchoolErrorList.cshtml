@@ -1,0 +1,187 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "FirmSchoolErrorList";
+    //Layout = "~/Views/Shared/_HeaderCorr.cshtml";  By Rohit
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>Firm School Error List</h1>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+@using (Html.BeginForm("FirmSchoolErrorList", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total Count&nbsp;
+                    <label>@ViewBag.TotalCount</label>
+                </div>
+
+                <div class="col-md-2">
+                    Enter School Code &nbsp;
+                    @Html.TextBoxFor(m => m.SchlCode, new { id = "SchlCode", @maxlength = "20", placeholder = "All School" })
+                </div>
+                <div class="col-md-2">
+                    Enter Candidate Id &nbsp;
+                    @Html.TextBoxFor(m => m.SdtID, new { id = "SdtID", @maxlength = "20", placeholder = "All Student" })
+                </div>
+                <div class="col-md-2">
+                    Enter Roll No. &nbsp;
+                    @Html.TextBoxFor(m => m.ROLLexam, new { id = "ROLLexam", @maxlength = "20", placeholder = "All Roll No" })
+                </div>
+                <div class="col-md-2">
+                    Enter Error Code &nbsp;
+                    @Html.TextBoxFor(m => m.ERRcode, new { id = "ERRcode", @maxlength = "20", placeholder = "All Error Code" })
+                </div>
+                <div class="col-md-2">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm();" title="Search Record" /></div>
+            </fieldset>
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="col-md-12 text-right">
+                           <input type="submit" value="Download Error List" name="cmd" onclick="return valForm();" title="Download Error List" />
+            </div>
+        <div class="clearfix"></div>
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="t01">
+                        <tr class="active-tr">
+                            <th width="5%">Sl.No.</th>
+                            <th width="8%">SET</th>
+                            <th width="10%">School Code</th>
+                            <th width="10%">CANDID</th>
+                            <th width="11%">ROLL</th>
+                            <th width="11%">GROUPNM</th>
+                            <th width="12%">ERRCODE</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 30 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var SET = Model.StoreAllData.Tables[0].Rows[i]["Set"].ToString();
+                                    var Schl = Model.StoreAllData.Tables[0].Rows[i]["Schl"].ToString();
+                                    var Candid = Model.StoreAllData.Tables[0].Rows[i]["Candid"].ToString();
+                                    var Roll = Model.StoreAllData.Tables[0].Rows[i]["Roll"].ToString();
+                                    var group_name = Model.StoreAllData.Tables[0].Rows[i]["group_name"].ToString();
+                                    var errcode = Model.StoreAllData.Tables[0].Rows[i]["errcode"].ToString();
+
+                                    Count = Count + 1;
+
+                    <tr>
+                        <td>
+                            @Count
+                        </td>
+                        <td>
+                            @SET
+                        </td>
+                        <td>
+                            @Schl
+                        </td>
+                        <td>
+                            @Candid
+                        </td>
+                        <td>
+                            @Roll
+                        </td>
+                        <td>
+                            @group_name
+                        </td>
+                        <td>
+                            @errcode
+                        </td>
+                    </tr>
+                                    //.... Pagin start
+                                    if (d == ViewBag.TotalCountp)
+                                    {
+                    <tr>
+                        <td colspan="12">
+
+                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                            &nbsp;
+
+                            @if (ViewBag.pagesize == 1)
+
+                                                {
+                            @:<<
+
+                            @Html.Raw("&nbsp;");
+
+                            @:< Prev
+                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                            @Html.ActionLink("Next >", "FirmSchoolErrorList", new { page = ViewBag.pagesize + 1 })
+
+                            @Html.Raw("&nbsp;");
+
+                            @Html.ActionLink(">>", "FirmSchoolErrorList", new { page = ViewBag.pn })
+                                                    }
+                                                }
+                                                else
+                                                {
+                            @Html.ActionLink("<<", "FirmSchoolErrorList", new { page = 1 })
+
+                            @Html.Raw("&nbsp;");
+
+                            @Html.ActionLink("< Prev", "FirmSchoolErrorList", new { page = ViewBag.pagesize - 1 })
+                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                            @Html.ActionLink("Next >", "FirmSchoolErrorList", new { page = ViewBag.pagesize + 1 })
+
+                            @Html.Raw("&nbsp;");
+
+                            @Html.ActionLink(">>", "FirmSchoolErrorList", new { page = ViewBag.pn })
+                                                    }
+
+                                                }
+
+
+                        </td>
+                    </tr>
+                                    }
+
+                                    //... Paging end
+
+
+                                }
+                            }
+                            else
+                            {
+                    <tr>
+                        <td colspan="11">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive text-center">
+                <input type="submit" value="Back" formaction="FirmCorrectionHome" title="Go for Home Page" />
+            </div>
+        </div>
+    </div>
+                        }
+
+
+

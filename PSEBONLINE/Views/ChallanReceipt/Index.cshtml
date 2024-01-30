@@ -1,0 +1,219 @@
+﻿@model PSEBONLINE.Models.ChallanModels
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Challan Receipt</title>
+    <script src="https://test2022.psebonline.in/scripts/tetra.js"></script>
+    <script>
+
+    </script>
+
+    <script>
+        function price_in_words(price) {
+            var sglDigit = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"],
+                dblDigit = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"],
+                tensPlace = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"],
+                handle_tens = function (dgt, prevDgt) {
+                    return 0 == dgt ? "" : " " + (1 == dgt ? dblDigit[prevDgt] : tensPlace[dgt])
+                },
+                handle_utlc = function (dgt, nxtDgt, denom) {
+                    return (0 != dgt && 1 != nxtDgt ? " " + sglDigit[dgt] : "") + (0 != nxtDgt || dgt > 0 ? " " + denom : "")
+                };
+
+            var str = "",
+                digitIdx = 0,
+                digit = 0,
+                nxtDigit = 0,
+                words = [];
+            if (price += "", isNaN(parseInt(price))) str = "";
+            else if (parseInt(price) > 0 && price.length <= 10) {
+                for (digitIdx = price.length - 1; digitIdx >= 0; digitIdx--) switch (digit = price[digitIdx] - 0, nxtDigit = digitIdx > 0 ? price[digitIdx - 1] - 0 : 0, price.length - digitIdx - 1) {
+                    case 0:
+                        words.push(handle_utlc(digit, nxtDigit, ""));
+                        break;
+                    case 1:
+                        words.push(handle_tens(digit, price[digitIdx + 1]));
+                        break;
+                    case 2:
+                        words.push(0 != digit ? " " + sglDigit[digit] + " Hundred" + (0 != price[digitIdx + 1] && 0 != price[digitIdx + 2] ? " and" : "") : "");
+                        break;
+                    case 3:
+                        words.push(handle_utlc(digit, nxtDigit, "Thousand"));
+                        break;
+                    case 4:
+                        words.push(handle_tens(digit, price[digitIdx + 1]));
+                        break;
+                    case 5:
+                        words.push(handle_utlc(digit, nxtDigit, "Lakh"));
+                        break;
+                    case 6:
+                        words.push(handle_tens(digit, price[digitIdx + 1]));
+                        break;
+                    case 7:
+                        words.push(handle_utlc(digit, nxtDigit, "Crore"));
+                        break;
+                    case 8:
+                        words.push(handle_tens(digit, price[digitIdx + 1]));
+                        break;
+                    case 9:
+                        words.push(0 != digit ? " " + sglDigit[digit] + " Hundred" + (0 != price[digitIdx + 1] || 0 != price[digitIdx + 2] ? " and" : " Crore") : "")
+                }
+                str = words.reverse().join("")
+            } else str = "";
+            document.getElementById("amountinWord").innerHTML = str;
+
+        }
+
+    </script>
+
+
+
+    
+
+</head>
+<body onload="price_in_words(@Model.TOTFEE)">
+    @if (@Model != null)
+    {
+        if (@Model.VERIFIED == "1")
+        {
+            <table width="600px" align="center" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td align="center" colspan="2"><img src="/Images/PSEB-Payment-Logo-HDFC.jpg" alt="Punjab School Education Board" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right" style="padding:0 0 15px 0">
+                        Print Date Time : 06/12/2022 01:45:40PM
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <span class="kds-strip-r">
+                            Fee Payment Acknowledgement Slip
+                        </span>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td colspan="2">
+                        <p>Thanks, Payment details are given below :-</p>
+                    </td>
+                </tr>
+                <tr><td colspan="2" class="kds-strip">Transaction Details</td></tr>
+                <tr>
+                    <td width="200px">Payment Gateway Bank</td>
+                    <td width="">@Model.BANK.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td class="kds-b">Challan / Merchant ID</td>
+                    <td class="kds-big">@Model.CHALLANID.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>Payment Gateway Ref. No.</td>
+                    <td>@Model.J_REF_NO.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>Transaction Date</td>
+                    <td>@Model.CHLNDATE</td>
+                </tr>
+                <tr>
+                    <td class="kds-b">Transaction Status</td>
+                    <td class="kds-big kds-suc">
+                        @{ if (@Model.VERIFIED == "1")
+                            {
+                                <span>Success</span>
+                            }
+                            else
+                            {
+                                <span>Failure</span>
+                            }
+                        }
+                    </td>
+                </tr>
+                <tr><td colspan="2" class="kds-strip">Fee and Student / School Details</td></tr>
+                <tr>
+                    <td>Fee Submitted By</td>
+                    <td>
+                        @{ if (@Model.type.ToLower() == "schle")
+                            {
+                                <span>School</span>
+                            }
+                            else
+                            {
+                                <span>Student</span>
+                            }
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>Fee Category / Code</td>
+                    <td class="kds-b">@Model.FEECAT.ToUpper() / @Model.FEECODE.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>App. / Ref. No.</td>
+                    <td>@Model.APPNO.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>School Code /Roll No. / ID</td>
+                    <td>@Model.SCHLREGID.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>@Model.SCHLCANDNM.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>Contact No.</td>
+                    <td>@Model.Mobile.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>Fee Amount</td>
+                    <td class="kds-b">@Model.FEE.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>Late Fee Amount</td>
+                    <td class="kds-b">@Model.latefee.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td class="kds-b">Total Fee Amount</td>
+                    <td class="kds-big">@Model.TOTFEE.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>Amount In Words</td>
+                    <td class="kds-b"><span id="amountinWord"></span></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" class="kds-strip">Payment Details</td>
+                </tr>
+                <tr>
+                    <td>Bank Reference</td>
+                    <td>@Model.BRCODE</td>
+                </tr>
+                <tr>
+                    <td>Deposit Date</td>
+                    <td>@Model.DEPOSITDT.ToUpper()</td>
+                </tr>
+                <tr>
+                    <td>Fee Verify Status / Date</td>
+                    <td class="kds-b"><span class="kds-suc">Verified</span> / 13/09/2022 08:00:45PM</td>
+                </tr>
+                <tr>
+                    <td colspan="2">&nbsp;</td>
+                </tr>
+            </table>
+        }
+        else
+        {
+<div>Challan Id @Model.CHALLANID is not verified</div>
+        }
+    }
+    else
+    {
+        <div>You do not have access to view this page.</div>
+    }
+</body>
+</html>

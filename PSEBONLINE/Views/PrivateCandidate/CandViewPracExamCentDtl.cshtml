@@ -1,0 +1,214 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    ViewBag.Title = "Candidates to View Practical Exam Centre Details Search";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprint.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+
+<div id="HPL">
+    @{
+        using (Html.BeginForm("CandViewPracExamCentDtl", "PrivateCandidate", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+        {            
+    <div class="row">
+        <div class="col-md-12">
+            <h4 style="margin:4px 0">Practical Exam Centre Of Matric and Senior Secondary October-2019</h4>
+        </div>
+        <div class="col-md-12 noprint">
+            <fieldset style="margin-bottom:15px;overflow:hidden">
+                <legend> Search </legend>
+                <div class="col-md-1">
+                    TotalCount
+                    <label>@ViewBag.TotalCount</label>
+                </div>
+                <div class="col-md-2" id="drpdwn_select">
+                    Select Exam Type
+                    @{
+                        List<SelectListItem> Exam_Type = new List<SelectListItem>();
+                        Exam_Type.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        //Exam_Type.Add(new SelectListItem { Text = "Regular", Value = "Regular" });
+                        //Exam_Type.Add(new SelectListItem { Text = "Open", Value = "Open" });
+                        Exam_Type.Add(new SelectListItem { Text = "Private", Value = "Private" });
+                    }
+                    @Html.DropDownList("Exam_Type", Exam_Type, new { id = "Exam_Type" })
+                </div>
+                <div class="col-md-2" id="drpdwn_select">
+                    Batch/Year
+                    @{
+                        List<SelectListItem> batch = new List<SelectListItem>();
+                        batch.Add(new SelectListItem { Text = "October 2019", Value = "1" });
+                    }
+                    @Html.DropDownList("batch", batch, new { id = "batch" })
+                </div>
+                <div class="col-md-2" id="drpdwn_select">
+                    Select Search By
+                    @{
+                        List<SelectListItem> SearchBy = new List<SelectListItem>();
+                        SearchBy.Add(new SelectListItem { Text = "--Select Search Option--", Value = "0" });
+                        SearchBy.Add(new SelectListItem { Text = "Roll No", Value = "Roll No" });
+                        SearchBy.Add(new SelectListItem { Text = "Ref. No", Value = "Ref. No" });
+                    }
+                    @Html.DropDownList("SearchBy", SearchBy, new { id = "SearchBy" })
+                </div>
+                <div class="col-md-2" id="txt_refNo">
+                    Enter Roll/Ref. No. &nbsp;
+                    @Html.TextBoxFor(m => m.SearchString, new { id = "SearchString", @maxlength = "15", onkeypress = "return isNumberKey(event);", placeholder = "Entre your Ref_No or Roll no." })
+                </div>
+                <div class="col-md-2">
+                    &nbsp;<br />
+                    <input type="submit" value="Search" name="cmd" onclick="return valForm2();" title="Search Record" />
+                    <input type="button" value="Print" class="btn" onclick="window.print()" />
+                </div>
+                <div class="clearfix"></div>
+            </fieldset>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <h1>Practical Exam Centre Of Matric and Senior Secondary October-2019</h1>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th width="5%">Sl.No.</th>
+                        <th width="10%">CATEGORY</th>
+                        <th width="10%">REF.NO./CANDID</th>
+                        <th width="10%">ROLL</th>
+                        <th width="10%">NAME/ FNAME/ MNAME</th>
+                        <th width="10%">SUBJECT</th>
+                        <th width="10%">CENTRE</th>
+                        @*<th width="10%">EXAM DATE</th>*@
+
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var utype = Model.StoreAllData.Tables[0].Rows[i]["utype"].ToString();
+                                var REFNO = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                                var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                var cent = Model.StoreAllData.Tables[0].Rows[i]["Pcent"].ToString();
+                                var centE = Model.StoreAllData.Tables[0].Rows[i]["centE"].ToString();
+                                var SUB = Model.StoreAllData.Tables[0].Rows[i]["SUB"].ToString();
+                                var NAME_ENG = Model.StoreAllData.Tables[0].Rows[i]["NAME_ENG"].ToString();
+                                var EXAM_DATE = Model.StoreAllData.Tables[0].Rows[i]["EXAM_DATE"].ToString();
+                                var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                var FName = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                                var MName = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+                                Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        @Count
+                                    </td>
+                                    <td>
+                                        @utype
+                                    </td>
+                                    <td>
+                                        @REFNO
+                                    </td>
+                                    <td>
+                                        @ROLL
+                                    </td>
+                                    <td>
+                                        @Name/ @FName/ @MName
+                                    </td>
+                                    <td>
+                                        ( @SUB ) @NAME_ENG
+                                    </td>
+                                    <td>
+                                        ( @cent ) @centE
+                                    </td>
+                                    @*<td>
+                                        @EXAM_DATE
+                                    </td>*@
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="11">
+                                    @ViewBag.Message2
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-left kdsfont">
+            <div style="padding:10px 0">
+                1. Ú²ÕÅÙ ÆñÛÚª¤ØÏÁÛ¤Ù Åã ÆñÍë¬Û ÆñÛÚª¤Ø Âã» Ð¥Û ÂØªÐØ ÇØÏÌ ÚÒó° Ú¥âÂÏØ² ¨Û¼Ø Õè, ÚÓÏÇ ¦ÝÕÛ ÆñÛÚª¤ØÏÁÛ ÕÛ ÆñÍë¬Û ÆñÛÚª¤Ø Âã Ó¨Âã ÕÅ¢
+                <br />
+                2. ÆñÍë¬Û ÆñÛÚª¤ØÒÙ ÚÌ¼Û 16.11.2019 ¼ë× ÓÖÝÏÞ Õë ÏÕÛ¤Ù ÕÅ, Ú¥Ó Ð¥Û ÆñÍë¬Û ÆñÛÚª¤Ø Âã» ÒØÐã ÆñÛÚª¤ØÏÁÛ, ÆñëÍë¬Û ÆñÛÚª¤Ø ÂÛ ÚÌ¼Û ¼ë× ÆÚÕÐÙ Ú¨Óã ÒÛ ¨âÌ ÒØÐã ÚÂÅ ÚÒó° ÓÉâÄ¼ ÆñÛÚª¤Ø ¨ã×ÂÏ ÚÒó° ²Ø¨ã ÆñÛÚª¤Ø Âã ÚÌ¼Û ¤¼ã ÓÌãð× ÓÉâÄÛ ¼ØÐÌãÐ ¨ÏÅÙ Í¨ÛÅÛ É»Ø¦Ý» ¼Ù Ú¨ ¦ÝÕ ÆñÛÚª¤Ø Âã» ¼ë× ÒÙ´ã ÏÚÕ» ¼ë× É° Ó¨»¢
+            </div>
+        </div>
+        </div>
+        }
+        }
+    </div>
+
+<script>
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+                return true;
+            }
+            else {
+                alert("Invalid character...Enter Only Number!!");
+                return false;
+            }
+        }
+
+        function valForm2() {
+            var ExamType = $("#Exam_Type").val();var SearchBy = $("#SearchBy").val(); var SearchString = $("#SearchString").val();
+            if (ExamType == "" || ExamType == "0")
+            {
+                alert("Please Select Exam Type");
+                $("#Exam_Type").focus();
+                return false;
+            }
+           else if (SearchBy == "" || SearchBy == "0") {
+               alert("Please Select Search By");
+                $("#SearchBy").focus();
+                return false;
+           }
+           else if (SearchString == "" || SearchString == "0") {
+               alert("Entter Search String");
+               $("#SearchString").focus();
+               return false;
+           }
+        }
+           
+        function goBack() {
+            window.history.back();
+        }
+        $(document).ready(function () {            
+            $('#Exam_Type').change(function () {
+                {
+                    if ($('#Exam_Type').val()=='P') {
+                        $('#SearchBy').empty();                
+                        $("#SearchBy").append('<option value="0">--Select Search Option--</option>');
+                        $("#SearchBy").append('<option value="1">Roll No</option>');
+                        $("#SearchBy").append('<option value="2">Ref. No</option>');
+                    }
+                    if ($('#Exam_Type').val() == 'R' || $('#Exam_Type').val() == 'O') {
+                        $('#SearchBy').empty();
+                        $("#SearchBy").append('<option value="0">--Select Search Option--</option>');
+                        $("#SearchBy").append('<option value="1">Roll No</option>');                
+                    }
+                }
+            });
+        });
+</script>

@@ -1,0 +1,94 @@
+﻿@model PSEBONLINE.Models.ReportModel
+
+<style type="text/css">
+    td {
+        font-size: 11px;
+        padding: 1px;
+        vertical-align: top
+    }
+</style>
+<script>
+    $("#fromDate").datepicker({
+        dateFormat: "dd/mm/yy",
+        changeMonth: true,
+        changeYear: true,
+        maxDate: '-10yr',
+        //maxDate: '10/08/2016',
+        yearRange: "1950:2023"
+    });
+    $("#toDate").datepicker({
+        dateFormat: "dd/mm/yy",
+        changeMonth: true,
+        changeYear: true,
+        maxDate: '-10yr',
+        //maxDate: '10/08/2016',
+        yearRange: "1950:2023"
+    });
+    $("#RegExamSearch").click(function () {
+        
+        $('#divMain').hide();
+        var fromDate = document.getElementById("fromDate").value;
+        var toDate = document.getElementById("toDate").value;
+        //alert(fromDate);
+        //alert(toDate);
+        $('div#loading').html("<p><img src='../images/loadingk.gif'></p>");
+        $.get("../Admin/Report?id=11&fromDate=" + fromDate + "&toDate=" + toDate, function (data) {
+            if (data != '') {
+                $('#divMain').show();
+                $('#divMain').empty();
+                $("#divMain").append(data);
+            }
+            $('div#loading').empty();
+        });
+    });
+</script>
+<link rel="stylesheet" href="https://registration.pseb.ac.in/Content/Print-4P.css" />
+@*<h1 class="noprint">Form Wise Report</h1>*@
+
+@if (ViewBag.TotalCount > 0)
+{
+    <table style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px" border="1">
+        <tr>
+            <td>From date</td>
+            <td><input type="text" class="date" id="fromDate"  /> </td>
+            <td>To Date</td>
+            <td><input type="text" class="date" id="toDate" /></td>
+            <td>
+                 <a id="RegExamSearch" class="btn">Search</a>
+            </td>
+        </tr>
+        <tr>
+            
+            <td style="border-right:0 !important;width:10%">
+                <div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div>
+            </td>
+            <td colspan="4" style="font-size:14px;text-align:center;line-height:22px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px;">
+                <span style="font-size:28px">Punjab School Education Board</span>
+                <br />
+                <span>Registration & Examination Forms Count and Fee Summary, Session (2023-24)</span>
+            </td>
+            @*<td style="border-left:0 !important" align="right">Print Date : @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")</td>*@
+        </tr>
+        <tr>
+            <td align="center">Class</td>
+            <td align="center">Registered Candidates Count</td>
+            <td align="center">Examination Forms Count</td>
+            <td align="center">Registration Fee</td>
+            <td align="center">Examination Fee</td>
+        </tr>
+        @foreach (System.Data.DataRow dr in Model.StoreAllData.Tables[0].Rows)
+        {
+            <tr>
+                <td align="center">@dr["Class"].ToString()@Html.Raw("th")</td>
+                <td align="center">@dr["RegCount"].ToString()</td>
+                <td align="center">@dr["ExamCount"].ToString()</td>
+                <td align="center">@dr["RegFee"].ToString()</td>
+                <td align="center">@dr["ExamFee"].ToString()</td>
+            </tr>
+        }
+    </table>
+}
+
+
+
+

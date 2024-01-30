@@ -1,0 +1,269 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title Punjab School Education Board</title>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,600' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">   
+ <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+           <noscript>
+            <style type="text/css">
+                #HPL {display:none}
+            </style>
+        <charset style="background-color:#cc0000;color:#ffd800;font-size:24px;text-align:center;padding:10px 0">Your browser does not support JavaScript!</charset>
+</noscript>   
+     @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div id="HPL">
+     <div class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-3 col-md-3"><img src="~/Images/pseb_logo.png" alt="Punjab School Education Board" class="img-responsive" /></div>
+                <div class="col-xs-9 col-md-6"><center> <img src="~/Images/PSEB_Text.png" alt="Punjab School Education Board" class="img-responsive" /></center></div>
+                <div class="col-xs-12 col-md-3 text-right">                
+                    @if (Session["TollFreeStatus"] != null)
+                    {
+                        if (Session["TollFreeStatus"].ToString() == "1")
+                        {
+                           <span style="color:#fff">
+                                Email Id: <a target="_blank" href="mailto:contact2@psebonline.in" style="color:#fff">psebhelpdesk@gmail.com</a><br />
+                                Toll Free Help Line No. :<span class="blink_text">18002700280</span>
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color:#fff">
+                                Email Id: <a target="_blank" href="mailto:contact2@psebonline.in" style="color:#fff">contact2@psebonline.in</a><br />
+                                Toll Free Help Line No. : <span class="blink_text">18004190690</span></span>
+                           
+                        }
+                    }
+                    else { Response.Redirect("~/Login"); }
+
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 text-center" style="color:#fff">
+                   <span>
+                    @if(Session["FullSchoolNameE"] != null)
+                    { @Session["FullSchoolNameE"].ToString()}
+                    else
+                    {
+                    @Html.ActionLink("Logout", "Logout", "Login") }
+                </span> &nbsp;  /
+             <span class="kdsfont">
+                 @if(Session["FullSchoolNameP"] != null)
+                    { @Session["FullSchoolNameP"].ToString()}
+            </span> &nbsp;[<span>
+         @if (Session["SCHL"] != null)
+         {
+            if (Session["SchoolLogin"].ToString() == Session["SCHL"].ToString())
+            {
+               @Session["SCHL"].ToString()
+            }
+            else
+            {
+                @Html.ActionLink("Logout", "Logout", "Login")
+            }
+         }
+         else
+         {
+                  @Html.ActionLink("Logout", "Logout", "Login")
+         }
+     </span>]
+            </div>
+            </div></div></div>
+            <div class="navbar navbar-inverse">
+        <div class="container">
+            <div class="row">
+                <div class="navbar-header">
+                    <button type = "button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @*@Html.ActionLink("Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                School Profile
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Update School Information", "Update_School_Information", "SchoolProfile")</li>
+                                <li>@Html.ActionLink("Change Password", "Change_Password", "SchoolProfile")</li>
+                                @*<li>@Html.ActionLink("School Staff Details", "School_Staff_Details", "SchoolProfile")</li>*@
+                                <li>@Html.ActionLink("Update UDISE Code", "School_UDISE_Code", "School")</li>
+                            </ul>
+                        </li>
+@if (Session["Session"].ToString() == "2017-2018" && Session["IsOpen"] != null && Session["IsOpen"].ToString().ToLower().Trim() == "true")
+{
+
+    <li>@Html.ActionLink("Open Portal", "SchoolOpen", "Open")</li>
+
+}
+
+
+                       @if (Session["Session"].ToString() == "2016-2017")
+                        {
+                                                        <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown">
+                                    Registration Portal
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Registration Portal", "Portal", "RegistrationPortal")</li>
+                                    <li>@Html.ActionLink("9th & 11th Result Updation", "ResultUpate", "School")</li>
+                                    <li>@Html.ActionLink("9th & 11th Transfer Certificate", "tcrequestschl", "TC")</li>
+                                </ul>
+                            </li>
+
+                        }
+                        else
+                        {
+                        <li>@Html.ActionLink("Registration Portal", "Portal", "RegistrationPortal")</li>}
+                        @if (Session["Session"].ToString() == "2017-2018")
+                        {
+
+                        }
+                        else   if (Session["Session"].ToString() == "2016-2017")  
+                        {
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown">
+                                    Examination Portal
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Examination Portal", "ExaminationPortal", "RegistrationPortal")</li>
+                                    <li>@Html.ActionLink("CCE and Grading Portal", "CCE_Grading_Portal", "School")</li>
+                                    <li>@Html.ActionLink("Result 2016-17", "SchoolResultDeclare", "School")</li>
+                                </ul>
+                            </li>
+                        }
+                        @if (Session["Session"].ToString() == "2017-2018")
+                        {
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown">
+                                    Examination Portal
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Examination Portal", "ExaminationPortal", "RegistrationPortal")</li>
+                                    @*<li>@Html.ActionLink("CCE and Grading Portal", "CCE_Grading_Portal", "School")</li>
+                                    <li>@Html.ActionLink("Result 2016-17", "SchoolResultDeclare", "School")</li>*@
+                                </ul>
+                            </li>
+                        }
+
+
+@if (Session["Session"].ToString() == "2017-2018")
+{
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown">
+            Correction Performa
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            @*<li>
+                <a href="/PDF/Correction-Performa-Ins.pdf" target="_blank">Instructions</a>
+            </li>*@
+            <li>@Html.ActionLink("Instructions", "Instructions", "CorrectionSubjects")</li>
+            <li>@Html.ActionLink("Particular Correction Performa", "SchoolCorrection", "RegistrationPortal")</li>
+            @*<li>@Html.ActionLink("Image Correction Performa", "ImageCorrectionPerforma", "CorrectionSubjects")</li>*@            
+            <li>@Html.ActionLink("Subject Correction Performa", "CorrectionPerforma", "CorrectionSubjects")</li>
+            <li>@Html.ActionLink("Photo/Sign Correction Performa", "ImageCorrectionPerforma", "CorrectionSubjects")</li>
+            @*<li>@Html.ActionLink("Stream Correction Performa (Senior Secondary Regular)", "StreamCorrectionPerforma", "CorrectionSubjects")</li>*@
+            <li>@Html.ActionLink("Correction Performa Final Print", "SchoolCorrectionFinalPrintLst", "RegistrationPortal")</li>
+            <li>@Html.ActionLink("Status of Correction", "SchoolCorrectionAllRecord", "RegistrationPortal")</li>
+        </ul>
+    </li>
+}
+
+
+
+else if (Session["Session"].ToString() == "2016-2017")
+{
+
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown">
+                                    Correction Performa
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="/PDF/Instructions_Regarding_Correction_Performa_2016-17.pdf" target="_blank">14<sup>th</sup> Dec 2016 - Instructions Regarding Correction Performa 2016-17 <img src="/images/new.gif" alt="new"></a>
+                                    </li>
+                                    <li>@Html.ActionLink("Image Correction Performa", "ImageCorrectionPerforma", "CorrectionSubjects")</li>
+                                    <li>@Html.ActionLink("Particular Correction Performa", "SchoolCorrection", "RegistrationPortal")</li>
+                                    <li>@Html.ActionLink("Subject Correction Performa", "SubjectCorrectionPerforma", "CorrectionSubjects")</li>
+                                    <li>@Html.ActionLink("Stream Correction Performa (Senior Secondary Regular)", "StreamCorrectionPerforma", "CorrectionSubjects")</li>
+                                    <li>@Html.ActionLink("Correction Performa Final Print", "SchoolCorrectionFinalPrintLst", "RegistrationPortal")</li>
+                                    <li>@Html.ActionLink("Status Of Correction", "SchoolCorrectionAllRecord", "RegistrationPortal")</li>
+                                </ul>
+                            </li>
+                            <li>@Html.ActionLink("Cut List", "SchoolCutlist", "School")</li>
+
+                            <li>@Html.ActionLink("Admit Card", "SchoolAdmitCardList", "RegistrationPortal")</li>
+                            if (Session["cent"].ToString() != "" && Session["cent"].ToString() != null)
+                            {
+
+                                <li>@Html.ActionLink("Exam Centre", "ExamCentre", "DeoPortal")</li>
+                            }
+
+                        }
+
+
+@if (Session["Session"].ToString() == "2017-2018")
+                        {
+      if (Session["cent"].ToString() != "" && Session["cent"].ToString() != null)
+                        {
+
+                        <li>@Html.ActionLink("Exam Centre", "ExamCentre", "School")</li>
+                        }
+                        }
+                      
+                    </ul>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li>@Html.ActionLink("Logout", "Logout", "Login") </li>
+                            </ul>
+</div>
+                </div>
+            </div>
+    </div>
+
+            <div class="container KDBG">
+            @RenderBody()
+
+        </div>
+<footer class="bs-docs-footer">
+        <div class="container text-center">
+           All Rights Reserved at Punjab School Education Board, 1969 - 2017 
+        </div>
+    </footer>
+    </div>
+       
+     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-82197953-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

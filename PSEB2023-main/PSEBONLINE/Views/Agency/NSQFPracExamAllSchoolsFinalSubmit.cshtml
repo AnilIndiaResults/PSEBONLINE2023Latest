@@ -1,0 +1,153 @@
+﻿@model PSEBONLINE.Models.AgencySchoolModelList
+@{
+    /**/
+
+    /**/
+
+    ViewBag.Title = "NSQF PracExam All Schools FinalSubmit";
+    Layout = "~/Views/Shared/_AgencyLayout.cshtml";
+}
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+@{
+    if (Model.AgencySchoolModels != null)
+    {
+        PSEBONLINE.Models.AgencyLoginSession AgencyLoginSession = (PSEBONLINE.Models.AgencyLoginSession)Session["AgencyLoginSession"];
+        @*<p>Total Schools : @Model.AgencySchoolModels.Count()</p>*@
+
+
+
+        if (ViewBag.NOMS == 0)
+        {
+            if (ViewBag.LastDate != null)
+            {
+                DateTime todayDate = DateTime.Today;
+                DateTime LastDate = Convert.ToDateTime(ViewBag.LastDate);
+
+                if (todayDate <= LastDate)
+                {
+                    <br />
+
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <p style="font-size:18px;color:red;text-align:center">No School is Pending, You are going to final submit the data. After that data will be locked for any changes.</p>
+                            </div>
+                            <div class="col-md-3">
+                                @*<a  href="/Agency/NSQFPracExamAllSchoolsFinalSubmit/@AgencyLoginSession.AgencyId?cls=@Model.AgencyAllowClass&&sub=@Model.AgencyAllowSubject" class="btn"
+                                    onclick="return confirm('You are going to submit the data. After that data will be locked for any changes?');">Lock & Final Submit</a>*@
+                                <button class="btn" type="submit" formaction="/Agency/NSQFPracExamAllSchoolsFinalSubmit/@AgencyLoginSession.AgencyId?cls=@Model.AgencyAllowClass&&sub=@Model.AgencyAllowSubject"
+                                        onclick="return confirm('You are going to submit the data. After that data will be locked for any changes?');">
+                                    Lock & Final Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                }
+
+                else
+                {
+                    <br /> <span class="rqf">Last date is over for Final Submission, i.e<span class="text-primary">@ViewBag.LastDate</span></span>
+
+                }
+            }
+        }
+        else
+        {
+            if (Convert.ToInt32(ViewBag.NOMS) > 0)
+            {
+                <br /> <p style="font-size:24px;color:red;text-align:center">Pending School List</p>
+            }
+            else
+            {
+                <br /> <p style="font-size:24px;color:red;text-align:center">Final Submitted</p>
+            }
+
+        }
+
+
+        if (Model.AgencySchoolModels.Count > 0)
+        {
+            <div class="table-responsive">
+                <table id="example" class="display table table-bordered" style="width:100%">
+                    <thead>
+                        <tr class="active-tr">
+                            <th>Schl</th>
+                            <th>UDISE Code</th>
+                            <th>School Name</th>
+                            <th>Mobile</th>
+                            <th>Total</th>
+                            <th>Filled</th>
+                            <th>Pending</th>
+                            <th>Last Date</th>
+                            <th>Final Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var obj in Model.AgencySchoolModels)
+                        {
+                            int NOMP = obj.NOP - obj.NOMF;
+                            <tr>
+                                <td>@obj.Schl</td>
+                                <td>@obj.Udisecode</td>
+                                <td>@obj.SchlNME </td>
+                                <td>@obj.Mobile </td>
+                                <td>@obj.NOP </td>
+                                <td>@obj.NOMF </td>
+                                <td>@NOMP</td>
+                                <td>@obj.LastDate </td>
+                                <td>@obj.FinalStatus </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        }
+        else
+        {
+            <p>Record Not Found</p>
+        }
+
+
+    }
+
+}
+<div class="clearfix"></div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 25,
+            "order": [[0, 'desc']],
+            language: {
+                searchPlaceholder: "Search By Schl, School Name .."
+            },
+        })
+    });
+</script>
+@{
+    if (ViewData["resultFS"] != null)
+    {
+        var result = ViewData["resultFS"].ToString();
+
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submitted SuccessFully");
+                document.location.href = '@Url.Action("ViewAllSchoolsAllowed", "Agency")';
+            </script>
+        }
+        else 
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submitted Failure");
+                
+            </script>
+        }
+    }
+}

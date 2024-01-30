@@ -1,0 +1,313 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+@using (Html.BeginForm("ReplacementStaff", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+  @Html.Hidden("hdnccode", (string)ViewBag.ccode)
+<h1>Staff Replacement</h1>
+<div class="row" style="display:none">
+<div class="col-md-12">
+    <fieldset>
+        <legend>Search Old Staff Details</legend>
+        <div class="col-md-2">
+            Enter Old Staff ID
+        </div>       
+        <div class="col-md-3">
+           <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+            @if (ViewBag.TotalCount==0)
+            {
+                <span id="reqsession" style="color:red;">@ViewBag.Message</span>
+            }
+           
+        </div>
+        <div class="col-md-6 text-left">
+            <input type="Submit" value="Search" name="cmd" onclick="return dee()" /> 
+            <input type="button" id="Reset" value="Reset" onclick="return ResetmyFunction();" />
+
+            @Html.ActionLink("Block Wise Extra Staff List Report", "ClusterWiseExtraStaffListPrint", "DeoPortal", new { @class = "btn" })
+            @*<input value="Reset" type="button" onclick="this.form.reset();return false;" />*@
+        </div>
+    </fieldset>
+</div>
+    </div>
+<div class="clearfix"></div>
+<div class="row" style="display:none">
+    <div class="col-md-12">
+        <h4>Old Staff Details</h4>
+        <div class="row">
+            <div class="col-md-3">Type of Duty </div>
+            <div class="col-md-9">@ViewBag.dutytype</div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Block Code / Name </div>
+            <div class="col-md-9">@ViewBag.ClusterDatails</div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Centre Code/ Name </div>
+            <div class="col-md-9">@ViewBag.centreDetails</div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Old Staff Details</div>
+            <div class="col-md-9">@ViewBag.OldStaffDetails</div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12" style="padding-top:10px">
+        <h4>Enter New Staff Details:</h4>
+        <div class="row">
+            <div class="col-md-12">
+                Enter New Staff <span class="rqf">*</span>
+                @Html.DropDownList("StaffName", new SelectList(ViewBag.Staff, "Value", "Text"), "--Select Staff---", new { @class = "" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">
+                This change will be implemented from date <span class="rqf">*</span>
+                @Html.TextBoxFor(m => m.centreDate, "{0:dd/MM/yyyy}", new
+                {
+                id = "centreDate",
+                @readonly = "readonly",
+                @maxlength = "10",
+                // onkeypress = "javascript: return false;",
+                onpaste = "return false;",
+                oncopy = "return false;",
+                oncut = "return false;"
+
+                })
+            </div>
+            <div class="col-md-9">
+                Reason <span class="rqf">*</span>
+                <input type="text" id="Reason" name="Reason" value="@ViewBag.Reason" />
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center" style="padding-bottom:6px">
+                @*<input type="submit" value="submit" onclick="return confirm('After submiting this old staff is releaved from selected centre & New staff is appointed, Are you sure?');" />*@
+                <input type="Submit" value="Submit" name="cmd" onclick="return confirmGetMessage();" />
+                <input type="button" id="Reset" value="Reset" onclick="return Funrest();" />
+            </div>
+
+        </div>
+</div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="table-responsive">
+            <div class="col-md-12">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">                       
+                        <th>SLNO. </th>
+                        <th>shift id</th>
+                        <th>cent</th>
+                        <th>ecentre</th>
+                        <th>School Name</th>
+                        <th>distnm</th>
+                        <th>Old Staff Details</th>
+                        <th>New Staff Details</th>                     
+                        <th>Print/View</th>
+                    </tr>
+                    <tr>
+                        @{
+                            if (@ViewBag.message == "1")
+                            {
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    if (ViewBag.pagesize == 1)
+                                    {
+                                        Count = 0;
+                                    }
+                                    else
+                                    {
+                                        Count = 20 * (ViewBag.pagesize - 1);
+                                    }
+                                    for (int i = 0; i < Model.StoreAllStaffData.Tables[0].Rows.Count; i++)
+                                    {
+                                        //CCODE, TeacherName, FatherName, Designation, TypeOfDuty, Mobile
+                                        d = d + 1;
+                                        var SLNO = Model.StoreAllStaffData.Tables[0].Rows[i]["id"].ToString();                                        
+                                        var cent = Model.StoreAllStaffData.Tables[0].Rows[i]["cent"].ToString();
+                                        var ecentre = Model.StoreAllStaffData.Tables[0].Rows[i]["ecentre"].ToString();
+                                        var SchlName = Model.StoreAllStaffData.Tables[0].Rows[i]["schoole"].ToString();
+                                        var DISTNM = Model.StoreAllStaffData.Tables[0].Rows[i]["distnm"].ToString();
+                                        var OldStaffDetails = Model.StoreAllStaffData.Tables[0].Rows[i]["OldStaffDetails"].ToString();
+                                        var NewStaffDetails = Model.StoreAllStaffData.Tables[0].Rows[i]["NewStaffDetails"].ToString();
+
+                                        Count = Count + 1;
+                                    <tr>
+                                        <td>@Count </td>
+                                        <td>@SLNO </td>
+                                        <td>@cent </td>
+                                        <td>@ecentre </td>
+                                        <td>@SchlName </td>
+                                        <td>@DISTNM</td>
+                                        <td>@OldStaffDetails</td>
+                                        <td>@NewStaffDetails</td>                                       
+                                        <td>
+                                           
+                                         @Html.ActionLink("Print/View", "DeoLetter", new { shiftid = SLNO }, new { @class = "btn" })
+
+                                        </td>
+                                    </tr>
+                                    if (d == ViewBag.TotalCount)
+                                        {
+                                            <tr>
+                                                <td colspan="10">
+
+                                                    Page @ViewBag.pagesize of @ViewBag.pn
+
+                                                    &nbsp;
+
+                                                    @if (ViewBag.pagesize == 1)
+
+                                                    {
+                                                        @:<<
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @:< Prev
+                                                        @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                        if (ViewBag.pn > ViewBag.pagesize)
+                                                        {
+                                                            @Html.ActionLink("Next >", "ReplacementStaff", new { page = ViewBag.pagesize + 1 })
+
+                                                            @Html.Raw("&nbsp;");
+
+                                                            @Html.ActionLink(">>", "ReplacementStaff", new { page = ViewBag.pn })
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (TempData["CenterListSelDist"] != null)
+                                                        {
+                                                            string str1 = TempData.Peek("CenterListSelDist").ToString();
+                                                            string str2 = TempData.Peek("CenterListSelectList").ToString();
+                                                            string str3 = TempData.Peek("CenterListSearchString").ToString();
+                                                            //string str4 = TempData.Peek("ImportData10thClassSession").ToString();
+                                                            TempData["CenterListSelDist"] = str1;
+                                                            TempData["CenterListSelectList"] = str2;
+                                                            TempData["CenterListSearchString"] = str3;
+                                                            // TempData["ImportData10thClassSession"] = str4;
+                                                        }
+                                                        @Html.ActionLink("<<", "ReplacementStaff", new { page = 1 })
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @Html.ActionLink("< Prev", "ReplacementStaff", new { page = ViewBag.pagesize - 1 })
+                                                        @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                        if (ViewBag.pn > ViewBag.pagesize)
+                                                        {
+                                                            @Html.ActionLink("Next >", "ReplacementStaff", new { page = ViewBag.pagesize + 1 })
+
+                                                            @Html.Raw("&nbsp;");
+
+                                                            @Html.ActionLink(">>", "ReplacementStaff", new { page = ViewBag.pn })
+                                                        }
+
+                                                    }
+
+
+                                                </td>
+                                            </tr>
+                                        }
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7">
+                                            @ViewBag.Message
+                                        </td>
+                                    </tr>
+                                }
+
+
+                            }
+                            else
+                            {
+                                <td colspan="4">@ViewBag.message </td>
+                            }
+
+                        }
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+                            }
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Staff Changed Successfully");
+            </script>}       
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Staff Not Changed..plz try again");
+            </script>
+        }
+    }
+}
+
+<script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#centreDate").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+
+            });
+        });
+
+
+</script>
+<script type="text/javascript">
+
+    var ss = document.getElementById("SearchString");
+    var sn = document.getElementById("StaffName");
+    var cn = document.getElementById("centreDate");
+    var re = document.getElementById("Reason");
+    function confirmGetMessage() {
+        if (ss.value == "" || ss.value == null) {
+            alert("Please Enter StaffID ");
+            ss.focus();
+            return false;
+        }
+        if (sn.value == "" || sn.value == "0") {
+            alert("Please Select New Staff");
+            sn.focus();
+            return false;
+        }
+        if (cn.value == "" || cn.value == " ") {
+            alert("Please Enter date ");
+            cn.focus();
+            return false;
+        }
+        if (re.value == "" || cn.value == null) {
+            alert("Please Enter Reason ");
+            re.focus();
+            return false;
+        }
+    var theAnswer = confirm("After submiting this old staff is releaved from selected centre & New staff is appointed, Are you sure?");
+    //if the user presses the "OK" button display the message "
+      if (theAnswer) {
+          return true;
+      }
+     else{
+          //alert("Here is a message anyway.");
+          return false;
+      }
+}
+function ResetmyFunction() {
+    document.getElementById("SearchString").value = '';
+
+}
+function Funrest() {
+    document.getElementById("StaffName").value = '';
+    document.getElementById("centreDate").value = '';
+}
+
+</script>

@@ -1,0 +1,118 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "Class SubjectWise Examination Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<style type="text/css">
+    body, td {
+        font-size: 12px
+    }
+</style>
+<h1 class="noprint">Class Subject Wise Examination Report</h1>
+
+<div class="col-md-12 noprint">
+    @using (Html.BeginForm("ClassSubjectWiseExaminationReport", "Report", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+    {
+        @Html.Hidden("Filevalue", "CENT")
+    <div class="row">
+        <div class="col-md-3">
+            Select Class @Html.DropDownList("SelClass", new SelectList(ViewBag.Mycls, "Value", "Text", ViewBag.Selectedcls), "--Select---", new { @class = "", id = "SelClass", required = "required" })
+        </div>
+        <div class="col-md-3">
+            Select RP @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem1", required = "required" })
+        </div>
+        <div class="col-md-6">
+            <br />
+            <input type="submit" name="submit" value="Submit" /> <input type="submit" name="submit" value="Download" />  <input type="button" value="Back" class="btn" onclick="history.go(-1)" />
+        </div>
+    </div>
+    }
+</div>
+<table style="width:100%;" border="0" class="bgimg">
+    <tr>
+        <td>
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        @if (ViewBag.TotalCount > 0)
+                        {
+                            <span>Total :</span> @ViewBag.TotalCount
+                            <input type="button" value="Print" class="btn" onclick="window.print()" />
+
+                        }
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table border="1" width="100%" class="tprint brack">
+                <thead>
+                    <tr>
+                        <td width="15%"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="70px" /></div></td>
+                        <td width="70%" style="font-size:16px;text-align:center;line-height:25px;">
+                            <span style="font-size:22px;">Punjab School Education Board</span><br />Class & Subject Wise Count of Candidates, Session 2023-24
+                        </td>
+                        <td width="15%" align="right">
+                            Print Date: @DateTime.Now.ToString("dd/MM/yyyy")<br />@*FINAL SBMITTED ON :*@
+                        </td>
+                    </tr>
+                    <tr style="font-size:12px">
+                        <td>
+                            Class: @if (ViewBag.Selectedcls == "10")
+                            {<span>Matric</span>}
+                            else
+                            {<span>Senior Secondary</span>}
+                        </td>
+                        <td colspan="2" align="right">
+                            Exam Type: @if (ViewBag.SelectedItem == "R")
+                            {<span>Regular</span>}
+                            else if (ViewBag.SelectedItem == "O")
+                            { <span>Open</span>}
+                            else if (ViewBag.SelectedItem == "A")
+                            {<span>Regular-Open</span>}
+
+                            else if (ViewBag.SelectedItem == "PROA")
+                            {<span>Private [Regular/Open/Add]</span>}
+                            else if (ViewBag.SelectedItem == "DRO")
+                            {<span>Differentlyabled [Regular-Open]</span>}
+                            else if (ViewBag.SelectedItem == "DPROA")
+                            {<span>Differentlyabled Private [Regular/Open/Add]</span>}
+                        </td>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0 && Model.StoreAllData.Tables.Count > 0)
+                        {
+                            <tr style="background-color:#ccc!important;font-size:14px">
+                                <td width="15%">Sub Code</td>
+                                <td width="70%">Subject Name</td>
+                                <td width="15%">No of Candidates</td>
+                            </tr>
+                            if (Model.StoreAllData.Tables[0].Rows.Count > 0)
+                            {
+                                int d = 0;
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var sub = Model.StoreAllData.Tables[0].Rows[i]["SUB"].ToString();
+                                    var subnm = Model.StoreAllData.Tables[0].Rows[i]["SUBNM"].ToString();
+                                    var noc = Model.StoreAllData.Tables[0].Rows[i]["noc"].ToString();
+
+                                    <tr>
+                                        <td>@sub</td>
+                                        <td>@subnm</td>
+                                        <td>@noc</td>
+                                    </tr>
+                                }
+                            }
+                        }
+
+                    }
+
+            </table>
+        </td>
+    </tr>
+</table>
+

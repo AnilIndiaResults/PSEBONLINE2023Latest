@@ -1,0 +1,107 @@
+﻿@model PSEBONLINE.Models.Challan
+@{
+    ViewBag.Title = "VerifyPayment";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+
+@using (Html.BeginForm("MisUpdate", "Challan", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <h1>
+        MIS Update
+    </h1>
+    //<input type="text" id="chkme" style="display:none;" value="@ViewBag.dee" name="chkme" />
+
+    <div class="row">
+        <div class="col-md-12">
+            <input type="Submit" value="MIS Update" name="cmd" style="float:right;" />         
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">Grid Total:  @ViewBag.TotalCount</div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>S.No</th>
+                        <th>BANK</th>
+                        <th>SCHLREGID</th>
+                        <th>CHALLAN ID</th>
+                        <th>CHLNDATE</th>
+                        <th>FEECAT</th>
+                        <th>Appno/RefNo</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var BANK = Model.StoreAllData.Tables[0].Rows[i]["BANK"].ToString();
+                                var schlregid = Model.StoreAllData.Tables[0].Rows[i]["schlregid"].ToString();
+                                var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                                var CHLNDATE = Model.StoreAllData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                                var FEECAT = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                                var APPNO = Model.StoreAllData.Tables[0].Rows[i]["APPNO"].ToString();
+                                Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        @Count
+                                    </td>
+                                    <td>
+                                        @BANK
+                                    </td>
+                                    <td>
+                                        @schlregid
+                                    </td>
+                                    <td>
+                                        @challanid
+                                    </td>
+                                    <td>
+                                        @CHLNDATE
+                                    </td>
+                                    <td>
+                                        @FEECAT
+                                    </td>
+                                    <td>
+                                        @APPNO
+                                    </td>
+                                </tr>
+
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                </table>
+
+
+
+            </div>
+        </div>
+    </div>
+
+ }
+
+
+

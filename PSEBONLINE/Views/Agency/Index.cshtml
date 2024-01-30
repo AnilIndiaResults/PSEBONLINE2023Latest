@@ -1,0 +1,53 @@
+﻿@model PSEBONLINE.Models.LoginModel
+@{
+
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<form class="form-signin" name="Login_Form" method="post" action="">
+    <h3 class="form-signin-heading text-center">Agency Login Panel</h3>
+    <br />
+    @Html.TextBoxFor(m => m.username, new { placeholder = "Username", @class = "form-control", required = "required" })
+    @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password", required = "required" })
+    @Html.DropDownList("Session", new SelectList(ViewBag.SessionList, "Value", "Text"), "--Select Session---", new { @class = "form-control", required = "required" })
+    <input type="submit" value="Login" />
+</form>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Alert",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+    });
+</script>
+
+@{
+    if (ViewData["result"] != null)
+    {
+
+        if (ViewData["result"].ToString().Contains("Error"))
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">@ViewData["result"]</span>
+            </div>
+        }
+		 else
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Login Credential are Wrong, Please Try again with correct credentials</span>
+            </div>
+        }
+    }
+}
+
+
+
+

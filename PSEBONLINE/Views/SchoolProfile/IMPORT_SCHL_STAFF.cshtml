@@ -1,0 +1,248 @@
+﻿@model PSEBONLINE.Models.SchoolStaffDetailsModel
+@{
+    ViewBag.Title = "ImportSchoolStaffDetails";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+<h2>View Releaved Staff Details</h2>
+@if (Session["SchlE"] == null)
+{ Response.Redirect("~/Login"); }
+<div style="color:green">@TempData["msg"]</div>
+<div class="clearfix"></div>
+@using (Html.BeginForm("IMPORT_SCHL_STAFF", "SchoolProfile", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                @*<div class="col-md-2"> <label>Total : @ViewBag.TotalCount1</label></div>*@
+                <div class="col-md-2">CATEGORY</div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> SelectList = new List<SelectListItem>();
+                        SelectList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        SelectList.Add(new SelectListItem { Text = "AADHAR NO", Value = "1" });
+                        SelectList.Add(new SelectListItem { Text = "MOBILE NO", Value = "2" });
+                    }
+                    @Html.DropDownList("Category", SelectList, new { id = "Category" })
+
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+                    <span id="reqsellist" style="color:red;display:none;">Enter Here</span>
+                </div>
+                <div class="col-md-1"><input type="Submit" value="Search" name="cmd" onclick="return dee()" /></div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="col-md-12 text-right">
+        <input type="Submit" value="IMPORT SELECT STAFF" name="cmd" onclick="return Staffdee()" />
+        @*<input type="button" value="IMPORT SELECT STAFF" onclick="javascript:document.location.href='@Url.Action("IMPORT_SCHL_STAFF", "SchoolProfile", new { @class = "btn" })'" />*@
+        <input type="button" value="Back" onclick="history.go(-1);" />
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th>Sr No</th>
+                        <th>Aadhar No</th>
+                        <th>Name</th>
+                        <th>Father's Name</th>
+                        <th>DOB</th>
+                        <th>Mobile No</th>
+                        <th>Gender</th>
+                        <th>Cadre</th>
+                        <th>Subject</th>
+                        <th>LOT</th>
+                        <th>Check To Import Staff</th>
+
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 50 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var aano = Model.StoreAllData.Tables[0].Rows[i]["AadharNo"].ToString();
+                                var name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                var id = Model.StoreAllData.Tables[0].Rows[i]["staffid"].ToString();
+                                var fname = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                                var gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                                var dob = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                var mobno = Model.StoreAllData.Tables[0].Rows[i]["MOBILENO"].ToString();
+                                var cadre = Model.StoreAllData.Tables[0].Rows[i]["cadre"].ToString();
+                                var subj = Model.StoreAllData.Tables[0].Rows[i]["SUBNM"].ToString();
+                                var lot = Model.StoreAllData.Tables[0].Rows[i]["lot"].ToString();
+
+                                Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        @Count
+                                    </td>
+                                    <td>
+                                        @aano
+                                    </td>
+                                    <td>
+                                        @name
+                                    </td>
+                                    <td>
+                                        @fname
+                                    </td>
+                                    <td>
+                                        @dob
+                                    </td>
+                                    <td>
+                                        @mobno
+                                    </td>
+                                    <td>
+                                        @gender
+                                    </td>
+                                    <td>
+                                        @cadre
+                                    </td>
+                                    <td>
+                                        @subj
+                                    </td>
+                                    <td>
+                                        @lot
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" value="@id" name="StaffName" class="checkbox" />
+                                    </td>
+
+                                </tr>
+
+
+
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="13">
+
+                                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                                            &nbsp;
+
+                                            @if (ViewBag.pagesize == 1)
+
+                                            {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "DisplaySchoolStaffDetails", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "DisplaySchoolStaffDetails", new { page = ViewBag.pn })
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("<<", "DisplaySchoolStaffDetails", new { page = 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink("< Prev", "DisplaySchoolStaffDetails", new { page = ViewBag.pagesize - 1 })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "DisplaySchoolStaffDetails", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "DisplaySchoolStaffDetails", new { page = ViewBag.pn })
+                                                }
+
+                                            }
+
+
+                                        </td>
+                                    </tr>
+                                }
+
+
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="13">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+                        }
+
+@{
+    if (ViewData["msg"] != null)
+    {
+        if (ViewData["msg"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Final Submitted Successfully");
+                window.location.href = '@Url.Action("DisplaySchoolStaffDetails", "SchoolProfile")';
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data not Final Submit..plz try again");
+            </script>
+        }
+    }
+    if (TempData["Rmsg"] != null)
+    {
+        if (TempData["Rmsg"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Staff Releaved Successfully");
+                window.location.href = '@Url.Action("DisplaySchoolStaffDetails", "SchoolProfile")';
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Staff not Releaved..plz try again");
+            </script>
+        }
+    }
+    if (TempData["Dmsg"] != null)
+    {
+        if (TempData["Dmsg"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Staff Deleted Successfully");
+                window.location.href = '@Url.Action("DisplaySchoolStaffDetails", "SchoolProfile")';
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Staff not Deleted..plz try again");
+            </script>
+        }
+    }
+}

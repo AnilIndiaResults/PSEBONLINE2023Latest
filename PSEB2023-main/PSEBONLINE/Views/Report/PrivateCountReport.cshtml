@@ -1,0 +1,268 @@
+﻿@{
+    ViewBag.Title = "Challan/Form Receiving Status";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4L.css" />
+
+    <h1 class="noprint">Matric Additonal Supplementry @*Private Count*@Report</h1>
+    <div class="row">
+        <div class="col-md-12 noprint">
+            @using (Html.BeginForm("PrivateCountReport", "Report", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+            {
+
+                <fieldset style="margin-bottom:15px">
+                    <legend>Search</legend>
+                    <div class="col-md-7">
+                        Select Category @Html.DropDownList("SelList", new SelectList(ViewBag.MyList, "Value", "Text", ViewBag.SelectedItem), "--ALL---", new { @class = "", @required = "required" })
+                    </div>
+                    <div class="col-md-3">
+                        Select Fee Category @Html.DropDownList("FEECAT", ViewBag.FEECAT as SelectList, "--All--", new { @class = "" })
+                        @*Fee Category  @Html.DropDownList("FEECAT", (List<SelectListItem>)ViewBag.FEECAT,"-- All --", new { @class = "", id = "SelectItem" })*@
+                    </div>
+                    <div class="col-md-2"><br /><input type="submit" value="Search" class="btn" /> <input type="button" value="Reset" onclick="javascript:document.location.href='@Url.Action("PrivateCountReport", "Report")'"></div>
+
+                </fieldset>
+            }
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-right noprint">
+            @if (ViewBag.TotalCount > 0)
+            {
+                <input type="button" value="Print" class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1)" />
+                <input type="button" value="Download Report" onclick="javascript:document.location.href='@Url.Action("DownloadPrivateCountReport", "Report", new { File = "Excel" })'" />
+            }
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                @*<table id="t01" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td style="border-right:0 !important"><div style="padding:2px"><img src="/Images/Printlogo.jpg" alt="PSEB" width="60px" height="60px"></div></td>
+                            <td colspan="6" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                                <span style="font-size:28px">Punjab School Education Board</span><br><span>
+                                    @{
+                                    if (ViewBag.SelectedItem.ToString() == "0")
+                                    { <span></span>}
+                                    if (ViewBag.SelectedItem.ToString() == "1")
+                                    { <span>Distwise & Tehsilwise Count</span>}
+                                    else if (ViewBag.SelectedItem.ToString() == "2")
+                                    { <span>Distwise, Tehsilwise & Subjectwise Count</span>}
+                                    else if (ViewBag.SelectedItem.ToString() == "3")
+                                    {<span>Subject Wise Count</span>}
+                                }
+                            </span>
+                        </td>
+                        <td style="text-align:right;border-left:0 !important;">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                    </tr>
+                </thead>
+                    </table>*@
+                    @if (ViewBag.SelectedItem == null)
+                    { }
+                    else
+                    {
+                        if (ViewBag.SelectedItem.ToString() == "1")
+                        {
+                            <table id="" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td style="border-right:0 !important"><div style="padding:2px"><img src="/Images/Printlogo.jpg" alt="PSEB" width="60px" height="60px"></div></td>
+                                        <td colspan="3" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                                            <span style="font-size:28px">Punjab School Education Board</span><br /><span>
+                                                @{
+                                                    if (ViewBag.SelectedItem.ToString() == "0")
+                                                    { <span></span>}
+                                                    if (ViewBag.SelectedItem.ToString() == "1")
+                                                    { <span>District & Tehsil wise Count</span>}
+                                                    else if (ViewBag.SelectedItem.ToString() == "2")
+                                                    { <span>District,Tehsil & Subject Wise Count</span>}
+                                                    else if (ViewBag.SelectedItem.ToString() == "3")
+                                                    {<span>Subject Wise Count</span>}
+                                                }
+                                            </span>
+                                        </td>
+                                        <td style="text-align:right;border-left:0 !important;">Print Date : @DateTime.Now.ToString("dd/MM/yyyy")&nbsp;</td>
+                                    </tr>
+
+                                    <tr class="active-tr">
+                                        <th width="15%">Dist Code</th>
+                                        <th width="25%">District Name</th>
+                                        <th width="15%">Tcode</th>
+                                        <th width="30%">Tehsil Name</th>
+                                        <th width="15%">Count</th>
+                                    </tr>
+                                </thead>
+                                @{
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        int Count = 0;
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            Count = Count + 1;
+                                            var DistCode = Model.StoreAllData.Tables[0].Rows[i]["DistCode"].ToString();
+                                            var DistrictName = Model.StoreAllData.Tables[0].Rows[i]["DistrictName"].ToString();
+                                            var Tcode = Model.StoreAllData.Tables[0].Rows[i]["Tcode"].ToString();
+                                            var TehsilName = Model.StoreAllData.Tables[0].Rows[i]["TehsilName"].ToString();
+                                            var cnt = Model.StoreAllData.Tables[0].Rows[i]["cnt"].ToString();
+                                            <tr>
+                                                <td>@DistCode</td>
+                                                <td>@DistrictName</td>
+                                                <td>@Tcode</td>
+                                                <td>@TehsilName</td>
+                                                <td>@cnt</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="8">
+                                                @ViewBag.Message
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                                    }
+                                    else if (ViewBag.SelectedItem.ToString() == "2")
+                                    {
+                                        <table id="t02" class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td style="border-right:0 !important"><div style="padding:2px"><img src="/Images/Printlogo.jpg" alt="PSEB" width="60px" height="60px"></div></td>
+                                                    <td colspan="6" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                                                        <span style="font-size:28px">Punjab School Education Board</span><br /><span>
+                                                            @{
+                                                            if (ViewBag.SelectedItem.ToString() == "0")
+                                                            { <span></span>}
+                                                            if (ViewBag.SelectedItem.ToString() == "1")
+                                                            { <span>District & Tehsil wise Count</span>}
+                                                            else if (ViewBag.SelectedItem.ToString() == "2")
+                                                            { <span>District,Tehsil & Subject Wise Count</span>}
+                                                            else if (ViewBag.SelectedItem.ToString() == "3")
+                                                            {<span>Subject Wise Count</span>}
+                                                            }
+                                                        </span>
+
+                                                    </td>
+                                                    <td style="text-align:right;border-left:0 !important;">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                                                </tr>
+
+                                                <tr class="active-tr">
+                                                    <th width="15%">Class</th>
+                                                    <th width="8%">DistCode</th>
+                                                    <th width="15%">District Name</th>
+                                                    <th width="8%">Tcode</th>
+                                                    <th width="12%">Tehsil Name</th>
+                                                    <th width="8%">Sub Code</th>
+                                                    <th width="17%">Subject Name</th>
+                                                    <th width="15%">Count</th>
+                                                </tr>
+                                            </thead>
+                                            @{
+                                                if (ViewBag.TotalCount > 0)
+                                                {
+                                                    int Count = 0;
+                                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                                    {
+                                                        Count = Count + 1;
+                                                        var class1 = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+                                                        var DistCode = Model.StoreAllData.Tables[0].Rows[i]["DistCode"].ToString();
+                                                        var DistrictName = Model.StoreAllData.Tables[0].Rows[i]["DistrictName"].ToString();
+                                                        var Tcode = Model.StoreAllData.Tables[0].Rows[i]["Tcode"].ToString();
+                                                        var TehsilName = Model.StoreAllData.Tables[0].Rows[i]["TehsilName"].ToString();
+                                                        var sub = Model.StoreAllData.Tables[0].Rows[i]["sub"].ToString();
+                                                        var subnm = Model.StoreAllData.Tables[0].Rows[i]["subnm"].ToString();
+                                                        var cnt = Model.StoreAllData.Tables[0].Rows[i]["cnt"].ToString();
+                    <tr>
+                        <td>@class1</td>
+                        <td>@DistCode</td>
+                        <td>@DistrictName</td>
+                        <td>@Tcode</td>
+                        <td>@TehsilName</td>
+                        <td>@sub</td>
+                        <td>@subnm</td>
+                        <td>@cnt</td>
+                    </tr>
+                            }
+                        }
+                        else
+                        {
+                    <tr>
+                        <td colspan="8">
+                            @ViewBag.Message
+                        </td>
+                    </tr>
+                        }
+                                            }
+                                        </table>
+                                                }
+                                                else if (ViewBag.SelectedItem.ToString() == "3")
+                                                {
+                                                    
+                                                    <table id="t02" class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <td style="border-right:0 !important"><div style="padding:2px"><img src="/Images/Printlogo.jpg" alt="PSEB" width="60px" height="60px"></div></td>
+                                                                <td colspan="2" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                                                                    <span style="font-size:28px">Punjab School Education Board</span><br /><span>
+                                                                        @{
+                                                                        if (ViewBag.SelectedItem.ToString() == "0")
+                                                                        { <span></span>}
+                                                                        if (ViewBag.SelectedItem.ToString() == "1")
+                                                                        { <span>District & Tehsil wise Count</span>}
+                                                                        else if (ViewBag.SelectedItem.ToString() == "2")
+                                                                        { <span>District,Tehsil & Subject Wise Count</span>}
+                                                                        else if (ViewBag.SelectedItem.ToString() == "3")
+                                                                        {<span>Subject Wise Count</span>}
+                                                                        }
+                                                                    </span>
+
+                                                                </td>
+                                                                <td style="text-align:right;border-left:0 !important;">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                                                            </tr>
+
+                                                            <tr class="active-tr">
+                                                                <th width="15%">Class</th>
+                                                                <th width="15%">Sub Code</th>
+                                                                <th width="55%">Subject Name</th>
+                                                                <th width="15%">Count</th>
+                                                            </tr>
+                                                        </thead>
+                                                        @{
+                                                            if (ViewBag.TotalCount > 0)
+                                                            {
+                                                                int Count = 0;
+                                                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                                                {
+                                                                    Count = Count + 1;
+                                                                    var class1 = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+                                                                    var sub = Model.StoreAllData.Tables[0].Rows[i]["sub"].ToString();
+                                                                    var subnm = Model.StoreAllData.Tables[0].Rows[i]["subnm"].ToString();
+                                                                    var cnt = Model.StoreAllData.Tables[0].Rows[i]["cnt"].ToString();
+                                <tr>
+                                    <td>@class1</td>
+                                    <td>@sub</td>
+                                    <td>@subnm</td>
+                                    <td>@cnt</td>
+                                </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                <tr>
+                                    <td colspan="8">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                                    }
+                                                        }
+                                                    </table>
+                                                                }
+                                                            }
+
+</div>
+        </div>
+    </div>
+

@@ -1,0 +1,216 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    ViewBag.Title = "Private Application Status";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprint.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<h1>Examination Form Status of Private Candidates (Reap/ Compartment / Additional Subject)</h1>
+
+@using (Html.BeginForm("AdmitCardPrivateSearchStatus", "PrivateCandidate", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px;overflow:hidden">
+                <legend>Search</legend>
+                <div class="col-md-1">
+                    TotalCount
+                    <label>@ViewBag.TotalCount</label>
+                </div>
+                <div class="col-md-2" id="drpdwn_select" style="display:none">
+                    @{
+                        List<SelectListItem> BatchList = new List<SelectListItem>();
+                        //BatchList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        BatchList.Add(new SelectListItem { Text = "March 2021", Value = "32021" });
+                    }
+                    Select Session @Html.DropDownList("batchYear", BatchList, new { id = "batchYear" })
+                </div>
+                <div class="col-md-2" id="drpdwn_select">
+                    @{
+                        List<SelectListItem> SelectList = new List<SelectListItem>();
+                        SelectList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        SelectList.Add(new SelectListItem { Text = "Ref.No.", Value = "1" });
+                        SelectList.Add(new SelectListItem { Text = "Old Roll No", Value = "2" });
+                        SelectList.Add(new SelectListItem { Text = "New Roll No", Value = "3" });
+                        SelectList.Add(new SelectListItem { Text = "Mobile No", Value = "4" });
+                        SelectList.Add(new SelectListItem { Text = "Challan Id", Value = "5" });
+                    }
+                    Search By  @Html.DropDownList("SelList", SelectList, new { id = "SelList" })
+                </div>
+                <div class="col-md-3" id="txt_refNo">
+                    Enter Search Number. &nbsp;
+                    @Html.TextBoxFor(m => m.SearchBy, new { id = "SearchBy", required= "@required", @maxlength = "15", onkeypress = "return isNumberKey(event);", placeholder = "Enter search number." })
+                </div>
+                <div class="col-md-1">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm2();" title="Search Record" /></div>
+                <div class="col-md-1">&nbsp;<br /><a href="/PrivateCandidate/Private_Candidate_Introduction_Form" class="btn">Fill New Application Form</a>
+				<!-- <input type="submit" value="New Application Fill"  formaction="Private_Candidate_Introduction_Form" title="Go for New Application fill" /> -->
+				</div>
+                <div class="clearfix"></div>
+                <div class="col-md-12"><span class="rqf" style="color:firebrick">Note : For Search Kindly Enter Reference Number or Old Roll No or New Roll or Mobile or ChallanId </span></div>
+            </fieldset>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th width="5%">Sl.No.</th>
+                        <th width="5%">BATCH/YEAR</th>
+                        <th width="5%">CLASS</th>
+                        <th width="10%">REF.NO.</th>
+                        <th width="10%">OROLL</th>
+                        <th width="10%">REG.NO.</th>
+                        <th width="15%">Candidate Name</th>
+                        <th width="15%">Father Name</th>
+                        <th width="15%">Mother Name</th>
+                        <th width="20%">Form Status</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var Utype = Model.StoreAllData.Tables[0].Rows[i]["Utype"].ToString();
+
+                                var batch = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+                                var batchYear = Model.StoreAllData.Tables[0].Rows[i]["batchYear"].ToString();
+                                var Class = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+
+                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                                var OROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                var regno = Model.StoreAllData.Tables[0].Rows[i]["regno"].ToString();
+
+                                var examRoll = Model.StoreAllData.Tables[0].Rows[i]["examRoll"].ToString();
+                                var examcent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                                var challanverify = Model.StoreAllData.Tables[0].Rows[i]["challanverify"].ToString();
+                                var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                                var formstatus = Model.StoreAllData.Tables[0].Rows[i]["formstatus"].ToString();
+
+                                var feecat = Model.StoreAllData.Tables[0].Rows[i]["feecat"].ToString();
+                                var exam = Model.StoreAllData.Tables[0].Rows[i]["exam"].ToString();
+                                var rp = Model.StoreAllData.Tables[0].Rows[i]["rp"].ToString();
+
+                                var ErrStatus = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                var ErrDtl = Model.StoreAllData.Tables[0].Rows[i]["ErrDtl"].ToString();
+
+                                var exammonth = Model.StoreAllData.Tables[0].Rows[i]["exammonth"].ToString();
+
+                                Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        @Count
+                                    </td>
+                                    <td>
+                                        @batch/@batchYear
+                                    </td>
+                                    <td>
+                                        @Class
+                                    </td>
+                                    <td>
+                                        @refno
+                                    </td>
+                                    <td>
+                                        @OROLL
+                                    </td>
+                                    <td>
+                                        @regno
+                                    </td>
+                                    <td>
+                                        @Candi_Name
+                                    </td>
+                                    <td>
+                                        @Father_Name
+                                    </td>
+                                    <td>
+                                        @Mother_Name
+                                    </td>
+                                    <td>
+                                        @if (ErrStatus == "1")
+                                        {<span class="rqf">INCOMPLETE FORM </span>}
+                                        else if (ErrStatus == "2")
+                                        {<span class="rqf">FEE NOT VERIFIED </span><br /><span style="font-size:7px;">(If fee paid, then submit challan copy at PSEB HOD)</span>}
+                                        else if (ErrStatus == "3" || ErrStatus == "5")
+                                        {<span class="rqf">FEE VERIFIED </span><br /><span style="font-size:7px;"><a onclick="go();">[For Admit Card visit www.pseb.ac.in->Roll Numbers]</a></span>}
+                                        @*<span class="rqf">Roll No/ Centre Not Alloted </span><br /><span style="font-size:7px;">@ErrDtl</span>*@
+                                        else if (ErrStatus == "4")
+                                        {<span class="rqf">Roll No Not Released due to </span><br /><span style="font-size:7px;">@ErrDtl</span>}
+                                   
+                                    else if (ErrStatus == "6")
+                                    {<span class="" title="tt">NOT ELIGIBLE </span><br />
+                                        <span style="font-size:7px;">(You had already availed all the chances of Examination of Reapear /Compartment)</span>
+                                    }
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="11">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function go() {
+        var url = "https://www.pseb.ac.in";
+        window.open(url, '_blank');
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function valForm2() {
+        var sel_value1 = 0;
+        sel_value1 = $("#SelList").val();
+        sel_text1 = $("#SelList option:selected").text();
+        // alert(sel_value1);
+        var txt_refNo = $("#SearchBy").val();
+        if (sel_value1 == "" || sel_value1 == "0") {
+            alert("Select Search By Option");
+            document.getElementById("SelList").focus();
+            return false;
+        }
+        else {
+            if (txt_refNo == "") {
+                alert("Please Enter " + sel_text1);
+                $("#SearchBy").focus();
+                return false;
+            }
+
+        }
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+</script>

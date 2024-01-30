@@ -1,0 +1,508 @@
+﻿@model PSEBONLINE.Models.DMModel
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+    <h1>School Details</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                @using (Html.BeginForm("SchoolList", "DM", FormMethod.Post, new { id = "searchform" }))
+                {
+                    if (ViewBag.MyDist != null)
+                    {
+                        <div class="col-md-2">@Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), "--All---", new { @class = "" })</div>
+                        <div class="col-md-2" style="display:none">@Html.DropDownList("SchoolType", new SelectList(ViewBag.MySchoolType, "Value", "Text", ViewBag.SelectedSchoolType), "--All School Type---", new { @class = "" })</div>
+                        <div class="col-md-2">@Html.DropDownList("ClassType", new SelectList(ViewBag.MyClassType, "Value", "Text", ViewBag.SelectedClassType), "--All Class ---", new { @class = "" })</div>
+                        <div class="col-md-2" style="display:none">@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District---", new { @class = "" })</div>
+                        <div class="col-md-2">@Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                        <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                        <div class="col-md-2">
+                            <input type="submit" value="Search" /> <input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" />
+                        </div>
+                    }
+                }
+                </fieldset>
+        </div>
+        <div class="clearfix"></div>
+            <div class="col-md-12">Grid Total:  @ViewBag.TotalCount1</div>
+            <div class="clearfix"></div>
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="t01" class="table table-bordered">
+                        <tr class="active-tr">
+                            <th>SCHL</th>
+                            <th>ID NO.</th>
+                            <th>School Name</th>
+                            <th>District</th>
+                            <th>Mobile</th>
+                            <th>Senior CCE</th>
+                            <th>Matric CCE</th>
+                            <th>Challan</th>
+                            <th>Action</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 20 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    //var schid = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                    var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                    var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                                    var SCHLE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                                    var StationE = Model.StoreAllData.Tables[0].Rows[i]["STATIONE"].ToString();
+                                    var DISTE = Model.StoreAllData.Tables[0].Rows[i]["DISTE"].ToString();
+                                    //var status = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                                    //var vfalg = Model.StoreAllData.Tables[0].Rows[i]["vflag"].ToString();
+                                    //var Approved = Model.StoreAllData.Tables[0].Rows[i]["Approved"].ToString();
+                                    var CLASS = Model.StoreAllData.Tables[0].Rows[i]["CLASS"].ToString();
+                                    var principalname = Model.StoreAllData.Tables[0].Rows[i]["principalname"].ToString();
+                                    var mobilenumber = Model.StoreAllData.Tables[0].Rows[i]["mobilenumber"].ToString();
+                                    var email = Model.StoreAllData.Tables[0].Rows[i]["email"].ToString();
+                                    var schooltype = Model.StoreAllData.Tables[0].Rows[i]["schooltype"].ToString();
+                                    var ADDRESSE = Model.StoreAllData.Tables[0].Rows[i]["ADDRESSE"].ToString();
+                                    var SeniorFinal = Model.StoreAllData.Tables[0].Rows[i]["SeniorFinal"].ToString();
+                                    var MatricFinal = Model.StoreAllData.Tables[0].Rows[i]["MatricFinal"].ToString();
+                                    var SeniorReceiveNo = Model.StoreAllData.Tables[0].Rows[i]["SeniorReceiveNo"].ToString();
+                                    var MatricReceiveNo = Model.StoreAllData.Tables[0].Rows[i]["MatricReceiveNo"].ToString();
+                                    var SeniorDairyNo = Model.StoreAllData.Tables[0].Rows[i]["SeniorDairyNo"].ToString();
+                                    var MatricDairyNo = Model.StoreAllData.Tables[0].Rows[i]["MatricDairyNo"].ToString();
+                                    <tr>
+                                        <td>
+                                            @SCHL
+                                        </td>
+                                        <td>
+                                            @IDNO
+                                        </td>
+                                        <td>
+                                            @SCHLE,@StationE
+                                        </td>
+                                        <td>
+                                            @DISTE
+                                        </td>
+                                        <td>
+                                            @mobilenumber
+                                        </td>
+                                        <td>
+                                            @if (SeniorReceiveNo != "")
+                                            {@SeniorReceiveNo }
+                                            else
+                                            {@Html.Raw("Pending") }
+                                        </td>
+
+                                        <td>
+                                            @if (MatricReceiveNo != "")
+                                            {@MatricReceiveNo  }
+                                            else
+                                            {@Html.Raw("Pending") }
+                                        </td>
+                                        <td>
+                                            @if (SeniorDairyNo != "")
+                                            {@Html.Raw("Senior.-") @SeniorDairyNo }<br />
+                                            @if (MatricDairyNo != "")
+                                            {@Html.Raw("Matric-") @MatricDairyNo  }
+                                        </td>
+                                        <td>
+                                            <div class="cart">
+                                                Choose Action <span class="caret"></span>
+                                                <div id="sidebar">
+                                                    <ul>
+                                                        <li><button type="button" class="" data-toggle="modal" data-target="#myModal1-@SCHL">View Details</button></li>
+                                                        @if (SeniorFinal == "1")
+                                                        {
+                                                    <li> <button type="button" class="" data-toggle="modal" data-target="#myModal2-@SCHL">Receive Senior C.C.E</button></li>}
+                                                        @if (MatricFinal == "1")
+                                                        {
+                                                    <li> <button type="button" class="" data-toggle="modal" data-target="#myModal3-@SCHL">Receive Matric C.C.E</button></li>}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    if (d == ViewBag.TotalCount)
+                                    {
+                                        <tr>
+                                            <td colspan="11">
+                                                Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                                @if (ViewBag.pagesize == 1)
+                                                {   @:<<
+                                                    @Html.Raw("&nbsp;");
+                                                    @:< Prev
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        var dp = ViewBag.pagesize + 1;
+                                                        <a href="~/DM/SchoolList?page=@dp">Next ></a>
+                                                        @Html.Raw("&nbsp;");
+                                                        <a href="~/DM/SchoolList?page=@ViewBag.pn">>></a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    var dp = ViewBag.pagesize - 1;
+                                                    <a href="~/DM/SchoolList?page=1"><<</a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/DM/SchoolList?page=@dp">< Prev</a>
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        var dp1 = ViewBag.pagesize + 1;
+                                                        <a href="~/DM/SchoolList?page=@dp1">Next ></a>
+                                                        @Html.Raw("&nbsp;");
+                                                        <a href="~/DM/SchoolList?page=@ViewBag.pn">>></a>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        @if (Model != null)
+        {
+            int k = 0;
+            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+            {
+                // var schid = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                var SCHLE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                var StationE = Model.StoreAllData.Tables[0].Rows[i]["STATIONE"].ToString();
+                var DISTE = Model.StoreAllData.Tables[0].Rows[i]["DISTE"].ToString();
+                var CLASS = Model.StoreAllData.Tables[0].Rows[i]["CLASS"].ToString();
+                var principalname = Model.StoreAllData.Tables[0].Rows[i]["principalname"].ToString();
+                var mobilenumber = Model.StoreAllData.Tables[0].Rows[i]["mobilenumber"].ToString();
+                var email = Model.StoreAllData.Tables[0].Rows[i]["email"].ToString();
+                var schooltype = Model.StoreAllData.Tables[0].Rows[i]["schooltype"].ToString();
+                var ADDRESSE = Model.StoreAllData.Tables[0].Rows[i]["ADDRESSE"].ToString();
+                var Prev = "0";
+                var Next = "0";
+                if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count == 1)
+                {
+                    Prev = "0";
+                    Next = "0";
+                }
+                else if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count > 1)
+                {
+                    Prev = "0";
+                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["SCHL"].ToString();
+                }
+                else if (i > 0 && i < Model.StoreAllData.Tables[0].Rows.Count - 1)
+                {
+                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["SCHL"].ToString();
+                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["SCHL"].ToString();
+                }
+                else if (i > 0 && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
+                {
+                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["SCHL"].ToString();
+                    Next = "0";
+                }
+                k = i + 1;
+                <div class="container">
+                    <div class="modal fade" id="myModal1-@SCHL" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">School Code : @SCHL</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div>
+                                        @Html.Raw("School Name: ")@SCHLE,@StationE,@DISTE<br />
+                                        @Html.Raw("School Type: ")@schooltype<br />
+                                        @Html.Raw("Class: ")@CLASS<br />
+                                        @Html.Raw("Principal: ")@principalname<br />
+                                        @Html.Raw("Mobile No: ")@mobilenumber<br />
+                                        @Html.Raw("Registered Email: ")@email <br />
+                                        @Html.Raw("Address: ")    @ADDRESSE <br />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <span class="lft">
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                                    </span>
+                                    <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="myModal2-@SCHL" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Receive Senior C.C.E Of School : @SCHL</h4>
+                                </div>
+                                <div class="modal-body">
+                                    School Name : <label>@SCHLE,@StationE,@DISTE</label><br />
+                                    Date:<input type="text" id="receivedate-@SCHL" name="receivedate" class="receivedate" />           @*onkeypress="return false;"*@
+                                    Remarks <textarea id="cceremarks-@SCHL" name="cceremarks"></textarea>
+                                    <input type="button" class="btn" value="Submit" id="btnsubmitRegenate" onclick="ReceiveSeniorCCE(@k,'@SCHL',@Next,@Prev)" />
+                                </div>
+                                <div class="modal-footer">
+                                    <span class="lft">
+                                        <button type="button" class="" data-toggle="modal" data-targetReceiveSeniorCCE="#myModal2-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                                    </span>
+                                    <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal2-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="myModal3-@SCHL" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Receive Matric C.C.E Of School : @SCHL</h4>
+                                </div>
+                                <div class="modal-body">
+                                    School Name : <label>@SCHLE,@StationE,@DISTE</label><br />
+                                    Date:<input type="text" id="receivedateM-@SCHL" name="receivedateM" class="receivedate" />           @*onkeypress="return false;"*@
+                                    Remarks <textarea id="cceremarksM-@SCHL" name="cceremarksM"></textarea>
+                                    <input type="button" class="btn" value="Submit" id="btnsubmitRegenate" onclick="ReceiveMatricCCE(@k,'@SCHL')" />
+                                </div>
+                                <div class="modal-footer">
+                                    <span class="lft">
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal3-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                                    </span>
+                                    <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal3-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            }
+        }
+
+
+
+    </div>
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<script type="text/javascript">
+    function nxtDiv2(nxt, crnt,prv) {
+        // var cid = '#myModal1-' + crnt
+        $('#myModal2-' + crnt).modal('hide');
+        if (nxt == "0" && prv == "0")
+        { }
+        else if (nxt == "0" && prv!="0")
+        {
+            $('#myModal2-' + prv).modal('show');
+        }
+        else if (prv == "0" && nxt != "0") {
+            $('#myModal2-'+nxt).modal('show');
+        }
+        else if (prv != "0" && nxt != "0") {
+            $('#myModal2-' + nxt).modal('show');
+        }
+    }
+
+    function ReceiveSeniorCCE(k, schl,nxt,prv) {  
+       // alert("schl" + schl);   
+      //  alert("nxt schl : " + nxt); 
+
+       // alert($("#receivedate-" + schl).val());
+        //alert($("#lumsumremarks-" + k).val());
+        var flag = 0;
+        if ($("#receivedate-" + schl).val() == "")
+        {
+            $("#receivedate-" + schl).addClass("input-validation-error");
+            flag = 1;
+        }        
+        if(flag==1)
+        {
+            return false;
+        }
+        else
+        {            
+            $.ajax({
+                type: "POST",
+                url: "../DM/ReceiveCCE", // this for calling the web method function in cs code.
+                data: '{class1: "4",cceremarks: "' + $("#cceremarks-" + schl).val() + '",receivedate:"' + $("#receivedate-" + schl).val() + '",schl:"' + schl + '"}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn=="Yes")
+                    {
+                        alert("Received Senior C.C.E Successfully of " + schl + "& Receiving No. is " + response.Rcno);
+                        //window.location.href = "/DM/SchoolList";
+                        window.location.reload(true);
+                       // nxtDiv2(nxt, schl, prv);                
+                    }
+                    else if (response.sn=="NF")
+                    {
+                        alert("Senior C.C.E Final Submission of " + schl + " is Pending ");
+                    }
+                    else
+                    {
+                        alert("Receive Senior C.C.E Failure.. Please Try Again.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+
+
+    function nxtDiv3(nxt, crnt,prv) {
+        // var cid = '#myModal1-' + crnt
+        $('#myModal3-' + crnt).modal('hide');
+        if (nxt == "0" && prv == "0")
+        { }
+        else if (nxt == "0" && prv!="0")
+        {
+            $('#myModal3-' + prv).modal('show');
+        }
+        else if (prv == "0" && nxt != "0") {
+            $('#myModal3-'+nxt).modal('show');
+        }
+        else if (prv != "0" && nxt != "0") {
+            $('#myModal3-' + nxt).modal('show');
+        }
+    }
+
+    function ReceiveMatricCCE(k, schl,nxt,prv) {
+        alert("schl-M-" + schl);
+        alert($("#receivedateM-" + schl).val());
+        //alert($("#lumsumremarks-" + k).val());
+        var flag = 0;
+        if ($("#receivedateM-" + schl).val() == "") {
+            $("#receivedateM-" + schl).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "../DM/ReceiveCCE", // this for calling the web method function in cs code.
+                data: '{class1: "2",cceremarks: "' + $("#cceremarksM-" + schl).val() + '",receivedate:"' + $("#receivedateM-" + schl).val() + '",schl:"' + schl + '"}',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.sn == "Yes") {
+                        alert("Received Matric C.C.E Successfully of " + schl + "& Receiving No. is " + response.Rcno);
+                        // window.location.href = "/Challan/ChallanDetails";
+                        nxtDiv3(nxt, crnt,prv);
+                    }
+                    else if (response.sn=="NF")
+                    {
+                        alert("Senior C.C.E Final Submission of " + schl + " is Pending ");
+                    }
+                    else {
+                        alert("Receive Matric C.C.E Failure.. Please Try Again.");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+            //alert("All is Well");
+        }
+    }
+    $(function () {    
+        $(".receivedate").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "2016:2017"
+           // defaultDate: "+1w",
+           // setDate: new Date()
+
+        });
+    });
+</script>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        var form = $("#searchform").serialize();
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            if (value == 1 || value == 3 || value == 5) {
+                $("#searchform").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        // alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    };
+                });
+            } else {
+                $("#searchform").off('keypress');
+            }
+
+        });
+    });
+</script>
+
+
+

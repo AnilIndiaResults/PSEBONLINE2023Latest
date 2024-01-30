@@ -1,0 +1,76 @@
+﻿@model PSEBONLINE.Models.SeniorStudentMatricResultMarksDistWiseSummaryReportModelList
+@{
+    ViewBag.Title = "Senior Student Matric Certificate Summary Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4L.css" />
+<h1 class="noprint">Senior Student Matric Certificate Summary Report</h1>
+<div class="row">
+    <div class="col-md-12 noprint">
+        @using (Html.BeginForm("SeniorStudentMatricMarksDMCCertificateSummaryReport", "Report", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+        {          
+            <div class="row">
+                <div class="col-md-3">@Html.DropDownList("SelMOD", new SelectList(ViewBag.MyMODList, "Value", "Text", ViewBag.SelectedMOD), "--Select Module---", new { @class = "", @required = "required" })</div>
+                <div class="col-md-3">@Html.DropDownList("SelRP", new SelectList(ViewBag.MyRPList, "Value", "Text", ViewBag.SelectedRP), "--Select RP---", new { @class = "", @required = "required" })</div>
+                <div class="col-md-6">
+                    <input type="submit" name="submit" value="Submit" /> <input type="submit" name="submit" value="Export To Excel" />                   
+                    <input type="button" value="Back" class="btn" onclick="history.go(-1)" />
+                </div>
+            </div>
+        }
+    </div>
+    <div class="clearfix"></div>
+    @if (Model.RegistrationSearchModel != null)
+    {
+        <div class="col-md-12 text-right noprint">
+            @if (Model.RegistrationSearchModel.Count() > 0)
+            {            
+            <input type="button" value="Print" class="btn" onclick="window.print()" />
+            }
+        </div>
+        <div class="col-md-12">
+            <table border="0" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td width="15%" colspan="1"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></td>
+                        <td width="55%" style="font-size:16px;text-align:center;line-height:25px;" colspan="4">
+                            @if (ViewBag.SelectedRP == "1")
+                            {
+                                <span style="font-size:22px;">Punjab School Education Board</span><br /><span>Regular Senior Student Matric Certificate Summary Report, March 2020</span>
+                            }
+                            else if (ViewBag.SelectedRP == "2")
+                            {
+                                <span style="font-size:22px;">Punjab School Education Board</span><br /><span>Open Senior Student Matric Certificate Summary Report, March 2020</span>
+                            }
+                        </td>
+                        <td width="15%" align="right">
+                            Print Date: @DateTime.Now.ToString("dd/MM/yyyy")<br />@*FINAL SBMITTED ON :*@
+                        </td>
+                    </tr>
+                    <tr class="active-tr">
+                        <th width="15%">DISTNM</th>
+                        <th width="10%">TOTAL</th>
+                        <th width="10%">PENDING</th>
+                        <th width="10%">ACCEPTED</th>
+                        <th width="10%">REJECTED</th>
+                        <th width="15%">CANCELLED</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var obj in Model.RegistrationSearchModel)
+                    {
+                        <tr>
+
+                            <td>@obj.DistNM</td>
+                            <td>@obj.TOTAL</td>
+                            <td>@obj.PENDING</td>
+                            <td>@obj.ACCEPTED</td>
+                            <td>@obj.REJECTED </td>
+                            <td>@obj.CANCELLED </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

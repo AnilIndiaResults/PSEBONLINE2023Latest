@@ -1,0 +1,268 @@
+﻿
+@model PSEBONLINE.Models.Challan
+@{
+    ViewBag.Title = "ChallanAffiliationReport";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+@using (Html.BeginForm("ChallanAffiliationReport", "Challan", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    int j = 0;
+<h1>
+    View Challan Affiliation Report
+</h1>
+    <input type="text" id="chkme" style="display:none;" value="@ViewBag.dee" name="chkme" />
+
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Select Bank
+                    @Html.DropDownList("BankName", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+                </div>
+                <div class="col-md-3">
+                    Select Fee Category
+                    @Html.DropDownList("feecat1", new SelectList(ViewBag.feecat, "Value", "Text", ViewBag.feecatselect), "--All---")
+                </div>
+                <div class="col-md-2">
+                    Select Action
+                    @Html.DropDownList("srhfld", new SelectList(ViewBag.MySch1, "Value", "Text", ViewBag.srhfld), "--All---")
+                </div>
+                <div class="col-md-3">
+                    <br />
+                    <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" />
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="Submit" value="Search" name="cmd" /> 
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-md-12">Grid Total:  @ViewBag.TotalCount1</div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>S.No</th>
+                        <th>BANK</th>
+                        <th>DIST</th>
+                        <th>SCHL</th>
+                        <th>SCHOOLE</th>
+                        <th>CHALLAN ID</th>
+                        <th>CHLNDATE</th>
+                        <th>FEECAT</th>
+                        <th>Appno/RefNo</th>
+                        <th>SCHLREGID</th>
+                        <th>(FEE+L.Fee+LS.Fine)=Tot</th>                       
+                        <th>VERIFY</th>
+                        <th>Refund Details</th>                       
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 20 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                j = d;
+                                var IsCancel = Model.StoreAllData.Tables[0].Rows[i]["IsCancel"].ToString();
+                                var bcode = Model.StoreAllData.Tables[0].Rows[i]["bcode"].ToString();
+                                var bank = Model.StoreAllData.Tables[0].Rows[i]["Bank"].ToString();
+                                var appno = Model.StoreAllData.Tables[0].Rows[i]["appno"].ToString();
+                                var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                                var CHLNDATE = Model.StoreAllData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                                var FEECAT = Model.StoreAllData.Tables[0].Rows[i]["FEECAT"].ToString();
+                                var FEECODE = Model.StoreAllData.Tables[0].Rows[i]["FEECODE"].ToString();
+                                var SCHLREGID = Model.StoreAllData.Tables[0].Rows[i]["SCHLREGID"].ToString();
+                                var FEE = Model.StoreAllData.Tables[0].Rows[i]["FEE"].ToString();
+                                var LateFee = Model.StoreAllData.Tables[0].Rows[i]["LateFee"].ToString();
+                                var LumsumFine = Model.StoreAllData.Tables[0].Rows[i]["LumsumFine"].ToString();
+                                var TotFee = Model.StoreAllData.Tables[0].Rows[i]["TotFee"].ToString();
+                                var DOWNLDFLG = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDFLG"].ToString();
+                                var DOWNLDDATE = Model.StoreAllData.Tables[0].Rows[i]["DOWNLDDATE"].ToString();
+                                var VERIFIED = Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString();
+
+                                if (VERIFIED == "1")
+                                {
+                                    VERIFIED = "Verified";
+                                }
+                                else
+                                {
+                                    VERIFIED = "Not Verified";
+                                }
+                                if (DOWNLDFLG == "1")
+                                {
+                                    DOWNLDFLG = "DOWNLOADED ";
+                                }
+                                else
+                                {
+                                    DOWNLDFLG = "Not Downloaded";
+                                }
+
+                                var SettlementDate = Model.StoreAllData.Tables[0].Rows[i]["SettlementDate"].ToString();
+                                var RefundStatus = Model.StoreAllData.Tables[0].Rows[i]["RefundStatus"].ToString();
+                                var RefundRefno = Model.StoreAllData.Tables[0].Rows[i]["RefundRefno"].ToString();
+                                var RefundDate = Model.StoreAllData.Tables[0].Rows[i]["RefundDate"].ToString();
+                                var ReChallanFlag = Model.StoreAllData.Tables[0].Rows[i]["ReChallanFlag"].ToString();
+
+                                var DIST = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();                                
+                                var SCHLCANDNM = Model.StoreAllData.Tables[0].Rows[i]["SCHLCANDNM"].ToString();
+
+                                Count = Count + 1;
+                    <tr>
+                        <td>@Count</td>
+                        <td>@bank</td>
+                        <th>@DIST</th>
+                        <th>@SCHLREGID</th>
+                        <th>@SCHLCANDNM</th>
+                        <td>
+                            <span style="@(ViewBag.IsPrint > 0 ? "display:block" : "display:none")">
+                                @challanid
+                            </span>
+                        </td>
+                        <td>@CHLNDATE</td>
+                        <td>@FEECAT</td>
+                        <td>@appno</td>
+                        <td>@SCHLREGID</td>
+                        <td>(@FEE+@LateFee+@LumsumFine)=@TotFee</td>
+                       
+                        <td>
+                            @VERIFIED
+                            @if (IsCancel == "1")
+                            {
+                                <span class="rqf">CANCELLED.</span>
+                            }                           
+                        </td>
+                        <td>
+                            @if (Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "2" && !string.IsNullOrEmpty(RefundStatus))
+                            {
+                                <span class="rqf">@RefundRefno<br />Date : @RefundDate</span>
+                            }
+                        </td>
+                       
+                    </tr>
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="11">
+
+                                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                                            &nbsp;
+
+                                            @if (ViewBag.pagesize == 1)
+
+                                            {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "ChallanAffiliationReport", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "ChallanAffiliationReport", new { page = ViewBag.pn })
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (TempData["search"] != null)
+                                                {
+                                                    string str1 = TempData.Peek("search").ToString();
+                                                    string str2 = TempData.Peek("SelList").ToString();
+                                                    string str3 = TempData.Peek("SearchString").ToString();
+                                                    TempData["search"] = str1;
+                                                    TempData["SelList"] = str2;
+                                                    TempData["SearchString"] = str3;
+                                                }
+                                                @Html.ActionLink("<<", "ChallanAffiliationReport", new { page = 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink("< Prev", "ChallanAffiliationReport", new { page = ViewBag.pagesize - 1 })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "ChallanAffiliationReport", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "ChallanAffiliationReport", new { page = ViewBag.pn })
+                                                }
+
+                                            }
+
+
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="11">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </table>
+                <p>Total Records(Filtered): @ViewBag.TotalCount1</p>
+            </div>
+        </div>
+    </div>
+
+ 
+}
+
+<script type="text/javascript">
+    function isNumberKey(evt) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function valForm() {
+        alert("Will be Available Soon..");
+        return false;
+    }
+</script>
+
+

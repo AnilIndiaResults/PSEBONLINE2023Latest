@@ -1,0 +1,515 @@
+﻿@model IEnumerable<PSEBONLINE.Models.InfrasturePerformasListWithSchool>
+
+@{
+    ViewBag.Title = "Infrasture Performa View";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,600' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <noscript>
+        <style type="text/css">
+            #HPL {
+                display: none;
+            }
+        </style>
+        <charset style="background-color:#cc0000;color:#ffd800;font-size:24px;text-align:center;padding:10px 0">Your browser does not support JavaScript!</charset>
+    </noscript>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style type="text/css">
+        td, th {
+            padding: 5px
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Infrastructure Performa Details</h1>
+    <div class="row">
+        @using (Html.BeginForm("BulkPrintInfrastructureForm", "School", FormMethod.Post, new { id = "searchform" }))
+        {
+            if (ViewBag.MyDist != null)
+            {
+                @*required = "required"*@
+                <div class="col-md-2">@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District---", new { @class = "" })</div>
+                <div class="col-md-2">
+                    <select id="SearchBy">
+                        <option>All</option>
+                        <option>School Code</option>
+                    </select>
+                </div>
+                <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2">
+                    <input type="submit" value="Search" /> <input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" />
+                </div>
+            }
+        }
+    </div>
+    <div class="clearfix"></div>
+
+    @if (Model != null)
+    {
+        foreach (var items in Model)
+        {
+            <table width="100%" border="1" class="table-bordered">
+                
+                <tr>
+                    <td colspan="6" style="padding:0">
+                        <table width="100%" border="0">
+                            <tr>
+                                <td width="10%">
+                                    <div style="padding:3px">
+                                        <img src="https://registration2022.pseb.ac.in/Images/Printlogo.jpg" height="80px" alt="PSEB">
+                                    </div>
+                                </td>
+                                <td width="80%" style="font-size:16px;text-align:center;line-height:24px;">
+                                    <span style="font-size:26px;">Punjab School Education Board</span><br>
+                                    <span style="display:block">
+                                        @if (items.FinalSubmitStatus == 1)
+                                        {
+                                            <span>Final Print</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Rough Print</span>
+                                        }
+                                        - School Infrastructure  Performa Session 2022–23
+                                    </span>
+                                </td>
+                                <td width="10%"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" style="padding:0">
+                        <table width="100%" border="1" class="table-bordered">
+                            @if (items.FinalSubmitStatus == 1)
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        <p style="float:right">Final Submitted Date : <span>@items.FinalSubmitDate</span></p>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left; color:red;">Rough Print</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left">School Profile Details</td>
+                            </tr>
+                            <tr>
+                                <td width="20%">School Code</td>
+                                <td width="15%">@items.SCHL</td>
+                                <td width="20%">School Identity Code</td>
+                                <td width="15%">@items.idno </td>
+                                <td width="15%">Class Level</td>
+                                <td width="15%">@items.CLASS</td>
+                            </tr>
+                            <tr>
+                                <td>School Name</td>
+                                <td colspan="5">
+                                    @items>SCHLE
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>District Name</td>
+                                <td colspan="2">@items.DISTE</td>
+                                <td>Establishment Year</td>
+                                <td colspan="2">@items.SchlEstd</td>
+                            </tr>
+                            <tr>
+                                <td>Address of School</td>
+                                <td colspan="5">
+                                    @items.SCHLE 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left">Class/ Stream Details</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" style="padding:0">
+
+                                    <table id="t01" class="table-bordered" width="100%">
+                                        <tr style="font-weight: bold;">
+                                            <td rowspan="2" style="text-align:left">Description</td>
+                                            <td colspan="3" style="text-align:center">MATRIC</td>
+                                            <td colspan="12" style="text-align:center">SENIOR SECONDARY</td>
+                                        </tr>
+                                        <tr style="font-weight: bold;">
+                                            <td colspan="2" style="text-align:center">REGULAR	</td>
+                                            <td style="text-align:center">OPEN</td>
+                                            <td colspan="6" style="text-align:center">REGULAR</td>
+                                            <td colspan="6" style="text-align:center">OPEN</td>
+                                        </tr>
+                                        <tr style="font-weight: bold;">
+                                            <td>Groups</td>
+                                            <td align="left">
+                                                GEN
+
+                                            </td>
+                                            <td align="left">
+                                                NSQF
+                                            </td>
+                                            <td align="left">
+                                                GEN
+                                            </td>
+                                            <td align="left">
+                                                Hum.
+                                            </td>
+                                            <td align="left">
+                                                Sci
+                                            </td>
+                                            <td align="left">
+                                                Comm.
+                                            </td>
+                                            <td align="left">
+                                                Voc.
+                                            </td>
+                                            <td align="left">
+                                                Tech.
+                                            </td>
+                                            <td align="left">
+                                                Agri.
+                                            </td>
+                                            <td align="left">
+                                                Hum.
+                                            </td>
+                                            <td align="left">
+                                                Sci
+                                            </td>
+                                            <td align="left">
+                                                Comm.
+                                            </td>
+                                            <td align="left">
+                                                Voc.
+                                            </td>
+                                            <td align="left">
+                                                Tech.
+                                            </td>
+                                            <td align="left">
+                                                Agri.
+                                            </td>
+                                        </tr>
+                                        <tr style="font-weight: bold;">
+                                            <td>Status</td>
+                                            <td>@items.MATRIC</td>
+                                            <td>
+                                                @*@items.NSQF_flag*@
+                                                
+
+                                            </td>
+                                            <td> 
+                                            @items.OMATRIC
+                                            </td>
+                                            <td align="left">
+                                                @items.HUM
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.SCI
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.COMM
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.VOC
+                                            </td>
+                                            <td align="left">
+                                                @items.TECH
+                                                
+                                                
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.AGRI
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.OHUM
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.OSCI
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.OCOMM
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.OVOC
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.OTECH
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.OAGRI
+                                                
+                                            </td>
+                                        </tr>
+                                        <tr style="font-weight: bold;">
+                                            <td>Type</td>
+                                            <td align="left">
+                                                @items.HID_UTYPE
+
+                                            </td>
+                                            <td></td>
+                                            <td align="left">
+                                                @items.HID_UTYPE
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.H_UTYPE
+                                                
+                                            </td>
+                                            <td align="left">
+                                                @items.S_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.C_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.V_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.A_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.T_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.H_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.S_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.C_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.V_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.A_UTYPE
+                                            </td>
+                                            <td align="left">
+                                                @items.T_UTYPE
+                                            </td>
+                                        </tr>
+                                        <tr style="font-weight: bold;">
+                                            <td>Year</td>
+                                            <td>@items.HID_YR</td>
+                                            <td></td>
+                                            <td>@*@items.OMID_YR*@</td>
+                                            <td>@items.HYR</td>
+                                            <td>@items.SYR</td>
+                                            <td>@items.CYR</td>
+                                            <td>@items.VYR</td>
+                                            <td>@items.TYR</td>
+                                            <td>@items.AYR</td>
+                                            <td>@*@items.OHYR*@</td>
+                                            <td>@*@items.OSYR*@</td>
+                                            <td>@*@items.OCYR*@</td>
+                                            <td>@*@items.OVYR*@</td>
+                                            <td>@*@items.OTYR*@</td>
+                                            <td>@*@items.OAYR*@</td>
+                                        </tr>
+
+                                        <!-- <tr style="font-weight: bold;"> -->
+                                        <!-- <td>Sections</td> -->
+                                        
+                                        <!-- </tr> -->
+
+                                    </table>
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left">Principal / Contact Details</td>
+                            </tr>
+                            <tr>
+                                <td>Principal Name</td>
+                                <td colspan="4">@*@items.PRINCIPAL*@</td>
+                                
+                            </tr>
+
+                         
+                            @*<tr>
+                                <td>Mobile No. </td>
+                                <td colspan="2">@items.MOBILE</td>
+                                <td>Std Code/Phone </td>
+                                <td colspan="2">
+                                    @items.STDCODE
+                                    @items.PHONE
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Registered Email </td>
+                                <td colspan="2">@items.EMAILID </td>
+                                <td>No of Teachers in School</td>
+                                <td colspan="2">@items.StaffCount</td>
+                            </tr>
+                            <tr>
+                                <td>Other Person Name</td>
+                                <td colspan="2">@items.CONTACTPER</td>
+                                <td>Other Mobile No.</td>
+                                <td colspan="2">@items.OtContactno </td>
+                            </tr>*@
+                            <!-- <tr> -->
+                            <!-- <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left">Staff / Teacher Details</td> -->
+                            <!-- </tr> -->
+                            <!-- <tr> -->
+                            <!-- <td>Total No of Teachers in School </td> -->
+                            <!-- <td colspan="2"></td> -->
+                            <!-- <td colspan="3"></td> -->
+                            <!-- </tr> -->
+                          
+                    
+                            
+                            
+                            </td>
+                </tr>
+                <tr>
+                    <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left">School Infrastructure Details</td>
+                </tr>
+                <tr>
+                    <th width="20%">No. of Floors (including ground floor)</th>
+                    <td width="6%">@items.Col1</td>
+                    <th width="20%">Total Classrooms on ground floor</th>
+                    <td width="6%">@items.Col2</td>
+                    <th width="20%">Seating capacity on ground floor (no of candidates)</th>
+                    <td width="8%">@items.Col3</td>
+                </tr>
+                <tr>
+                    <th>Total Classrooms on first floor, if any</th>
+                    <td>@items.Col4</td>
+                    <th>Seating capacity on first floor (no of candidates)</th>
+                    <td>@items.Col5</td>
+                    <th>Total Classrooms on second floor, if any</th>
+                    <td>@items.Col6</td>
+                </tr>
+                <tr>
+                    <th>Seating capacity on second floor (no of candidates)</th>
+                    <td>@items.Col7</td>
+                    <th>Total Classrooms on third floor, if any</th>
+                    <td>@items.Col8</td>
+                    <th>Seating capacity on third floor (no of candidates)</th>
+                    <td>@items.Col9</td>
+                </tr>
+                <tr>
+                    <th>Floor on which the examination centre is created in the school? (Exam Centre should preferably on Ground Floor/First Floor)</th>
+                    <td>@items.Col10</td>
+                    <th>Total seating capacity of candidates in Exam centre</th>
+                    <td>@items.Col11</td>
+                    <th>Number of rooms provided for examination centre [Minimum capacity is 30 candidates per room (Single bench single candidate)]</th>
+                    <td>@items.Col12</td>
+                </tr>
+                <tr>
+                    <th>Total No. of Single Benches</th>
+                    <td>@items.Col13</td>
+                    <th>Total No. of Double Benches</th>
+                    <td>@items.Col14</td>
+                    <th>Are CCTV cameras installed in the school campus?</th>
+                    <td>
+                        @items.Col15
+                    </td>
+                </tr>
+                <tr>
+                    <th>How many rooms (used for examination centre) have CCTV cameras?</th>
+                    <td>@items.Col16</td>
+                    <th>Capacity for Physics Lab (no of candidates)</th>
+                    <td>@items.Col17</td>
+                    <th>Capacity for Chemistry Lab (no of candidates)</th>
+                    <td>@items.Col18</td>
+                </tr>
+                <tr>
+                    <th>Capacity for Biology Lab (no of candidates)</th>
+                    <td>@items.Col19</td>
+                    <th>Total no. of Computers in computer lab</th>
+                    <td>@items.Col20</td>
+                    <th>Capacity of Computer Lab (no of candidates)</th>
+                    <td>@items.Col21</td>
+                </tr>
+                <tr>
+                    <th>Is internet Facility available in Computer lab?</th>
+                    <td>@items.Col22</td>
+                    <th></th>
+                    <!-- <th>Size and capacity of lab (no of candidates) Specify the purpose of its usage</th> -->
+                    <!-- <td>@items.Col23</td> -->
+                    <td></td>
+                    <th>Does the school has gated boundary or not?</th>
+                    <td>@items.Col24</td>
+                </tr>
+                <tr>
+                    <th colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left">Is drinking water facility available in school? If yes, then total number of:-</th>
+                </tr>
+                <tr>
+                    <th>R.O's</th>
+                    <td>@items.Col25A</td>
+                    <th>Water coolers</th>
+                    <td>@items.Col25B</td>
+                    <!-- <th>Any other source</th> -->
+                    <!-- <td>@items.Col25C</td> -->
+                    <th>Are there separate toilets for boys & girls?</th>
+                    <td>@items.Col29</td>
+                </tr>
+             
+                <tr>
+                    <th colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left">School Bank Account Details</th>
+                </tr>
+
+                <tr>
+                    <td>IFSC Code 1</td>
+                    <td>@items.IFSC1</td>
+                    <td>Bank Name</td>
+                    <td>@items.Bank1</td>
+                    <td>Branch Name & Address</td>
+                    <td>@items.BankBranch1</td>
+                </tr>
+                <tr>
+                    <td>IFSC Code 2</td>
+                    <td>@items.IFSC2</td>
+                    <td>Bank Name</td>
+                    <td>@items.Bank2</td>
+                    <td>Branch Name & Address</td>
+                    <td>@items.BankBranch2</td>
+                </tr>
+                <tr>
+                    <td>IFSC Code 3</td>
+                    <td>@items.IFSC3</td>
+                    <td>Bank Name</td>
+                    <td>@items.Bank3</td>
+                    <td>Branch Name & Address</td>
+                    <td>@items.BankBranch3</td>
+                </tr>
+
+            </table>
+        }
+    }
+    else
+    {
+        <span>No Record Found</span>
+    }
+
+</body>
+</html>

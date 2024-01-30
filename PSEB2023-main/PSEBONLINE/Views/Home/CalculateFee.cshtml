@@ -1,0 +1,748 @@
+﻿@model PSEBONLINE.Models.FeeHomeViewModel
+@{
+    ViewBag.Title = "CalculateFee";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+
+    .popup {
+        padding-top: 5%;
+        padding-bottom: 12%;
+        text-align: center;
+    }
+
+        .popup table {
+            background: #fff none repeat scroll 0 0;
+            border-radius: 5px;
+            max-width: 500px;
+            min-width: 480px;
+            border: 5px solid #f1f1f1;
+            padding: 15px;
+            box-shadow: 0 0 3px 3px #64686e;
+        }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<h1>Calculate Fee & Final Submission</h1>
+
+@using (Html.BeginForm("CalculateFee", "Home", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+
+    <div class="clearfix"></div>
+    <br />
+    <div class="col-md-12">
+        @{
+            if (Session["LoginSessionSchl"] != null)
+            {
+                PSEBONLINE.Models.LoginSessionSchl loginSession = (PSEBONLINE.Models.LoginSessionSchl)Session["LoginSessionSchl"];
+
+                <div class="clearfix"></div>
+                <br />
+                <div class="row">
+                    <div class="col-md-12 noprint">
+                        <fieldset style="margin-bottom:15px">
+                            <legend>Select </legend>
+                            <div class="col-md-3">
+                                Select Class
+                                @{
+                                    List<SelectListItem> catgilist = new List<SelectListItem>();
+                                    catgilist.Add(new SelectListItem { Text = "Select Class", Value = "Select" });
+                                    if (loginSession.MATRIC == "Y" || loginSession.MATRIC == "1")
+                                    {
+                                        catgilist.Add(new SelectListItem { Text = "9th", Value = "9" });
+                                        // catgilist.Add(new SelectListItem { Text = "10th", Value = "10" });
+                                    }
+                                    if (loginSession.SENIOR == "Y" || loginSession.SENIOR == "1")
+                                    {
+                                        catgilist.Add(new SelectListItem { Text = "11th", Value = "11" });
+                                        // catgilist.Add(new SelectListItem { Text = "12th", Value = "12" });
+                                    }
+                                }
+                                @Html.DropDownListFor(m => m.selectedClass, catgilist, new { id = "selectedClass" })
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <br />
+                <div class="col-md-12" id="dvForm">
+                    <table border="1" style="border-color:orange;">
+                        <tr>
+                            @*----Ninth and Matric------*@
+                            @*<td align="center"><input type="checkbox" id="select_all" name="All" value="N1" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;Select All &nbsp;&nbsp;&nbsp;&nbsp;</span></td>*@
+                            @if (loginSession.MATRIC == "1")
+                            {
+
+                                <td id="tdN1" align="center" style="display:none"><input type="checkbox" id="N1" name="ChkId" value="N1" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;N1 Form &nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                                <td id="tdN2" align="center"><input type="checkbox" id="N2" name="ChkId" value="N2" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;N2 Form &nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                                <td id="tdN3" align="center"><input type="checkbox" id="N3" name="ChkId" value="N3" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;N3 Form &nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                                <td id="tdM1" align="center"><input type="checkbox" id="M1" name="ChkId" value="M1" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;M1 Form &nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                                <td id="tdM2" align="center"><input type="checkbox" id="M2" name="ChkId" value="M2" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;M2 Form &nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                            }
+
+                            @*----11th and Senior------*@
+
+                            @if (loginSession.SENIOR == "1")
+                            {
+                                <td id="tdE1" align="center"><input type="checkbox" id="E1" name="ChkId" value="E1" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;E1 Form &nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                                <td id="tdE2" align="center"><input type="checkbox" id="E2" name="ChkId" value="E2" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;E2 Form &nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                                <td id="tdT1" align="center"><input type="checkbox" id="T1" name="ChkId" value="T1" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;T1 Form &nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                                <td id="tdT2" align="center"><input type="checkbox" id="T2" name="ChkId" value="T2" class="checkbox" /><span align="center">&nbsp;&nbsp;&nbsp;&nbsp;T2 Form &nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                            }
+                            <td class="col-md-2">
+                                @{
+                                    if (loginSession.MATRIC == "1" && loginSession.SENIOR == "1")
+                                    { <input type="submit" value="Calculate Fee by Form" name="cmd" onclick="return valFormChk();" />
+                                    }
+                                    if (loginSession.MATRIC == "1" && loginSession.SENIOR == "0")
+                                    { <input type="submit" value="Calculate Fee by Form" name="cmd" onclick="return valFormChkMAtricOnly();" />
+                                    }
+                                    if (loginSession.MATRIC == "0" && loginSession.SENIOR == "1")
+                                    { <input type="submit" value="Calculate Fee by Form" name="cmd" onclick="return valFormChkSeniorOnly();" />
+                                    }
+                                }
+
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            }
+        }
+
+
+    </div>
+
+    <div class="row" id="divall"></div>
+    <div class="col-md-12" id="divFees">
+        @{
+            if (ViewData["FeeStatus"] != null)
+            {
+                if (ViewData["FeeStatus"].ToString() == "Successfully")
+                {
+
+
+
+                    <h1 style="color:#cc0000">  Records Successfully Final Submitted</h1>
+
+                    <p style="font-size:16px;line-height:24px">
+                        Now you can take final print for your reference and generate examination form of final submitted records.<br />
+                    </p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "Failure")
+                {
+                    <p style="font-size:16px;line-height:24px">
+                        Final Submitted Failure, Plz try again..< br />
+                        <a href="/Home/CalculateFee"> Click here </a>
+                    </p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "1")
+                {
+                    <p style="color:#cc0000;font-weight:bold;font-size:15px;">
+                        This Fee is Valid Upto date @Html.DisplayFor(m => m.EndDate)
+                    </p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "0")
+                {
+                    <p style="color:#cc0000;font-weight:bold;font-size:20px;"> @ViewBag.Message </p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "2" && ViewBag.OutStatus != "3")
+                {
+                    <p style="color:#cc0000;font-weight:bold;font-size:20px;">Final Submission of these forms are not allow/ Last Date is Over</p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "2" && ViewBag.OutStatus == "3")
+                {
+                    <p style="color:#cc0000;font-weight:bold;font-size:15px;"> Some Mandatory Fields Like Subject's/Photograph's,Signature's of Listed Form wise Candidate's are Missing or Duplicate Records. Please Update These Details Then Try Again to Calculate Fee & Final Submission </p>
+                    <input type="button" value="Download Report" onclick="javascript:document.location.href='@Url.Action("DownloadMissingReport", "Home", new { File = "Excel", cls = @ViewBag.selectedClass })'" />
+                }
+                else if (ViewData["FeeStatus"].ToString() == "3")
+                {
+                    <p style="color:#cc0000;font-weight:bold;font-size:15px;"> @ViewBag.Message </p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "5")
+                {
+                    <p style="color:#cc0000;font-weight:bold;font-size:15px;">View Duplicate Records </p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "10")
+                {
+                    <p style="color:#cc0000;font-weight:bold;font-size:18px;"> Photograph's or Signature's of Listed Form wise Candidate's are Missing </p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "11")
+                {
+                    <p style="font-size:16px;line-height:24px"> Please try again to Calculate Fee of particular selected form.</p>
+                }
+                else if (ViewData["FeeStatus"].ToString() == "22")
+                {
+                    <p style="font-size:16px;line-height:24px"> There is not any record to canculate fee of selected form. </p>
+                }
+            }
+        }
+        @*<div style="padding:10px 0"><a href="/PDF/Revised_Fee_Schedule_2017-18.pdf" target="_blank" class="listitm"><samp>&#10093;</samp> <span>19.08.2017</span> Revised - Schedule of Registration/Continuation Fee <img src="/images/new.gif" alt="new" /></a></div>*@
+        @if (ViewData["FeeStatus"] != null)
+        {
+            <div class="table-responsive">
+                @{
+                    if (ViewData["FeeStatus"] != null)
+                    {
+                        if (ViewData["FeeStatus"].ToString() == "10")
+                        {
+                            <table class="table table-bordered" id="t01">
+                                <tr class="active-tr">
+                                    <th>Form</th>
+                                    <th>Candidate Id</th>
+                                    <th>Photo</th>
+                                    <th>Signature</th>
+                                </tr>
+                                @{
+                                    //var array = new[] { @ViewBag.Message };
+                                    string[] array = ViewBag.Message;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[1].Rows.Count; i++)
+                                    {
+                                        var Form = Model.StoreAllData.Tables[1].Rows[i]["form_Name"].ToString();
+                                        var Candid = Model.StoreAllData.Tables[1].Rows[i]["std_id"].ToString();
+                                        var Photo = "https://registration2022.pseb.ac.in/upload/upload" + Session["Session"].ToString().Substring(0, 4).ToString() + "/" + Model.StoreAllData.Tables[1].Rows[i]["std_Photo"].ToString();
+                                        var Sign = "https://registration2022.pseb.ac.in/upload/upload" + Session["Session"].ToString().Substring(0, 4).ToString() + "/" + Model.StoreAllData.Tables[1].Rows[i]["std_Sign"].ToString();
+                                        int Count = i + 1;
+                                        if (array.Contains(Candid))
+                                        {
+                                            <tr>
+                                                <td>@Form</td>
+                                                <td>@Candid</td>
+                                                <td><img src="@Photo" style="width:50px;height:40px;background-color:#000 !important;padding:1px !important;" alt="Photograph" id="imgPhoto" /></td>
+                                                <td><img src="@Sign" style="height:35px;width:80px;background-color:#000 !important;padding:1px !important" alt="Signature" id="img1" /></td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </table>
+                        }
+                        else if (ViewData["FeeStatus"].ToString() == "2")
+                        {
+                            if (ViewBag.OutStatus == "3")
+                            {
+                                <table class="table table-bordered" id="t01">
+                                    <tr class="active-tr">
+                                        <th>Form</th>
+                                        <th>Pending No. of Students</th>
+                                        <th>Form Wise Pending Report</th>
+                                    </tr>
+                                    @{
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            var Form = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                            var CountStudent = Model.StoreAllData.Tables[0].Rows[i]["CountStudents"].ToString();
+                                            int Count = i + 1;
+                                            <tr>
+                                                <td>@Form</td>
+                                                <td>@CountStudent</td>
+                                                <td><input type="button" value="@Form Report" onclick="javascript:document.location.href='@Url.Action("DownloadMissingReport", "Home", new { File = @Form })'" /></td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            }
+                            if (ViewBag.TotalCountDuplicate > 0)
+                            {
+                                <table class="table table-bordered" id="t01">
+                                    <tr class="active-tr">
+                                        <th>Field</th>
+                                        <th>Duplicate</th>
+                                        <th>No. of Students</th>
+                                        <th>View</th>
+                                    </tr>
+                                    @{
+                                        for (int i = 0; i < Model.StoreAllData.Tables[1].Rows.Count; i++)
+                                        {
+                                            var Field = Model.StoreAllData.Tables[1].Rows[i]["Field"].ToString();
+                                            var Duplicate = Model.StoreAllData.Tables[1].Rows[i]["Duplicate"].ToString();
+                                            var CountStudent = Model.StoreAllData.Tables[1].Rows[i]["CountStudents"].ToString();
+                                            int Count = i + 1;
+                                            var Dup = "Dup" + Count.ToString();
+                                            <tr>
+                                                <td>@Field</td>
+                                                <td>@Duplicate</td>
+                                                <td>@CountStudent</td>
+                                                <td>
+                                                    <a data-toggle="modal" data-target="#myModal1-@Dup"><span>Click to View Duplicate Records</span></a>
+
+                                                    <div class="container">
+                                                        <div class="modal fade" id="myModal1-@Dup" role="dialog">
+                                                            <div class="modal-dialog" style="width:80%">
+                                                                <!-- Modal content-->
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        View Duplicate Details of <span class="text-success">@Field</span>  : <span class="rqf">@Duplicate</span>
+                                                                        <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div>
+                                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                                <thead>
+                                                                                    <tr class="active-tr">
+                                                                                        <th>FORM</th>
+                                                                                        <th>Cand Id</th>
+                                                                                        @*<th>Duplicate</th>*@
+                                                                                        <th>School Name</th>
+                                                                                        <th>Cand Name</th>
+                                                                                        <th>Father Name</th>
+                                                                                        <th>Mother Name</th>
+                                                                                        <th>Contact No.</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                @{
+                                                                                    for (int j = 0; j < Model.StoreAllData.Tables[2].Rows.Count; j++)
+                                                                                    {
+                                                                                        var jForm = Model.StoreAllData.Tables[2].Rows[j]["form_Name"].ToString();
+                                                                                        var act = jForm + "FormModify";
+                                                                                        var jField = Model.StoreAllData.Tables[2].Rows[j]["Field"].ToString();
+                                                                                        var jSchl = Model.StoreAllData.Tables[2].Rows[j]["Schl"].ToString();
+                                                                                        var jSchle = "(" + jSchl + ") " + Model.StoreAllData.Tables[2].Rows[j]["Schle"].ToString();
+                                                                                        var jCandid = Model.StoreAllData.Tables[2].Rows[j]["Candid"].ToString();
+                                                                                        var jDuplicate = Model.StoreAllData.Tables[2].Rows[j]["Duplicate"].ToString();
+                                                                                        var jCandi_Name = Model.StoreAllData.Tables[2].Rows[j]["Candi_Name"].ToString();
+                                                                                        var jFather_Name = Model.StoreAllData.Tables[2].Rows[j]["Father_Name"].ToString();
+                                                                                        var jMother_Name = Model.StoreAllData.Tables[2].Rows[j]["Mother_Name"].ToString();
+                                                                                        var jMobile = Model.StoreAllData.Tables[2].Rows[j]["Mobile"].ToString();
+                                                                                        if (Duplicate == jDuplicate)
+                                                                                        {
+                                                                                            <tr style="font-size:12px">
+                                                                                                <td>@jForm</td>
+                                                                                                <td>
+                                                                                                    @if (jSchl.ToString() == Session["Schl"].ToString())
+                                                                                                    {
+                                                                                                        @Html.ActionLink(jCandid, act, "RegistrationPortal", new { id = encrypt.QueryStringModule.Encrypt(jCandid) }, htmlAttributes: null)
+                                                                                                    }
+                                                                                                    else
+                                                                                                    { @jCandid
+                                                                                                }
+                                                                                                </td>
+                                                                                                @*<td>@jDuplicate</td>*@
+                                                                                                <td>@jSchle</td>
+                                                                                                <td>@jCandi_Name</td>
+                                                                                                <td>@jFather_Name</td>
+                                                                                                <td>@jMother_Name</td>
+                                                                                                <td>@jMobile</td>
+                                                                                            </tr>
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            </table>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+
+                            }
+                        }
+                        else if (ViewData["FeeStatus"].ToString() == "1")
+                        {
+
+                            <table class="table table-bordered" id="t01">
+                                <tr class="active-tr">
+                                    <th>Form</th>
+                                    <th>Fee</th>
+                                    <th>LateFee</th>
+                                    <th>Total Fee of Students</th>
+                                    <th>No. Of Students</th>
+                                    <th>Total Fees</th>
+                                </tr>
+                                @{
+
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        var StudentList = "";
+
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            var Form = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                            var fee = Model.StoreAllData.Tables[0].Rows[i]["fee"].ToString();
+                                            var latefee = Model.StoreAllData.Tables[0].Rows[i]["latefee"].ToString();
+                                            var CountStudent = Model.StoreAllData.Tables[0].Rows[i]["CountStudents"].ToString();
+                                            var StudentFee = Model.StoreAllData.Tables[0].Rows[i]["StudentFee"].ToString();
+                                            var TotalFees = Model.StoreAllData.Tables[0].Rows[i]["TotalFees"].ToString();
+                                            StudentList += Model.StoreAllData.Tables[0].Rows[i]["StudentList"].ToString() + ",";
+                                            int Count = i + 1;
+                                            <tr>
+                                                <td align="center">@Form</td>
+                                                <td align="center">@fee</td>
+                                                <td align="center">@latefee</td>
+                                                <td align="center">@StudentFee</td>
+                                                <td align="center">@CountStudent</td>
+                                                <td align="center">@TotalFees</td>
+                                            </tr>
+                                        }
+                                        Session["FeeStudentList"] = StudentList.ToString();
+                                        <tr>
+                                            <td colspan="4"></td>
+                                            <td colspan="2" align="right">Total Fees : ₹  @Html.DisplayFor(m => m.TotalFeesInWords)  </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4"></td>
+                                            <td colspan="2" align="right">
+                                                <a href="" data-toggle="modal" data-target="#myModal1" class="btn">Click Here To View Candidate Wise Fee</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                        }
+                    }
+                }
+                @{
+                    if (ViewData["FeeStatus"] != null)
+                    {
+                        if (ViewData["FeeStatus"].ToString() == "1")
+                        {
+
+                            if (Model.StoreAllData.Tables[1].Rows[0]["TotalFee"].ToString() == "0" && Model.StoreAllData.Tables[1].Rows[0]["TotalFeeAmount"].ToString() == "0")
+                            {
+                                @Html.ActionLink("Final Submission and Generate PSEB HOD Challan", "PaymentFormM1T1", "Home", new { @class = "btn", @OnClick = "return confirm('You are going to submit the data. After that data will be locked for any changes?');" })
+                            }
+                            else
+                            {
+
+                                @Html.ActionLink("Final Submission", "PaymentForm", "Home", new { @class = "btn", @OnClick = "return confirm('You are going to submit the data. After that data will be locked for any changes?');" })
+                            }
+                        }
+                    }
+                }
+
+            </div>
+        }
+
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-left">
+        <p style="color:#cc0000">
+            <b>Note:</b> Final Submission Button will be displayed when candidate's all fields including mandatory fields are filled.
+            @*For other Form fee calculate please contact PSEB Head Office (0172-5227441,440)*@
+        </p>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-center">
+        <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a> @*<a href="/Home/finalprint" class="btn">Final Print</a>*@
+    </div>
+
+}
+
+
+@*Candidate Fee List*@
+
+@if (ViewBag.TotalCount > 0)
+{
+    if (ViewData["FeeStatus"].ToString() == "1")
+    {
+        if (ViewBag.TotalCount > 0 && Model.StoreAllData.Tables[3].Rows.Count > 0)
+        {
+            <div class="container">
+                <div class="modal fade" id="myModal1" role="dialog">
+                    <div class="modal-dialog" style="width:80%">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3><span style="color:#cc0000">Total Number of Students : @Model.StoreAllData.Tables[3].Rows.Count</span></h3>
+                            </div>
+
+                            <div class="modal-body">
+                                <table id="t01" class="table table-bordered">
+                                    <tr class="active-tr">
+                                        <th>Sr No</th>
+                                        <th>Unique ID</th>
+                                        <th>Form</th>
+                                        <th>Name/Father's Name/Mother's Name</th>
+                                        <th>Phy Chl</th>
+                                        <th>DOB</th>
+                                        <th>Exemption</th>
+
+                                        <th>Fee</th>
+                                        <th>Late Fee</th>
+                                        <th>Total Fee</th>
+                                    </tr>
+                                    @{
+                                        int Count = 0;
+                                        int TotalFee = 0, TotalAdmFee = 0, TotalLateFee = 0;
+                                        for (int k = 0; k < Model.StoreAllData.Tables[3].Rows.Count; k++)
+                                        {
+                                            var std_id = Model.StoreAllData.Tables[3].Rows[k]["Std_id"].ToString();
+                                            var form_name = Model.StoreAllData.Tables[3].Rows[k]["form_Name"].ToString();
+                                            var Differently_Abled = Model.StoreAllData.Tables[3].Rows[k]["Differently_Abled"].ToString();
+                                            var cnm = Model.StoreAllData.Tables[3].Rows[k]["candi_name"].ToString();
+                                            var Father_Name = Model.StoreAllData.Tables[3].Rows[k]["Father_Name"].ToString();
+                                            var Mother_Name = Model.StoreAllData.Tables[3].Rows[k]["Mother_Name"].ToString();
+                                            var Age = Model.StoreAllData.Tables[3].Rows[k]["Age"].ToString();
+                                            var IsExemption = Model.StoreAllData.Tables[3].Rows[k]["IsExemption"].ToString();
+                                            var DOB = Model.StoreAllData.Tables[3].Rows[k]["DOB"].ToString();
+
+                                            var Fee = Model.StoreAllData.Tables[3].Rows[k]["Fee"].ToString();
+                                            var StudentFee = Model.StoreAllData.Tables[3].Rows[k]["StudentFee"].ToString();
+
+                                            var LateFee = Model.StoreAllData.Tables[3].Rows[k]["latefee"].ToString();
+                                            var TotFee = Model.StoreAllData.Tables[3].Rows[k]["totfee"].ToString();
+                                            TotalAdmFee += Convert.ToInt32(Fee);
+                                            TotalLateFee += Convert.ToInt32(LateFee);
+                                            TotalFee += Convert.ToInt32(TotFee);
+                                            Count = Count + 1;
+                                            <tr>
+                                                <td>@Count</td>
+                                                <td>@std_id</td>
+                                                <td>@form_name</td>
+                                                <td>@cnm / @Father_Name / @Mother_Name</td>
+                                                <td>@Differently_Abled</td>
+                                                <td>@DOB</td>
+                                                <td>@IsExemption</td>
+                                                <td>@Fee</td>
+                                                <td>@LateFee</td>
+                                                <td>@TotFee</td>
+                                            </tr>
+
+                                        }
+                                        <tr style="color: lightgray; background-color: #000000; font-size: 14px; ">
+                                            <td colspan="3">Total</td>ss
+                                            <td colspan="4" align="left">
+                                                Total Fees : ₹  @{
+                                                    if (TotalFee > 0)
+                                                    {
+                                                        string AmountInWords = new PSEBONLINE.AbstractLayer.DBClass().GetAmountInWords(TotalFee);
+                                                        <span>@AmountInWords</span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>@TotalAdmFee</td>
+                                            <td>@TotalLateFee</td>
+                                            <td>@TotalFee</td>
+                                        </tr>
+
+                                    }
+
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+
+
+        $("#tdN1,#tdN2,#tdN3,#tdM1,#tdM2,#tdE1,#tdE2,#tdT1,#tdT2").hide();
+        $("#dvForm").hide();
+
+
+
+        $('#selectedClass').change(function () {
+            // alert('1');
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                this.checked = false; //change ".checkbox" checked status
+            });
+            $("#dvForm").hide();
+            $("#divFees").hide();
+            var selectedCls = $("#selectedClass").val();
+            // alert(selectedCls);
+            if (selectedCls != "") {
+                $("#tdN1,#tdN2,#tdN3,#tdM1,#tdM2,#tdE1,#tdE2,#tdT1,#tdT2").hide();
+                if (selectedCls == "9") {
+                    $("#dvForm").show();
+                    $("#tdN2,#tdN3").show();
+                }
+                else if (selectedCls == "10") {
+                    $("#dvForm").show();
+                    $("#tdM1,#tdM2").show();
+                }
+                else if (selectedCls == "11") {
+                    $("#dvForm").show();
+                    $("#tdE1,#tdE2").show();
+                }
+                else if (selectedCls == "12") {
+                    $("#dvForm").show();
+                    $("#tdT1,#tdT2").show();
+                }
+            } else {
+                alert('Please Select Class');
+                $("#tdN1,#tdN2,#tdN3,#tdM1,#tdM2,#tdE1,#tdE2,#tdT1,#tdT2").hide();
+            }
+        });
+
+
+        if ('@Model.selectedClass' == '9') { $("#dvForm").show();$("#tdN2,#tdN3").show(); }
+        else if ('@Model.selectedClass' == '10') { $("#dvForm").show(); $("#tdM1,#tdM2").show(); }
+        else if ('@Model.selectedClass' == '11') { $("#dvForm").show();$("#tdE1,#tdE2").show(); }
+        else if ('@Model.selectedClass' == '12') { $("#dvForm").show(); $("#tdT1,#tdT2").show(); }
+        else { $("#tdN1,#tdN2,#tdN3,#tdM1,#tdM2,#tdE1,#tdE2,#tdT1,#tdT2").hide();}
+    });
+</script>
+<script type="text/javascript">
+    function valForm() {
+        alert("Will be Available Soon..");
+        return false;
+    }
+    function valFormChk() {
+
+        if (document.getElementById("N1").checked == false && document.getElementById("N2").checked == false && document.getElementById("N3").checked == false
+            && document.getElementById("M1").checked == false && document.getElementById("M2").checked == false
+            && document.getElementById("E1").checked == false && document.getElementById("E2").checked == false
+            && document.getElementById("T1").checked == false && document.getElementById("T2").checked == false
+        ) {
+            alert("Please check any Form to Calculate Fee");
+            return false;
+        }
+        else {
+            $("#divFees").show();
+        }
+
+    }
+
+    function valFormChkMAtricOnly() {
+
+        if (document.getElementById("N1").checked == false && document.getElementById("N2").checked == false && document.getElementById("N3").checked == false
+            && document.getElementById("M1").checked == false && document.getElementById("M2").checked == false
+        ) {
+            alert("Please check any Form to Calculate Fee");
+            return false;
+        }
+        else {
+            $("#divFees").show();
+        }
+
+    }
+
+    function valFormChkSeniorOnly() {
+
+        if (document.getElementById("E1").checked == false && document.getElementById("E2").checked == false
+            && document.getElementById("T1").checked == false && document.getElementById("T2").checked == false
+        ) {
+            alert("Please check any Form to Calculate Fee");
+            return false;
+        }
+        else {
+            $("#divFees").show();
+        }
+
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#select_all").change(function () {
+            var status = this.checked; // "select all" checked status
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                this.checked = status; //change ".checkbox" checked status
+            });
+        });
+
+        //uncheck "select all", if one of the listed checkbox item is unchecked
+        $('.checkbox').change(function () { //".checkbox" change
+
+            //alert($(this).val());
+            if (this.checked == false) { //if this item is unchecked
+                $("#select_all")[0].checked = false; //change "select all" checked status to false
+            }
+        });
+
+    });
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if ('@TempData["ChkId"]' != null && '@TempData["ChkId"]' != "") {
+
+            var tempchkid = '@TempData["ChkId"]';
+            if (tempchkid.includes("N1")) {
+                $("#N1").attr("checked", true);
+            }
+            if (tempchkid.includes("N2")) {
+                $("#N2").attr("checked", true);
+            }
+            if (tempchkid.includes("N3")) {
+                $("#N3").attr("checked", true);
+            }
+            if (tempchkid.includes("E1")) {
+                $("#E1").attr("checked", true);
+            }
+            if (tempchkid.includes("E2")) {
+                $("#E2").attr("checked", true);
+            }
+            if (tempchkid.includes("M1")) {
+                $("#M1").attr("checked", true);
+            }
+            if (tempchkid.includes("M2")) {
+                $("#M2").attr("checked", true);
+            }
+            if (tempchkid.includes("T1")) {
+                $("#T1").attr("checked", true);
+            }
+            if (tempchkid.includes("T2")) {
+                $("#T2").attr("checked", true);
+            }
+        }
+    });
+</script>
+
+
+
+<script language="JavaScript">
+
+    window.onload = function () {
+        document.addEventListener("contextmenu", function (e) {
+            e.preventDefault();
+        }, false);
+        document.addEventListener("keydown", function (e) {
+            //document.onkeydown = function(e) {
+            // "I" key
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
+                disabledEvent(e);
+            }
+            // "J" key
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
+                disabledEvent(e);
+            }
+            // "S" key + macOS
+            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+                disabledEvent(e);
+            }
+            // "U" key
+            if (e.ctrlKey && e.keyCode == 85) {
+                disabledEvent(e);
+            }
+            // "F12" key
+            if (event.keyCode == 123) {
+                disabledEvent(e);
+            }
+        }, false);
+        function disabledEvent(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            } else if (window.event) {
+                window.event.cancelBubble = true;
+            }
+            e.preventDefault();
+            return false;
+        }
+    }
+
+</script>

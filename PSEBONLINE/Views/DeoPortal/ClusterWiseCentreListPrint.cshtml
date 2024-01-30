@@ -1,0 +1,281 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/print.css" />
+<style type="text/css">
+    .header_outer {
+        display: none;
+    }
+
+    .bs-docs-footer {
+        display: none;
+    }
+
+    body {
+        font-size: 11px;
+    }
+</style>
+@* <h1>Centre List Report</h1><p>
+        Welcome: @if (Session["NAME"] != null)
+        {@Session["NAME"].ToString()}
+        else { Response.Redirect("~/DeoPortal/Index"); }
+    </p>*@
+
+@using (Html.BeginForm("ClusterListReportPrint", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Click Here to Print" dowload class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>
+    </table>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <span style="display:none"><input type="button" value="Click Here to Download & Print" dowload class="btn" onclick="window.print()" /></span>
+            <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            <a href="/DeoPortal/CentreReportPrint" class="btn">Click Here to Download & Print</a>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <thead style="border:0">
+                        <tr>
+                            <td colspan="10" style="border:0;text-align:center;padding:20px 0 10px 0">
+                                <span style="font-size:32px">Punjab School Education Board</span><br />
+                                                                                                 <span style="font-size:18px">District wise Examination Centres List for @Session["DeoSessionMonthYear"].ToString()</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" style="text-align:left;border:0">
+                                &nbsp;
+                                District Name: (@Session["Dist"].ToString()) @if (Session["NAME"] != null)
+                                {
+
+                                    @Session["DISTNM"].ToString();
+                                }
+                                else { Response.Redirect("~/DeoPortal/Index"); }
+                            </td>
+                            <td colspan="5" style="text-align:right;border:0">Date :@ViewBag.Date &nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" style="text-align:left;border:0">
+                                &nbsp;Lot: 1
+                            </td>
+                            <td colspan="5" style="text-align:right;border:0">
+                                Final Submit Date
+                                &nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10">
+                                Block Code:   Block Cent Code:    Block Schl Code:
+
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10">Block Name & Building</td>
+                        </tr>
+                        <tr>
+                            <td colspan="10">
+                                No of Centre :                     No of Supdt. :                      No of Deputy Supdt. :                  No of Invisilator :
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10" style="border:0"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                            <th>Sr</th>
+                            <th>Cent</th>
+                            <th>Cent Schl</th>
+                            <th>Building Name</th>
+                            <th>Mat.Reg.</th>
+                            <th>Mat.Opn.</th>
+                            <th>SrSec.Reg</th>
+                            <th>SrSec.Opn.</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+                        </tr>
+
+                        if (d == ViewBag.TotalCount)
+                        {
+                        <tr style="background-color:#c1c1c1">
+                            <td colspan="4" align="right">
+                                Total Count:
+                            </td>
+                            <td>
+                                @TotMatricReg
+
+                            </td>
+                            <td>
+                                @TotMatricOpen
+                            </td>
+                            <td>
+                                @TotSrSecReg
+                            </td>
+                            <td>
+                                @TotSrSecOpen
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr class="noprint">
+                            <td colspan="6">
+                                Page @ViewBag.pagesize of @ViewBag.pn
+                                &nbsp;
+                                @if (ViewBag.pagesize == 1)
+
+                                {
+                                    @:<<
+
+                                    @Html.Raw("&nbsp;");
+
+                                    @:< Prev
+                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                    if (ViewBag.pn > ViewBag.pagesize)
+                                    {
+                                        @Html.ActionLink("Next >", "CentreReport", new { page = ViewBag.pagesize + 1 })
+
+                                        @Html.Raw("&nbsp;");
+
+                                        @Html.ActionLink(">>", "CentreReport", new { page = ViewBag.pn })
+                                    }
+                                }
+                                else
+                                {
+                                    if (TempData["CenterListSelDist"] != null)
+                                    {
+                                        string str1 = TempData.Peek("CenterListSelDist").ToString();
+                                        string str2 = TempData.Peek("CenterListSelectList").ToString();
+                                        string str3 = TempData.Peek("CenterListSearchString").ToString();
+                                        //string str4 = TempData.Peek("ImportData10thClassSession").ToString();
+                                        TempData["CenterListSelDist"] = str1;
+                                        TempData["CenterListSelectList"] = str2;
+                                        TempData["CenterListSearchString"] = str3;
+                                        // TempData["ImportData10thClassSession"] = str4;
+                                    }
+                                    @Html.ActionLink("<<", "CentreReport", new { page = 1 })
+
+                                    @Html.Raw("&nbsp;");
+
+                                    @Html.ActionLink("< Prev", "CentreReport", new { page = ViewBag.pagesize - 1 })
+                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                    if (ViewBag.pn > ViewBag.pagesize)
+                                    {
+                                        @Html.ActionLink("Next >", "CentreReport", new { page = ViewBag.pagesize + 1 })
+
+                                        @Html.Raw("&nbsp;");
+
+                                        @Html.ActionLink(">>", "CentreReport", new { page = ViewBag.pn })
+                                    }
+
+                                }
+
+
+                            </td>
+                            <td colspan="4" style="text-align:right" class="rqf">Total Records(Filtered): @ViewBag.TotalCount1</td>
+                        </tr>
+
+                        }
+                        }
+
+                        }
+                        else
+                        {
+                        <tr class="noprint">
+                            <td colspan="12">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                        }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+}
+
+<script>
+
+                        function dee() {
+
+                            if ($("#SelDist").val() == "") {
+
+                                $("#reqsession").slideDown("slow");
+                                return false;
+                            }
+                            if ($("#Category").val() != "0" && $("#SearchString").val() == "") {
+
+                                $("#reqsellist").slideDown("slow");
+                                return false;
+                            }
+
+                                //else if ($("#SelDist").val() != "" && $("#Category").val() != "" && $("#SearchString").val() == "") {
+                                //    $("#reqsellist").slideUp("slow");
+                                //    $("#reqsstring").slideDown("slow");
+                                //    return false;
+                                //}
+                            else
+                                return true;
+
+                        }
+                        $(document).ready(function () {
+
+                            $("#SelDist").change(function () {
+                                if ($("#SelDist").val() == "") {
+                                    // $("#SearchString").focus(function () { $("#reqsellist").slideUp("slow"); });
+                                    $("#reqsession").slideDown("slow");
+                                }
+                                else {
+                                    $("#reqsession").slideUp("slow");
+                                }
+
+                            });
+
+                        });
+
+
+                        var form = $("#searchform").serialize();
+                        $("#btnNext").click(function () {
+                            $.ajax({
+                                url: 'DeoPortal/Next',
+                                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                                success: function (response) {
+                                    $("body").html(response);
+                                }
+                            });
+                        });
+
+                        $("#btnPrevious").click(function () {
+                            $.ajax({
+                                url: 'DeoPortal/Previous',
+                                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                                success: function (response) {
+                                    $("body").html(response);
+                                }
+                            });
+                        });
+
+
+
+</script>

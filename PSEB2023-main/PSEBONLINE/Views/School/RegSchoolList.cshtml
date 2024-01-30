@@ -1,0 +1,232 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<div class="container">
+    <h1>Regular School List</h1>
+    <div class="row">
+
+        @using (Html.BeginForm("RegSchoolList", "School", FormMethod.Post, new { id = "searchform" }))
+            {
+                if (ViewBag.MyDist != null)
+                {
+                @*required = "required"*@			
+
+                <div class="col-md-2">@Html.DropDownList("SchoolType", new SelectList(ViewBag.MySchoolType, "Value", "Text", ViewBag.SelectedSchoolType), "--All School Type---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("ClassType", new SelectList(ViewBag.MyClassType, "Value", "Text", ViewBag.SelectedClassType), "--All Class ---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2"><input type="submit" value="Search" /> <input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" /></div>
+            }
+        }
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">Grid Total:  @ViewBag.TotalCount1</div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>SCHL</th>
+                        <th>ID NO.</th>
+                        <th>School Name</th>
+                        <th>District</th>
+                        <th>Status</th>
+                        <th>Verify</th>
+                        <th>Approve</th>
+                        <th>Action</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 20 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var schid = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                                var SCHLE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                                var StationE = Model.StoreAllData.Tables[0].Rows[i]["STATIONE"].ToString();
+                                var DISTE = Model.StoreAllData.Tables[0].Rows[i]["DISTE"].ToString();
+                                var status = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                                var vfalg = Model.StoreAllData.Tables[0].Rows[i]["vflag"].ToString();
+                                var Approved = Model.StoreAllData.Tables[0].Rows[i]["Approved"].ToString();
+
+                                <tr>
+                                    <td>
+                                        @SCHL
+                                    </td>
+                                    <td>
+                                        @IDNO
+                                    </td>
+                                    <td>
+                                        @SCHLE,@StationE
+                                    </td>
+                                    <td>
+                                        @DISTE
+                                    </td>
+                                    <td>
+                                        @status
+                                    </td>
+                                    <td>
+                                        @vfalg
+                                    </td>
+                                    <td>
+                                        @Approved
+                                    </td>
+                                    <td>
+                                        <div class="cart">
+                                            Choose Action <span class="caret"></span>
+                                            <div id="sidebar">
+                                                <ul>                                                  
+                                                    <li style="@(ViewBag.IsView == 1 ? "display:block" : "display:none")">
+                                                        @Html.ActionLink("View", "School_View_Form", new { id = SCHL })
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="11">
+                                            Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                            @if (ViewBag.pagesize == 1)
+                                            {   @:<<
+                                                    @Html.Raw("&nbsp;");
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp = ViewBag.pagesize + 1;
+                                                    <a href="~/School/RegSchoolList?page=@dp">Next ></a>
+                                                      @Html.Raw("&nbsp;");
+                                                    <a href="~/School/RegSchoolList?page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var dp = ViewBag.pagesize - 1;
+                                                <a href="~/School/RegSchoolList?page=1"><<</a>
+                                                                                                            @Html.Raw("&nbsp;");
+                                                <a href="~/School/RegSchoolList?page=@dp">< Prev</a>
+                                                                                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp1 = ViewBag.pagesize + 1;
+                                                    <a href="~/School/RegSchoolList?page=@dp1">Next ></a>
+                                                                                                                @Html.Raw("&nbsp;");
+                                                    <a href="~/School/RegSchoolList?page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+            }
+        }
+    }
+    else
+    {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+
+
+                            </tr>
+                        }
+                    }
+                </table>
+
+
+
+            </div>
+        </div>
+    </div>
+    @*<a href="javascript:void(0);" onclick="history.go(-1);" style="-moz-user-select: none;background-image: none;border: 1px solid transparent;border-radius: 4px;
+        cursor: pointer;    display: inline-block;    font-size: 14px;    font-weight: 400;    line-height: 1.42857;    margin-bottom: 0;    padding: 6px 12px;    text-align: center;
+        vertical-align: middle;    white-space: nowrap;    background-color: #fb9709;    border-color: #f08f06;    color: #fff;cursor:pointer">Back</a>*@
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        var form = $("#searchform").serialize();
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            if (value == 1 || value == 3 || value == 5) {
+                $("#searchform").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        // alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    };
+                });
+            } else {
+                $("#searchform").off('keypress');
+            }
+
+        });
+    });
+</script>
+
+<script type='text/javascript'>
+var isCtrl = false;
+document.onkeyup=function(e)
+{
+    if(e.which == 17)
+    isCtrl=false;
+}
+document.onkeydown=function(e)
+{
+    if(e.which == 17)
+    isCtrl=true;
+}
+var isNS = (navigator.appName == "Netscape") ? 1 : 0;
+if(navigator.appName == "Netscape") document.captureEvents(Event.MOUSEDOWN||Event.MOUSEUP);
+function mischandler(){
+    return false;
+}
+function mousehandler(e){
+    var myevent = (isNS) ? e : event;
+    var eventbutton = (isNS) ? myevent.which : myevent.button;
+    if((eventbutton==2)||(eventbutton==3)) return false;
+}
+document.oncontextmenu = mischandler;
+document.onmousedown = mousehandler;
+document.onmouseup = mousehandler;
+</script>

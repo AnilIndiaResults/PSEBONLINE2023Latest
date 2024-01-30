@@ -1,0 +1,207 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Practical Signature Chart Matric";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/print-4PS.css" />
+@*<link rel="stylesheet" href="~/barcode.css" type="text/css" charset="utf-8" />*@
+<style type="text/css">
+    .brack {
+        page-break-after: always;
+    }
+</style>
+@using (Html.BeginForm("PracSignatureChartMatric", "School", FormMethod.Post, new { id = "searchform" }))
+{
+    @Html.Hidden("cid", (string)ViewBag.cid)
+    <div class="row noprint">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    TotalCount &nbsp;
+                    @if (Model != null)
+                    {                       
+                        <label>@Model.StoreAllData.Tables[1].Rows.Count</label>
+                    }
+                </div>
+                <div class="col-md-4">
+                    Select Exam Centre Block
+                    @Html.DropDownList("ExamCent", new SelectList(ViewBag.MySchCode, "Value", "Text"), "---Select Exam Centre Block--", new { @class = "ddlCentcode" })
+                </div>
+                <div class="col-md-2">
+                    Select Subject
+                    @Html.DropDownList("ExamSub", new SelectList(ViewBag.MyExamSub, "Value", "Text"), "---Select Subject--", new { @class = "" })
+                </div>
+                <div class="col-md-2">
+                    Roll Number
+                    @Html.TextBoxFor(m => m.ExamRoll, new { id = "ExamRoll", @maxlength = "10", onkeypress = "return isNumberKey(event);", placeholder = "Roll No." })
+                </div>
+                <div class="col-md-2">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm();" title="Search Record" /></div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        <input type="button" value="Print" dowload class="btn" onclick="window.print()" />
+                        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+                <table border="1" style="width:100%;" align="center">
+                @{                     
+                    int columns = 2;
+                    var setH = "";
+                    var rpH = "";
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 1;
+                        int pageCnt = 0;
+
+                        for (int k = 0; k < Model.StoreAllData.Tables[1].Rows.Count; k++)
+                        {
+                            var cnm2 = Model.StoreAllData.Tables[1].Rows[k]["cnm"].ToString();
+                            var fnm2 = Model.StoreAllData.Tables[1].Rows[k]["fnm"].ToString();
+                            var mnm2 = Model.StoreAllData.Tables[1].Rows[k]["mnm"].ToString();
+                            var roll2 = Model.StoreAllData.Tables[1].Rows[k]["roll"].ToString();
+                            var sid = Model.StoreAllData.Tables[1].Rows[k]["std_id"].ToString();
+                            var pht2 = Model.StoreAllData.Tables[1].Rows[k]["pht"].ToString();
+                            var sig2 = Model.StoreAllData.Tables[1].Rows[k]["sig"].ToString();
+                            // var sub2 = Model.StoreAllData.Tables[1].Rows[k]["sub"].ToString();
+                            var rp = Model.StoreAllData.Tables[1].Rows[k]["rp"].ToString();
+                            var set = Model.StoreAllData.Tables[1].Rows[k]["set"].ToString();
+                            //if (pht2.Contains("Pvt") || rp.Contains("P"))
+                            //{
+                            //    pht2 = "https://registration2022.pseb.ac.in/upload/Upload2023/" + pht2;
+                            //    sig2 = "https://registration2022.pseb.ac.in/upload/Upload2023/" + sig2;
+                            //}
+                            //else if (pht2.Contains("OPEN"))
+                            //{
+                            //    pht2 = "https://registration2022.pseb.ac.in/upload/" + pht2;
+                            //    sig2 = "https://registration2022.pseb.ac.in/upload/" + sig2;
+                            //}
+                            //else
+                            //{
+                            //    pht2 = "https://registration2022.pseb.ac.in/upload/Upload2023/" + pht2;
+                            //    sig2 = "https://registration2022.pseb.ac.in/upload/Upload2023/" + sig2;
+                            //}
+
+
+                            //-------- Header
+                            var HDdist = Model.StoreAllData.Tables[0].Rows[0]["dist"].ToString();
+                            var HDdistnmp = Model.StoreAllData.Tables[0].Rows[0]["distnmp"].ToString();
+                            var HDcent = Model.StoreAllData.Tables[0].Rows[0]["cent"].ToString();
+                            var HDcentP = Model.StoreAllData.Tables[0].Rows[0]["centP"].ToString();
+                            var HDpDate = Model.StoreAllData.Tables[0].Rows[0]["PrintDate"].ToString();
+                            var HDsub = Model.StoreAllData.Tables[0].Rows[0]["sub"].ToString();
+                            var HDsubnm = Model.StoreAllData.Tables[0].Rows[0]["subnm"].ToString();
+
+                            var ExamDate = Model.StoreAllData.Tables[0].Rows[0]["exam_date"].ToString();
+
+                            if (set != setH || rpH != rp)
+                            {
+                                setH = set; rpH = rp;
+
+                                    <thead>
+                                         <tr>
+                                            <td width="16%" style="text-align:center"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" height="50px" alt="PSEB" /></div></td>
+                                            <td style="font-size:24px;text-align:center;line-height:22px;vertical-align:top" class="kdsfont" colspan="2">
+                                                <span style="font-size:32px"> Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span> <br />
+                                                ÌèÚ¶ñ¨ (ÂÓÒÜ Óñã»Û) ÆñÛÚª¤Ø ÌØÏ° - 2022<br /> @*²ÝÐØ¥Û, 2019<br />*@
+                                                @*ÕÓ¼ØªÏ-°ØÏ¶ (ÌØÏ°) ((Vocational Group))*@
+                                            </td>
+                                            <td style="text-align:right" width="16%"><br /><span class="kdsfont">Ú²ÐðØ ¨ë¸ ¤¼ã ÅÙ</span><br /><span class="kdsfont">@HDdist @HDdistnmp</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="kdsfont">¨ã×ÂÏ ¨ë¸ ¤¼ã ÅÙ</td>
+                                            <td colspan="3" class="kdsfont">@HDcent - <span class="kdsfont">@HDcentP</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="kdsfont">ÚÌ¼Û / ÚÒÓÖã</td>
+                                            <td colspan="2">@*@ExamDate*@-----------------------------  / (@HDsub) @HDsubnm</td>
+                                            <td class="kdsfont" style="text-align:right">Óèó¶  : @set</td>
+                                        </tr>
+                                        <tr>
+                                            <td rowspan="4" class="kdsfont">Çë¶ë</td>
+                                            <td class="kdsfont">ÏëÐ ÅâÉÏ</td>
+                                            <td class="kdsfont" colspan="2">Ó¶Þ¸è×¶ ¤Ø¥Û. ¸Û.</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="kdsfont">ÅØÌ/ÚÆ¼Ø ÂØ ÅÙ/ÌØ¼Ø ÂØ ÅÙ</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="kdsfont">¦Ýó¼Ï Æó¼ÏÛ ÅâÉÏ</td>
+                                            <td class="kdsfont" colspan="2" width="35%">ÆñÓÖÅ Æó¼Ï ¨ë¸</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="kdsfont">¤ÆÐë¸ ¨Û¼ã ÕÓ¼ØªÏ</td>
+                                            <td class="kdsfont" colspan="2">ÕÓ¼ØªÏ</td>
+                                        </tr>
+                                    </thead>
+                                
+
+            }
+            d = d + 1;
+            //-----Header
+            int col = k % columns;
+            // left
+                                    <tbody>
+                                    <tr>
+                                        <td rowspan="4" style="text-align:center;height:128px !important"><div style="padding:3px 2px"><img src="@pht2" style="height:118px;width:120px" alt="Photo" id="Photo" /></div></td>
+                                   
+                                        <td><span style="font-size:18px">@roll2</span></td>
+                                        <td colspan="2">@sid</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"><span class="kdsfont">@cnm2 / @fnm2 / @mnm2</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:left"><div style="padding:2px"><img src="@sig2" style="height:40px;width:150px" alt="Sign" id="Sign" /></div></td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                </tbody>
+        }
+    }
+
+
+
+
+
+    else
+    {
+                <p>@ViewBag.Message</p>
+
+    }
+                }
+
+                </table>
+           
+}
+<script type="text/javascript">
+    function valForm() {
+        var schoolcode = document.getElementById("ExamCent").value;
+        if (schoolcode == "" || document.getElementById("ExamCent").value == null) {
+            alert("Select Block");
+            document.getElementById("ExamCent").focus();
+            return false;
+        }
+    }
+</script>
+
+
+
+
+

@@ -1,0 +1,235 @@
+﻿@model IEnumerable<PSEBONLINE.Models.AttendanceAdminReport>
+@{
+
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<!-- #endregion -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+
+
+
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+@*<h1>Centre Exam Date Report @ViewBag.ClassName (Session <b>@Session["Session"].ToString()</b>) </h1>*@
+<h1>Attendance Summary</h1>
+@using (Html.BeginForm("AttendanceReport", "Report", FormMethod.Post))
+{
+    <fieldset style="margin-bottom:15px">
+        <legend>Search</legend>
+        <form id="myForm">
+            <div class="clearefix"></div>
+            <div class="row">
+                <div class="col-md-2">
+                    Exam Batch
+                    <label><span>March 2023</span></label>
+                </div>
+                <div class="col-md-2">
+                    Select Class
+
+                    @Html.DropDownList("Class", new SelectList(ViewBag.MyClass, "Value", "Text", ViewBag.SelectedClass), new { id = "Class" })
+                </div>
+                <div class="col-md-2">
+                    Select Category
+                    @Html.DropDownList("SelRP", new SelectList(ViewBag.MyRP, "Value", "Text", ViewBag.SelectedRP), "--Select---", new { @class = "", required = "required" })
+
+                </div>
+                <div class="col-md-2">
+                    Center Code
+                    <input type="text" id="centercode" value='@ViewBag.centercode' name="centercode" required />
+
+                </div>
+                <div class="col-md-1">
+                    &nbsp;<br /><input type="submit" value="Search" name="cmd" title="Search Record" />
+
+                </div>
+                <div class="col-md-1">
+                    &nbsp;<br /><input type="submit" value="Export" name="export" title="Export" />
+
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+        </form>
+    </fieldset>
+
+    <div id="loading1"></div>
+    <div class="clearfix"></div>
+    <div class="row" id="divMain1">
+        <div class="col-md-4">
+            Grid Total:  @{
+                if (Model != null) { Model.Count(); }
+                else
+                { <span>0</span>}
+            }
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th width="10%">Center Code</th>
+                        <th width="5%">Class</th>
+                        <th width="5%">Category</th>
+                        <th width="10%">Subject Code</th>
+                        <th width="10%">Subject Name</th>
+                        <th width="9%">Exam Date</th>
+                        <th width="5%">Total</th>
+                        <th width="5%">Present</th>
+                        <th width="5%">Absent</th>
+                        <th width="5%">Cancel</th>
+                        <th width="5%">UMC</th>
+                        <th width="11%">Memo Number</th>
+                        <th width="5%">Status</th>
+                        <th width="5%">Unlock Detail</th>
+                        <th width="5%">Action</th>
+                    </tr>
+                    @{ if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                        <tr>
+                                            <td>@item.centrecode</td>
+                                            <td>@item.cls</td>
+                                            <td>@item.RPname</td>
+                                            <td>@item.subcode</td>
+                                            <td>@item.SubNM</td>
+                                            <td>@item.Exmdate</td>
+                                            <td>@item.Total</td>
+                                            <td>@item.Present</td>
+                                            <td>@item.Absent</td>
+                                            <td>@item.Cancel</td>
+                                            <td>@item.UMC</td>
+                                            <td>@item.memoNumber</td>
+                                            <td>@item.statusNM</td>
+                                            <td>@item.remarks</td>
+                                            <td>
+                                                <div class="cart">
+                                                    Choose&nbsp;Action <span class="caret"></span>
+                                                    <div id="sidebar">
+                                                        @if (@item.statusNM.ToUpper() == "FINAL")
+                                                        {
+
+
+                                                            <ul>
+                                                                <li><a href="/Attendance/AttendancePrint/@item.memoNumber">Final Print</a></li>
+                                                                <li>
+
+                                                                    <a onclick="Unlock('@item.memoNumber')">Unlock</a>
+                                                                </li>
+                                                            </ul>
+
+
+                                                        }
+                                                        else
+                                                        {
+
+                                                            <ul>
+                                                                <li><a href="/Attendance/AttendancePrint/@item.memoNumber">Rough Print</a></li>
+                                                            </ul>
+
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="13">Record not found</td></tr>
+                        }
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+}
+<div id="dialog" style="display: none" class="kdsfont">
+    <span id="memoUpdateNo" style="font-size:2px;"></span>
+
+    <div class="col-md-12">
+        Remarks     <textarea id="txtRemark" name="txtRemark"></textarea>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#dialog").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to Unlock?",
+            width: 450,
+            height: 250,
+            buttons: {
+                "Unlock": function () {
+                    var vRemark = document.getElementById('txtRemark').value;
+                    var vMemo = document.getElementById('memoUpdateNo').innerHTML;
+                    if (vRemark == "") {
+                        alert("Please Enter Remark");
+                    }
+                    else {
+                        UnlockMemo(vMemo, vRemark);
+                    }
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+    });
+
+</script>
+
+<script>
+    function Unlock(memono) {
+        document.getElementById('memoUpdateNo').innerHTML = memono;
+        document.getElementById('memoUpdateNo').style.visibility = "hidden";
+        $('#dialog').dialog('open');
+    }
+
+    function UnlockMemo(memono,remark) {
+        $('#dialog').dialog('open');
+        let text;
+        if (true == false) {
+            text = "";
+        } else {
+            var request = {};
+            request.memonumber = memono;
+            request.remarks = remark;
+
+            $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UnlockApplication", "Master")',
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify(request),
+                    success: function (response) {
+                        if (response.returncode == "1") {
+                            alert("Unlocked Sucessfully");
+                            window.location.href = "/Report/AttendanceReport";
+                        }
+                        else {
+                            alert("Saved Failure");
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response);
+                    }
+            });
+
+        }
+    }
+</script>

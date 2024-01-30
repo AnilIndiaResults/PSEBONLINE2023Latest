@@ -1,0 +1,169 @@
+﻿@model PSEBONLINE.Models.ReportModel
+
+@{
+    ViewBag.Title = "Center Creation Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<style type="text/css">
+    .table-responsive td {
+        font-size: 10px;
+    }
+
+    body {
+        font-size: 12px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .footer {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        z-index: 9999999;
+        display: block;
+    }
+</style>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in//Content/cardprintr.css" />
+
+
+@using (Html.BeginForm("CenterCreationReport", "Report", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    <div class="row noprint">
+        <div class="col-md-12">
+            <h1>Regular School Report</h1>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">@Html.DropDownList("Term", new SelectList(ViewBag.MyTerm, "Value", "Text", ViewBag.SelectedTerm), "--All Terms---", new { @class = "", required= "required" })</div>
+                <div class="col-md-2">@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("SchoolType", new SelectList(ViewBag.MySchoolType, "Value", "Text", ViewBag.SelectedSchoolType), "--All User Type---", new { @class = "" })</div>
+                <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" placeholder="Enter School Code" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2">
+                    <input type="submit" value="Search" /> <a href="/Report/RegSchoolReport" class="btn">Reset</a>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+}
+
+<div style="width:100%;text-align:right;" class="noprint"><input type="button" value="Print" class="btn noprint" onclick="window.print()" />&nbsp;<a href="javascript:history.back()" class="btn noprint" style="color:#fff">Back</a> </div>
+
+
+<div class="table-responsive">
+    <table width="100%" border="1">
+
+        <thead>
+            <tr>
+                <td colspan="2" style="border-right:0 !important"></td>
+                <td colspan="7" style="text-align:center;border-left:0 !important;border-right:0 !important">
+                    <span style="font-size:24px">Punjab School Education Board</span><br>
+                    Online Centre Creation Report, (Session @Session["session"].ToString())
+                </td>
+                <td colspan="2" style="border-left:0 !important;text-align:right">Print Date: @DateTime.Today.ToString("dd/MM/yyyy")  &nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="11" style="border-top:0 !important">
+                    <span>
+                        District:
+                        @if (ViewBag.SelectedDist == null || ViewBag.SelectedDist == "0")
+                        {<span>ALL</span>}
+                        else
+                        {<span>(@ViewBag.DIST) @ViewBag.DISTNM</span>}
+
+                    </span>
+                </td>
+            </tr>
+
+            <tr class="active-tr">
+                <th rowspan="2" width="3%">
+                    SR
+                </th>
+                <th rowspan="2" width="7%" style="text-align:center">
+                    SCHL
+                </th>
+                <th rowspan="2">
+                    School Name
+                </th>
+                <th colspan="3">Self School Count</th>
+                <th rowspan="2">
+                    User Type
+                </th>
+                <th rowspan="2">Ref No.</th>
+                <th rowspan="2">Trans ID</th>
+                <th rowspan="2">
+                    Payment ID
+                </th>
+                <th rowspan="2">Amount/Date</th>
+            </tr>
+            <tr class="active-tr">
+                <th style="padding-top:0;padding-bottom:0">Matric</th>
+                <th style="padding-top:0;padding-bottom:0">Senior</th>
+                <th style="padding-top:0;padding-bottom:0">Middle</th>
+            </tr>
+        </thead>
+
+        @{
+            if (ViewBag.TotalCount > 0 && Model.StoreAllData.Tables.Count > 0)
+            {
+
+                if (Model.StoreAllData.Tables[0].Rows.Count > 0)
+                {
+                    int count = 0;
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        count = count + 1;
+                        var schl = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
+                        var schlnme = Model.StoreAllData.Tables[0].Rows[i]["SCHLNME"].ToString();
+                        var schlnmp = Model.StoreAllData.Tables[0].Rows[i]["SCHLNMP"].ToString();
+
+                        var MATREG = Model.StoreAllData.Tables[0].Rows[i]["MATREG"].ToString();
+                        var SSREG = Model.StoreAllData.Tables[0].Rows[i]["SSREG"].ToString();
+                        var MIDREG = Model.StoreAllData.Tables[0].Rows[i]["MIDREG"].ToString();
+
+
+                        var USERTYPE = Model.StoreAllData.Tables[0].Rows[i]["USERTYPE"].ToString();
+                        var CentreAppNo = Model.StoreAllData.Tables[0].Rows[i]["CentreAppNo"].ToString();
+                        var Challanid = Model.StoreAllData.Tables[0].Rows[i]["Challanid"].ToString();
+                        var J_REF_NO = Model.StoreAllData.Tables[0].Rows[i]["J_REF_NO"].ToString();
+                        var TotalFee = Model.StoreAllData.Tables[0].Rows[i]["TotalFee"].ToString();
+                        var DEPOSITDT = Model.StoreAllData.Tables[0].Rows[i]["DEPOSITDT"].ToString().Split(' ')[0];
+                        <tr>
+                            <td>
+                                @count
+                            </td>
+                            <td>
+                                @schl
+                            </td>
+                            <td>
+                                @schlnme<br><span class="kdsfont"> @schlnmp</span>
+                            </td>
+                            <td>
+                                <i class="">@MATREG</i>
+                            </td>
+                            <td>
+                                <i class="">@SSREG</i>
+                            </td>
+                            <td>
+                                <i class="">@MIDREG</i>
+                            </td>
+                            <td>&nbsp;@USERTYPE</td>
+                            <td width="8%">&nbsp;@CentreAppNo</td>
+                            <td width="8%">&nbsp;@Challanid</td>
+                            <td width="8%">&nbsp;@J_REF_NO</td>
+                            <td width="8%">&nbsp;@TotalFee [@DEPOSITDT]</td>
+                        </tr>
+                    }
+                }
+            }
+
+        }
+
+
+    </table>
+</div>
+
+
+
+

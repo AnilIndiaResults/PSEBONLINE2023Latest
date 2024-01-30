@@ -1,0 +1,362 @@
+﻿@model PSEBONLINE.Models.PaymentformViewModel
+@{
+    ViewBag.Title = "ReExamTermStudent PaymentForm";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>
+Re-Exam Term Exam Portal  Payment Option
+</h1>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<div id="dialog" style="display: none">
+    <span class="rqf">Click OK button to Generate Challan otherwise click Cancel button.</span>
+</div>
+
+
+<div id="dialogOnline" style="display: none">
+    <span class="rqf">Click OK button to do Online Payment through Credit Card, Debit Card, Net Banking etc of any bank otherwise click Cancel button.</span>
+</div>
+
+<div id="loading1"></div>
+@using (Html.BeginForm("ReExamTermStudentPaymentForm", "School", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+{
+
+
+    <div class="row">
+        <div class="col-md-12 noprint">
+            <fieldset style="margin-bottom:15px">
+                <legend>Select </legend>
+                <div class="col-md-3">
+                    Select Payment Method
+                    @{
+                        List<SelectListItem> catgilist = new List<SelectListItem>();
+                        catgilist.Add(new SelectListItem { Text = "Select", Value = "Select" });
+                       // catgilist.Add(new SelectListItem { Text = "Offline (Through Manual Bank Challan)", Value = "Offline" });
+                        catgilist.Add(new SelectListItem { Text = "Online (Though Online Payment Gateway)", Value = "Online" });
+                    }
+                    @Html.DropDownListFor(m => m.IsOnline, catgilist, new { id = "IsOnline" })
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row" id="divMain1">
+        <div class="col-md-12">
+            <div class="table-responsive">
+
+                <table id="divOffline">
+                    <tr>
+                        <td>
+
+                            @{
+
+                                if (Model != null)
+                                {
+                                    if (Model.bankList != null)
+                                    {
+                                        if (Model.TotalFinalFees == 0)
+                                        {
+                                            <span>@Html.RadioButtonFor(m => m.BankCode, "203", new { id = "203" }) <label>PSEB HOD</label></span>
+                                        }
+                                        else if (Model.bankList.Count == 1 && Model.bankList[0].BCode == "203")
+                                        {
+                                            <span>@Html.RadioButtonFor(m => m.BankCode, "203", new { id = "203" }) <label>PSEB HOD</label></span>
+                                        }
+                                        else
+                                        {
+
+                                            <span>@Html.RadioButtonFor(m => m.BankCode, "204", new { id = "204" })<img src="~/Images/SBIbank.png" width="150" /></span>
+                                            <span>
+                                                @Html.RadioButtonFor(m => m.BankCode, "202", new { id = "202" }) <img src="~/Images/PNBbank.gif" width="150" />
+                                            </span>
+                                        }
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @{
+                                if (Model.TotalFinalFees == 0)
+                                {
+                                    <input type="button" value="Proceed to Final Submit & Pay Against PSEB HOD" id="btnPaymentHOD" />
+                                }
+
+                                else if (Model.bankList.Count == 1 && Model.bankList[0].BCode == "203")
+                                {
+                                    <input type="button" value="Proceed to Final Submit & Pay Against PSEB HOD" id="btnPaymentHOD" />
+                                }
+                                else
+                                {
+                                    <input type="button" value="Proceed to Final Submit & Generate Challan" id="btnPayment" />
+
+                                }
+                            }
+
+
+                        </td>
+                    </tr>
+                </table>
+                <table id="divOnline">
+                    <tr>
+                        <td>
+                            @{
+                                <span>@Html.RadioButtonFor(m => m.BankCode, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span>
+                                <span>@Html.RadioButtonFor(m => m.BankCode, "302", new { id = "ATOM" }) <img src="~/Images/PNSB.jpg" alt="ATOM" width="150" /></span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @if (Model.TotalFinalFees > 0)
+                            {
+                                <input id="btnPaymentOnline" type="button" value="Proceed to Pay Online" class="btn" />
+
+                            }
+                        </td>
+                    </tr>
+                </table>
+
+
+
+                <table class="table table-bordered" id="t01">
+                    <tr>
+                        <td>Category</td>
+                        <td>@Html.DisplayFor(m => m.FeeCategory)</td>
+                    </tr>
+                    <tr>
+                        <td>LOT No</td>
+                        <td>@Html.DisplayFor(m => m.LOTNo)</td>
+                    </tr>
+                    <tr>
+                        <td>School Code</td>
+                        <td>@Html.DisplayFor(m => m.SchoolCode)</td>
+                    </tr>
+                    <tr>
+                        <td>School Name</td>
+                        <td>@Html.DisplayFor(m => m.SchoolName)</td>
+                    </tr>
+                    <tr>
+                        <td>Total Candidates</td>
+                        <td>@Html.DisplayFor(m => m.TotalCandidates)</td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td>₹@Html.DisplayFor(m => m.TotalFinalFees)</td>
+                    </tr>
+                    <tr>
+                        <td>Total(In Words)</td>
+                        <td>@Html.DisplayFor(m => m.TotalFeesInWords)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-center rqf">Fee Valid Upto @Html.DisplayFor(m => m.FeeDate)</td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@{
+    if (ViewData["SelectBank"] != null)
+    {
+        if (ViewData["SelectBank"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Bank ");             
+            </script>
+
+        }
+    }
+}
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#divOnline").hide();
+        $("#divOffline").hide();
+        //$("#offlineLastDate").hide();
+        //$("#onlineLastDate").hide();
+
+
+        $('#IsOnline').change(function () {
+            // alert('1');
+            var selectedCategory = $("#IsOnline").val();
+            // alert(selectedCategory);
+            if (selectedCategory != "") {
+
+                if (selectedCategory == "Select") {
+                    $("#divOnline").hide();
+                    $("#divOffline").hide();
+                    //$("#offlineLastDate").hide();
+                    //$("#onlineLastDate").hide();
+                }
+                else if (selectedCategory == "Online") {
+                    $("#divOnline").show();
+                    $("#divOffline").hide();
+                    //$("#offlineLastDate").hide();
+                    //$("#onlineLastDate").show();
+                }
+                else {
+                    $("#divOnline").hide();
+
+                    if ( '@Convert.ToDateTime(Model.OfflineLastDate).Date' >= '@DateTime.Now.Date') {
+
+                        $("#divOffline").show();
+
+                    }
+                    else {
+
+                        alert('last date for Offline challan is over for slab from @Model.StartDate to @Model.FeeDate date. In next slab you will able to generate offline challan with new fee/fine. ');
+						$("#IsOnline").val('Select');
+                    }
+                }
+            } else {
+                alert('Please Select Payment Method');
+                $("#divOnline").hide();
+                $("#divOffline").hide();
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    $("#btnPaymentOnline").click(function () {
+
+        var SBPa = document.getElementById("HDFC").checked;
+        var PNBa = document.getElementById("ATOM").checked;
+
+        if (SBPa == false && PNBa == false) {
+            alert("Please Select Any Bank For Online Payment");
+            return false;
+        }
+        else {
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+          //  alert("Are you sure to do online payment?");
+            $('#dialogOnline').dialog('open');
+            return true;
+        }
+
+    });
+    $(function () {
+        $("#dialogOnline").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to do online payment?",
+            width: 400,
+            height: 220,
+            buttons: {
+                "OK": function () {
+                    // $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $("#btnPaymentOnline").attr('disabled', 'disabled');
+                    $('#myForm').submit();
+                    $(this).dialog("close");
+
+                },
+                Cancel: function () {
+                    $('#loading1').empty("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+</script>
+
+
+
+<script type="text/javascript">
+    //Start Payment
+    $("#btnPaymentHOD").click(function () {
+
+        var HODa = document.getElementById("203").checked;
+        if (HODa == false) {
+            alert("Please Select Any Bank");
+            return false;
+        }
+        else {
+            $('#Main1').hide();
+            alert("Are you sure to Generate Challan ?");
+            $('#dialog').dialog('open');
+            return true;
+        }
+
+    });
+
+    $(function () {
+        $("#dialog").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to Generate Challan?",
+            width: 400,
+            height: 220,
+            buttons: {
+                "OK": function () {
+                    $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $("#btnPaymentHOD").attr('disabled', 'disabled');
+                    $('#myForm').submit();
+                    $(this).dialog("close");
+
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+    //End  Payment
+</script>
+
+
+<script type="text/javascript">
+    //Start Payment
+    $("#btnPayment").click(function () {
+
+        var SBPa = document.getElementById("204").checked;
+        var PNBa = document.getElementById("202").checked;
+        //var HODa = document.getElementById("203").checked;
+
+        if (SBPa == false && PNBa == false ) {
+            //if (SBPa == false && PNBa == false ) {
+            alert("Please Select Any Bank");
+            return false;
+        }
+        else {
+            $('#Main1').hide();
+            //$('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to Generate Challan ?");
+            $('#dialog').dialog('open');
+            return true;
+        }
+
+    });
+
+    $(function () {
+        $("#dialog").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to Generate Challan?",
+            width: 400,
+            height: 220,
+            buttons: {
+                "OK": function () {
+                    $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $("#btnPayment").attr('disabled', 'disabled');
+                    $('#myForm').submit();
+                    $(this).dialog("close");
+
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+    //End  Payment
+</script>

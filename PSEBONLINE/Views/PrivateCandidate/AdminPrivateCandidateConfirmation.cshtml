@@ -1,0 +1,1313 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+@*@if (Session["OROLL"] == null || Session["OROLL"].ToString() == "" || Session["refno"] == null || Session["refno"].ToString() == "")
+    { Response.Redirect("~/PrivateCandidate/Private_Candidate_Examination_Form"); }
+    else{Session["Session"] = "2017-2018";}*@
+@{
+
+    if (TempData["Status"] != null)
+    {
+        var result = TempData["Status"].ToString();
+
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Refrence No. Successfully Generated.  Kindly Check your Email and Mobile No.: ");
+            </script>
+        }
+
+        if (result == "2")
+        {
+
+            <script type="text/javascript" language="javascript">
+                alert("Refrence No. Already Generated.  Kindly Check your Email and Mobile No. : ");
+                document.location.href = '@Url.Action("AdminPrivateCandidateConfirmation/"+ TempData["refno"], "PrivateCandidate")';
+            </script>
+        }
+        ///// For After Inserted Confurmation Data
+        if (result == "3")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("All Data Inserted Successfully.");
+                document.location.href = '@Url.Action("AdminPrivateCandidateConfirmation/refno1=" + TempData["refno1"], "PrivateCandidate")';
+            </script>
+        }
+    }
+
+    if (TempData["SelectPhotoSign"] != null)
+    {
+        if (TempData["SelectPhotoSign"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Photo & Sign");
+            </script>
+
+        }
+    }
+
+    if (TempData["SelectGender"] != null)
+    {
+        if (TempData["SelectGender"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Gender");
+            </script>
+
+        }
+    }
+    if (TempData["SelectCast"] != null)
+    {
+        if (TempData["SelectCast"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Cast");
+            </script>
+
+        }
+    }
+    if (TempData["SelectArea"] != null)
+    {
+        if (TempData["SelectArea"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Area");
+            </script>
+
+        }
+    }
+    if (TempData["SelectRelist"] != null)
+    {
+        if (TempData["SelectRelist"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select Religion");
+            </script>
+
+        }
+    }
+    if (TempData["Selectaddress"] != null)
+    {
+        if (TempData["Selectaddress"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Enter Your Address");
+            </script>
+
+        }
+    }
+
+    if (TempData["SelectDist"] != null)
+    {
+        if (TempData["SelectDist"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Select District & Tehsil");
+                @*window.location.href = '@Url.Action("PaymentForm", "PrivateCandidate")';*@
+            </script>
+
+        }
+    }
+
+    if (TempData["SelectPin"] != null)
+    {
+        if (TempData["SelectPin"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Please Enter Pin Code");
+            </script>
+
+        }
+    }
+
+
+
+}
+
+<div class="container KDBG">
+
+    @using (Html.BeginForm("AdminPrivateCandidateConfirmation", "PrivateCandidate", FormMethod.Post, new { id = "refno", enctype = "multipart/form-data" }))
+    {
+        var refnoH = Session["refno"].ToString().Substring(3, 2);
+        var yearH = "20" + Session["refno"].ToString().Substring(5, 2);
+        var feecatH = Session["form"].ToString();
+
+        var refnoMonthNM = PSEBONLINE.AbstractLayer.DBClass.GetMonthFullNameBYNumber().SingleOrDefault(s => s.Value == refnoH).Text;
+
+        var classNM = Model.StoreAllData.Tables[0].Rows[0]["class"].ToString();
+        var categoryNM = Model.category.ToUpper();
+        if (classNM == "10") { classNM = "Matriculation"; }
+        else if (classNM == "12") { classNM = "Senior Secondary"; }
+        else if (classNM == "5") { classNM = "Primary"; }
+        else if (classNM == "8") { classNM = "Middle"; }
+        var CATEGORY = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+        if (CATEGORY == "R") { CATEGORY = "Reappear/Compartment"; }
+        if (CATEGORY == "D") { CATEGORY = "Division improvement"; }
+        if (CATEGORY == "A") { CATEGORY = "Additional subject"; }
+        var EXAMTYPE = Model.StoreAllData.Tables[0].Rows[0]["rp"].ToString();
+        if (EXAMTYPE == "R") { EXAMTYPE = "Regular"; }
+        if (EXAMTYPE == "O") { EXAMTYPE = "Open"; }
+        if (EXAMTYPE == "P") { EXAMTYPE = "Private"; }
+        if (EXAMTYPE == "SR") { EXAMTYPE = "Golden Chance Re-Appear"; }
+        if (EXAMTYPE == "SD") { EXAMTYPE = "Golden Chance DIC"; }
+        if (EXAMTYPE == "SA") { EXAMTYPE = "Golden Chance Additional"; }
+        <h1 class="noprint">@classNM Examination Form For @categoryNM (@EXAMTYPE) , @refnoMonthNM-@yearH</h1>
+
+        <form name="myForm">
+            <div class="row text-center"><h3>&nbsp;&nbsp; Modify Page</h3></div>
+            <div class="row">
+                <div class="col-md-2">Reference Number</div>  <div class="col-md-4">@Html.TextBoxFor(a => a.refNo, new { id = "refNo", @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">Exam District <span class="rqf">*</span></div>
+                @Html.HiddenFor(m => m.FormStatus)
+                <div class="col-md-4">@Html.DropDownList("SelExamDist", new SelectList(ViewBag.MyExamDist, "Value", "Text"), "--Select---", new { @class = "" })</div>
+            </div>
+            <div class="clearfix"></div>
+            <h4>Old Class Details</h4>
+            <div class="row">
+                @*<div class="col-md-2">Exam Type</div>*@
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> Exam_Type = new List<SelectListItem>();
+                        Exam_Type.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        Exam_Type.Add(new SelectListItem { Text = "Regular", Value = "Regular" });
+                        Exam_Type.Add(new SelectListItem { Text = "Open", Value = "Open" });
+                        Exam_Type.Add(new SelectListItem { Text = "Private", Value = "Private" });
+                    }
+                    Exam Type  @Html.DropDownList("Exam_Type", Exam_Type, new { id = "Exam_Type" })
+                    @*@Html.TextBoxFor(a => a.Exam_Type, new { id = "Exam_Type"})*@
+                    @*@Html.TextBoxFor(a => a.Exam_Type, new { id = "Exam_Type", @ReadOnly = "ReadOnly" })*@
+                </div>
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> Stream = new List<SelectListItem>();
+                        Stream.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        Stream.Add(new SelectListItem { Text = "GENERAL", Value = "G" });
+                        Stream.Add(new SelectListItem { Text = "AGRICULTURE", Value = "A" });
+                        Stream.Add(new SelectListItem { Text = "COMMERCE", Value = "C" });
+                        Stream.Add(new SelectListItem { Text = "NSQF", Value = "G" });
+                        Stream.Add(new SelectListItem { Text = "HUMANITIES", Value = "H" });
+                        Stream.Add(new SelectListItem { Text = "SCIENCE", Value = "S" });
+                        Stream.Add(new SelectListItem { Text = "TECHNICAL", Value = "T" });
+                        Stream.Add(new SelectListItem { Text = "VOCATIONAL", Value = "V" });
+                    }
+                    Stream  @Html.DropDownList("Stream", Stream, new { id = "Stream" })
+                </div>
+                @*<div class="col-md-1">Category</div>*@
+                <div class="col-md-3">
+                    Category  @Html.TextBoxFor(a => a.category, new { id = "category", @ReadOnly = "ReadOnly" })
+                </div>
+                @*<div class="col-md-1">Class</div>*@
+                <div class="col-md-2">
+                    Class  @Html.TextBoxFor(a => a.Class, new { id = "Class", @ReadOnly = "ReadOnly" })
+                </div>
+
+                <div class="col-md-3">
+                    Roll Number
+                    @Html.TextBoxFor(a => a.OROLL, new { id = "OROLL" })
+                </div>
+                <div class="clearfix"></div>
+
+                @*<div class="col-md-3">
+                        @Html.TextBoxFor(a => a.Session, new { id = "Session"})
+                    </div>*@
+                <div class="col-md-2">Session @Html.DropDownList("SelMonth", new SelectList(ViewBag.MyMonth, "Value", "Text"), "MONTH", new { @class = "" })</div>
+                <div class="col-md-2">Year @Html.DropDownList("SelYear", new SelectList(ViewBag.MyYear, "Value", "Text"), "YEAR", new { @class = "" })</div>
+
+                <div class="col-md-3">
+                    Result
+                    @Html.TextBoxFor(a => a.Result, new { id = "Result" })
+                </div>
+            </div>
+            <h4>Candidate Personal Details</h4>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+
+                        <div class="col-md-3">Registration No.</div>
+                        <div class="col-md-9">@Html.TextBoxFor(a => a.RegNo, new { id = "RegNo", })</div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Candidate Name</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Candi_Name)</div>
+                        <div class="col-md-4 kdsfont">
+                            @Html.TextBoxFor(a => a.Pname, new
+                       {
+                           id = "Pname",
+                           @class = "keyboardInput",
+                           onKeyPress = "javascript:convertThis(event)",
+                           onpaste = "return false;",
+                           oncopy = "return false;",
+                           oncut = "return false;",
+                           onclick = "toggleKBMode1(event)",
+                           lang = "pa"
+                       })
+                        </div>
+
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Father's Name</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Father_Name)</div>
+                        <div class="col-md-4 kdsfont">
+                            @Html.TextBoxFor(a => a.PFname, new
+                       {
+                           id = "PFname",
+                           @class = "keyboardInput",
+                           onKeyPress = "javascript:convertThis(event)",
+                           onpaste = "return false;",
+                           oncopy = "return false;",
+                           oncut = "return false;",
+                           onclick = "toggleKBMode1(event)",
+                           lang = "pa"
+                       })
+                        </div>
+
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Mother's Name</div>
+                        <div class="col-md-4">@Html.TextBoxFor(a => a.Mother_Name)</div>
+                        <div class="col-md-4 kdsfont">
+                            @Html.TextBoxFor(a => a.PMname, new
+                       {
+                           id = "PMname",
+                           @class = "keyboardInput",
+                           onKeyPress = "javascript:convertThis(event)",
+                           onpaste = "return false;",
+                           oncopy = "return false;",
+                           oncut = "return false;",
+                           onclick = "toggleKBMode1(event)",
+                           lang = "pa"
+                       })
+                        </div>
+
+                        @{
+
+
+                            if (Model.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "12")
+                            { }
+                            else
+                            {
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Date Of Birth</div>
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(a => a.DOB, new
+               {
+                   id = "DOB",
+                   //@readonly = "readonly",
+                   @maxlength = "10",
+                   //onkeypress = "javascript: return false;",
+                   onpaste = "return false;",
+                   oncopy = "return false;",
+                   oncut = "return false;",
+                   //onkeydown = "return false;"
+               })
+                                </div>
+                            }
+                        }
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Email ID</div>
+                        <div class="col-md-9">@Html.TextBoxFor(a => a.emailID, new { id = "emailID", })</div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Mobile No.</div>
+                        <div class="col-md-9">@Html.TextBoxFor(a => a.mobileNo, new { id = "mobileNo", })</div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Gender</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> Gender = new List<SelectListItem>();
+                                Gender.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                                Gender.Add(new SelectListItem { Text = "Male", Value = "Male" });
+                                Gender.Add(new SelectListItem { Text = "Female", Value = "Female" });
+                            }
+
+                            @Html.DropDownList("Gender", Gender, new { id = "Gender" })
+
+                        </div>
+                        <div class="col-md-1">Caste</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> CastList = new List<SelectListItem>();
+                                CastList.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                CastList.Add(new SelectListItem { Text = "General", Value = "General" });
+                                CastList.Add(new SelectListItem { Text = "BC", Value = "BC" });
+                                CastList.Add(new SelectListItem { Text = "OBC", Value = "OBC" });
+                                CastList.Add(new SelectListItem { Text = "SC", Value = "SC" });
+                                CastList.Add(new SelectListItem { Text = "ST", Value = "ST" });
+                                CastList.Add(new SelectListItem { Text = "Others", Value = "Others" });
+                            }
+
+                            @Html.DropDownList("CastList", CastList, new { id = "CastList" })
+
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Area</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> Area = new List<SelectListItem>();
+                                Area.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                                Area.Add(new SelectListItem { Text = "Rural", Value = "Rural" });
+                                Area.Add(new SelectListItem { Text = "Urban", Value = "Urban" });
+                            }
+
+                            @Html.DropDownList("Area", Area, new { id = "Area" })
+                        </div>
+                        <div class="col-md-1">Religion</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> Relist = new List<SelectListItem>();
+                                Relist.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                Relist.Add(new SelectListItem { Text = "Hindu", Value = "Hindu" });
+                                Relist.Add(new SelectListItem { Text = "Muslim", Value = "Muslim" });
+                                Relist.Add(new SelectListItem { Text = "Sikh", Value = "Sikh" });
+                                Relist.Add(new SelectListItem { Text = "Christian", Value = "Christian" });
+                                Relist.Add(new SelectListItem { Text = "Others", Value = "Others" });
+
+                            }
+                            @Html.DropDownList("Relist", Relist, new { id = "Relist" })
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Differently Abled</div>
+                        <div class="col-md-9">
+                            @{
+                                List<SelectListItem> phyChal = new List<SelectListItem>();
+                                phyChal.Add(new SelectListItem { Text = "N.A.", Value = "N.A." });
+                                phyChal.Add(new SelectListItem { Text = "Blind/Visually Impaired", Value = "Blind/VisuallyImpaired" });
+                                phyChal.Add(new SelectListItem { Text = "Deaf and Dumb/Hearing", Value = "Deaf and Dumb/Hearing" });
+                                phyChal.Add(new SelectListItem { Text = "Others", Value = "Others" });
+                            }
+
+                            @Html.DropDownList("phyChal", phyChal, new { id = "phyChal", onchange = "getval(this);" })
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        @{
+                            var phychal = Model.StoreAllData.Tables[0].Rows[0]["phy_chal"].ToString();
+                            var writer = Model.StoreAllData.Tables[0].Rows[0]["writer"].ToString();
+                            {
+                                if (phychal != "N.A." && phychal != "")
+                                {
+                                    if (writer == "True")
+                                    {
+                                        <div id="wantWriter" style="display:block">
+                                            <div class="col-md-3">If yes, do you want writer (Scribe) </div>
+                                            <div class="col-md-3">
+                                                @Html.RadioButtonFor(a => a.rdoWantWriter, "Yes", new { id = "rdoWantWriterY", @checked = true })
+                                                Yes
+                                                @Html.RadioButtonFor(a => a.rdoWantWriter, "No", new { id = "rdoWantWriterN", })
+                                                No
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    }
+                                    else
+                                    {
+                                        <div id="wantWriter" style="display:block">
+                                            <div class="col-md-3">Do you Want Writer</div>
+                                            <div class="col-md-3">
+                                                @Html.RadioButtonFor(a => a.rdoWantWriter, "Yes", new { id = "rdoWantWriterY", })
+                                                Yes
+                                                @Html.RadioButtonFor(a => a.rdoWantWriter, "No", new { id = "rdoWantWriterN", @checked = true })
+                                                No
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    }
+
+                                }
+                                else
+                                {
+                                    <div id="wantWriter" style="display:none">
+                                        <div class="col-md-3">Do you Want Writer</div>
+                                        <div class="col-md-3">
+                                            @Html.RadioButtonFor(a => a.rdoWantWriter, "Yes", new { id = "rdoWantWriterY", })
+                                            Yes
+                                            @Html.RadioButtonFor(a => a.rdoWantWriter, "No", new { id = "rdoWantWriterN", @checked = true })
+                                            No
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                }
+                            }
+
+
+
+
+                        }
+
+
+
+                        @{
+                            var prac = Model.StoreAllData.Tables[0].Rows[0]["prac"].ToString();
+                            var cat = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                            if (cat == "A" || cat == "D")
+                            {
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Do you want to Appear in Practical Exam</div>
+                                <div class="col-md-3">
+                                    @Html.RadioButtonFor(a => a.IsPracExam, "Yes", new { id = "rdoPraticalExamY" })
+                                    Yes
+                                    @Html.RadioButtonFor(a => a.IsPracExam, "No", new { id = "rdoPraticalExamN", @checked = true })
+                                    No
+                                </div>
+                            }
+                            else
+                            {
+                                {
+                                    if (prac == "True")
+                                    {
+                                        <div class="clearfix"></div>
+                                        <div class="col-md-3">Do you want to Appear in Practical Exam</div>
+                                        <div class="col-md-3">
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "Yes", new { id = "rdoPraticalExamY", @checked = true })
+                                            Yes
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "No", new { id = "rdoPraticalExamN", })
+                                            No
+                                        </div>
+                                    }
+
+                                    else if (prac == "False")
+                                    {
+                                        <div class="clearfix"></div>
+                                        <div class="col-md-3">Do you want to Appear in Practical Exam</div>
+                                        <div class="col-md-3">
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "Yes", new { id = "rdoPraticalExamY", })
+                                            Yes
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "No", new { id = "rdoPraticalExamN", @checked = true })
+                                            No
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="clearfix"></div>
+                                        <div class="col-md-3">Do you want to Appear in Practical Exam</div>
+                                        <div class="col-md-3">
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "Yes", new { id = "rdoPraticalExamY", })
+                                            Yes
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "No", new { id = "rdoPraticalExamN", @checked = true })
+                                            No
+                                        </div>
+                                    }
+                                }
+                            }
+
+
+                        }
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">
+                            Do you want Hard Copy of Certificate?<sup style="color:red;font-size:15px;">*</sup>
+                        </div>
+                        <div class="col-md-9">
+
+                            @{
+                                @Html.DropDownListFor(model => model.IsHardCopyCertificate, (List<SelectListItem>)ViewBag.YesNoList, "--Select--", new { required = "required", @disabled = "disabled" })
+                                @Html.HiddenFor(a => a.IsHardCopyCertificate)
+                            }
+
+                        </div>
+                        <div class="clearfix"></div>
+
+
+
+                        <div>
+                            @{
+                                var FormStatus2 = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+                                if (Model.Class == "5" || Model.Class == "8" || Model.Class == "Primary" || Model.Class == "Middle")
+                                {
+                                    <div style="display:none;">
+                                        <div class="col-md-3">Exam Centre 1.</div>
+                                        <div class="col-md-4">@Html.DropDownList("tehsilEC", new SelectList(ViewBag.MyTehsilEC, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+                                        <div class="col-md-1">2.</div>
+                                        <div class="col-md-4">@Html.DropDownList("tehsilEC2", new SelectList(ViewBag.MyTehsilEC2, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (FormStatus2 == "2" || FormStatus2 == "3")
+                                    {
+                                        <div class="col-md-3">Exam Centre 1.</div>
+                                        <div class="col-md-4">@Html.DropDownList("tehsilEC", new SelectList(ViewBag.MyTehsilEC, "Value", "Text"), "--Select---", new { @class = "" })</div>
+										@Html.HiddenFor(a => a.IsHardCopyCertificate)
+                                        <div class="col-md-1">2.</div>
+                                        <div class="col-md-4">@Html.DropDownList("tehsilEC2", new SelectList(ViewBag.MyTehsilEC2, "Value", "Text"), "--Select---", new { @class = "" })</div>
+                                    
+									
+									}
+                                    else
+                                    {
+                                        <div class="col-md-3">Exam Centre 1.</div>
+                                        <div class="col-md-4">@Html.DropDownList("tehsilEC", new SelectList(ViewBag.MyTehsilEC, "Value", "Text"), "--Select---", new { @class = "" })</div>
+                                        <div class="col-md-1">2.</div>
+                                        <div class="col-md-4">@Html.DropDownList("tehsilEC2", new SelectList(ViewBag.MyTehsilEC2, "Value", "Text"), "--Select---", new { @class = "" })</div>
+
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            Upload Photo
+                            @{
+                                ViewBag.Photo = "https://psebdata.s3.ap-south-1.amazonaws.com/" + Convert.ToString(ViewBag.Photo);
+                                ViewBag.sign = "https://psebdata.s3.ap-south-1.amazonaws.com/" + Convert.ToString(ViewBag.sign);
+                                {
+                                    @Html.TextBoxFor(a => a.std_Photo, new { id = "std_Photo", type = "file", onchange = "findSizeAndPreview(this)" })
+                                    <span class="rqf">*Photo Size 5 to 50 KB (.JPG ONly)</span>
+                                }
+                            }
+                        </div>
+
+                        <div class="col-md-4"><img src="@ViewBag.Photo" class="img-responsive" alt="Photo" id="imgPhoto" /></div>
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-8">
+                            <br />
+                            Upload Signature
+                            @{
+                                {
+                                    @Html.TextBoxFor(a => a.std_Sign, new { id = "std_Sign", type = "file", onchange = "findSizeAndPreviewSign(this)" })
+                                    <span class="rqf">*Signature Size 1 to 50 KB  (.JPG ONly)</span>
+                                }
+                            }
+
+                        </div>
+                        <div class="col-md-4"><br /><img src="@ViewBag.sign" class="img-responsive" alt="Signature" id="imgSign" /></div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="clearfix"></div>
+            <h4>Address Details</h4>
+            <div class="row">
+                <div class="clearfix"></div>
+
+
+                @{
+                    {
+                        <div class="col-md-2">Address<span class="rqf">*</span></div>
+                        <div class="col-md-10">@Html.TextBoxFor(a => a.address, new { placeholder = "Enter Your Address", @maxlength = "500" })</div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-2">Landmark</div>
+                        <div class="col-md-10">@Html.TextBoxFor(a => a.landmark, new { placeholder = "Enter Near Landmark", @maxlength = "50" })</div>
+                        <div class="col-md-2">Block<span class="rqf">*</span></div>
+                        <div class="col-md-2">@Html.TextBoxFor(a => a.block, new { placeholder = "Enter Your Block", @maxlength = "200" })</div>
+                        <div class="col-md-1">District<span class="rqf">*</span></div>
+                        <div class="col-md-2">@Html.DropDownList("SelDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--Select---", new { @class = "" })</div>
+                        <div class="col-md-1">Tehsil<span class="rqf">*</span></div>
+                        <div class="col-md-2">@Html.DropDownList("tehsil", new SelectList(ViewBag.MyTehsil, "Value", "Text"), "--Select---", new { @class = "" })</div>
+                    }
+                }
+
+
+                <div class="col-md-1">
+                    Pin Code<span class="rqf">*</span>
+                </div>
+                <div class="col-md-1">
+                    @{
+                        {
+                            @Html.TextBoxFor(a => a.pinCode, new { id = "pinCode", @maxlength = "6", onpaste = "return false;", oncopy = "return false;", oncut = "return false;", onkeypress = "return isNumberKey(event);" })
+                        }
+                    }
+
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <h4>Subject Details</h4>
+            <div class="row">
+
+                @{
+                    var Cat = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                    var Class = Model.StoreAllData.Tables[0].Rows[0]["class"].ToString();
+                    var Sub1 = Model.StoreAllData.Tables[0].Rows[0]["Rsub1"].ToString();
+                    var Sub2 = Model.StoreAllData.Tables[0].Rows[0]["Rsub2"].ToString();
+                    var Sub3 = Model.StoreAllData.Tables[0].Rows[0]["Rsub3"].ToString();
+                    var Sub4 = Model.StoreAllData.Tables[0].Rows[0]["Rsub4"].ToString();
+                    var Sub5 = Model.StoreAllData.Tables[0].Rows[0]["Rsub5"].ToString();
+                    var Sub6 = Model.StoreAllData.Tables[0].Rows[0]["Rsub6"].ToString();
+                    var Sub7 = Model.StoreAllData.Tables[0].Rows[0]["Rsub7"].ToString();
+                    var Sub8 = Model.StoreAllData.Tables[0].Rows[0]["Rsub8"].ToString();
+
+
+                    if (Cat == "R" && (Class == "5" || Class == "8"))
+                    {
+                        if (Sub1 != "")
+                        {
+                            <div class="col-md-2">Subject1:</div><div class="col-md-4">@Sub1</div>
+                        }
+                        if (Sub2 != "")
+                        {
+                            <div class="col-md-2">Subject2:</div><div class="col-md-4">@Sub2</div>
+                        }
+                        if (Sub3 != "")
+                        {
+                            <div class="col-md-2">Subject3:</div><div class="col-md-4">@Sub3</div>
+                        }
+                        if (Sub4 != "")
+                        {
+                            <div class="col-md-2">Subject4:</div><div class="col-md-4">@Sub4</div>
+                        }
+                        if (Sub5 != "")
+                        {
+                            <div class="col-md-2">Subject5:</div><div class="col-md-4">@Sub5</div>
+                        }
+                        if (Sub6 != "")
+                        {
+                            <div class="col-md-2">Subject6:</div><div class="col-md-4">@Sub6</div>
+                        }
+                        if (Sub7 != "")
+                        {
+                            <div class="col-md-2">Subject7:</div><div class="col-md-4">@Sub7</div>
+                        }
+                        if (Sub8 != "")
+                        {
+                            <div class="col-md-2">Subject8:</div><div class="col-md-4">@Sub8</div>
+                        }
+
+                    }
+
+                    if ((Cat == "R" || Cat == "D" || Cat == "A") && Class == "10")
+                    {
+                        <div class="col-md-2">Subject1:</div><div class="col-md-4">
+                            @Html.DropDownList("sub1", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        //<div class="col-md-2">Subject1:</div><div class="col-md-4">@Html.TextBoxFor(a => a.sub1, new { @ReadOnly = "ReadOnly" })</div>
+                        <div class="col-md-2">Subject2:</div><div class="col-md-4">
+                            @Html.DropDownList("sub2", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject3:</div><div class="col-md-4">
+                            @Html.DropDownList("sub3", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject4:</div><div class="col-md-4">
+                            @Html.DropDownList("sub4", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject5:</div><div class="col-md-4">
+                            @Html.DropDownList("sub5", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject6:</div><div class="col-md-4">
+                            @Html.DropDownList("sub6", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject7:</div><div class="col-md-4">
+                            @Html.DropDownList("sub7", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject8:</div><div class="col-md-4">
+                            @Html.DropDownList("sub8", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                    }
+
+                    if ((Cat == "R" || Cat == "D" || Cat == "A") && Class == "12")
+                    {
+                        <div class="col-md-2">Subject1:</div><div class="col-md-4">
+                            @Html.DropDownList("sub1", new SelectList(ViewBag.SubTwelve, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject2:</div><div class="col-md-4">
+                            @Html.DropDownList("sub2", new SelectList(ViewBag.SubTwelve, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject3:</div><div class="col-md-4">
+                            @Html.DropDownList("sub3", new SelectList(ViewBag.SubTwelve, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject4:</div><div class="col-md-4">
+                            @Html.DropDownList("sub4", new SelectList(ViewBag.SubTwelve, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject5:</div><div class="col-md-4">
+                            @Html.DropDownList("sub5", new SelectList(ViewBag.SubTwelve, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject6:</div><div class="col-md-4">
+                            @Html.DropDownList("sub6", new SelectList(ViewBag.SubTwelve, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject7:</div><div class="col-md-4">
+                            @Html.DropDownList("sub7", new SelectList(ViewBag.SubTwelve, "Value", "Text"), "--Select Subjects---")
+                        </div>
+                        <div class="col-md-2">Subject8:</div><div class="col-md-4">
+                            @Html.DropDownList("sub8", new SelectList(ViewBag.SubTwelve, "Value", "Text"), "--Select Subjects---")
+                        </div>
+
+                    }
+
+
+                    else if (Cat == "A" && Class == "110")
+                    {
+                        <div class="col-md-2">Subject1:</div><div class="col-md-4">
+
+                            @{
+                                {
+                                    @Html.DropDownList("MatricSub", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                                }
+                            }
+
+                        </div>
+                        <div class="col-md-2">Subject2:</div><div class="col-md-4">
+                            @{
+                                {
+                                    @Html.DropDownList("MatricSub2", new SelectList(ViewBag.SubMatric, "Value", "Text"), "--Select Subjects---")
+                                }
+                            }
+
+                        </div>
+                    }
+                    else if (Cat == "A" && Class == "112")
+                    {
+                        <div class="col-md-2">Subject1:</div><div class="col-md-4">
+
+                            @{
+                                {
+                                    @Html.DropDownList("TwelveSub", new SelectList(ViewBag.SubTwelve, "Value", "Text"), "--Select Subjects---")
+                                }
+                            }
+                        </div>
+                    }
+
+                    //----------- SD Begin----
+                    else if ((Cat == "SR" || Cat == "SD" || Cat == "SA") && Class == "10")
+                    {
+                        <div class="col-md-2">Subject1:</div><div class="col-md-4">
+
+                            @{
+
+                                @Html.DropDownList("sub1", new SelectList(ViewBag.Sub1Matric, "Value", "Text"), "--Select Subjects---")
+
+                            }
+
+                        </div>
+                        <div class="col-md-2">Subject2:</div><div class="col-md-4">
+                            @{
+                                @Html.DropDownList("sub2", new SelectList(ViewBag.Sub1Matric, "Value", "Text"), "--Select Subjects---")
+                            }
+
+                        </div>
+                        <div class="col-md-2">Subject3:</div><div class="col-md-4">
+
+                            @{
+                                @Html.DropDownList("sub3", new SelectList(ViewBag.Sub1Matric, "Value", "Text"), "--Select Subjects---")
+                            }
+
+                        </div>
+                        <div class="col-md-2">Subject4:</div><div class="col-md-4">
+                            @{
+                                @Html.DropDownList("sub4", new SelectList(ViewBag.Sub1Matric, "Value", "Text"), "--Select Subjects---")
+                            }
+
+                        </div>
+                        <div class="col-md-2">Subject5:</div><div class="col-md-4">
+
+                            @{
+                                @Html.DropDownList("sub5", new SelectList(ViewBag.Sub1Matric, "Value", "Text"), "--Select Subjects---")
+                            }
+
+                        </div>
+                        <div class="col-md-2">Subject6:</div><div class="col-md-4">
+                            @{
+                                @Html.DropDownList("sub6", new SelectList(ViewBag.Sub1Matric, "Value", "Text"), "--Select Subjects---")
+                            }
+
+                        </div>
+                        <div class="col-md-2">Subject7:</div><div class="col-md-4">
+
+                            @{
+                                @Html.DropDownList("sub7", new SelectList(ViewBag.Sub1Matric, "Value", "Text"), "--Select Subjects---")
+                            }
+
+                        </div>
+                        <div class="col-md-2">Subject8:</div><div class="col-md-4">
+                            @{
+                                @Html.DropDownList("sub8", new SelectList(ViewBag.Sub1Matric, "Value", "Text"), "--Select Subjects---")
+                            }
+
+                        </div>
+                    }
+                    else if ((Cat == "SR" || Cat == "SD" || Cat == "SA") && Class == "12")
+                    {
+                        <div class="col-md-2">Subject1:</div><div class="col-md-4">
+
+                            @{
+                                @Html.DropDownList("sub1", new SelectList(ViewBag.Sub1Twelve, "Value", "Text"), "--Select Subjects---")
+                            }
+                        </div>
+                        <div class="col-md-2">Subject2:</div><div class="col-md-4">
+                            @{
+                                @Html.DropDownList("sub2", new SelectList(ViewBag.Sub1Twelve, "Value", "Text"), "--Select Subjects---")
+                            }
+                        </div>
+                        <div class="col-md-2">Subject3:</div><div class="col-md-4">
+                            @{
+                                @Html.DropDownList("sub3", new SelectList(ViewBag.Sub1Twelve, "Value", "Text"), "--Select Subjects---")
+                            }
+                        </div>
+                        <div class="col-md-2">Subject4:</div><div class="col-md-4">
+
+                            @{
+                                @Html.DropDownList("sub4", new SelectList(ViewBag.Sub1Twelve, "Value", "Text"), "--Select Subjects---")
+                            }
+                        </div>
+                        <div class="col-md-2">Subject5:</div><div class="col-md-4">
+
+                            @{
+                                @Html.DropDownList("sub5", new SelectList(ViewBag.Sub1Twelve, "Value", "Text"), "--Select Subjects---")
+                            }
+                        </div>
+                        <div class="col-md-2">Subject6:</div><div class="col-md-4">
+
+                            @{
+                                @Html.DropDownList("sub6", new SelectList(ViewBag.Sub1Twelve, "Value", "Text"), "--Select Subjects---")
+                            }
+                        </div>
+                        <div class="col-md-2">Subject7:</div><div class="col-md-4">
+
+                            @{
+                                @Html.DropDownList("sub7", new SelectList(ViewBag.Sub1Twelve, "Value", "Text"), "--Select Subjects---")
+                            }
+                        </div>
+                        <div class="col-md-2">Subject8:</div><div class="col-md-4">
+
+                            @{
+                                @Html.DropDownList("sub8", new SelectList(ViewBag.Sub1Twelve, "Value", "Text"), "--Select Subjects---")
+                            }
+                        </div>
+                    }
+                    <div class="col-md-2">Remarks<span class="rqf">*</span> :</div><div class="col-md-10">
+                        @*@Html.TextBoxFor(a => a.SearchString, new { id = "SearchString" })*@
+
+                        @Html.TextBoxFor(a => a.SearchString, new { id = "SearchString" })
+                    </div>
+                }
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center">
+                @{
+                    var OROLL = Model.StoreAllData.Tables[0].Rows[0]["roll"].ToString();
+                    var FormStatus = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+                    var ChallanNo = Model.StoreAllData.Tables[0].Rows[0]["challanid"].ToString();
+                    var Challanid = Model.StoreAllData.Tables[0].Rows[0]["challanid"].ToString();
+                    var ChallanVerify = Model.StoreAllData.Tables[0].Rows[0]["verified"].ToString();
+                    var ChallanExpdate = Model.StoreAllData.Tables[0].Rows[0]["ExpireVDate"].ToString();
+                    var errRefNo = Model.StoreAllData.Tables[0].Rows[0]["errRefNo"].ToString();
+                    var SUBMITCAND = Model.StoreAllData.Tables[0].Rows[0]["SUBMITCAND"].ToString();
+
+                    <input value="Update" type="submit" onclick="return formVal();" />
+                    <input type="button" value="Print Application Form" title="Print Application Form" onclick="javascript:document.location.href='@Url.Action("AdminFPPrivateFinalPrint", "PrivateCandidate")'" />
+                    <input type="button" value="Back" title="Back" onclick="javascript:document.location.href='@Url.Action("AdminFPPrivateSearch", "PrivateCandidate")'" />
+
+
+                }
+            </div>
+        </form>
+    }
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        ///----------
+        var vcat = document.getElementById('category').value;
+        var FormStatus = document.getElementById('FormStatus').value;
+        //alert(FormStatus);
+        if (vcat == "Additional subject" && FormStatus != "1" && FormStatus != "2" && FormStatus != "3") {
+            $("#DOB").datepicker({
+
+
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10yr',
+                //maxDate: '10/08/2016',
+                yearRange: "1930:2017"
+
+            });
+        }
+
+
+        $('#Candi_Name').change(function () {
+            var selectedText = { text: $("#Candi_Name").val() };
+            var cname = document.getElementById('Candi_Name').value;
+            var cnameP = document.getElementById('Pname').value;
+            if (cnameP == "") {
+                $.ajax({
+                    url: '@Url.Action("getPunjabiName", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedText),
+                    success: function (result) {
+                        //  alert("Candidate Name: " + result);
+                        $('#Pname').val(result);
+                    }
+                });
+            }
+        });
+
+        $('#Father_Name').change(function () {
+            var selectedText = { text: $("#Father_Name").val() };
+            var Father_Name_P = { text1: $("#PFname").val() };
+            var fname = document.getElementById('Father_Name').value;
+            var fnameP = document.getElementById('PFname').value;
+            if (fnameP == "") {
+
+                $.ajax({
+                    url: '@Url.Action("getPunjabiName", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedText),
+                    success: function (result) {
+                        //  alert("Father Name: " + result);
+                        $('#PFname').val(result);
+                    }
+                });
+            }
+        });
+
+        $('#Mother_Name').change(function () {
+            var selectedText = { text: $("#Mother_Name").val() };
+            var mname = document.getElementById('Mother_Name').value;
+            var mnameP = document.getElementById('PMname').value;
+            if (mnameP == "") {
+                $.ajax({
+                    url: '@Url.Action("getPunjabiName", "School")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedText),
+                    success: function (result) {
+                        //  alert("Mother Name: " + result);
+                        $('#PMname').val(result);
+                    }
+                });
+            }
+        });
+        ///---------------
+
+
+        $("#SelDist").change(function () {
+            var selectedDIST = { DIST: $("#SelDist").val() };
+            //var selectedText = $(this).find("option:selected").text();
+            // document.getElementById("hidText").value = selectedText;
+            //alert(document.getElementById("hidText").value);
+            $.ajax({
+                url: '@Url.Action("GetTehID", "PrivateCandidate")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedDIST),
+                success: function (States) {
+                    //alert(StatesList);
+                    //document.getElementById("Address").value = StatesList;
+                    $("#tehsil").empty();
+
+                    $.each(States, function (i, TehList) {
+                        $("#tehsil").append('<option value="'
+                           + TehList.Value + '">'
+                           + TehList.Text + '</option>');
+                    });
+                    if (TehList.success) {
+
+                        //document.getElementById("MName").value = data.result;
+                        // $("#TextBoxID").val(data.result.MName);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        });
+
+
+        $("#SelExamDist").change(function () {
+            var selectedDIST = { DIST: $("#SelExamDist").val() };
+            //var selectedText = $(this).find("option:selected").text();
+            // document.getElementById("hidText").value = selectedText;
+            //alert("Text");
+            $.ajax({
+                url: '@Url.Action("GetExamTehID", "PrivateCandidate")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedDIST),
+                success: function (States) {
+                    //alert(StatesList);
+                    //document.getElementById("Address").value = StatesList;
+                    $("#tehsilEC").empty();
+                    $("#tehsilEC2").empty();
+
+                    $.each(States, function (i, TehList) {
+                        $("#tehsilEC").append('<option value="'
+                           + TehList.Value + '">'
+                           + TehList.Text + '</option>');
+                        $("#tehsilEC2").append('<option value="'
+                           + TehList.Value + '">'
+                           + TehList.Text + '</option>');
+                    });
+                    if (TehList.success) {
+
+                        //document.getElementById("MName").value = data.result;
+                        // $("#TextBoxID").val(data.result.MName);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        });
+    });
+
+
+    function getval(sel) {
+        if (sel.value != "N.A.") {
+            document.getElementById("wantWriter").style.display = "block";
+        }
+        else {
+            document.getElementById("wantWriter").disabled = true;
+            document.getElementById("rdoWantWriterY").checked = false;
+            document.getElementById("rdoWantWriterN").checked = true;
+            document.getElementById("wantWriter").style.display = "none";
+        }
+    }
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function formVal() {
+        //if (document.getElementById("rdoWantWriter").checked == false) {
+        //    alert('Choose Yes/No');
+        //    document.getElementById("rdoWantWriter").focus();
+        //    return false;
+        //}
+
+
+
+        var txtSelExamDist = document.getElementById('SelExamDist').value;
+        if (txtSelExamDist == '--Select---' || txtSelExamDist == null || txtSelExamDist == '') {
+            alert("Select Exam District");
+            document.getElementById('SelExamDist').focus();
+            return false;
+        }
+
+        var txtstd_Photo = document.getElementById('std_Photo').value;
+        var txtimgPhoto = document.getElementById('imgPhoto').src;
+
+        var fullPath = document.getElementById("imgPhoto").src;
+        var filename = fullPath.replace(/^.*[\\\/]/, '');
+        var ext = filename.substr(filename.lastIndexOf('.') + 1);
+        if (ext == '') {
+            alert("Select Photo");
+            document.getElementById('std_Photo').focus();
+            return false;
+        }
+
+        var txtstd_Sign = document.getElementById('std_Sign').value;
+        var txtimgSign = document.getElementById('imgSign').src;
+
+        var fullPath1 = document.getElementById("imgSign").src;
+        var filename1 = fullPath1.replace(/^.*[\\\/]/, '');
+        var ext1 = filename.substr(filename1.lastIndexOf('.') + 1);
+        if (filename1 == '') {
+            alert("Select Signature");
+            document.getElementById('std_Sign').focus();
+            return false;
+        }
+
+        var txtGender = document.getElementById('Gender').value;
+        if (txtGender == '0') {
+            alert("Select Gender");
+            document.getElementById('Gender').focus();
+            return false;
+        }
+
+        var txtCastList = document.getElementById('CastList').value;
+        if (txtCastList == '0') {
+            alert("Select Cast List");
+            document.getElementById('CastList').focus();
+            return false;
+        }
+
+        var txtArea = document.getElementById('Area').value;
+        if (txtArea == '0') {
+            alert("Select Area");
+            document.getElementById('Area').focus();
+            return false;
+        }
+
+        var txtRelist = document.getElementById('Relist').value;
+        if (txtRelist == '0') {
+            alert("Select Religion");
+            document.getElementById('Relist').focus();
+            return false;
+        }
+
+
+
+        //var txtChoice1 = document.getElementById('Choice1').value;
+        //var txtChoice2 = document.getElementById('Choice2').value;
+        //if (txtChoice1 == '') {
+        //    alert("Enter Exam Centre1");
+        //    document.getElementById('Choice1').focus();
+        //    return false;
+        //}
+        //if (txtChoice2 == '') {
+        //    alert("Enter Exam Centre2");
+        //    document.getElementById('Choice2').focus();
+        //    return false;
+        //}
+
+        if ('@Model.Class' == "5" || '@Model.Class' == "8" || '@Model.Class' == "Primary" || '@Model.Class' == "Middle") { }
+        else {
+
+            var txtChoice1 = document.getElementById('tehsilEC').value;
+            var txtChoice2 = document.getElementById('tehsilEC2').value;
+            if (txtChoice1 == "" || txtChoice1 == "0") {
+                alert("Select Exam Centre1");
+                document.getElementById('tehsilEC').focus();
+                return false;
+            }
+            if (txtChoice2 == "" || txtChoice2 == "0") {
+                alert("Select Exam Centre2");
+                document.getElementById('tehsilEC2').focus();
+                return false;
+            }
+        }
+
+        var txtaddress = document.getElementById('address').value;
+        if (txtaddress == '') {
+            alert("Enter address");
+            document.getElementById('address').focus();
+            return false;
+        }
+
+        var txtMyDist = document.getElementById('SelDist').value;
+        if (txtMyDist == '--Select---' || txtMyDist == null || txtMyDist == '') {
+            alert("Select District");
+            document.getElementById('SelDist').focus();
+            return false;
+        }
+        var txtMyTeh = document.getElementById('tehsil').value;
+        if (txtMyTeh == '0' || txtMyTeh == null || txtMyTeh == '') {
+            alert("Select Tehsil");
+            document.getElementById('tehsil').focus();
+            return false;
+        }
+        var txtpinCode = document.getElementById('pinCode').value;
+        if (txtpinCode == '') {
+            alert("Enter pin code");
+            document.getElementById('pinCode').focus();
+            return false;
+        }
+
+        var txtSearchString = document.getElementById('SearchString').value;
+        if (txtSearchString == '' || txtSearchString == "") {
+            alert("Enter Remarks");
+            document.getElementById('SearchString').focus();
+            return false;
+        }
+
+        var txtsub1 = document.getElementById('MatricSub').value;
+        if (txtsub1 == '0' || txtsub1 == null || txtsub1 == '') {
+            alert("Select subject1");
+            document.getElementById('MatricSub').focus();
+            return false;
+        }
+        var txtsub2 = document.getElementById('MatricSub2').value;
+        var txtcat = document.getElementById('category').value;
+        if (document.getElementById('MatricSub').value == document.getElementById('MatricSub2').value && txtcat == 'Additional subject') {
+            alert("subject not to be same.");
+            document.getElementById('MatricSub2').focus();
+            return false;
+        }
+
+
+
+    }
+
+
+    function findSizeAndPreview(input) {
+        if (typeof ($("#std_Photo")[0].files) != "undefined") {
+
+            var size = parseFloat($("#std_Photo")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 50) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#imgPhoto').attr('src', e.target.result);
+
+                }
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#std_Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+
+
+            }
+        }
+
+    }
+    function findSizeAndPreviewSign(input) {
+        if (typeof ($("#std_Sign")[0].files) != "undefined") {
+
+            var size = parseFloat($("#std_Sign")[0].files[0].size / 1024).toFixed(2);
+            // alert(size);
+            if (parseInt(size) >= 1 && parseInt(size) <= 50) {
+                var filerdrS = new FileReader();
+                filerdrS.onload = function (e) {
+                    $('#imgSign').attr('src', e.target.result);
+
+                }
+                filerdrS.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 1) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#std_Sign').val('');
+                    ('#imgSign').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#Sign').val('');
+                    ('#imgSign').hide();
+                }
+
+            }
+        }
+
+    }
+
+    function val() {
+        if (!window.confirm("Are you Sure to Final Submit. Once Final Submitted you will not able to make any kind of changes in Application ?")) {
+            return false;
+        }
+        else {
+            document.location.href = '@Url.Action("FinalSubmit", "PrivateCandidate")';
+        }
+    }
+
+</script>
+
+
+

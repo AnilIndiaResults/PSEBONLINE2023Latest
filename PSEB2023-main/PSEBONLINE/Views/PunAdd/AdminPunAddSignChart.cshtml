@@ -1,0 +1,285 @@
+﻿@model PSEBONLINE.Models.PunAddModels
+@{
+    ViewBag.Title = "Punjabi Additional Signature Chart Matric";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<link rel="stylesheet" href="~/barcode.css" type="text/css" charset="utf-8" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+
+    td {
+        line-height: 16px
+    }
+
+    .algtop {
+        text-align: center;
+        vertical-align: top;
+    }
+
+    .brack {
+        page-break-before: always;
+    }
+
+    .footer {
+        position: fixed;
+        bottom: 0;
+        vertical-align: top;
+        text-align: right;
+        width: 100%;
+        display: block;
+    }
+</style>
+
+@using (Html.BeginForm("AdminPunAddSignChart", "PunAdd", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row noprint">
+        <h1>Signature Chart Punjabi Additional</h1>
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-1">
+                    Total <label>@ViewBag.TotalCount</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-2">
+                        Select Batch  @Html.DropDownList("batchYear", new SelectList(ViewBag.MybatchYear, "Value", "Text"), "-- Select---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        Select Centre 
+                        @Html.DropDownList("CList", new SelectList(ViewBag.MyCentre, "Value", "Text"), new { id = "MyCentre", @class = "" })
+                    </div>
+                    <div class="col-md-2">
+                        @{
+                            List<SelectListItem> SearchBy = new List<SelectListItem>();
+                            SearchBy.Add(new SelectListItem { Text = "---Select----", Value = "0" });
+                            SearchBy.Add(new SelectListItem { Text = "PUNJABI-A", Value = "01" });
+                            SearchBy.Add(new SelectListItem { Text = "PUNJABI-B", Value = "72" });
+                        }
+
+                        Search By @Html.DropDownList("SearchBy", SearchBy, new { id = "SearchBy", ViewBag.MySearchBy })
+                    </div>
+                    <div class="col-md-2" style="display:none;">
+                        @{
+                            List<SelectListItem> setNo = new List<SelectListItem>();
+                            setNo.Add(new SelectListItem { Text = "---Select----", Value = "0" });
+                            setNo.Add(new SelectListItem { Text = "A", Value = "A" });
+                            setNo.Add(new SelectListItem { Text = "B", Value = "B" });
+                        }
+
+                        Select Set @Html.DropDownList("setNo", setNo, new { id = "setNo", ViewBag.MysetNo })
+                    </div>
+                    <div class="col-md-3">
+                        Roll No. <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" />
+                        <input type="submit" value="Back" formaction="AdminPunAddHome" title="Go for Home Page" />
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Print" dowload class="btn" onclick="window.print()" />
+                @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" border="0">
+        @{
+
+
+            if (ViewBag.TotalCount > 0)
+            {
+                int d = 0;
+                int pageCnt = 0;
+                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                {
+                    var rsub1code = Model.StoreAllData.Tables[0].Rows[i]["subcode"].ToString();
+                    var rsub1 = Model.StoreAllData.Tables[0].Rows[i]["sub"].ToString();
+                    var date1 = Model.StoreAllData.Tables[0].Rows[i]["SubExamDate"].ToString();
+                    var batch = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+                    var yr = Model.StoreAllData.Tables[0].Rows[i]["yr"].ToString();
+                    var centE = Model.StoreAllData.Tables[0].Rows[i]["centE"].ToString();
+                    var centP = Model.StoreAllData.Tables[0].Rows[i]["centP"].ToString();
+                    var set = Model.StoreAllData.Tables[0].Rows[i]["SET"].ToString();
+                    switch (batch.Trim())
+                    {
+                        case "1": batch = "¤ÆñèÐ"; break;
+                        case "2": batch = "²ÝÐØ¥Û"; break;
+                        case "3": batch = "¤¨¼ÞÉÏ"; break;
+                        case "4": batch = "²ÅÒÏÛ"; break;
+                    }
+                    pageCnt = pageCnt + 1;
+                    <tr>
+                        <td colspan="2" style="padding-bottom:5px;padding-top:2px">
+                            <table width="100%" border="1">
+                                <thead>
+                                    <tr>
+                                        <td width="30%" colspan="2" style="vertical-align:top;padding-top:1px;border:0 !important"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="60px" /></td>
+                                        <td width="40%" colspan="2" style="font-size:22px;text-align:center;line-height:20px;vertical-align:top;padding-top:1px;border:0 !important" class="kdsfont">
+                                            <span style="font-size:28px"> Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span> <br />
+                                            Æâ²ØÉÛ ÒØÄÞ ÚÒÓÖØ ÓÆèÓÖÐ ÆñÛÚª¤Ø, @batch @yr<br />
+                                            ÕÓ¼ØªÏ-°ØÏ¶ (ÚÐª¼Û)
+                                        </td>
+                                        <td style="border:0 !important" width="30%" class="kdsfont">
+                                            @* ÆâÅØ Å :  <br /><br />
+                                                ÆâÅØ Å : @pageCnt <br /><br />*@
+                                            @*<div>Unique No: @BarCodeValue</div>*@
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="15%" valign="top">&nbsp;<span class="kdsfont">¨ã×ÂÏ ¨ë¸ ¤¼ã ÅÙ</span></td>
+                                        <td colspan="4" valign="top" style="vertical-align:top">&nbsp;@centE<br />&nbsp;<span class="kdsfont">@centP</span> @*<span style="float:right">Set : @set &nbsp;</span>*@ </td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;<span class="kdsfont">ÚÌ¼Û  / ÚÒÓÖã</span></td>
+                                        <td colspan="4">&nbsp;@date1 (@rsub1code) @rsub1 </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" style="padding-bottom:2px">
+                                            &nbsp;<span class="kdsfont">ÏëÐ ÅâÉÏ</span><br />&nbsp;<span class="kdsfont">ÆñÛÚª¤ØÏÁÛ ÂØ ÅÙ / ÚÆ¼Ø ÂØ ÅÙ / ÌØ¼Ø ÂØ ÅÙ</span>
+                                            @*¦Ý¼óÏ Æó¼ÏÛ Åâ: / ÆñÓÖÅ Æó¼Ï ¨ë¸<br />
+                                                ÕÓ¼ØªÏ*@
+                                        </td>
+                                    </tr>
+                                </thead>
+
+                                @for (int k = 0; k < Model.StoreAllData.Tables[1].Rows.Count; k++)
+                                {
+                                    var roll2 = Model.StoreAllData.Tables[1].Rows[k]["ROLL"].ToString();
+                                    var pht2 = "https://registration2022.pseb.ac.in/upload/Upload2023/" + Model.StoreAllData.Tables[1].Rows[k]["std_Photo"].ToString();
+                                    var sig2 = "https://registration2022.pseb.ac.in/upload/Upload2023/" + Model.StoreAllData.Tables[1].Rows[k]["std_Sign"].ToString();
+                                    //var Candi_Name = Model.StoreAllData.Tables[1].Rows[k]["Candi_Name"].ToString();
+                                    //var Father_Name = Model.StoreAllData.Tables[1].Rows[k]["Father_Name"].ToString();
+                                    //var Mother_Name = Model.StoreAllData.Tables[1].Rows[k]["Mother_Name"].ToString();
+                                    var cnm2 = Model.StoreAllData.Tables[1].Rows[k]["Candi_Name_P"].ToString();
+                                    var fnm2 = Model.StoreAllData.Tables[1].Rows[k]["Father_Name_P"].ToString();
+                                    var mnm2 = Model.StoreAllData.Tables[1].Rows[k]["Mother_Name_P"].ToString();
+                                    if (@rsub1code == Model.StoreAllData.Tables[1].Rows[k]["SubCode"].ToString())
+                                    {
+
+                                        <tbody>
+                                            <tr>
+                                                <td rowspan="3" width="15%" style="line-height:0;text-align:center;"><img src="@pht2" style="height:80px;width:80px;padding:4px 2px;" alt="Photo" id="Photo" /></td>
+                                                <td width="15%">&nbsp;<span style="font-size:18px">@roll2</span></td>
+                                                <td width="20%">&nbsp;<span class="kdsfont">¦Ý¼óÏ Æó¼ÏÛ Åâ</span></td>
+                                                <td width="20%">&nbsp;<span class="kdsfont">ÆñÓÖÅ Æó¼Ï ¨ë¸</span></td>
+                                                <td width="30%">&nbsp;<span class="kdsfont">ÕÓ¼ØªÏ</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">&nbsp;<span class="kdsfont">@cnm2 / @fnm2 / @mnm2</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td style="text-align:center"><img src="@sig2" style="height:30px;width:180px" alt="Sign" id="Sign" /></td>
+                                            </tr>
+                                            <tr><td colspan="5" style="height:10px"></td></tr>
+                                        </tbody>
+                                    }
+                                }
+
+
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <footer class="footer">
+                                <span class="kdsfont" style="float:left;font-size:16px">¨ã×ÂÏ ÓÝÆÏ¸â¶ Âã ÆÞÏã ÕÓ¼ØªÏ</span>
+                                <span style="float:right;font-size:11px;padding-right:60px">Room No.</span>
+                            </footer>
+                        </td>
+
+                    </tr>
+                }
+
+            }
+            else
+            {
+                <tr class="noprint">
+                    <td colspan="2">
+                        @ViewBag.Message
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+
+    @* <input type="Submit" value="Click Here to Download & Print" />*@
+
+
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script type="text/javascript">
+                $(document).ready(function () {
+
+                    $("#batchYear").change(function () {
+
+                        var selectedBATCH = { BATCH: $("#batchYear").val() };                        
+                        $.ajax({
+                            url: '@Url.Action("GetCentreID", "PunAdd")',
+                            type: 'Post',
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            data: JSON.stringify(selectedBATCH),
+                            success: function (States) {                               
+                                $("#MyCentre").empty();
+
+                                $.each(States, function (i, CentList) {
+                                    $("#MyCentre").append('<option value="'
+                                       + CentList.Value + '">'
+                                       + CentList.Text + '</option>');
+                                });
+                                if (CentList.success) {
+
+                                    //document.getElementById("MName").value = data.result;
+                                    // $("#TextBoxID").val(data.result.MName);
+                                }
+                                else {
+                                    alert('invalid ID' + data.success);
+                                }
+                            }
+                        });
+                    });
+                });
+</script>
+<script>
+    function formVal() {
+        var result = document.getElementById('batchYear').value;
+        //var schlList1 = document.getElementById('SelList').value;
+        //alert(result);
+        if (result == '' || result == "") {
+            alert("Select any batch");
+            document.getElementById('batchYear').focus();
+            return false;
+        }
+        var schlList = document.getElementById('SearchBy').value;
+        if (schlList == '0') {
+            alert("Select Subject");
+            document.getElementById("SearchBy").focus();
+            return false;
+        }
+        //var setNolList = document.getElementById('setNo').value;
+        //if (setNolList == '0') {
+        //    alert("Select Set");
+        //    document.getElementById("setNo").focus();
+        //    return false;
+        //}
+    }
+</script>

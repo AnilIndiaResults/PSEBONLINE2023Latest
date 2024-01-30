@@ -1,0 +1,285 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>Private Candidate</h1>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+@using (Html.BeginForm("imgUpdPvtemail", "PrivateCandidate", FormMethod.Post, new { id = "SchlDetail", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">               
+                <form id="myForm">                    
+                    <div class="col-md-3">
+                        Select Batch<br />
+                        @{
+                            List<SelectListItem> batchYear = new List<SelectListItem>();
+                            batchYear.Add(new SelectListItem { Text = "---Select----", Value = "0" });
+                            batchYear.Add(new SelectListItem { Text = "7/2017", Value = "7/2018" });
+                            batchYear.Add(new SelectListItem { Text = "8/2017", Value = "8/2018" });
+
+                        }
+
+                        @Html.DropDownList("batchYear", batchYear, new { id = "batchYear", ViewBag.MybatchYear })
+                    </div>
+                    <div class="col-md-3">
+                        Search By
+                        @{
+                            List<SelectListItem> SearchBy = new List<SelectListItem>();
+                            SearchBy.Add(new SelectListItem { Text = "---Select----", Value = "0" });
+                            SearchBy.Add(new SelectListItem { Text = "Roll No.", Value = "1" });
+                            SearchBy.Add(new SelectListItem { Text = "Ref No.", Value = "2" });
+                            SearchBy.Add(new SelectListItem { Text = "Name", Value = "3" });
+                            SearchBy.Add(new SelectListItem { Text = "Father's Name", Value = "4" });
+                        }
+                        @Html.DropDownList("SearchBy", SearchBy, new { id = "SearchBy", ViewBag.MySearchBy })
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+
+                    </div>
+
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" />
+                    </div>                    
+                    <div class="clearfix"></div>                    
+                </form>
+            </fieldset>
+        </div>
+    </div>
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>REFNO</th>
+                    <th>ROLL</th>
+                    <th>CLASS</th>
+                    <th>Name/Father's Name/Mother's Name</th>                    
+                    <th>ACTIONS</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                            var roll = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                            var cls   = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+                            var Name  = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                            var FName = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var MName = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                            var emailid = Model.StoreAllData.Tables[0].Rows[i]["emailid"].ToString();
+                            var FullName = Name + "/ " + FName + "/ " + MName;
+
+                            <tr>
+                                <td>
+                                    @refno
+                                </td>     
+                                <td>
+                                    @roll
+                                </td>                                 
+                                <td>
+                                    @cls
+                                </td>  
+                                                         
+                                <td>
+                                    @FullName
+                                </td>
+                                
+                                <td>
+                                    <div>
+                                        @{                                            
+                                          @Html.ActionLink("SEND EMAIL", "Pvtemail", new { id = encrypt.QueryStringModule.Encrypt(refno),email=emailid,name=Name }, new { Class = "", title = "Send Email" })                                            
+                                         }
+                                    </div>                                   
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+@{
+    if (ViewData["result"] != null)
+    {
+        var tt= ViewData["result"].ToString();
+        if (ViewData["ComResult"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("This School not submmitted Final Result");
+                history.go(-1);
+            </script>
+        }
+    }
+
+}
+
+
+<script>
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelFilter').value;
+
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'RegistrationPortal/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelFilter").change(function () {
+            var value = document.getElementById('SelFilter').value;
+            $('#SearchString').val('');
+            if (value == 6) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '-10Y',
+
+                });
+
+            }
+            else if (value == 3 || value == 4 || value == 5) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var keyCode = (evt.which) ? evt.which : evt.keyCode
+                    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                        alert("Only Characters Allowed!!");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+        function tcDateVal()
+        {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1;
+            var yy = today.getFullYear();
+            var d1 = new Date(dd / mm / yy);
+            //alert(mm);
+            if ((dd > "14" && (mm != "6" || mm != "7" || mm != "8")) && (yy > "2017")) {
+                alert('Last Date of TC Generation was 14th-August-2017, You can not generate TC');
+                return false;
+            }
+        }
+        function formVal() {           
+            
+            if (document.getElementById('SchlCode').value == "") {
+                alert('Select School');
+                document.getElementById('SchlCode').focus();
+                return false;
+            }
+            if (document.getElementById('SelYear').value == "") {
+                alert('Select Year');
+                document.getElementById('SelYear').focus();
+                return false;
+            }
+            if (document.getElementById('SelForm').value == "") {
+                alert('Select any Form');
+                document.getElementById('SelForm').focus();
+                return false;
+            }
+
+
+
+        }
+</script>
+
+
+
+

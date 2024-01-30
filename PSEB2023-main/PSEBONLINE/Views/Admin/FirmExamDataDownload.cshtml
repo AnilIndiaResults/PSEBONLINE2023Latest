@@ -1,0 +1,354 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "DOWNLOAD EXAM DATA";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h2>DOWNLOAD EXAM DATA</h2>
+
+<div class="row" id="divR">
+    <div class="col-md-6">
+        <fieldset>
+            <legend>By Student Id </legend>
+            @using (Html.BeginForm("FirmExamDataDownload", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("Filevalue", "STDIDMIS")
+                <div class="row" style="padding-bottom:50px">
+                    <div class="col-md-12">
+                        Select  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem1" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        Upload Student Id Mis File @Html.TextBoxFor(m => m.file, new { id = "STDIDMIS", type = "file", required = "required" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        <br />
+                        <input type="submit" name="submit" value="Download Data" onclick="return valForm();" />
+                        <input type="submit" name="submit" value="Download Subjects" onclick="return valForm();" />
+                        @if (Session["UserName"].ToString() == "PERFPM" || Session["UserName"].ToString() == "SAIPM")
+                        { }
+                        else {<input type="submit" name="submit" value="Download Photo/Sign" onclick="return valForm();" /> }
+                        
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-6">
+                        <br />
+                        <a download="" href="~/PDF/FirmExamDataDownloadSample.xls" class="btn">Click Here to Download Firm Exam Data Sample File</a>
+                    </div>
+                </div>
+            }
+        </fieldset>
+    </div>
+    <div class="col-md-6">
+        <fieldset>
+            <legend>Search By Date</legend>
+            @using (Html.BeginForm("FirmExamDataDownload", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("Filevalue", "DATE")
+            <div class="row" style="padding-bottom:100px">
+                <div class="col-md-12">
+                    Select Type  @Html.DropDownList("SelData", new SelectList(ViewBag.MySchData, "Value", "Text", ViewBag.SelectedItemData), "--Select---", new { @class = "", id = "SelData" })
+                </div>
+                <div class="col-md-12">
+                    Select RP  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem" })
+                </div>
+                <div class="col-md-12">
+                    From Date
+                    <input type="text" onkeypress="return false" required id="FromDate" name="FromDate" class="date" value="@Request["FromDate"]" />
+
+                    To Date
+                    <input type="text" onkeypress="return false" required id="ToDate" name="ToDate" class="date" value="@Request["ToDate"]" />
+                </div>
+                <div class="col-md-12">
+                    <br />
+                    <input type="submit" name="submit" value="Download Data" onclick="return valForm1();" />
+                    <input type="submit" name="submit" value="Download Subjects" onclick="return valForm1();" />
+                    @if (Session["UserName"].ToString() == "PERFPM" || Session["UserName"].ToString() == "SAIPM")
+                    { }
+                    else
+                    {
+                    <input type="submit" name="submit" value="Download Photo/Sign" onclick="return valForm1();" />
+                    }
+                </div>
+            </div>
+            }
+        </fieldset>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="row" id="divP">
+    <div class="col-md-12">
+        <div class="row">
+            @if (Session["UserName"].ToString() == "PERFPM" || Session["UserName"].ToString() == "SAIPM")
+            {<div class="col-md-6" style="text-align:right">
+                    @if (ViewBag.TotalCount1 != null && ViewBag.TotalCount1 != "0")
+                    {
+                        <a href="/Admin/FirmExamDataDownload/Pending" class="btn">Create Lot of Pending Data ( @ViewBag.TotalCount1 )</a>
+                    }
+                    else
+                    { <p class="rqf" style="text-align:center;font-size:medium;">No Pending Data Found </p>}
+
+
+                </div>}
+            else
+            {
+                <div class="col-md-6" style="text-align:left">
+                    @if (ViewBag.TotalCount1Pvt != null && ViewBag.TotalCount1Pvt != "0")
+                    {
+                        <a href="/Admin/FirmExamDataDownload/PendingPvt" class="btn">Create Lot of Private Pending Data ( @ViewBag.TotalCount1Pvt )</a>
+                    }
+                    else
+                    { <p style="text-align:center;font-size:medium;color:darkgreen">No Private Pending Data Found </p>}
+
+                </div>
+                <div class="col-md-6" style="text-align:right">
+                    @if (ViewBag.TotalCount1 != null && ViewBag.TotalCount1 != "0")
+                    {
+                        <a href="/Admin/FirmExamDataDownload/Pending" class="btn">Create Lot of Pending Data ( @ViewBag.TotalCount1 )</a>
+                    }
+                    else
+                    { <p class="rqf" style="text-align:center;font-size:medium;">No Pending Data Found </p>}
+
+
+                </div>
+            }
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="10%">RP</th>
+                    <th width="15%">Total Student</th>
+                    <th width="15%">Download Lot</th>
+                    <th width="20%">Download Date</th>
+                    <th width="40%">Download File</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        if (Model!= null  && Model.StoreAllData != null)
+                        {
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                var tcount = Model.StoreAllData.Tables[0].Rows[i]["Total"].ToString();
+                                var DataDownloadLot = Model.StoreAllData.Tables[0].Rows[i]["DataDownloadLot"].ToString();
+                                var IsDataDate = Model.StoreAllData.Tables[0].Rows[i]["IsDataDate"].ToString();
+                                int Count = i + 1;
+                            <tr>
+                                <td style="text-align:center;font-size:small;color:white;background-color:darkolivegreen;">
+                                    <span>REG-OPEN</span>
+                                </td>
+                                <td>
+                                    @tcount
+                                </td>
+                                <td>
+                                    @DataDownloadLot
+                                </td>
+                                <td>
+                                    @IsDataDate
+                                </td>
+                                <td>
+                                    @if (DataDownloadLot != "0")
+                                    {
+                                        <a href="/Admin/FirmExamDataDownload/Data-@DataDownloadLot" class="btn">Data </a>@Html.Raw("&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;")
+                                        <a href="/Admin/FirmExamDataDownload/Subject-@DataDownloadLot" class="btn">Subjects</a>@Html.Raw("&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;")
+                                        <a href="/Admin/FirmExamDataDownload/Photo-@DataDownloadLot" class="btn">Photo/Sign</a>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <p class="rqf">Data Not Found</p>
+                            </td>
+                        </tr>
+                    }
+                }
+
+                @{
+                    if (Session["UserName"].ToString() == "PERF" || Session["UserName"].ToString() == "SAI")
+                    {
+                        if (ViewBag.TotalCountPvt > 0)
+                        {
+                            for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                            {
+                                var tcount = Model.StoreAllData.Tables[2].Rows[i]["Total"].ToString();
+                                var DataDownloadLot = Model.StoreAllData.Tables[2].Rows[i]["DataDownloadLot"].ToString();
+                                var IsDataDate = Model.StoreAllData.Tables[2].Rows[i]["IsDataDate"].ToString();
+                                int Count = i + 1;
+                            <tr>
+                                <td style="text-align:center;font-size:small;color:darkolivegreen;background-color:lightgoldenrodyellow;">
+                                    <span><b>Private</b></span>
+                                </td>
+                                <td>
+                                    @tcount
+                                </td>
+                                <td>
+                                    @DataDownloadLot
+                                </td>
+                                <td>
+                                    @IsDataDate
+                                </td>
+                                <td>
+                                    @if (DataDownloadLot != "0")
+                                    {
+                                        <a href="/Admin/FirmExamDataDownload/DataPvt-@DataDownloadLot" class="btn">Data Pvt</a>@Html.Raw("&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;")
+                                        @*<a href="/Admin/FirmExamDataDownload/SubjectPvt-@DataDownloadLot" class="btn">Subjects Pvt</a>@Html.Raw("&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;")*@
+                                        <a href="/Admin/FirmExamDataDownload/PhotoPvt-@DataDownloadLot" class="btn">Photo/Sign Pvt</a>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                        }
+                        else
+                        {
+                        <tr>
+                            <td colspan="4">
+                                <p class="rqf">Private Data Not Found</p>
+                            </td>
+                        </tr>
+                            }
+                        }
+                    }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+               // window.location.href = 'Url.Action("Welcome", "Bank")';
+            </script>}
+        else if (ViewData["Result"].ToString() == "10")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('Generated Successfully, New Download Lot is : ' + '@ViewBag.Message');
+                window.location.href = '/Admin/FirmExamDataDownload';
+            </script>}
+        else if (ViewData["Result"].ToString() == "20")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('Generated Successfully,Private New Download Lot is : ' + '@ViewBag.Message');
+                window.location.href = '/Admin/FirmExamDataDownload';
+            </script>}
+        else if (ViewData["Result"].ToString() == "15")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('Correction Data Not Found');
+            </script>}
+        else if (ViewData["Result"].ToString() == "5")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('Failure, ' + '@ViewBag.Message');
+            </script>}
+        else
+        {
+            <script type="text/javascript" language="javascript">
+               alert('@ViewBag.Message');
+            </script>}
+
+    }
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "2022:2023",
+            maxDate: 0
+            // defaultDate: "+1w",
+            // setDate: new Date()
+
+        });
+    });
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+
+</script>
+
+
+
+<script type="text/javascript">
+
+    function valForm1() {
+
+        var SelData = document.getElementById("SelData");    
+        if (SelData.value == "0" || SelData.value == "") {
+            alert("Select Type");
+            SelData.focus();
+            return false;
+        }
+
+        var SelectItem = document.getElementById("SelectItem");
+        if (SelectItem.value == "0" || SelectItem.value == "") {
+            alert("Select RP");
+            SelectItem.focus();
+            return false;
+        }
+        var FromDate = document.getElementById("FromDate");
+        if (FromDate.value == "0" || FromDate.value == "") {
+            alert("Select From Date");
+            FromDate.focus();
+            return false;
+        }
+        var ToDate = document.getElementById("ToDate");
+        if (ToDate.value == "0" || ToDate.value == "") {
+            alert("Select To Date");
+            ToDate.focus();
+            return false;
+        }
+    }
+
+
+    function valForm() {
+        var SelectItem1 = document.getElementById("SelectItem1");
+        if (SelectItem1.value == "0" || SelectItem1.value == "") {
+            alert("Select Type");
+            SelectItem1.focus();
+            return false;
+        }
+    }
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select only .xls file format');
+            }
+        });
+    });
+
+
+</script>
+
+
+

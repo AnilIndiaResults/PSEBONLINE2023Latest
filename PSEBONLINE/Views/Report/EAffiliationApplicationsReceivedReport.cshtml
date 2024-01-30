@@ -1,0 +1,183 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "EAffiliation Applications Received Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/Content/Print-4L.css" />
+<style type="text/css">
+    body, td {
+        font-size: 12px
+    }
+</style>
+<h1 class="noprint">E-Affiliation Application Received Report</h1>
+<div class="col-md-12 noprint">
+    @using (Html.BeginForm("EAffiliationApplicationsReceivedReport", "Report", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+    {
+        @Html.Hidden("Filevalue", "CENT")
+    <div class="row">
+        <div class="col-md-2">
+            Select Class @Html.DropDownList("SelClass", new SelectList(ViewBag.Mycls, "Value", "Text", ViewBag.Selectedcls), "--Select---", new { @class = "", id = "SelClass", required = "required" })
+        </div>
+        <div class="col-md-2">
+            Select District @Html.DropDownList("SelDist", new SelectList(ViewBag.DistEList, "Value", "Text", ViewBag.SelectedDIST), "--All---", new { @class = "", id = "SelDIST" })
+        </div>
+
+        @*Select Application Submission Date*@
+        <div class="col-md-2">
+            Submission  From Date<input type="text" onkeypress="return false" id="FromDate" name="FromDate" class="date" value="@Request["FromDate"]" />
+        </div>
+        <div class="col-md-2">
+            Submission To Date<input type="text" onkeypress="return false" id="ToDate" name="ToDate" class="date" value="@Request["ToDate"]" />
+        </div>
+        <div class="col-md-4">
+            <br />
+            <input type="submit" name="submit" value="Submit" /> <input type="button" value="Back" class="btn" onclick="history.go(-1)" />
+        </div>
+    </div>
+    }
+</div>
+
+<table style="width:100%;" border="0" class="bgimg">
+    <tr>
+        <td>
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        @if (ViewBag.TotalCount > 0)
+                        {
+                            <span>Total :</span> @ViewBag.TotalCount
+                            <input type="button" value="Print" class="btn" onclick="window.print()" />
+
+                        }
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            
+        </td>
+    </tr>
+</table>
+<table border="1" style="width:100%;" align="center" class="brack">
+    <thead>
+        <tr>
+            <td colspan="2"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="70px" /></div></td>
+            <td style="font-size:16px;text-align:center;line-height:25px;" colspan="5">
+                <span style="font-size:22px;">Punjab School Education Board</span><br />List of Applications Received For Provisional Affiliation, Session 2023-24
+            </td>
+            <td align="right">
+                Print Date: @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")<br />
+            </td>
+        </tr>
+        <tr style="font-size:12px">
+            <td colspan="8" style="text-align:center">
+                @if (ViewBag.FromDate != null)
+                {<span>Application Submission Date :   @ViewBag.FromDate to @ViewBag.ToDate</span>} &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                Class: @if (ViewBag.Selectedcls == "5")
+                {<span>5th</span>}
+                else if (ViewBag.Selectedcls == "8")
+                {<span>8th</span>}
+                else if (ViewBag.Selectedcls == "10")
+                {<span>10th</span>}
+                else if (ViewBag.Selectedcls == "12")
+                {<span>12th</span>}
+                &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                District: @if (ViewBag.SelectedDIST == "" || ViewBag.SelectedDIST == "0")
+                {<span>ALL</span>}
+                else
+                {<span>@ViewBag.DISTNM (@ViewBag.DIST)</span>}
+            </td>
+        </tr>
+        </thead>
+        @{
+            if (ViewBag.TotalCount > 0 && Model.StoreAllData.Tables.Count > 0)
+            {
+                <tr style="background-color:#ccc!important;font-size:14px">
+                    <td width="5%">Sr.No </td>
+                    <td width="10%">SCHL Code/<br />ID No </td>
+                    <td width="15%">Application No </td>
+                    <td width="10%">UDISE Code </td>
+                    <td width="15%">Complete School Name(English)<br />Complete School Name(Punjabi) </td>
+                    <td width="15%">Class<br />Level </td>
+                    <td width="10%">Principal Name->Mobile->Email ID</td>
+                    <td width="20%">Fee Details<br /><span style="font-size:11px">(ChallanID | Bank Abbr | Total Amount | Deposit Date)</span></td>
+                </tr>
+                if (Model.StoreAllData.Tables[0].Rows.Count > 0)
+                {
+                    int d = 0;
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        d = d + 1;
+                        var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                        var APPNO = Model.StoreAllData.Tables[0].Rows[i]["APPNO"].ToString();
+                        var UDISECODE = Model.StoreAllData.Tables[0].Rows[i]["UDISECODE"].ToString();
+                        var SCHLNME = Model.StoreAllData.Tables[0].Rows[i]["SCHLNME"].ToString().ToUpper();
+                        var STATIONE = Model.StoreAllData.Tables[0].Rows[i]["STATIONE"].ToString().ToUpper();
+                        var DISTNME = Model.StoreAllData.Tables[0].Rows[i]["DISTNME"].ToString().ToUpper();
+
+                        var SCHLNMP = Model.StoreAllData.Tables[0].Rows[i]["SCHLNMP"].ToString();
+                        var STATIONP = Model.StoreAllData.Tables[0].Rows[i]["STATIONP"].ToString();
+                        var DISTNMP = Model.StoreAllData.Tables[0].Rows[i]["DISTNMP"].ToString();
+
+                        var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                        var PrincipalName = Model.StoreAllData.Tables[0].Rows[i]["PrincipalName"].ToString();
+                        var SCHLMOBILE = Model.StoreAllData.Tables[0].Rows[i]["SCHLMOBILE"].ToString();
+                        var SCHLEMAIL = Model.StoreAllData.Tables[0].Rows[i]["SCHLEMAIL"].ToString();
+                        //
+                        var Challanid = Model.StoreAllData.Tables[0].Rows[i]["Challanid"].ToString();
+                        var TOTFEE = Model.StoreAllData.Tables[0].Rows[i]["TOTFEE"].ToString();
+                        var BANK = Model.StoreAllData.Tables[0].Rows[i]["BANK"].ToString();
+                        var J_REF_NO = Model.StoreAllData.Tables[0].Rows[i]["J_REF_NO"].ToString();
+                        var DEPOSITDT = Model.StoreAllData.Tables[0].Rows[i]["DEPOSITDT"].ToString();
+                        <tr>
+                            <td>@d</td>
+                            <td>@SCHL</td>
+                            <td>@APPNO</td>
+                            <td>@UDISECODE</td>
+                            <td>@SCHLNME,@STATIONE,@DISTNME<br /><span class="kdsfont">@SCHLNMP,@STATIONP,@DISTNMP</span></td>
+                            <td>@Class</td>
+                            <td>@PrincipalName @Html.Raw("->") @SCHLMOBILE<Br />@SCHLEMAIL</td>
+                            <td>@Challanid@Html.Raw(" | ")@BANK@Html.Raw(" | ")@TOTFEE@Html.Raw(" | ")@DEPOSITDT</td>
+                        </tr>
+                    }
+                }
+            }
+
+        }
+
+</table>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "2018:2020",
+            maxDate: 0
+            // defaultDate: "+1w",
+            // setDate: new Date()
+
+        });
+    });
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+
+</script>
+

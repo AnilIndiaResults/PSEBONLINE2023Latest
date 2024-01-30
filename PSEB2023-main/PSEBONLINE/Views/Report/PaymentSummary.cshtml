@@ -1,0 +1,123 @@
+﻿
+@{
+    ViewBag.Title = "PaymentSummaary";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>Payment Summary</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tsummary">
+                <tr class="active-tr">
+                    <th>School Category</th>
+                    <th>Total School</th>
+                    <th>Entry Started</th>
+                    <th>Total Entries</th>
+                    <th>Final Submit</th>                    
+                    <th>Total Final Entries</th>
+                    <th>Total Fee</th>
+                    <th>Total Verified Fee</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int sumtotalfee = 0;
+                        int sumverifyfee = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var SchoolCategory = Model.StoreAllData.Tables[0].Rows[i]["School Category"].ToString();
+                            var EnteryStarted = Model.StoreAllData.Tables[0].Rows[i]["EnteryStarted"].ToString();
+                            var TotalSchool = Model.StoreAllData.Tables[0].Rows[i]["TotalSchool"].ToString();
+                            var finalsubmit = Model.StoreAllData.Tables[0].Rows[i]["finalsubmit"].ToString();
+                            var TotalEntries = Model.StoreAllData.Tables[0].Rows[i]["Total Entries"].ToString();
+                            var TotalFinalEntries = Model.StoreAllData.Tables[0].Rows[i]["Total Final Entries"].ToString();
+                            var TotalFee = "0";
+                            var TotalVerifiedFee = "0";
+                            if (i< Model.StoreAllData.Tables[1].Rows.Count)
+                            {
+                                TotalFee = Model.StoreAllData.Tables[1].Rows[i]["TotalFee"].ToString();
+                            }
+                            if (i < Model.StoreAllData.Tables[2].Rows.Count)
+                            {
+                                TotalVerifiedFee = Model.StoreAllData.Tables[2].Rows[i]["TotalVerifiedFee"].ToString();
+                            }
+                            int Count = i + 1;
+                            if (TotalFee == "")
+                            { TotalFee = "0"; }
+
+                            if (TotalVerifiedFee == "")
+                            { TotalVerifiedFee = "0"; }
+
+                            sumtotalfee = sumtotalfee + Convert.ToInt32(TotalFee);
+                            sumverifyfee = sumverifyfee + Convert.ToInt32(TotalVerifiedFee);
+                            <tr>
+                                <td>@SchoolCategory</td>
+                                <td>@TotalSchool</td>
+                                <td>@EnteryStarted</td>
+                                <td>@TotalEntries</td>
+                                <td>@finalsubmit</td>                                
+                                <td>@TotalFinalEntries</td>
+                                @if (Count > Model.StoreAllData.Tables[1].Rows.Count)
+                                {
+                                    <td> @sumtotalfee</td>
+                                }
+                                else
+
+                                    if (Model.StoreAllData.Tables[0].Rows[i]["School Category"].ToString() == Model.StoreAllData.Tables[1].Rows[i]["USERTYPE"].ToString())
+                                {
+                                    <td>@TotalFee</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+
+                               
+
+                                @if (Count == Model.StoreAllData.Tables[0].Rows.Count)
+                                {
+                                    <td> @sumverifyfee</td>
+                                }
+                                else
+                                {
+                                    int flag = 0;
+                                    for (int j = 0; j < Model.StoreAllData.Tables[2].Rows.Count; j++)
+                                    {
+
+
+                                        if (Model.StoreAllData.Tables[0].Rows[i]["School Category"].ToString() == Model.StoreAllData.Tables[2].Rows[j]["USERTYPE"].ToString())
+                                        {
+                                        <td>@Model.StoreAllData.Tables[2].Rows[j]["TotalVerifiedFee"].ToString()</td>
+                                            flag = 1;
+                                            break;
+                                        }
+                                    }
+                                    if(flag==0)
+                                    {
+                                        <td>0</td>
+                                    }
+                                }
+
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+
+        </div>
+    </div>
+</div>
+
+
+

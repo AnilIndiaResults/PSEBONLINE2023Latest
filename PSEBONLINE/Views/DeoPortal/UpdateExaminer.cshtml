@@ -1,0 +1,402 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+<h1>Update Examiner</h1>
+@using (Html.BeginForm("UpdateExaminer", "DeoPortal", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        @Html.Hidden("hdnccode", (string)ViewBag.Exid)
+        <div class="col-md-2">Class</div>
+        <div class="col-md-4">
+            @{
+                List<SelectListItem> ClassList = new List<SelectListItem>();
+                ClassList.Add(new SelectListItem { Text = "--SELECT CLASS--", Value = "0" });
+                ClassList.Add(new SelectListItem { Text = "Matric", Value = "10" });
+                ClassList.Add(new SelectListItem { Text = "Senior Secondary", Value = "12" });
+            }
+            @Html.DropDownList("Class", ClassList, new { id = "Class" })
+        </div>
+        <div class="col-md-2">Subject</div>
+        @*<div class="col-md-4">@Html.DropDownList("Subjects", new SelectList(ViewBag.lstsubs, "Value", "Text"), new { width = "200Px" })</div>*@
+        @*<div class="col-md-4">@Html.ListBox("lstSubjects", new SelectList(ViewBag.lstsubs, "Value", "Text"), new { width = "200Px" })</div>*@
+        <div class="col-md-4">@Html.ListBoxFor(m => m.lstSubjects, new SelectList(ViewBag.lstsubs, "Value", "Text"), new { width = "200Px" })</div>
+        @*<div class="col-md-4">@Html.ListBoxFor(m => m.lstSubjects, new MultiSelectList(ViewBag.lstsubs, "Value", "Text"), new { width = "200Px" })</div>*@
+        @*<div>@Html.ListBoxFor(m => m.lstSubjects, new MultiSelectList((List<SelectListItem>)ViewData["lstsubs"]), new { width = "200Px" })</div>*@
+       @*<div>@Html.ListBoxFor(model => model.lstSubjects, new SelectList(ViewBag.sports, "Value", "Text"))</div>*@
+        @*<div class="col-md-4">@Html.ListBoxFor(m => m.lstSubjects, new SelectList(Model.lstSubjects), new { width = "200Px" })</div>*@
+       
+        @*ViewBag.lstsubs*@
+        <div class="clearfix"></div>
+        <div class="col-md-2">Name</div>
+        <div class="col-md-4">@Html.TextBoxFor(m => m.StaffName, new { id = "StaffName", @maxlength = "50" })</div>
+        <div class="col-md-2">Father's Name</div>
+        <div class="col-md-4">@Html.TextBoxFor(m => m.StaffFatherName, new { id = "StaffFatherName", @maxlength = "50" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">Cadre</div>
+        <div class="col-md-4">@Html.DropDownList("cadre", new SelectList(ViewBag.Dcadre, "Value", "Text"), "--Select CADRE---", new { @class = "" }) </div>
+
+        <div class="col-md-2">Designation</div>
+        <div class="col-md-4">@Html.DropDownList("desi", new SelectList(ViewBag.Mydesi, "Value", "Text"), "--Select Designation---", new { @class = "" })</div>
+       
+       
+        <div class="clearfix"></div>
+        <div class="col-md-2">Education Qualification</div>
+        <div class="col-md-4">@Html.TextBoxFor(m => m.Quali, new { id = "quali", @maxlength = "50" })</div>
+        <div class="col-md-2">School Name</div>
+        <div class="col-md-4">@Html.DropDownList("Selschool", new SelectList(ViewBag.Myschl, "Value", "Text"), "--Select School Name---", new { @class = "" })</div>
+        <div class="col-md-2" id="OSchlT" style="display:none;">
+            Other School:  <span class="rqf">*</span>
+        </div>
+        <div class="col-md-4" id="OSchl" style="display:none;">
+            @Html.TextBoxFor(m => m.Otherschl, new { id = "Otherschl", })
+        </div> 
+        <div class="clearfix"></div>
+        <div class="col-md-2">Email ID</div>
+        <div class="col-md-4">@Html.TextBoxFor(m => m.mailid, new { id = "mailid", @maxlength = "50" })</div>
+        <div class="col-md-2">Mobile No.</div>
+        <div class="col-md-4">@Html.TextBoxFor(m => m.Mobile, new { id = "Mobile", @maxlength = "50" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">District</div>
+        <div class="col-md-4">@Html.DropDownList("homedist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--Select---", new { @class = "" })</div>
+        <div class="col-md-2">Tehsil</div>
+        <div class="col-md-4">@Html.DropDownList("hometehsil", new SelectList(ViewBag.MyTeh, "Value", "Text"), "--Select---", new { @class = "" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">Address</div>
+        <div class="col-md-4">@Html.TextBoxFor(m => m.homeaddress, new { id = "homeaddress", cols = 50, rows = 5 })</div>
+        <div class="col-md-2">Pin Code</div>
+        <div class="col-md-4">@Html.TextBoxFor(m => m.homepincode, new { id = "homepincode", @maxlength = "50" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">Teaching Experience (Year)</div>
+        <div class="col-md-4">@Html.DropDownList("teachingexp", new SelectList(ViewBag.texp, "Value", "Text"), "--Select YEAR---", new { @class = "" })</div>
+        <div class="col-md-2">Evaluation Experience (Year)</div>
+        <div class="col-md-4">@Html.DropDownList("Evaluationexp", new SelectList(ViewBag.evaexp, "Value", "Text"), "--Select YEAR---", new { @class = "" })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-2">
+            Date Of Retierment <span class="rqf">*</span>
+        </div>
+        <div class="col-md-4">
+            @Html.TextBoxFor(m => m.DOR, "{0:dd/MM/yyyy}", new
+       {
+           id = "DOR",
+           @readonly = "readonly",
+           @maxlength = "10",
+           // onkeypress = "javascript: return false;",
+           onpaste = "return false;",
+           oncopy = "return false;",
+           oncut = "return false;"
+
+       })
+
+        </div>
+        <div class="col-md-2">Remarks</div>
+        <div class="col-md-4">@Html.TextBoxFor(m => m.remarks, new { id = "remarks", cols = 50, rows = 5 })</div>
+        <div class="clearfix"></div>
+        <div class="col-md-12 text-center">
+            <input value="Update Examiner" type="submit" onclick="return valForm();"/>
+            <input value="Reset" type="submit"  onClick="this.form.reset()" />
+            <input value="Back" type="submit"  onclick="history.go(-1);" />
+            <input value="Examiner List" type="button" onclick="javascript:document.location.href='@Url.Action("Examiner", "DeoPortal")'" />
+        </div>
+    </div>
+
+
+    <div class="clearfix"></div>
+}
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Data Updated Successfully");
+                window.location.href = '@Url.Action("Examiner", "DeoPortal")';
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Data Already Exist");
+            </script>
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Data not saved..plz try again");
+            </script>
+        }
+    }
+}
+<script type="text/javascript">
+    $("#Selschool").change(function () {
+        var selectedVal = $("#Selschool").val();
+        //alert(selectedVal);
+        if (selectedVal == "Others") {
+
+            $('#OSchl').css("display", "block");
+            $('#OSchlT').css("display", "block");
+
+        }
+        else {
+            $('#OSchl').css("display", "none");
+            $('#OSchlT').css("display", "none");
+            $("#schlcode").val("*******");
+
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var selectedVal = $("#Selschool").val();
+        //alert(selectedVal);
+        if (selectedVal == "Others") {
+
+            $('#OSchl').css("display", "block");
+            $('#OSchlT').css("display", "block");
+
+        }
+        else {
+            $('#OSchl').css("display", "none");
+            $('#OSchlT').css("display", "none");
+            $("#schlcode").val("*******");
+
+        }
+        $("#DOR").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            //maxDate: '-10Y',
+
+        });
+        $("#Class").change(function () {
+            var selectedCLS = { cls: $("#Class").val() };
+            if ($("#Class").val() == "0") {
+                alert("Please Select Class");
+                $("#lstSubjects").empty();
+                return false;
+            }
+            $.ajax({
+                url: '@Url.Action("GetSub", "DeoPortal")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedCLS),
+                success: function (States) {
+                    $("#lstSubjects").empty();
+                    $.each(States, function (i, SubList) {
+                        $("#lstSubjects").append('<option value="'
+                           + SubList.Value + '">'
+                           + SubList.Text + '</option>');
+                    });
+                    if (SubList.success) {
+
+                        //document.getElementById("MName").value = data.result;
+                        // $("#TextBoxID").val(data.result.MName);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        });
+
+
+            $("#homedist").change(function () {
+
+                var selectedDIST = { DIST: $("#homedist").val() };
+                $.ajax({
+                    url: '@Url.Action("GetTehID", "DeoPortal")',
+                    type: 'Post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(selectedDIST),
+                    success: function (States) {
+                        $("#hometehsil").empty();
+                        $.each(States, function (i, TehList) {
+                            $("#hometehsil").append('<option value="'
+                               + TehList.Value + '">'
+                               + TehList.Text + '</option>');
+                        });
+                        if (TehList.success) {
+
+                            //document.getElementById("MName").value = data.result;
+                            // $("#TextBoxID").val(data.result.MName);
+                        }
+                        else {
+                            alert('invalid ID' + data.success);
+                        }
+                    }
+                });
+
+            });
+        $("#cadre").change(function () {
+            var selectedCAD = { CAD: $("#cadre").val() };
+            $.ajax({
+                url: '@Url.Action("GETDSTAFFESIGNATION", "DeoPortal")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedCAD),
+                success: function (cadres) {
+                    $("#desi").empty();
+                    $.each(cadres, function (i, desiList) {
+
+                        $("#desi").append('<option value="'
+                           + desiList.Value + '">'
+                           + desiList.Text + '</option>');
+                    });
+                    if (desiList.success) {
+
+
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        });
+
+  });
+</script>
+<script type="text/javascript">
+    function valForm()
+    {
+        var cls = document.getElementById("Class");
+        var sub = document.getElementById("lstSubjects");
+        var sn = document.getElementById("StaffName");
+        var sfn = document.getElementById("StaffFatherName");
+        var cad = document.getElementById("cadre");
+        var desi = document.getElementById("desi");
+        var scname = document.getElementById("Selschool");
+        var Emailid = document.getElementById("mailid");
+        var mob = document.getElementById("Mobile");
+        var Eduquali = document.getElementById("quali");
+        var haddress = document.getElementById("homeaddress");
+        var hdist = document.getElementById("homedist");
+        var htehsil = document.getElementById("hometehsil");
+        var hpincode = document.getElementById("homepincode");
+        var expyear = document.getElementById("teachingexp");
+        var expEva = document.getElementById("Evaluationexp");
+        var remarks = document.getElementById("remarks");
+
+
+        if (cls.value == "" || cls.value == "0") {
+            alert("Please Select Class");
+            cls.focus();
+            return false;
+        }
+        if (sub.value.length <= 0) {
+            alert("Please Select atleast One Subject");
+            sub.focus();
+            return false;
+        }
+        if (sn.value == "") {
+            alert("Please Enter Examiners's Name ");
+            sn.focus();
+            return false;
+        }
+        if (sfn.value == "") {
+            alert("Please Enter Examiners's Father Name");
+            sfn.focus();
+            return false;
+        }
+        if (cad.value == "" || cad.value == "0") {
+            alert("Please Select Cadre");
+            cad.focus();
+            return false;
+        }
+        if (desi.value == "" || desi.value == "0") {
+            alert("Please Select Designation");
+            desi.focus();
+            return false;
+        }
+        if (Eduquali.value == "") {
+            alert("Enter your Education Qualification ");
+            Eduquali.focus();
+            return false;
+        }
+        if (scname.value == "" || scname.value == "0") {
+            alert("Please Select School Name");
+            scname.focus();
+            return false;
+        }
+        if (Emailid.value == "") {
+            alert("Enter your EmailID ");
+            Emailid.focus();
+            return false;
+        }
+
+        if (mob.value == "") {
+            alert("Enter Mobile Number");
+            mob.focus();
+            return false;
+        }
+        if (mob.value != "") {
+            if (mob.value.length != 10) {
+
+                alert("Please Enter 10 digits Mobile Number");
+                mob.focus();
+                return false;
+            }
+            else {
+                var Number = document.getElementById('Mobile').value;
+                var IndNum = /^[0]?[789]\d{9}$/;
+
+                if (!IndNum.test(Number)) {
+                    alert("invalid Number");
+                    mob.focus();
+                    return false;
+                }
+
+            }
+        }
+       
+        
+        if (hdist.value == "" || hdist.value == "0") {
+            alert("Please Select Home District");
+            hdist.focus();
+            return false;
+        }
+        if (htehsil.value == "" || htehsil.value == "0") {
+            alert("Please Select Home Tehsil");
+            htehsil.focus();
+            return false;
+        }
+        if (haddress.value == "") {
+            alert("Enter your Home Address");
+            haddress.focus();
+            return false;
+        }
+        if (hpincode.value == "") {
+            alert("Enter your Home Pincode");
+            hpincode.focus();
+            return false;
+        }
+        if (document.getElementById("homepincode").value != "") {
+            if (hpincode.value.length != 6) {
+                alert("Please Enter 6 digits Pincode");
+                hpincode.focus();
+                return false;
+            }
+        }
+        if (expyear.value == "" || expyear.value == "0") {
+            alert("Please Select Teaching Experience");
+            expyear.focus();
+            return false;
+        }
+        if (expEva.value == "" || expEva.value == "0") {
+            alert("Please Select Evaluation Experience");
+            expmon.focus();
+            return false;
+        }
+        //if (remarks.value == "") {
+        //    alert("Enter your Your Remarks ");
+        //    remarks.focus();
+        //    return false;
+        //}
+        //-------------
+
+        return true;
+    }
+</script>

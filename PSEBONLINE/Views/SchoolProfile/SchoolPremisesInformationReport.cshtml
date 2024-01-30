@@ -1,0 +1,865 @@
+﻿
+@model PSEBONLINE.Models.SchoolPremisesInformation
+@{
+    ViewBag.Title = "School Infrastructure of School & Other Activities Information";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+        line-height: 16px
+    }
+
+    .widthe {
+        width: 25px;
+        height: 25px;
+        display: inline-block;
+    }
+
+    @@media print {
+        body {
+            font-size: 9px;
+            line-height: 14px
+        }
+
+        .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+            float: left;
+        }
+
+        .col-md-12 {
+            width: 100%;
+        }
+
+        .col-md-11 {
+            width: 91.66666667%;
+        }
+
+        .col-md-10 {
+            width: 83.33333333%;
+        }
+
+        .col-md-9 {
+            width: 75%;
+        }
+
+        .col-md-8 {
+            width: 66.66666667%;
+        }
+
+        .col-md-7 {
+            width: 58.33333333%;
+        }
+
+        .col-md-6 {
+            width: 50%;
+        }
+
+        .col-md-5 {
+            width: 41.66666667%;
+        }
+
+        .col-md-4 {
+            width: 33.33333333%;
+        }
+
+        .col-md-3 {
+            width: 25%;
+        }
+
+        .col-md-2 {
+            width: 16.66666667%;
+        }
+
+        .col-md-1 {
+            width: 8.33333333%;
+        }
+
+        h4 {
+            background-color: #dedede !important;
+            font-size: 11px;
+            font-weight: bold
+        }
+    }
+</style>
+<h1 class="noprint">Infrastructure, Exam Centre & other activities information of School</h1>
+<div class="row">
+    <div class="col-md-12 text-right noprint">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        @if (Session["AdminId"] == null)
+        {
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("SchoolPremisesInformation", "SchoolProfile")'" />
+
+        }
+        else
+        {
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("ViewSchoolPremisesInformation", "Admin")'" />
+
+        }
+
+
+    </div>
+
+    @if (ViewBag.TotalCount > 0)
+    {
+        <div class="col-md-12">
+            <table border="0" style="width:100%;" align="center" class="brack">
+                <thead>
+                    <tr>
+                        <td width="25%"><img src="~/Images/Printlogo.jpg" alt="PSEB" height="90px" /></td>
+                        <td width="50%" style="font-size:16px;text-align:center;line-height:24px;">
+                            <span style="font-size:22px;">Punjab School Education Board</span><br />Infrastructure, Exam Centre & other activities information of School
+                            @if (ViewBag.IsFinalSubmit == 1)
+                            {<span>(Final Report)</span> }
+                            else
+                            { <span>(Rough Report)</span>}
+                        </td>
+                        <td width="25%" align="right">
+                            Print Date: @DateTime.Now.ToString("dd/MM/yyyy")<br />
+                            @if (ViewBag.IsFinalSubmit == 1 && ViewBag.FinalSubmitOn != null)
+                            {<span>@ViewBag.FinalSubmitOn</span>}
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <div class="row">
+                                <div class="col-md-2">School Name and District</div>
+                                <div class="col-md-10"><label> @ViewBag.SCHLE</label></div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-2">
+                                    School Code<span class="rqf">*</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>@Html.DisplayFor(m => m.SCHL, new { }) @Html.HiddenFor(m => m.SCHL)</label>
+                                </div>
+                                <div class="col-md-3">School Identity No (Issued by Aff. Branch) </div>
+                                <div class="col-md-3"><label>@ViewBag.IDNO</label></div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>SCHOOL & STAFF DETAILS</h4>
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <span class="widthe">(1)</span>
+                                    Whether the school is receiving financial aid from any Govt./Semi Govt./Autonomous Body?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.SSD1, new { })
+                                </div>
+                                <div class="col-md-10">
+                                    <span class="widthe">(2)</span>
+                                    School campus area and property belongs to the Govt. or it is on rent or it is on lease or own property.*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.SSD2, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(3)</span>
+                                    Total No. of Teaching Staff in School *
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.SSD3, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(4)</span>
+                                    Total No. of Non-Teaching in school *
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.SSD4, new { })
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>CAMPUS & BUILDING</h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <span class="widthe">(5)</span>
+                                    <span class="widtha">Campus area (in sq. feet) (at site from where the school is presently running)*</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB5, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(6)</span>
+                                    Built up area*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB6, new { })
+                                </div>
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(7)</span>
+                                    No. of Floors (including ground floor)*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB7, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(8)</span>
+                                    Total Classrooms rooms on ground floor
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB8, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(9)</span>
+                                    Capacity of students on ground floor *
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB9, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(10)</span>
+                                    Total Classrooms rooms on first floor, if any
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB10, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(11)</span>
+                                    Capacity of students on first floor
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB11, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(12)</span>
+                                    Total Classrooms rooms on second floor, if any
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB12, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(13)</span>
+                                    Capacity of students on second floor
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB13, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(14)</span>
+                                    Total Classrooms rooms on third floor, if any
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB14, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(15)</span>
+                                    Capacity of students on third floor
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CB15, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(16)</span>
+                                    Whether the classrooms are adequate to meet the requirements of the students/subject teachers/co-curricular activities?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.CB16, new { })
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>EXAM CENTRE DETAILS</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="widthe">(17)</span>
+                                    If Examination Centre is built in school, then on which floor.(Exam Centre is Preferred on Ground Floor)
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.DisplayFor(m => m.ECD17, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(18)</span>
+                                    Total candidate capacity of Exam centre
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.ECD18, new { })
+                                </div>
+
+                                <div class="col-md-4">
+                                    <span class="widthe">(19)</span>
+                                    Number of rooms provided for exam centre(minimum candidates capacity 30 per room single bench single candidates
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.ECD19, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(20)</span>
+                                    Total No. of lecturer
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.ECD20, new { })
+                                </div>
+
+                                <div class="col-md-4">
+                                    <span class="widthe">(21)</span>
+                                    Total No. of Master
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.ECD21, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(22)</span>
+                                    Total No. of Supervisory Staff for exam duty
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.ECD22, new { })
+                                </div>
+
+                                <div class="col-md-4">
+                                    <span class="widthe">(23)</span>
+                                    Total No. of Single Benches
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.ECD23, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(24)</span>
+                                    Total No. of Double Benches
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.ECD24, new { })
+                                </div>
+
+                                <div class="col-md-4">
+                                    <span class="widthe">(25)</span>
+                                    Is CCTV cameras facility available?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.ECD25, new { })
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>CLASS WISE COUNT OF STUDENTS FOR SESSION @Session["Session"].ToString()</h4>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <span class="widthe">(26)</span>
+                                    1st  Class
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS26, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(27)</span>
+                                    2nd Class
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS27, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(28)</span>
+                                    3rd Class
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS28, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(29)</span>
+                                    4th Class
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS29, new { })
+                                </div>
+
+                                <div class="col-md-2">
+                                    <span class="widthe">(30)</span>
+                                    5th Class
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS30, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(31)</span>
+                                    6th Class
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS31, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(32)</span>
+                                    7th Class
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS32, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(33)</span>
+                                    8th Class
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS33, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(34)</span>
+                                    9th Class
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS34, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(35)</span>
+                                    10th Gen.
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS35, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(36)</span>
+                                    10th NSQF
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS36, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(37)</span>
+                                    11th Class Hum.
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS37, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(38)</span>
+                                    11th Science
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS38, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(39)</span>
+                                    11th Commerce
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS39, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(40)</span>
+                                    11th Vocational/NSQF
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS40, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(41)</span>
+                                    12th Hum.
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS41, new { })
+                                </div>
+
+                                <div class="col-md-2">
+                                    <span class="widthe">(42)</span>
+                                    12th Science
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS42, new { })
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(43)</span>
+                                    12th  Commerce
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS43, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-2">
+                                    <span class="widthe">(44)</span>
+                                    12th Vocational/NSQF
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CWS44, new { })
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>COUNT OF SPORTS STUDENTS AT DIFFERENT LEVEL</h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <span class="widthe">(45)</span>
+                                    Count of Sports Candidates (District Level)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CSS45, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(46)</span>
+                                    Count of Sports Candidates (Zone Level)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CSS46, new { })
+                                </div>
+                                <div class="clearfix"></div>
+
+                                <div class="col-md-4">
+                                    <span class="widthe">(47)</span>
+                                    Count of Sports Candidates(National Level)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CSS47, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(48)</span>
+                                    Count of Sports Candidates(Inter National Level)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CSS48, new { })
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>PLAYGROUND </h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <span class="widthe">(49)</span>
+                                    Size(in sq. feet) of playground
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.PG49, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(50)</span>
+                                    Numbers of different games taken in school
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.PG50, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(51)</span>
+                                    Is equipments related to different games available in school?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.PG51, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(52)</span>
+                                    Number of Game Coaches
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.PG52, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(53)</span>
+                                    Whether playground(s) is/are part of the school campus?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.PG53, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(54)</span>
+                                    If no, distance between school campus and playgrounds.
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.PG54, new { })
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>LIBRARY/FURNITURE </h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <span class="widthe">(55)</span>
+                                    Size(in sq. feet) of library
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LIB55, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(56)</span>
+                                    Whether the library has reading rooms for students/teachers?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.LIB56, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(57)</span>
+                                    Total No. of Books in Library
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LIB57, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(58)</span>
+                                    Total No. of different types of magazines
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LIB58, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(59)</span>
+                                    Total No. of different types of newspaper
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LIB59, new { })
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>LABORATORIES </h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <span class="widthe">(60)</span>
+                                    Size(in sq. feet) of Science laboratories(For Matric students)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LAB60, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(61)</span>
+                                    Capacity of Candidates for Science laboratories(For Matric students)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LAB61, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(62)</span>
+                                    Size(in sq. feet) of Physics Lab, if any
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LAB62, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(63)</span>
+                                    Capacity of Candidates for Physics Lab
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LAB63, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(64)</span>
+                                    Size(in sq. feet) of Chemistry Lab, if any
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LAB64, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(65)</span>
+                                    Capacity of Candidates for Chemistry Lab
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LAB65, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(66)</span>
+                                    Size (in sq. feet) of Biology Lab, if any
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LAB66, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(67)</span>
+                                    Capacity of Candidates for Biology Lab
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.LAB67, new { })
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>COMPUTER LAB </h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <span class="widthe">(68)</span>
+                                    Size(in sq. feet) of Computer Lab
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CLAB68, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(69)</span>
+                                    Capacity of Total Candidates in Computer Lab
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CLAB69, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(70)</span>
+                                    Total no. of Computers in computer lab
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.CLAB70, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(71)</span>
+                                    Internet Facility available in Computer lab*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.CLAB71, new { })
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h4>OTHER INFORMATION RELATED TO YOUR SCHOOL </h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <span class="widthe">(72)</span>
+                                    Is EDUSAT facility available in school*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH72, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(73)</span>
+                                    Is school having gated boundary or not*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH73, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(74)</span>
+                                    If any case is pending in court against the institution?(if yes, then attach copy)*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH74, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(75)</span>
+                                    Does your institute have transport facility as per Govt. rules & regulations?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH75, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(76)</span>
+                                    Does your institute pay salaries to employees as per affiliation regulation 7 (III) through a/c payee check?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH76, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(77)</span>
+                                    Is there air cooling facility in Classrooms?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH77, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(78)</span>
+                                    Are there any smart classrooms in school?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH78, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(79)</span>
+                                    Is Organize Parents/Teachers Meeting in school ?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH79, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(80)</span>
+                                    R.O Drinking water facility?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH80, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(81)</span>
+                                    Separate toilet for boys& Girls?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH81, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(82)</span>
+                                    Play ground under institute premises reputation?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH82, new { })
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(83)</span>
+                                    Display board for special candidates facilities?*
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(m => m.OTH83, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <span class="widthe">(84)</span>
+                                    Enter Your School UDISE Code *
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(a => a.UDISECODE, new { })
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+
+
+                            @if (ViewBag.IsVerified == 1)
+                            {
+                                <h4>Fee Details</h4>
+                                <!--Tab Challan Details-->
+                                <table align="center" border="1" cellspacing="5" cellpadding="5" width="100%">
+                                    <tr>
+                                        <td>&nbsp;Challan No.</td>
+                                        <td>&nbsp;@Html.DisplayFor(a => a.ChallanId)</td>
+                                        <td>&nbsp;Challan Generate Date</td>
+                                        <td>&nbsp;@Model.StoreAllData.Tables[1].Rows[0]["CHLNDATE"].ToString()</td>
+                                        <td>&nbsp;Fee Category Name</td>
+                                        <td>&nbsp;@Model.StoreAllData.Tables[1].Rows[0]["FEECAT"].ToString()</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;Challan Fee</td>
+                                        <td>&nbsp;@Model.StoreAllData.Tables[1].Rows[0]["fee"].ToString()</td>
+                                        <td>&nbsp;Challan Late Fee </td>
+                                        <td>&nbsp;@Model.StoreAllData.Tables[1].Rows[0]["latefee"].ToString()</td>
+                                        <td>&nbsp;Challan Total Fee</td>
+                                        <td>&nbsp;@Model.StoreAllData.Tables[1].Rows[0]["Totfee"].ToString()</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp; Bank / Branch Name</td>
+                                        <td colspan="5">&nbsp;@Model.StoreAllData.Tables[1].Rows[0]["PayableAt"].ToString()</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;Bank Ref No .</td>
+                                        <td>&nbsp;@Model.StoreAllData.Tables[1].Rows[0]["J_REF_NO"].ToString()</td>
+                                        <td>&nbsp;Fee Deposit Date</td>
+                                        <td>&nbsp;@Model.StoreAllData.Tables[1].Rows[0]["DEPOSITDT"].ToString()</td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                </table>
+                                <!--Tab Challan Details-->
+                            }
+
+                        </td>
+                    </tr>
+
+
+
+                </tbody>
+            </table>
+
+        </div>
+    }
+    else
+    { <p class="rqf" style="font-size:14px;text-align:center;">Record Not Found</p>}
+</div>
+
+
+
+
+
+
+

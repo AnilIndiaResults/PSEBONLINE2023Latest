@@ -1,0 +1,247 @@
+﻿@model PSEBONLINE.Models.webSerModel
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+@using (Html.BeginForm("Index", "Webservice", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <h1>
+        Import Data From E-punjab - Session @if (Session["Session"] != null)
+        {@Session["Session"].ToString()}
+    else { Response.Redirect("~/Login"); }
+    </h1>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3">
+                UDISE CODE:
+            </div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.UdiseCode, new { @maxlength = "30", readOnly = "ReadOnly" })
+            </div>
+            <input type="Submit" value="Submit" name="cmd" />
+            <input type="submit" value="Import Selected Record" name="cmd" />
+            <input type="button" value="View All Inserted Records" onclick="javascript:document.location.href='@Url.Action("N1Formgrid", "RegistrationPortal")'" />
+
+        </div>
+        OR
+        <div class="col-md-12">
+            <div class="col-md-3">
+                IMPORT BY:
+            </div>
+            <div class="col-md-3">
+                @{
+                    List<SelectListItem> catgilist = new List<SelectListItem>();
+                    catgilist.Add(new SelectListItem { Text = "--SELECT--", Value = "0" });
+                    catgilist.Add(new SelectListItem { Text = "E-PUNJAB STUDENT ID", Value = "1" });
+                    catgilist.Add(new SelectListItem { Text = "AADHAR NO.", Value = "2" });
+
+                }
+
+                @Html.DropDownList("importBy", catgilist, new { id = "importBy" })
+
+            </div>
+            <div class="col-md-3">
+                <input type="text" id="SearchString" name="SearchString" value="@ViewBag.Searchstring" onclick="deetext()" />
+            </div>
+            <input type="submit" value="Import Records" name="cmd" />
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <div class="col-md-12">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>Id</th>
+                    <th>Udisecode</th>
+                    <th>School Name</th>
+                    <th>Student ID</th>
+                    <th>Candidate Name</th>
+                    <th>Father's Name</th>
+                    <th>Mother's Name</th>
+                    <th>Aadhar No.</th>
+                    <th>Select for Import<input type="checkbox" id="select_all" /> </th>
+                    @*<th>Update Detail</th>*@
+
+                </tr>
+                @{
+                    DateTime dt = DateTime.Now;
+                    DateTime str = DateTime.Now; //DateTime.Parse(dt.ToString("MM/dd/yyyy").Replace('-', '/'));
+                    DateTime date = str;
+
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        //if (ViewBag.pagesize == 1)
+                        //{
+                        //    Count = 0;
+                        //}
+                        //else
+                        //{
+                        //    Count = 30 * (ViewBag.pagesize - 1);
+                        //}
+                        //for (int i = 0; i < Model.StoreAllDataTable.Rows.Count; i++)
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            //var udicode = Model.StoreAllDataTable.Rows[i]["udisecode"].ToString();
+                            //var schl = Model.StoreAllDataTable.Rows[i]["SchoolName"].ToString();
+                            //var stdid = Model.StoreAllDataTable.Rows[i]["StudentID"].ToString();
+                            //var canName = Model.StoreAllDataTable.Rows[i]["StudentName"].ToString();
+                            //var Fname = Model.StoreAllDataTable.Rows[i]["FatherName"].ToString();
+                            //var Mname = Model.StoreAllDataTable.Rows[i]["MotherName"].ToString();
+                            var udicode = Model.StoreAllData.Tables[0].Rows[i]["udisecode"].ToString();
+                            var schl = Model.StoreAllData.Tables[0].Rows[i]["SchoolName"].ToString();
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["StudentID"].ToString();
+                            var canName = Model.StoreAllData.Tables[0].Rows[i]["StudentName"].ToString();
+                            var Fname = Model.StoreAllData.Tables[0].Rows[i]["FatherName"].ToString();
+                            var Mname = Model.StoreAllData.Tables[0].Rows[i]["MotherName"].ToString();
+                            var uid = Model.StoreAllData.Tables[0].Rows[i]["StudentUID"].ToString();
+                            var ImpStatus = Model.StoreAllData.Tables[0].Rows[i]["ImpStatus"].ToString();
+                            Count = i + 1;
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @udicode
+                                </td>
+                                <td>
+                                    @schl
+                                </td>
+                                <td>
+                                    @stdid
+                                </td>
+
+                                <td>
+                                    @canName
+                                </td>
+                                <td>
+                                    @Fname
+                                </td>
+                                <td>
+                                    @Mname
+                                </td>
+                                <td>
+                                    @uid
+                                </td>
+
+                                <td>
+                                    @if (@ImpStatus.ToUpper() != "OK")
+                                    {
+                                        <span>@ImpStatus</span>
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="@stdid" name="ChkCNinthClass" class="checkbox" />
+
+                                    }
+
+                                </td>
+
+                            </tr>
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+
+}
+@{
+    if (TempData["result"] != null)
+    {
+        @*if (TempData["result"].ToString() == "1" && ViewData["OutStatus"].ToString() == "10")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Duplicate Data");
+            </script>
+        }*@
+        if (TempData["result"].ToString() == "1")
+        {
+
+
+            <script type="text/javascript" language="javascript">
+                var impcn = @TempData["TotImported"];
+                //alert(impcn);
+                alert(impcn+" Records Imported Successfully");
+                document.location.href = '@Url.Action("Index", "Webservice")';
+            </script>
+        }
+        else if (TempData["result"].ToString() == "5")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Webservice Of Epunjab  Is Not Responding , Please Try After Some Time");
+            </script>
+
+        }
+        else if (TempData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Record Already Exist");
+                document.location.href = '@Url.Action("Index", "Webservice")';
+            </script>
+        }
+        @*if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                        alert("Data saved Successfully");
+                </script>}
+            else if (ViewData["result"].ToString() == "0")
+            {
+                <script type="text/javascript" language="javascript">
+                        alert("Data Already Exist");
+                </script>
+            }
+            else if (ViewData["result"].ToString() == "-1")
+            {
+                <script type="text/javascript" language="javascript">
+                        alert("Data not saved..plz try again");
+                </script>
+            }
+            else if (ViewData["result"].ToString() == "-3")
+            {
+                <script type="text/javascript" language="javascript">
+                        alert("Duplicate Aadhar number..plz try again");
+                </script>
+            }*@
+    }
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#select_all").change(function () {
+            //"select all" change
+            //alert("abc");
+            var status = this.checked; // "select all" checked status
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                this.checked = status; //change ".checkbox" checked status
+            });
+        });
+
+        //uncheck "select all", if one of the listed checkbox item is unchecked
+        $('.checkbox').change(function () { //".checkbox" change
+
+            //alert($(this).val());
+            if (this.checked == false) { //if this item is unchecked
+                $("#select_all")[0].checked = false; //change "select all" checked status to false
+            }
+        });
+
+    });
+</script>

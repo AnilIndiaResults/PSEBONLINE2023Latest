@@ -1,0 +1,64 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+@{
+    if (Session["LoginSession"] != null)
+    {
+        PSEBONLINE.Models.LoginSession LoginSession = (PSEBONLINE.Models.LoginSession)Session["LoginSession"];
+
+        using (Html.BeginForm("SchoolBasedExamsAgree", "School", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+    <h1>
+        School Based Exams Guidelines For Examination - Session @LoginSession.CurrentSession
+    </h1>
+            <div class="row">
+                <div class="col-md-9">
+                    <h4>
+                        Instructions
+                    </h4>
+                </div>
+                <div class="col-md-3 text-right"> <a class="btn" href="@ViewBag.Dpdf" target="_blank">Download/Print Instructions</a></div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                    @if (TempData["SchoolBasedExamsClass"] != null)
+                    {
+                        if (TempData["SchoolBasedExamsClass"].ToString() == "Matric")
+                        {
+                            <iframe src="../../PDF/Instructions_SchoolBasedExams.pdf" class="col-lg-12 col-md-12 col-sm-12 iframeh"></iframe>
+                        }
+                        else if (TempData["SchoolBasedExamsClass"].ToString() == "Senior")
+                        {
+                            <iframe src="../../PDF/Instructions_SchoolBasedExams.pdf" class="col-lg-12 col-md-12 col-sm-12 iframeh"></iframe>
+                        }
+                        else if (TempData["SchoolBasedExamsClass"].ToString() == "OMatric")
+                        {
+                            <iframe src="../../PDF/Instructions_SchoolBasedExamsOpen.pdf" class="col-lg-12 col-md-12 col-sm-12 iframeh"></iframe>
+                        }
+                        else if (TempData["SchoolBasedExamsClass"].ToString() == "OSenior")
+                        {
+                            <iframe src="../../PDF/Instructions_SchoolBasedExamsOpen.pdf" class="col-lg-12 col-md-12 col-sm-12 iframeh"></iframe>
+                        }
+                    }
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                    <p>
+                        @Html.RadioButtonFor(model => model.Agree, "Agree", new { id = "Agree", @checked = "true" }) <span class="kdsfont">Ìè× ÓÚÕÌ¼ ÕÙ </span> (I Agree)
+                        @Html.RadioButtonFor(model => model.Agree, "NotAgree", new { id = "NotAgree", }) <span class="kdsfont">Ìè× ÓÚÕÌ¼ ÅÕÛ× ÕÙ</span> (I do not Agree)
+                    </p>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 text-center">
+                    <input type="submit" id="Submit" value="Submit" />
+
+                    <a href="/School/SchoolBasedExamsPortal" class="btn">Back</a>
+                </div>
+
+            </div>
+
+        }
+    } }
+

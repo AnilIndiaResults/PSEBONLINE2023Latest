@@ -1,0 +1,162 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "FinalExamResult";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>Final Exam Result</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("FinalExamResult", "Admin", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-2"> Select Year   @Html.DropDownList("Year", new SelectList(ViewBag.MyYear, "Value", "Text", ViewBag.SelectedYear), "--All---", new { required = "required" })</div>
+                <div class="col-md-2">Select School Code   @Html.DropDownList("totalcountlist", new SelectList(ViewBag.MySchcode, "Value", "Text", ViewBag.SelectedItemcode), "--Select---")</div>
+                <div class="col-md-2">Enter School Code @Html.TextBoxFor(m => m.TotalSearchString, new { id = "TotalSearchString", onkeypress = "return isNumberKey(event);", @maxlength = "7", required = "required" })</div>
+                <div class="col-md-2">Select Class   @Html.DropDownList("SelClass", new SelectList(ViewBag.MyClass, "Value", "Text", ViewBag.SelectedClass), "--All---")</div>
+                <div class="col-md-2">Search By:@Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---")</div>
+                <div class="col-md-2">Enter Text: <input type="text" id="SearchByString" name="SearchByString" value="@Request["SearchByString"]" /></div>
+                <div class="col-md-2">&nbsp;<br /><input type="submit" name="submit" value="Search" />&nbsp;&nbsp; <input type="submit" name="submit" value="Reset" /> </div>
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">Grid Total:  @ViewBag.TotalCount1</div>   
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th width="8%">ROLL</th>
+                    <th width="10%">REG No.</th>
+                    <th width="20%">NAME/FATHER NAME/MOTHER NAME</th>                    
+                    <th width="7%">SCHL</th>
+                    <th width="15%">School/Distict</th>                    
+                    <th width="10%">SET/PHONE</th>
+                    <th width="10%">TOTAL/TOTMAX</th> 
+                    <th width="10%">RESULT</th>                    
+                    <th width="10%">Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var SchoolNameFull = Model.StoreAllData.Tables[0].Rows[i]["SchoolNameFull"].ToString();
+                            var Phone = Model.StoreAllData.Tables[0].Rows[i]["Phone"].ToString();
+                            var ID = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                            var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                            var REGNO = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                            var NAME = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                            var FNAME = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var MNAME = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                            var FORM = Model.StoreAllData.Tables[0].Rows[i]["FORM"].ToString();
+                            var SET = Model.StoreAllData.Tables[0].Rows[i]["SET"].ToString();
+                            var PHONE = Model.StoreAllData.Tables[0].Rows[i]["PHONE"].ToString();
+                            var TOTAL = Model.StoreAllData.Tables[0].Rows[i]["TOTAL"].ToString() +"/"+ Model.StoreAllData.Tables[0].Rows[i]["TOTMAX"].ToString();
+                            var RESULT = Model.StoreAllData.Tables[0].Rows[i]["RESULT"].ToString();
+                            var GRADE = Model.StoreAllData.Tables[0].Rows[i]["GRADE"].ToString();
+                            var RESULTDTL = Model.StoreAllData.Tables[0].Rows[i]["RESULTDTL"].ToString();
+                            var Resultyear = Model.StoreAllData.Tables[0].Rows[i]["Resultyear"].ToString();
+                            <tr>
+                                <td>
+                                    @ROLL
+                                </td>
+                                <td>
+                                    @REGNO
+                                </td>
+                                <td>
+                                   @NAME @Html.Raw("/") @FNAME @Html.Raw("/") @MNAME
+                                </td>
+                                <td>
+                                    @SCHL
+                                </td>
+                                <td>
+                                    @SchoolNameFull
+                                </td>
+                                <td>
+                                    @SET@Html.Raw("<br/>")@Phone
+                                </td>
+
+                                <td>
+                                    @TOTAL
+                                </td>
+                                <td>
+                                    @RESULTDTL
+                                </td>                                                          
+                                <td>
+                                  @Html.ActionLink("View Result", "ViewFinalResult", new { id = ROLL, Resultyear= Resultyear }, new { })
+                                </td>
+                            </tr>
+
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                        Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {   @:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp = ViewBag.pagesize + 1;
+                                                <a href="~/Admin/FinalExamResult?page=@dp">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                <a href="~/Admin/FinalExamResult?page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var dp = ViewBag.pagesize - 1;
+                                            <a href="~/Admin/FinalExamResult?page=1"><<</a>
+                                                @Html.Raw("&nbsp;");
+                                            <a href="~/Admin/FinalExamResult?page=@dp">< Prev</a>
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp1 = ViewBag.pagesize + 1;
+                                                <a href="~/Admin/FinalExamResult?page=@dp1">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                <a href="~/Admin/FinalExamResult?page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="11">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

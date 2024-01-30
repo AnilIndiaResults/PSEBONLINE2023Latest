@@ -1,0 +1,349 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "PracExamViewList";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>List of Candidates for Practical Exam,  March 2023</h1>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+
+@using (Html.BeginForm("PracExamViewList", "School", FormMethod.Post, new { id = "CCE", enctype = "multipart/form-data" }))
+{
+    <fieldset style="margin-bottom:15px">
+        <legend>Search</legend>
+        <form id="myForm">
+            <div class="row" id="divMain1">
+                <div class="col-md-12">Centre Code & Name:  @ViewBag.CentreCode<span>&</span> @ViewBag.CentreName</div>
+                <div class="clearefix"></div>
+                <div class="col-md-6">Subject Code & Name: @ViewBag.SubCode<span>&</span> @ViewBag.SubName</div>
+                <div class="col-md-6">Min/Max Marks: @ViewBag.PrMin<span>&</span> @ViewBag.PrMax</div>
+            </div>
+                <div class="clearefix"></div>
+                <div class="row">
+                    <div class="col-md-2" style="display:none">
+                        Select Exam Type:  @Html.DropDownList("SelRP", new SelectList(ViewBag.MyRP, "Value", "Text", ViewBag.SelectedRP), "--All---", new { @class = "" })
+                    </div>
+                    <div class="col-md-2">
+                        Select Status:  @Html.DropDownList("SelStatus", new SelectList(ViewBag.MyStatus, "Value", "Text", ViewBag.SelectedStatus), "--All---", new { @class = "" })
+                    </div>
+                    <div class="col-md-2">
+                        Search By:  @Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), "Select", new { @class = "" })
+                    </div>
+                    <div class="col-md-2">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-6">
+                        <br />
+                        <input type="submit" value="Search" />
+                        @Html.Hidden("cid", (string)ViewBag.cid)
+                        @*<a href="/School/PracticalExamMarks" class="btn">Back</a>*@
+                        @*<a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a>*@
+                        <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("PracticalExamMarks", "School")'" />
+
+                        @{
+                            if (ViewBag.LastDateofSub != null)
+                            {
+                                DateTime todayDate = DateTime.Today;
+                                DateTime LastDate = Convert.ToDateTime(ViewBag.LastDateofSub);
+
+                                if (todayDate <= LastDate)
+                                {
+                                    <a href="/School/PracExamEnterMarks/@ViewBag.cid" class="btn">Click here to Enter Marks</a>
+                                }
+                                else
+                                {
+                                    <span class="rqf">Last date is over for Enter Marks or Final Submit</span>
+                                }
+                            }
+                        }
+
+
+
+
+                    </div>
+                </div>
+
+                <div id="dialog" style="display: none" class="kdsfont">
+                    ÓÛ.ÓÛ.¥Û. Âã ¤â¨ ÓÕÛ ¤¼ã ÂÏÝÓ¼ ÊÏã ¬¥ã ÕÅ, Ú¥ÓÂØ ÏÇ ÚÆâñ¶ °èó¨ ¨Ï ÚÐ¤Ø Ú¬¤Ø Õè ¤¼ã Ú¥Ó ÚÒó° ¨ë¥Û ÕëÏ ÓëÄ ÉØ¨Û ÅÕÛ× Õè¢Ìè× Ú¥Ó ÕÂØÚ¥¼ ¼ë× ²Ø»Þ ÕÙ Ú¨ ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¦ÝÆÏâ¼ ¸Ø¶Ø ÐØ¨ Õë ²ØÒã¬Ø, Ú¥Ó ¦ÝÆÏâ¼ Ú¨Óã ÒÛ ÓÞÏ¼ ÚÒó° ¨ë¥Û ÒÛ ÓëÄ ÅÕÛ× ¨Û¼Û/¨ÏÒØ¥Û ²Ø Ó¨ã¬Û¢ Ìè× ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¨ÏÅ Ð¥Û ÓÚÕÌ¼ ÕÙ¢
+                </div>
+</form>
+    </fieldset>
+}
+<div id="loading1"></div>
+<div class="clearfix"></div>
+<div class="row" id="divMain1">
+    <div class="col-md-4">Grid Total:  @ViewBag.TotalCount1</div>
+       <div class="col-md-8 text-right rqf"><span style="font-size:20px">Last Date : @Convert.ToDateTime(ViewBag.LastDateofSub).ToString("dd/MM/yyyy")</span></div>
+    
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="5%">Exam Type</th>
+                    <th width="10%">StdId/RefNo</th>
+                    <th width="5%">Roll No</th>
+                    <th width="5%">Reg No</th>
+                    <th width="26%">Name/Fname/Mname</th>
+                    <th width="7%">Marks</th>
+                    <th width="10%">Practical Date</th>
+                    <th width="4%">Status</th>
+                    <th width="4%">Lot</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        DateTime todayDate = DateTime.Today;
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var ExamType = Model.StoreAllData.Tables[0].Rows[i]["RP1"].ToString();
+                            var StdId = Model.StoreAllData.Tables[0].Rows[i]["StdId"].ToString();
+                            var Roll = Model.StoreAllData.Tables[0].Rows[i]["Roll"].ToString();
+                            var Regno = Model.StoreAllData.Tables[0].Rows[i]["Regno"].ToString();
+                            var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                            var FName = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                            var MName = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+                            var Marks = Model.StoreAllData.Tables[0].Rows[i]["Marks"].ToString();
+                            var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                            var fpLot = Model.StoreAllData.Tables[0].Rows[i]["fpLot"].ToString();
+                            var fpLot2 = Model.StoreAllData.Tables[0].Rows[i]["fpLot2"].ToString();
+                            var prmin = Convert.ToString(Model.StoreAllData.Tables[0].Rows[i]["prmin"].ToString());
+                            var prmax = Convert.ToString(Model.StoreAllData.Tables[0].Rows[i]["prmax"].ToString());
+                            var PracDate = Model.StoreAllData.Tables[0].Rows[i]["PracDate"].ToString();
+                            DateTime LastDate = Convert.ToDateTime(Model.StoreAllData.Tables[0].Rows[i]["LastDate"].ToString());                           
+                            var FullName = Name + "/" + FName + "/" + MName;
+                            Count = Count + 1;
+                                <tr>
+                                    <td>@ExamType  </td>
+                                    <td>@StdId</td>
+                                    <td>@Roll</td>
+                                    <td>@Regno</td>
+                                    <td>@FullName</td>
+                                    @*<td>@FName</td>
+                            <td>@MName</td>*@
+                                    <td>@Marks</td>
+                                    <td>@PracDate</td>
+                                    <td>@Status</td>
+                                    <td>@fpLot</td>
+                                </tr>
+
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="11">
+                                            Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                            @if (ViewBag.pagesize == 1)
+                                            {@:<<
+                                                @Html.Raw("&nbsp;");
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp = ViewBag.pagesize + 1;
+                                                    <a href="~/School/PracExamViewList?id=@ViewBag.cid&page=@dp">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/School/PracExamViewList?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var dp = ViewBag.pagesize - 1;
+                                                <a href="~/School/PracExamViewList?id=@ViewBag.cid&page=1"><<</a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/School/PracExamViewList?id=@ViewBag.cid&page=@dp">< Prev</a>
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp1 = ViewBag.pagesize + 1;
+                                                    <a href="~/School/PracExamViewList?id=@ViewBag.cid&page=@dp1">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/School/PracExamViewList?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+
+                            }
+                        }
+                            else
+                            {
+                                <tr>
+                                    <td colspa = "8">
+                                         @ViewBag.Message
+                                     </td>
+
+                                 </tr>
+                            }
+                    }
+                </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".chkclass").off('keypress');
+
+        $(".chkclass").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 65) || (charCode == 67) || (charCode == 97) || (charCode == 99)) {
+                return true;
+            }
+            else {
+                alert("Invalid character, Enter Numeric Value or 'A' or 'C' !!");
+                return false;
+            }
+        });
+
+
+        var value = document.getElementById('SelFilter').value;
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0'
+                //maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+    var form = $("#searchform").serialize();
+    $("#btnNext").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Next',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#btnPrevious").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Previous',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+            success: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#SelFilter").change(function () {
+        var value = document.getElementById('SelFilter').value;
+        $('#SearchString').val('');
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0'
+                //maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+
+    });
+
+</script>
+
+
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+    /*input:required {
+         background-color: #FF9494 !important;
+        border:1px solid #999;
+    }*/
+</style>

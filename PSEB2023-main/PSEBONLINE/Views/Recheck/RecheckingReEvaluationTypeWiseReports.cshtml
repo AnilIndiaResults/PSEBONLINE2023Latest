@@ -1,0 +1,356 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "Rechecking ReEvaluation TypeWise Reports";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4L.css" />
+<h1 class="noprint">Rechecking-ReEvaluation TypeWise Reports</h1>
+<div class="row">
+    <div class="col-md-12 noprint">
+        @using (Html.BeginForm("RecheckingReEvaluationTypeWiseReports", "Recheck", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+        {
+        <div class="row">
+            <div class="col-md-3">
+                Select Type <span class="rqf">*</span>
+                @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem1", required = "required" })
+            </div>
+            <div class="col-md-2">
+                Session <span class="rqf">*</span>
+                @Html.DropDownList("batch", new SelectList(ViewBag.Mybatch, "Value", "Text", ViewBag.Month), "--Select Session---", new { @class = "", id = "batch", required = "required" })
+            </div>
+            <div class="col-md-2">
+                Class<span class="rqf">*</span>
+                @Html.DropDownList("Class", new SelectList(ViewBag.Mycls, "Value", "Text", ViewBag.Selectedcls), "--Select---", new { @class = "", id = "Class", required = "required" })
+            </div>
+            <div class="col-md-2">
+                Module   @Html.DropDownList("Module", new SelectList(ViewBag.MyModule, "Value", "Text", ViewBag.SelectedModule), "--All---", new { @class = "" })
+            </div>
+            <div class="col-md-2">
+                Exam Type  @Html.DropDownList("RP", new SelectList(ViewBag.MyRP, "Value", "Text", ViewBag.SelectedRP), "--All---", new { @class = "", id = "RP" })
+            </div>
+            <div class="col-md-3">
+                <br />
+                <input type="submit" name="submit" value="Submit" />
+                <a href="/Report/RecheckSummaryReport" class="btn">Back</a>
+                <!-- <input type="button" value="Back" class="btn" onclick="history.go(-1)" /> -->
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12"><p style="height:50px"></p></div>
+        </div>
+        }
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-right noprint">
+        @if (ViewBag.TotalCount > 0)
+        {
+            <input type="button" value="Print" class="btn" onclick="window.print()" />
+        }
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="col-md-12">
+        @{
+            if (ViewBag.SelectedItem == "2")
+            { <table width="100%" border="1">
+                    <tr>
+                        <td colspan="12" align="center">
+                            Punjab School Education Board<br />
+                            List of More Than 10% Marks Change Cases @ViewBag.Month
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" align="left">
+                            Class : @{
+                                if (ViewBag.Selectedcls == "12")
+                                { <span>Senior</span> }
+                                else
+                                { <span>Matric</span> }
+                            }
+                        </td>
+                        <td colspan="6" align="right">Date : @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt") &nbsp;<br /></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;Sr.</td>
+                        <td>&nbsp;Roll</td>
+                        <td>&nbsp;Subject</td>
+                        <td>&nbsp;Bar/Bag/Marks(1)</td>
+                        <td>&nbsp;Bar/Bag/Marks(2)</td>
+                        <td>&nbsp;Bar/Bag/Marks(3)</td>
+                        <td>&nbsp;Old Result</td>
+                        <td>&nbsp;New Result</td>
+                        <td>&nbsp;M.Marks</td>
+                        <td>&nbsp;Old</td>
+                        <td>&nbsp;New</td>
+                        <td>&nbsp;Diff</td>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int srno = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+
+                                var Dist = Model.StoreAllData.Tables[0].Rows[i]["Dist"].ToString();
+                                var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                                var Month = Model.StoreAllData.Tables[0].Rows[i]["Month"].ToString();
+                                var Year = Model.StoreAllData.Tables[0].Rows[i]["Year"].ToString();
+                                var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                var RefNo = Model.StoreAllData.Tables[0].Rows[i]["RefNo"].ToString();
+                                var Roll = Model.StoreAllData.Tables[0].Rows[i]["Roll"].ToString();
+                                var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                var FName = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                                var SubCode = Model.StoreAllData.Tables[0].Rows[i]["SubCode"].ToString();
+                                var SubNM = Model.StoreAllData.Tables[0].Rows[i]["SubNM"].ToString();
+                                var IsRecheck = Model.StoreAllData.Tables[0].Rows[i]["IsRecheck"].ToString();
+                                var IsReEvaluation = Model.StoreAllData.Tables[0].Rows[i]["IsReEvaluation"].ToString();
+                                var IsRTI = Model.StoreAllData.Tables[0].Rows[i]["IsRTI"].ToString();
+                                var SET = Model.StoreAllData.Tables[0].Rows[i]["SET"].ToString();
+                                var ConductLot = Model.StoreAllData.Tables[0].Rows[i]["ConductLot"].ToString();
+                                var Bag1 = Model.StoreAllData.Tables[0].Rows[i]["Bag1"].ToString();
+                                var Bar1 = Model.StoreAllData.Tables[0].Rows[i]["Bar1"].ToString();
+                                var Marks1 = Model.StoreAllData.Tables[0].Rows[i]["Marks1"].ToString();
+                                var ExEpunjab1 = Model.StoreAllData.Tables[0].Rows[i]["ExEpunjab1"].ToString();
+                                var ExDetail1 = Model.StoreAllData.Tables[0].Rows[i]["ExDetail1"].ToString();
+                                var HeEpunjab1 = Model.StoreAllData.Tables[0].Rows[i]["HeEpunjab1"].ToString();
+                                var HeDetail1 = Model.StoreAllData.Tables[0].Rows[i]["HeDetail1"].ToString();
+                                var CaEpunjab1 = Model.StoreAllData.Tables[0].Rows[i]["CaEpunjab1"].ToString();
+                                var CaDetail1 = Model.StoreAllData.Tables[0].Rows[i]["CaDetail1"].ToString();
+                                var EvnCode1 = Model.StoreAllData.Tables[0].Rows[i]["EvnCode1"].ToString();
+                                var EvnDetail1 = Model.StoreAllData.Tables[0].Rows[i]["EvnDetail1"].ToString();
+                                var Bag2 = Model.StoreAllData.Tables[0].Rows[i]["Bag2"].ToString();
+                                var Bar2 = Model.StoreAllData.Tables[0].Rows[i]["Bar2"].ToString();
+                                var Marks2 = Model.StoreAllData.Tables[0].Rows[i]["Marks2"].ToString();
+                                var ExEpunjab2 = Model.StoreAllData.Tables[0].Rows[i]["ExEpunjab2"].ToString();
+                                var ExDetail2 = Model.StoreAllData.Tables[0].Rows[i]["ExDetail2"].ToString();
+                                var HeEpunjab2 = Model.StoreAllData.Tables[0].Rows[i]["HeEpunjab2"].ToString();
+                                var HeDetail2 = Model.StoreAllData.Tables[0].Rows[i]["HeDetail2"].ToString();
+                                var CaEpunjab2 = Model.StoreAllData.Tables[0].Rows[i]["CaEpunjab2"].ToString();
+                                var CaDetail2 = Model.StoreAllData.Tables[0].Rows[i]["CaDetail2"].ToString();
+                                var EvnCode2 = Model.StoreAllData.Tables[0].Rows[i]["EvnCode2"].ToString();
+                                var EvnDetail2 = Model.StoreAllData.Tables[0].Rows[i]["EvnDetail2"].ToString();
+                                var Bag3 = Model.StoreAllData.Tables[0].Rows[i]["Bag3"].ToString();
+                                var Bar3 = Model.StoreAllData.Tables[0].Rows[i]["Bar3"].ToString();
+                                var Marks3 = Model.StoreAllData.Tables[0].Rows[i]["Marks3"].ToString();
+                                var ExEpunjab3 = Model.StoreAllData.Tables[0].Rows[i]["ExEpunjab3"].ToString();
+                                var ExDetail3 = Model.StoreAllData.Tables[0].Rows[i]["ExDetail3"].ToString();
+                                var HeEpunjab3 = Model.StoreAllData.Tables[0].Rows[i]["HeEpunjab3"].ToString();
+                                var HeDetail3 = Model.StoreAllData.Tables[0].Rows[i]["HeDetail3"].ToString();
+                                var CaEpunjab3 = Model.StoreAllData.Tables[0].Rows[i]["CaEpunjab3"].ToString();
+                                var CaDetail3 = Model.StoreAllData.Tables[0].Rows[i]["CaDetail3"].ToString();
+                                var EvnCode3 = Model.StoreAllData.Tables[0].Rows[i]["EvnCode3"].ToString();
+                                var EvnDetail3 = Model.StoreAllData.Tables[0].Rows[i]["EvnDetail3"].ToString();
+                                var OldResult = Model.StoreAllData.Tables[0].Rows[i]["OldResult"].ToString();
+                                var NewResult = Model.StoreAllData.Tables[0].Rows[i]["NewResult"].ToString();
+                                var Diff1 = Model.StoreAllData.Tables[0].Rows[i]["Diff1"].ToString();
+                                var Diff2 = Model.StoreAllData.Tables[0].Rows[i]["Diff2"].ToString();
+                                var MaxMarks = Model.StoreAllData.Tables[0].Rows[i]["MaxMarks"].ToString();
+                                var Address = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+                                var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                var ResultSheetLocation = Model.StoreAllData.Tables[0].Rows[i]["ResultSheetLocation"].ToString();
+                                var Diff = Model.StoreAllData.Tables[0].Rows[i]["Diff"].ToString();
+
+                                var P1 = Model.StoreAllData.Tables[0].Rows[i]["P1"].ToString();
+                                var P2 = Model.StoreAllData.Tables[0].Rows[i]["P2"].ToString();
+                                var P3 = Model.StoreAllData.Tables[0].Rows[i]["P3"].ToString();
+                                var pc_diff = Model.StoreAllData.Tables[0].Rows[i]["pc_diff"].ToString();
+
+                                srno = srno + 1;
+                                <tr>
+                                    <td>&nbsp;@srno</td>
+                                    <td>&nbsp;@Roll</td>
+                                    <td>&nbsp;@SubCode @SubNM</td>
+                                    <td>&nbsp;@Bag1/@Bar1/@Marks1/@EvnCode1</td>
+                                    <td>&nbsp;@Bag2/@Bar2/@Marks2/@EvnCode2</td>
+                                    <td>&nbsp;@Bag3/@Bar3/@Marks3/@EvnCode3</td>
+                                    <td>&nbsp;@OldResult</td>
+                                    <td>&nbsp;@NewResult</td>
+                                    <td>&nbsp;@MaxMarks</td>
+                                    <td>&nbsp;@Marks1 / @P1%</td>
+                                    <td>&nbsp;@Marks2 / @P2%</td>
+                                    <td>&nbsp;@Diff1 / @pc_diff%</td>
+
+                                </tr>
+                                <tr>
+                                    <td colspan="12">
+                                        @if (Marks1 != "")
+                                        {
+                                            <span>&nbsp; Marking Detail : @ExEpunjab1,@ExDetail1<br></span>
+                                        }
+                                        @if (Marks2 != "")
+                                        {
+                                            <!-- <span>&nbsp;2<sup>nd</sup> Marking Detail : @ExEpunjab2,@ExDetail2<br></span> -->
+                                        }
+                                        @if (Marks3 != "")
+                                        {
+                                            <!-- <span>&nbsp;3<sup>rd</sup> Marking Detail : @ExEpunjab3,@ExDetail3</span> -->
+                                        }
+                                        <!-- @Name/@FName Add :@Address- @Mobile</td> -->
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="12" class="rqf">&nbsp;No Record Found</td>
+                            </tr>
+                        }
+                    }
+                </table> }
+            else if (ViewBag.SelectedItem == "1")
+            {
+
+                <table width="100%" border="1">
+                    <tr>
+                        <td colspan="11" align="center">
+                            Punjab School Education Board<br />
+                            <!-- List of More Than 10% Marks Change Cases -->
+                            Complete Staff List @ViewBag.Month
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" align="left">
+                            Class : @{
+                                if (ViewBag.Selectedcls == "12")
+                                { <span>Senior</span> }
+                                else
+                                { <span>Matric</span> }
+                            }
+                        </td>
+                        <td colspan="5" align="right">Date : @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt") &nbsp;<br /></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;Sr.</td>
+                        <td>&nbsp;Roll</td>
+                        <td>&nbsp;Subject</td>
+                        <td>&nbsp;Bar/Bag/Marks(1)</td>
+                        <td>&nbsp;Bar/Bag/Marks(2)</td>
+                        <td>&nbsp;Bar/Bag/Marks(3)</td>
+                        <td>&nbsp;Avg Marks(2),(3)</td>
+                        <td>&nbsp;M Marks</td>
+                        <td>&nbsp;Differance (1),(2)</td>
+                        <td>&nbsp;Old Result </td>
+                        <td>&nbsp;New Result </td>
+                    </tr>
+
+                    @{
+
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int srno = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+
+                                var Dist = Model.StoreAllData.Tables[0].Rows[i]["Dist"].ToString();
+                                var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                                var Month = Model.StoreAllData.Tables[0].Rows[i]["Month"].ToString();
+                                var Year = Model.StoreAllData.Tables[0].Rows[i]["Year"].ToString();
+                                var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                var RefNo = Model.StoreAllData.Tables[0].Rows[i]["RefNo"].ToString();
+                                var Roll = Model.StoreAllData.Tables[0].Rows[i]["Roll"].ToString();
+                                var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                var FName = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                                var SubCode = Model.StoreAllData.Tables[0].Rows[i]["SubCode"].ToString();
+                                var SubNM = Model.StoreAllData.Tables[0].Rows[i]["SubNM"].ToString();
+                                var IsRecheck = Model.StoreAllData.Tables[0].Rows[i]["IsRecheck"].ToString();
+                                var IsReEvaluation = Model.StoreAllData.Tables[0].Rows[i]["IsReEvaluation"].ToString();
+                                var IsRTI = Model.StoreAllData.Tables[0].Rows[i]["IsRTI"].ToString();
+                                var SET = Model.StoreAllData.Tables[0].Rows[i]["SET"].ToString();
+                                var ConductLot = Model.StoreAllData.Tables[0].Rows[i]["ConductLot"].ToString();
+                                var Bag1 = Model.StoreAllData.Tables[0].Rows[i]["Bag1"].ToString();
+                                var Bar1 = Model.StoreAllData.Tables[0].Rows[i]["Bar1"].ToString();
+                                var Marks1 = Model.StoreAllData.Tables[0].Rows[i]["Marks1"].ToString();
+                                var ExEpunjab1 = Model.StoreAllData.Tables[0].Rows[i]["ExEpunjab1"].ToString();
+                                var ExDetail1 = Model.StoreAllData.Tables[0].Rows[i]["ExDetail1"].ToString();
+                                var HeEpunjab1 = Model.StoreAllData.Tables[0].Rows[i]["HeEpunjab1"].ToString();
+                                var HeDetail1 = Model.StoreAllData.Tables[0].Rows[i]["HeDetail1"].ToString();
+                                var CaEpunjab1 = Model.StoreAllData.Tables[0].Rows[i]["CaEpunjab1"].ToString();
+                                var CaDetail1 = Model.StoreAllData.Tables[0].Rows[i]["CaDetail1"].ToString();
+                                var EvnCode1 = Model.StoreAllData.Tables[0].Rows[i]["EvnCode1"].ToString();
+                                var EvnDetail1 = Model.StoreAllData.Tables[0].Rows[i]["EvnDetail1"].ToString();
+                                var Bag2 = Model.StoreAllData.Tables[0].Rows[i]["Bag2"].ToString();
+                                var Bar2 = Model.StoreAllData.Tables[0].Rows[i]["Bar2"].ToString();
+                                var Marks2 = Model.StoreAllData.Tables[0].Rows[i]["Marks2"].ToString();
+                                var ExEpunjab2 = Model.StoreAllData.Tables[0].Rows[i]["ExEpunjab2"].ToString();
+                                var ExDetail2 = Model.StoreAllData.Tables[0].Rows[i]["ExDetail2"].ToString();
+                                var HeEpunjab2 = Model.StoreAllData.Tables[0].Rows[i]["HeEpunjab2"].ToString();
+                                var HeDetail2 = Model.StoreAllData.Tables[0].Rows[i]["HeDetail2"].ToString();
+                                var CaEpunjab2 = Model.StoreAllData.Tables[0].Rows[i]["CaEpunjab2"].ToString();
+                                var CaDetail2 = Model.StoreAllData.Tables[0].Rows[i]["CaDetail2"].ToString();
+                                var EvnCode2 = Model.StoreAllData.Tables[0].Rows[i]["EvnCode2"].ToString();
+                                var EvnDetail2 = Model.StoreAllData.Tables[0].Rows[i]["EvnDetail2"].ToString();
+                                var Bag3 = Model.StoreAllData.Tables[0].Rows[i]["Bag3"].ToString();
+                                var Bar3 = Model.StoreAllData.Tables[0].Rows[i]["Bar3"].ToString();
+                                var Marks3 = Model.StoreAllData.Tables[0].Rows[i]["Marks3"].ToString();
+                                var ExEpunjab3 = Model.StoreAllData.Tables[0].Rows[i]["ExEpunjab3"].ToString();
+                                var ExDetail3 = Model.StoreAllData.Tables[0].Rows[i]["ExDetail3"].ToString();
+                                var HeEpunjab3 = Model.StoreAllData.Tables[0].Rows[i]["HeEpunjab3"].ToString();
+                                var HeDetail3 = Model.StoreAllData.Tables[0].Rows[i]["HeDetail3"].ToString();
+                                var CaEpunjab3 = Model.StoreAllData.Tables[0].Rows[i]["CaEpunjab3"].ToString();
+                                var CaDetail3 = Model.StoreAllData.Tables[0].Rows[i]["CaDetail3"].ToString();
+                                var EvnCode3 = Model.StoreAllData.Tables[0].Rows[i]["EvnCode3"].ToString();
+                                var EvnDetail3 = Model.StoreAllData.Tables[0].Rows[i]["EvnDetail3"].ToString();
+                                var OldResult = Model.StoreAllData.Tables[0].Rows[i]["OldResult"].ToString();
+                                var NewResult = Model.StoreAllData.Tables[0].Rows[i]["NewResult"].ToString();
+                                var Diff1 = Model.StoreAllData.Tables[0].Rows[i]["Diff1"].ToString();
+                                var Diff2 = Model.StoreAllData.Tables[0].Rows[i]["Diff2"].ToString();
+                                var MaxMarks = Model.StoreAllData.Tables[0].Rows[i]["MaxMarks"].ToString();
+                                var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                var Address = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+                                var Diff = Model.StoreAllData.Tables[0].Rows[i]["Diff"].ToString();
+                                var ResultSheetLocation = Model.StoreAllData.Tables[0].Rows[i]["ResultSheetLocation"].ToString();
+
+
+                                var P1 = Model.StoreAllData.Tables[0].Rows[i]["P1"].ToString();
+                                var P2 = Model.StoreAllData.Tables[0].Rows[i]["P2"].ToString();
+                                var P3 = Model.StoreAllData.Tables[0].Rows[i]["P3"].ToString();
+                                var pc_diff = Model.StoreAllData.Tables[0].Rows[i]["pc_diff"].ToString();
+                                srno = srno + 1;
+                                <tr>
+                                    <td>&nbsp;@srno</td>
+                                    <td>&nbsp;@Roll</td>
+                                    <td>&nbsp;@SubCode @SubNM</td>
+                                    <td>&nbsp;@Bag1/@Bar1/@Marks1/@EvnCode1</td>
+                                    <td>&nbsp;@Bag2/@Bar2/@Marks2/@EvnCode2</td>
+                                    <td>&nbsp;@Bag3/@Bar3/@Marks3/@EvnCode3</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;@MaxMarks</td>
+                                    <td>&nbsp;@Diff / @pc_diff%</td>
+                                    <td>&nbsp;@OldResult / @P1%</td>
+                                    <td>&nbsp;@NewResult / @P2%</td>
+
+                                </tr>
+                                <tr>
+                                    <td colspan="11">
+                                        @if (Marks1 != "")
+                                        {
+                                            <span>&nbsp; Marking Detail : @ExEpunjab1,@ExDetail1<br></span>
+                                        }
+                                    @if (Marks2 != "")
+                                    {
+                                        <!-- <span>&nbsp;2<sup>nd</sup> Marking Detail : @ExEpunjab2,@ExDetail2<br></span> -->
+                                    }
+                                    @if (Marks3 != "")
+                                    {
+                                        <!-- <span>&nbsp;3<sup>rd</sup> Marking Detail : @ExEpunjab3,@ExDetail3</span> -->
+                                    }
+                                    <!-- @Name/@FName Add :@Address- @Mobile -->
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="11" class="rqf">&nbsp;No Record Found</td>
+                        </tr>
+                    }
+                    }
+                </table>
+
+
+            }
+        }
+
+    </div>
+</div>

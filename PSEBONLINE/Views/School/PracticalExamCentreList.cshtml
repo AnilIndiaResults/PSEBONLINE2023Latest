@@ -1,0 +1,120 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Final Print Private Matric Admit Card Search";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprint.css" />
+<style type="text/css">
+    body {
+        font-size: 11px
+    }
+</style>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<div class="container">
+    @{
+        using (Html.BeginForm("PracticalExamCentreList", "School", FormMethod.Post, new { id = "searchform" }))
+        {
+            <h1>
+                Practical Exam Centre List For Session @if (Session["Session"] != null)
+                {@Session["Session"].ToString()}
+            else { Response.Redirect("~/Login"); }
+            </h1>
+            {<div class="row">
+                    <div class="col-md-12">
+                        <fieldset style="margin-bottom:15px;overflow:hidden">
+                            <legend>Search</legend>
+                            <div class="col-md-3">
+                                Select Class
+                                @{
+                                    List<SelectListItem> SelectList = new List<SelectListItem>();
+                                    SelectList.Add(new SelectListItem { Text = "--Select Class--", Value = "" });
+                                    SelectList.Add(new SelectListItem { Text = "Matriculation", Value = "10" });
+                                    SelectList.Add(new SelectListItem { Text = "Senior Secondary", Value = "12" });
+                                }
+                                @Html.DropDownList("Class", SelectList, new { id = "Class", @required = "required" })
+                            </div>
+                            <div class="col-md-3">
+                                Search By @Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), "Select", new { @class = "", @required = "required" })
+                            </div>
+                            <div class="col-md-3">
+                                &nbsp;<br />
+                                <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" required />
+                            </div>
+                            <div class="col-md-1">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm2();" title="Search Record" /></div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-12"><span class="rqf" style="color:firebrick">Note : For Search Kindly Enter Candid  Or Roll No.</span></div>
+                        </fieldset>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="t01">
+                                <tr class="active-tr">
+                                    <th width="12%">School Code</th>
+                                    <th width="12%">Candid</th>
+                                    <th width="12%">Roll</th>
+                                    <th width="20%">Name</th>
+                                    <th width="14%">Subject Name</th>
+                                    <th width="30%">Centre Name</th>
+                                </tr>
+                                @{
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        int d = 0;
+                                        int Count = 0;
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            d = d + 1;
+                                            var cent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                                            var Candid = Model.StoreAllData.Tables[0].Rows[i]["Candid"].ToString();
+                                            var Roll = Model.StoreAllData.Tables[0].Rows[i]["Roll"].ToString();
+                                            var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                            var SubjectName = Model.StoreAllData.Tables[0].Rows[i]["SubjectName"].ToString();
+                                            var CentreNM = Model.StoreAllData.Tables[0].Rows[i]["CentreNM"].ToString();
+
+                                            Count = Count + 1;
+                                                                <tr>
+                                                                    <td>
+                                                                        @cent
+                                                                    </td>
+                                                                    <td>
+                                                                        @Candid
+                                                                    </td>
+                                                                    <td>
+                                                                        @Roll
+                                                                    </td>
+                                                                    <td>
+                                                                        @Name
+                                                                    </td>
+                                                                    <td>
+                                                                        @SubjectName
+                                                                    </td>
+                                                                    <td>
+                                                                        @CentreNM
+                                                                    </td>
+                                                                </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5">
+                                                @ViewBag.Message
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12 text-center" style="padding:10px 0;display:none">
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
+
+

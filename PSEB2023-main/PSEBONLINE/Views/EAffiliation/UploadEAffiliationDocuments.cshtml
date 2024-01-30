@@ -1,0 +1,234 @@
+﻿@model PSEBONLINE.Models.EAffiliationDocumentDetailsModel
+@{
+    ViewBag.Title = "Upload EAffiliation Documents";
+    Layout = "~/Views/Shared/_HeaderEAffiliation.cshtml";
+}
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<section class="content-header">
+    <h1>Upload EAffiliation Documents</h1>
+</section>
+<div id="loading1"></div>
+@using (Html.BeginForm("UploadEAffiliationDocuments", "EAffiliation", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+
+    <div class="box">
+        <div class="row">
+            <div class="col-md-2">
+                Document List<span style="color:red">*</span>
+            </div>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.DocID, new SelectList(Model.EAffiliationDocumentMasterList, "DocID", "DocumentName"), "--Select Document--", new { @Title = "Tooltip here", @required = "required" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Upload Document<span style="color:red">*</span>
+            </div>
+            <div class="col-md-6">
+                @if (!string.IsNullOrEmpty(Model.DocFile))
+                {
+                    @Html.TextBoxFor(a => a.DocFile, null, new { id = "DocFile", type = "file", @onchange = "CheckDocFile(this)" })
+                    @Html.HiddenFor(a => a.DocFile)<span class="rqf">(Size limit upto 1MB)</span>
+                    <a href="@ViewBag.DocFile" target="_blank" class="btn">Download File</a>
+                }
+                else
+                {
+                    @Html.TextBoxFor(a => a.DocFile, null, new { @required = "required", id = "DocFile", type = "file", @onchange = "CheckDocFile(this)" })
+                    @Html.HiddenFor(a => a.DocFile)<span class="rqf">(Upload only single PDF , Size limit upto 1MB)</span>
+                }
+
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2"></div>
+            <div class="col-md-6 text-center">
+                @Html.HiddenFor(a => a.APPNO)
+
+                <input type="submit" value="Submit" name="cmd" onclick="return validateothers()" style="@(Session["eDataSubmissionAllow"].ToString() == "0" ? "display:block" : "display:none")" />
+
+
+
+            </div>
+            <div class="col-md-2"><button type="button" class="btn" data-toggle="modal" data-target="#myModalDocList">View Document List</button></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th>Sr No</th>
+                        <th>App no</th>
+                        <th>Document Name</th>
+                        <th>File</th>
+                        <th>Submit On</th>
+                        <th>Action</th>
+
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var eDocId = Model.StoreAllData.Tables[0].Rows[i]["eDocId"].ToString();
+                                var APPNO = Model.StoreAllData.Tables[0].Rows[i]["APPNO"].ToString();
+                                var DocID = Model.StoreAllData.Tables[0].Rows[i]["DocID"].ToString();
+                                var DocumentName = Model.StoreAllData.Tables[0].Rows[i]["DocumentName"].ToString();
+                                var DocFile = Model.StoreAllData.Tables[0].Rows[i]["DocFile"].ToString();
+                                var CreatedDate = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString();
+
+                                Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        @Count
+                                    </td>
+                                    <td>
+                                        @APPNO
+                                    </td>
+                                    <td>
+                                        @DocumentName
+                                    </td>
+                                    <td>
+                                        <a href="/Upload/@DocFile" target="_blank" class="btn">Download File</a>
+                                    </td>
+                                    <td>
+                                        @CreatedDate
+                                    </td>
+                                    <td>
+                                        <div class="cart" style="@(Session["eDataSubmissionAllow"].ToString() == "0" ? "display:block" : "display:none")">
+                                            Choose Action <span class="caret"></span>
+                                            <div id="sidebar">
+                                                <ul>
+                                                    <li>
+                                                        @Html.ActionLink("Delete", "ActionUploadEAffiliationDocuments", new { id = APPNO, eDocId = eDocId, act = "D" }, new { onclick = "return confirm('Are you sure want to Delete ?');" })
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                </tr>
+
+
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="13">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="modal fade" id="myModalDocList" role="dialog">
+            <div class="modal-dialog" style="width:80%">
+                <div class="modal-content" >
+                    <div class="modal-header">
+                        <span style="font-size:24px">Error List</span>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <table id="tblerror" style="width:100%" class="kds-table">                          
+                                @{
+                                    if (Model.EAffiliationDocumentMasterList.Count() > 0)
+                                    {
+                                        for (int s = 0; s < Model.StoreAllData.Tables[1].Rows.Count; s++)
+                                        {
+                                            var DocID = Model.StoreAllData.Tables[1].Rows[s]["DocID"].ToString();
+                                            var DocumentName = Model.StoreAllData.Tables[1].Rows[s]["DocumentName"].ToString();
+                                                            <tr>
+                                                                <td width="4%">
+                                                                    <span style="font-size:13px;color:red;">@DocID</span>
+                                                                </td>
+                                                                <td>@DocumentName
+                                                                </td>
+                                                            </tr>
+                                        }
+                                    }
+                                }                           
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                    window.location.href = '@Url.Action("UploadEAffiliationDocuments", "EAffiliation")';
+                </script>
+            }
+            else if (ViewData["result"].ToString() == "DUP")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Already Exist");
+                </script>
+            }
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                    //alert('ViewBag.Mesaage');
+                </script>
+            }
+
+        }
+    }
+}
+
+
+
+<script type="text/javascript">
+    function CheckDocFile(input) {
+        if (typeof ($("#DocFile")[0].files) != "undefined") {
+
+            var ext = $('#DocFile').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#DocFile').val('');
+                return false;
+            }
+            var size = parseFloat($("#DocFile")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#DocFile').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#DocFile').val('');
+                }
+            }
+        }
+
+    }
+</script>

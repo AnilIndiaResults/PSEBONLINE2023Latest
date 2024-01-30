@@ -1,0 +1,791 @@
+﻿@model PSEBONLINE.Models.DuplicateCertificate
+@{
+    ViewBag.Title = "DuplicateCertificate";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<style type="text/css">
+    #dataTable td {
+        padding: 4px;
+        vertical-align: top;
+    }
+
+    .remove {
+        -moz-user-select: none;
+        background-color: #cc0000;
+        background-image: none;
+        border: 1px solid #f08f06;
+        border-radius: 4px;
+        color: #fff !important;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857;
+        margin-bottom: 0;
+        padding: 3px 12px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+</style>
+<h1>Duplicate Certificate</h1>
+
+@using (Html.BeginForm("DuplicateCertificate", "Admin", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <div class="col-md-4">
+                    Class <span class="rqf">*</span> @Html.DropDownList("Class1", new SelectList(ViewBag.MyClass, "Value", "Text", ViewBag.SelectedClass), "--Select---", new { @class = "", id = "Class", required = "required" })
+                </div>
+                <div class="col-md-4">
+                    Candidate Dist (Exam Passed/Appeared) <span class="rqf">*</span> @Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District--", new { @class = "", id = "Dist", required = "required" })
+                </div>
+                <div class="col-md-4">
+                    Roll No. <span class="rqf">*</span> @Html.TextBoxFor(model => model.Roll, new { id = "Roll", required = "required", @maxlength = "10", onkeypress = "return validateNumber(event)" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Year <span class="rqf">*</span> @Html.DropDownList("Year1", new SelectList(ViewBag.MyYear, "Value", "Text", ViewBag.SelectedYear), "--Select---", new { @class = "", id = "Year", required = "required" })
+                </div>
+                <div class="col-md-4">
+                    Session <span class="rqf">*</span> @Html.DropDownList("Session1", new SelectList(ViewBag.MySession, "Value", "Text", ViewBag.SelectedSession), new { @class = "", id = "Session", required = "required" })
+                </div>
+                <div class="col-md-4">
+                    Mobile No. <span class="rqf">*</span> @Html.TextBoxFor(model => model.Mobile, new { id = "Mobile", @maxlength = "10", required = "required", onkeypress = "return validateNumber(event)" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Result  @Html.DropDownList("Result1", new SelectList(ViewBag.MyResult, "Value", "Text", ViewBag.SelectedResult), "--Select Result---", new { @class = "", id = "Result" })
+                </div>
+                <div class="col-md-4">
+                    Result Details <span class="rqf">(i.e. PASS 425,R(PB,ENG),RLA etc.)</span> @Html.TextBoxFor(model => model.ResultDt, new { id = "ResultDt", @maxlength = "30" })
+                </div>
+                <div class="col-md-2">
+                    Total Max. Marks  @Html.TextBoxFor(model => model.MaxMarks, new { id = "MaxMarks", @maxlength = "10", onkeypress = "return validateNumber(event)" })
+                </div>
+                <div class="col-md-2">
+                    Obtained Marks   @Html.TextBoxFor(model => model.ObtMarks, new { id = "ObtMarks", @maxlength = "10", onkeypress = "return validateNumber(event)" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Reciept No: <span class="rqf">*</span> @Html.TextBoxFor(model => model.ReceiptNo, new { id = "ReceiptNo", @maxlength = "30", required = "required" })
+                </div>
+                <div class="col-md-4">
+                    Fee/Amount: <span class="rqf">*</span> @Html.TextBoxFor(model => model.FeeAmount, new { id = "FeeAmount", @maxlength = "8", required = "required", onkeypress = "return validateNumber(event)" })
+                </div>
+                <div class="col-md-4">
+                    Receipt Date <span class="rqf">*</span>@Html.TextBoxFor(m => m.ReceiptDate, new
+                                                      {
+                                                          id = "ReceiptDate",
+                                                          @readonly = "readonly",
+                                                          @maxlength = "10",
+                                                          @class = "date",
+                                                          // onkeypress = "javascript: return false;",
+                                                          onpaste = "return false;",
+                                                          oncopy = "return false;",
+                                                          oncut = "return false;",
+                                                          @placeholder = "MM/dd/yyyy"
+                                                      })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Name <span class="rqf">*</span> @Html.TextBoxFor(model => model.Name, new { id = "Name", required = "required", @maxlength = "100" })
+                </div>
+                <div class="col-md-4">
+                    Father Name <span class="rqf">*</span> @Html.TextBoxFor(model => model.FNAME, new { id = "FNAME", required = "required", @maxlength = "50" })
+                </div>
+                <div class="col-md-4">
+                    Mother Name <span class="rqf">*</span> @Html.TextBoxFor(model => model.MNAME, new { id = "MNAME", required = "required", @maxlength = "50" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Date of Birth <span class="rqf">*</span>@Html.TextBoxFor(m => m.DOB, new
+                                                    {
+                                                        id = "DOB",
+                                                        @readonly = "readonly",
+                                                        @maxlength = "10",
+                                                        @class = "date5",
+                                                        onpaste = "return false;",
+                                                        oncopy = "return false;",
+                                                        oncut = "return false;",
+                                                        @placeholder = "MM/dd/yyyy"
+                                                    })
+                </div>
+                <div class="col-md-4">
+                    Registration Number  @Html.TextBoxFor(model => model.REGNO, new { id = "REGNO", @maxlength = "30" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                    Complete Address <span class="rqf">*</span> @Html.TextBoxFor(model => model.Address, new { id = "Address", required = "required", @maxlength = "100" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Upload Form: <span class="rqf">*</span> @Html.TextBoxFor(m => m.file, new { id = "ScanFile", type = "file", @accept = "application/pdf, image/jpeg" }) <span class="rqf">*Size Upto 5MB (PDF or JPG format Only)</span>
+                </div>
+                <div class="col-md-4">
+                    Select Type
+                    @*@Html.DropDownList("MyStatus", new SelectList(ViewBag.MyStatus, "Value", "Text", ViewBag.SelectedStatus), "--Select---", new { @class = "", id = "SelectStatus", @onchange = "GetSelectStatus(this)" })*@
+                    @{
+
+                        IEnumerable<SelectListItem> myType2 = ViewBag.MyStatus;
+                        foreach (var item in ViewBag.MyStatus)
+                        {
+                            if (item.Value.ToString() == Model.IsType.ToString())
+                            {
+                                item.Selected = true;
+                            }
+                            else
+                            { item.Selected = false; }
+                        }
+                        @Html.DropDownListFor(m => m.IsType, myType2, "--Select--", new { @class = "", id = "ddlIsType", @onchange = "GetSelectStatus(this)" })
+                    }
+                    <div style="display:none">
+                        Select "Yes", If Want Certificate as per Board Record else if any Correction then select "No" <span class="rqf">*</span> <br />
+                        @Html.RadioButtonFor(m => m.IsSameAsRecord, "YES", new { id = "YES" })<span>YES</span>
+                        @Html.RadioButtonFor(m => m.IsSameAsRecord, "NO", new { id = "NO" })<span>NO</span>
+                    </div>
+                    <br />
+                </div>
+                <div class="col-md-4" id="divPrevCert" style="display:none">
+                    Previous Certificate Serial No.  @Html.TextBoxFor(m => m.PrevCert, new { @class = "", id = "txtPrevCert", @placeholder = "Enter Previous Certificate Serial No." })
+                </div>
+                <div class="clearfix"></div>
+                @*<div class="col-md-12" id="divType" style="display:none">
+                     <div class="col-md-3">
+                         Select Type <span class="rqf">*</span> @Html.DropDownList("Type1", new SelectList(ViewBag.MyType, "Value", "Text", ViewBag.SelectedType), "--Select Type--", new { @class = "", id = "Type" })
+                     </div> <div class="col-md-3">
+                             Before : @Html.TextBoxFor(model => model.Before, new { id = "Before", @maxlength = "50" })
+                         </div>
+                             <div class="col-md-3">
+                                 After : @Html.TextBoxFor(model => model.After, new { id = "After", @maxlength = "50" })
+                             </div>
+                    </div>*@
+                <div class="col-md-12" id="divType" style="display:none">
+                    <table id="dataTable" border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr class="active-tr">
+                            <th>Select Type</th>
+                            <th>Before </th>
+                            <th>After </th>
+                            <th></th>
+                        </tr>
+                        @if (Model != null && Model.SameAsRecordList.Count > 0)
+                        {
+                            // int j = 0;
+                            IEnumerable<SelectListItem> myType;
+                            IEnumerable<SelectListItem> myType1 = ViewBag.MyType;
+                            for (int i = 0; i < Model.SameAsRecordList.Count; i++)
+                            {
+                                myType = null;
+                                if (Model.SameAsRecordList[i].TypeOf == null || Model.SameAsRecordList[i].TypeOf == "")
+                                { myType = ViewBag.MyType; }
+                                else
+                                {
+                                    myType = ViewBag.MyType;
+                                    foreach (var item in ViewBag.MyType)
+                                    {
+                                        if (item.Value.ToString() == Model.SameAsRecordList[i].TypeOf.ToString())
+                                        {
+                                            item.Selected = true;
+                                        }
+                                        else
+                                        { item.Selected = false; }
+                                    }
+                                    //var selected = myType1.Where(x => x.Value == Model.SameAsRecordList[i].TypeOf.ToString()).First();
+                                    //selected.Selected = true;
+                                }
+
+                                <tr id=@("rowCount" + i )>
+                                    <td>@Html.DropDownListFor(m => m.SameAsRecordList[i].TypeOf, myType, "--Select--", new { @class = "TypeOf", @onchange = "GetSelectedTextValueNew(this)" }) </td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.SameAsRecordList[i].Before, new
+                                   {
+                                       @maxlength = "50",
+                                       @class = "keyboardInput",
+
+                                     
+                                       //onclick = "toggleKBMode1(event)",
+                                       //onKeyPress = "javascript:convertThis(event)",
+                                       //@lang = "pa"
+                                   })
+                                    </td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.SameAsRecordList[i].After, new
+                                   {
+                                       @maxlength = "50",
+                                       @class = "keyboardInput",
+                                      
+                                       //    onclick = "toggleKBMode1(event)",
+                                       //    onKeyPress = "javascript:convertThis(event)",
+                                       //@lang = "pa"
+                                   })
+                                    </td>
+                                    <td style="text-align:center">
+                                        @if (i > 0)
+                                        {
+                                            <a href="#" class="remove btn" id="remove-@i">Remove</a>
+                                        }
+                                        else if (i == 0)
+                                        {
+                                            <a href="#" id="addNew" class="btn">Add New</a>
+                                            @*<span style="font:normal 12px agency, arial; color:blue;  cursor:pointer;" onclick="addMoreRows(@i);"> Add More</span>*@
+                                        }
+                                    </td>
+                                </tr>
+                                //  j++;
+                            }
+                        }
+                    </table>
+
+                </div>
+
+
+                <div class="clearfix"></div>
+                <div class="col-md-12" style="text-align:center;padding-top:15px">
+                    @if (ViewBag.Id == null)
+                    {<input type="submit" value="Save" name="cmd" onclick="return formVal();" /> }
+                    else
+                    {<input type="submit" value="Update" name="cmd" onclick="return formVal();" />}
+                    <input type="submit" value="Reset" name="cmd" /> <a href="/Admin/ViewDuplicateCertificate" class="btn">View Duplicate Certificate</a>
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+
+                        }
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                     alert("Submit SuccessFully..Your Dairy Number is : " + '@ViewBag.DairyNo');
+                     window.open("/Admin/DuplicateCertificateAcknowledgement/" + '@ViewBag.DairyNo', '_blank');
+                </script>}
+            else if (ViewData["result"].ToString() == "2")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Data Updated SuccessFully of Dairy Number  : " + '@ViewBag.DairyNo');
+                     window.location.href = '@Url.Action("ViewDuplicateCertificate","Admin")';
+                </script>}
+            else if (ViewData["result"].ToString() == "10")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Please Fill All Fields");
+                </script>}
+            else if (ViewData["result"].ToString() == "20")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Duplicate Types ");
+                </script>}
+            else if (ViewData["result"].ToString() == "11")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Please Select Type");
+                </script>}
+			else if (ViewData["result"].ToString() == "0")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Duplicate Record");
+                </script>}
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                </script>
+            }
+        }
+    }
+}
+
+
+<script type="text/javascript">
+    function removeRow(removeNum) {
+          jQuery('#rowCount' + removeNum).remove();
+      }
+      function GetSelectedTextValueNew(selNum) {
+          var selectedText = selNum.options[selNum.selectedIndex].innerHTML;
+          var value = selNum.value;
+          var id = $(selNum).attr('id');
+          var mid = id.split('TypeOf')[0];
+          var bid = mid + "Before";
+          var aid = mid + "After";
+
+          if (value == 7) {
+              $("#" + bid + "," + "#" + aid).val("");
+              $("#" + bid + "," + "#" + aid).datepicker({
+                  dateFormat: "dd/mm/yy",
+                  changeMonth: true,
+                  changeYear: true,
+                  maxDate: new Date(),
+                  yearRange: "1901:2018",
+              });
+          }
+		   else if (value == 8) {
+             $("#" + bid + "," + "#" + aid).removeAttr('onkeypress');
+              $("#" + bid + "," + "#" + aid).removeAttr('lang');
+              $("#" + bid + "," + "#" + aid).removeAttr('onclick');
+              $("#" + bid + "," + "#" + aid).val("");
+              $("#" + bid + "," + "#" + aid).datepicker("destroy");
+          }
+          else if (value == 2 || value == 4 || value == 6) {
+              $("#" + bid + "," + "#" + aid).val("");
+               $("#" + bid + "," + "#" + aid).attr("lang", "pa");
+               $("#" + bid + "," + "#" + aid).attr("onkeypress", "javascript:convertThis(event)");
+               $("#" + bid + "," + "#" + aid).attr("onclick", "toggleKBMode1(event)");
+               $("#" + bid + "," + "#" + aid).datepicker("destroy");
+
+          }
+          else {
+              $("#" + bid + "," + "#" + aid).removeAttr('onkeypress');
+              $("#" + bid + "," + "#" + aid).removeAttr('lang');
+              $("#" + bid + "," + "#" + aid).removeAttr('onclick');
+              $("#" + bid + "," + "#" + aid).val("");
+              $("#" + bid + "," + "#" + aid).datepicker("destroy");
+              $("#" + bid + "," + "#" + aid).on("keypress", function (evt) {
+                  var keyCode = (evt.which) ? evt.which : evt.keyCode
+                  if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                      alert("Only Characters Allowed!!");
+                      //$("#" + bid + "," + "#" + aid).val("");
+                      return false;
+                  }
+                  else {
+                      return true;
+                  }
+
+              });
+          }
+
+      }
+</script>
+
+
+
+
+<script type="text/javascript">
+
+      $(document).ready(function () {
+
+          var ddlIsType = document.getElementById("ddlIsType").value;
+          if (ddlIsType == 1 || ddlIsType == 0 || ddlIsType == "") {
+              $('#divType').hide();
+              $('#divPrevCert').hide();
+              $(".TypeOf").prop('required', false);
+              $(".keyboardInput").prop('required', false);
+              $('.keyboardInput').val('');
+              $("#ScanFile").prop('required', false);
+
+          }
+          else {
+              $('#divType').show();
+              $('#divPrevCert').show();
+              $(".TypeOf").prop('required', true);
+              $(".keyboardInput").prop('required', true);
+              $("#ScanFile").prop('required', false);
+          }
+
+          function GetSelectStatus(selNum1) {
+              var selectedText = selNum1.options[selNum1.selectedIndex].innerHTML;
+              var value = selNum1.value;
+
+              var fileval = @(Model.ScanFile == null ? 1 : 0);     
+            if (value == 1 || value == 0 || value == "") {
+                $('#divType').hide();
+                $('#divPrevCert').hide();
+                $(".TypeOf").prop('required', false);
+                $(".keyboardInput").prop('required', false);
+                $('.keyboardInput').val('');
+                $("#ScanFile").prop('required', false);
+            }
+            else {
+                $('#divType').show();
+                $('#divPrevCert').show();
+                $(".TypeOf").prop('required', true);
+                $(".keyboardInput").prop('required', true);
+				if(fileval == 1){$("#ScanFile").prop('required', true);}
+				else{ $("#ScanFile").prop('required', false);}
+
+            }
+        }
+
+    });
+
+
+    function GetSelectStatus(selNum1) {
+        var selectedText = selNum1.options[selNum1.selectedIndex].innerHTML;
+        var value = selNum1.value;
+         var fileval = @(Model.ScanFile == null ? 1 : 0);        
+        if (value == 1 || value == 0 || value == "") {
+            $('#divType').hide();
+            $('#divPrevCert').hide();
+            $(".TypeOf").prop('required', false);
+            $(".keyboardInput").prop('required', false);
+            $('.keyboardInput').val('');
+            $("#ScanFile").prop('required', false);
+        }
+        else
+        {
+            $('#divType').show();
+            $('#divPrevCert').show();
+            $(".TypeOf").prop('required', true);
+            $(".keyboardInput").prop('required', true);
+            if (fileval == 1) { $("#ScanFile").prop('required', true); }
+            else { $("#ScanFile").prop('required', false); }
+        }
+    }
+
+
+    $(function () {
+        $(".date").datepicker({
+            dateFormat: "mm/dd/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: new Date(),
+            yearRange: "2017:2019",
+
+        });
+    });
+    $(function () {
+        $(".date5").datepicker({
+            dateFormat: "mm/dd/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: new Date(),
+            yearRange: "1901:2019",
+
+        });
+    });
+
+
+    function validateNumber(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $("#mobile").val();
+        if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c.length > 9) {
+            return false;
+        }
+        else return true;
+    }
+
+    function formVal() {
+          //alert('check formVal');
+        //var DairyNo = document.getElementById('DairyNo').value;
+        //var DairyDate = document.getElementById('DairyDate').value;
+        var Class = document.getElementById('Class').value;
+        var Session = document.getElementById('Session').value;
+        var Roll = document.getElementById('Roll').value;
+        var Name = document.getElementById('Name').value;
+        var Dist = document.getElementById('Dist').value;
+        var Mobile = document.getElementById('Mobile').value;
+        var Address = document.getElementById('Address').value;
+        var Year = document.getElementById('Year').value;
+
+        var YESa = document.getElementById("YES").checked;
+        var NOa = document.getElementById("NO").checked;
+
+        var FNAME = document.getElementById('FNAME').value;
+        var MNAME = document.getElementById('MNAME').value;
+        var ReceiptNo = document.getElementById('ReceiptNo').value;
+        var ReceiptDate = document.getElementById('ReceiptDate').value;
+        var FeeAmount = document.getElementById('FeeAmount').value;
+        var ddlIsType = document.getElementById('ddlIsType').value;
+
+
+
+        var Result = document.getElementById('Result').value;
+        var ResultDt = document.getElementById('ResultDt').value;
+        var MaxMarks = document.getElementById('MaxMarks').value;
+        var ObtMarks = document.getElementById('ObtMarks').value;
+        var DOB = document.getElementById('DOB').value;
+        var REGNO = document.getElementById('REGNO').value;
+
+         if (Class == '' || Class == '0') {
+            alert("Select Class");
+            document.getElementById('Class').focus();
+            return false;
+         }
+         if (Year == '' || Year == '0') {
+             alert("Select Year");
+             document.getElementById('Year').focus();
+             return false;
+         }
+         if (Session == '' || Session == '0') {
+            alert("Select Session ");
+            document.getElementById('Session').focus();
+            return false;
+        }
+         if (Roll == '') {
+            alert("Enter Roll ");
+            document.getElementById('Roll').focus();
+            return false;
+        }
+         if (Roll != "") {
+             if (Roll.length > 10) {
+                 alert("Please Enter less than equal to 10 digits Roll Number");
+                 document.getElementById('Roll').focus();
+                 return false;
+             }
+         }
+
+         if (Dist == '' || Dist == '0') {
+            alert("Select Dist ");
+            document.getElementById('Dist').focus();
+            return false;
+        }
+         if (Mobile == '') {
+            alert("Enter Mobile ");
+            document.getElementById('Mobile').focus();
+            return false;
+         }
+         if (Mobile != "") {
+             if (Mobile.length != 10) {
+                 alert("Please Enter 10 Digits Mobile Number");
+                 document.getElementById('Mobile').focus();
+                 return false;
+             }
+         }
+
+         //if (Result == '' || Result == '0') {
+         //    alert("Select Result");
+         //    document.getElementById('Result').focus();
+         //    return false;
+         //}
+         //if (ResultDt == '') {
+         //    alert("Enter Result Details ");
+         //    document.getElementById('ResultDt').focus();
+         //    return false;
+         //}
+         //if (MaxMarks == '') {
+         //    alert("Enter Max Marks ");
+         //    document.getElementById('MaxMarks').focus();
+         //    return false;
+         //}
+         //if (ObtMarks == '') {
+         //    alert("Enter ObtMarks ");
+         //    document.getElementById('ObtMarks').focus();
+         //    return false;
+         //}
+
+
+         if (ReceiptNo == '') {
+             alert("Enter Receipt No ");
+             document.getElementById('ReceiptNo').focus();
+             return false;
+         }
+
+         if (ReceiptNo != "") {
+             if (ReceiptNo.length < 6) {
+                 alert("Please Enter More than 6 Digits Receipt Number");
+                 document.getElementById('ReceiptNo').focus();
+                 return false;
+             }
+         }
+
+         if (FeeAmount == '') {
+             alert("Enter Fee/Amount ");
+             document.getElementById('FeeAmount').focus();
+             return false;
+         }
+
+         if (ReceiptDate == '') {
+             alert("Enter Receipt Date ");
+             document.getElementById('ReceiptDate').focus();
+             return false;
+         }
+         if (Name == '') {
+             alert("Enter Name ");
+             document.getElementById('Name').focus();
+             return false;
+         }
+         if (FNAME == '') {
+             alert("Enter Father Name ");
+             document.getElementById('FNAME').focus();
+             return false;
+         }
+         if (MNAME == '') {
+             alert("Enter Mother Name ");
+             document.getElementById('MNAME').focus();
+             return false;
+         }
+
+
+         if (DOB == '') {
+             alert("Enter Date of Birth");
+             document.getElementById('DOB').focus();
+             return false;
+         }
+         //if (REGNO == '') {
+        //     alert("Enter Registration Number ");
+        //     document.getElementById('REGNO').focus();
+       //      return false;
+       //  }
+         if (REGNO != "") {
+             var chlregnum = REGNO.charAt(0);
+             if (((chlregnum != "b") && (chlregnum != "B")) || regnum123.length <= 5) {
+                 alert('Registration Number Starts With Letter "B OR b" and Minimum 5 Characters');
+                 document.getElementById("REGNO").focus();
+                 return false;
+             }
+         }
+         if (Address == '') {
+             alert("Enter Address ");
+             document.getElementById('Address').focus();
+             return false;
+         }
+
+         if (ddlIsType == '' || ddlIsType == '0') {
+             alert("Select Type");
+             document.getElementById('ddlIsType').focus();
+             return false;
+         }
+
+         return true;
+    }
+</script>
+
+<script language="javascript">
+    $(document).ready(function () {
+        //1. Add new row
+        $("#addNew").click(function (e) {
+            e.preventDefault();
+            var $tableBody = $("#dataTable");
+           var $trLast = $tableBody.find("tr:last");
+      // count table rows
+            var trCount = $('#dataTable tr').length;    
+			
+            // first row
+            var $trfirst = $('#dataTable tr').eq(1);
+            var $trfirsthtml = $('#dataTable tr').eq(1).html();
+           // alert("$trfirst" + $trfirst);
+           // alert("$trfirsthtml" + $trfirsthtml);
+            // end
+            var $trNew = $trfirst.clone();
+            var last = $trNew.find("td:last").html();
+
+
+           // $trNew.find('td:last a').remove();
+         //   var $trNew = $tableBody.find("tr:last").clone().find('td:last').remove();
+            var row_id = $('#dataTable tr').eq(1).attr('id');
+            //alert("row_id" + row_id);
+            var firstsuffix = $trfirst.find(':input:last').attr('name').match(/\d+/);
+            var suffix = $trLast.find(':input:last').attr('name').match(/\d+/);
+             //alert(" suffix: "+ suffix);
+
+            $trNew.find("td:last").html('<a href="javascript:void(0);" class="remove" onclick="removeRow(' + (parseInt(suffix) + 1) + ');">Remove</a>');
+            $trNew.attr('id', 'rowCount' +(parseInt(suffix) + 1));
+            var rowc = (parseInt(suffix) + 1);
+            var optext2 = $('#SameAsRecordList_0__TypeOf option:selected').val();
+
+			rowc = parseInt(trCount) - 1;
+            if(rowc < 8)
+            {
+                var newId = "";
+                var newN ="";
+                $.each($trNew.find(':input'), function (i, val) {
+                    // Replaced Name
+                    var oldN = $(this).attr('name');
+                    var oldid = $(this).attr('id');
+                     newN = oldN.replace('[' + firstsuffix + ']', '[' + rowc + ']');
+                     newId = oldid.replace('' + firstsuffix + '', '' + rowc + '');
+
+                    // var newN1 = oldN.replace('[' + (parseInt(suffix) - 1)  + ']', '[' + suffix + ']');
+                    var input;
+                    $(this).attr('name', newN);
+                    $(this).attr('id', newId);
+                    $(this).attr('readonly', true);
+
+
+                    if (i == 0) {
+                        $(this).attr('onkeypress', "javascript: return false;");
+                       // var val1 = $("#" + oldid + " option:selected").val();
+                       // var text1 = $("#" + oldid + " option:selected").text();
+                        //$(this).attr('type', 'text');
+                       // $(this).replaceWith($('<input/>', { 'type': 'text', 'value': text1, 'id': newId, 'name': newN , 'readonly': true}));
+                      //  input = $("<input type=text  id=" + newId + " name=" + newN + " />");
+                        // jQuery(this).remove();
+                       // $(this).attr('onkeypress', "javascript: return false;");
+                    }
+                    else {
+                        $(this).removeAttr('onkeypress');
+                        $(this).attr('onkeypress', "javascript: return false;");
+                    }
+
+
+                    $(this).removeClass("input-validation-error");
+                   // $(this).removeProp("lang");
+                });
+                $trfirst.after($trNew);
+                $("#SameAsRecordList_" + rowc + "__TypeOf").val(optext2).attr("selected", "selected");
+                $('#SameAsRecordList_0__TypeOf').val('');
+                $('#SameAsRecordList_0__Before').val('');
+                $('#SameAsRecordList_0__After').val('');
+
+            }
+            else{
+                alert('Only 8 Records Can be Added');
+            }
+
+
+
+
+        });
+
+        // 2. Remove
+
+        $('.remove').click(function (e) {
+            e.preventDefault();
+            $(this).parent().parent().remove();
+        });
+
+
+
+    });
+</script>
+
+
+<script type="text/javascript">
+    $(function(){
+        $("#ScanFile").on('change', function(event) {
+            // alert('check file');
+            var input = $("#ScanFile");
+            var file = event.target.files[0];
+            var filetype = file.type;
+            if(file.size>=5*1024*1024) {
+                alert("file size of maximum 5MB");
+                document.getElementById('ScanFile').focus();
+                $("#ScanFile").val("");
+                return false;
+            }
+            if(filetype == "application/pdf" || filetype == "image/jpeg") {}
+            else{
+                alert("PDF or JPG format Allowed Only");
+                document.getElementById('ScanFile').focus();
+                $("#ScanFile").val("");
+                return false;
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+

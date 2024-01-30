@@ -1,0 +1,363 @@
+﻿@model PSEBONLINE.Models.SeniorStudentMatricResultMarksViews
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<style>
+    input:read-only {
+        background-color: #dddddd;
+        border: 1px solid #ccc;
+        cursor: not-allowed;
+        pointer-events: all !important;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+
+    .input-validation-success {
+        background-color: #bcf5bc !important;
+        border: solid 1px green !important;
+    }
+</style>
+
+
+<h1>Matriculation Marks for Senior Secondary Students</h1>
+
+@*<div class="row">
+    <div class="col-md-12"><a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a></div>
+
+</div>*@
+@if (Model != null)
+{
+
+    <div class="row">
+        <div class="col-md-12">
+            <table width="100%">
+                <tr><td colspan="4"><h1>Personal Details</h1></td></tr>
+                <tr>
+                    <td width="28%">&nbsp;Student ID</td>
+                    <td><label>@Model.Std_id</label></td>
+                    <td width="28%" align="center">&nbsp;Roll</td>
+                    <td><label>@Model.Roll</label></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Candidate Name</td>
+                    <td><label>@Model.Candi_Name</label></td>
+                    <td align="center">&nbsp;Father Name</td>
+                    <td><label>@Model.Father_Name</label></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Mother Name</td>
+                    <td colspan="3"><label>@Model.Mother_Name</label></td>
+                </tr>
+                <tr><td colspan="4"><h1>Matric Class Details</h1></td></tr>
+                <tr>
+                    <td width="28%">&nbsp;Matric Roll</td>
+                    <td align="center"><input type="text" maxlength="15" id="MAT_ROLL-@Model.Std_id" onpaste="return false;" value="@Model.MAT_ROLL" readonly /></td>
+                    <td width="28%" align="center">&nbsp;Matric Board</td>
+                    <td align="center">@Html.HiddenFor(m => m.MAT_BOARD) @Html.DropDownList("MAT_BOARD", new SelectList(ViewBag.MyMatricBoard, "Value", "Text", Model.MAT_BOARD), new { @id = "MAT_BOARD-" + @Model.Std_id, @disabled = "disabled" })</td>
+
+                </tr>
+                <tr>
+                    <td>&nbsp;Matric Month</td>
+                    <td>
+                        @Html.HiddenFor(m => m.MAT_MONTH)
+                        @Html.DropDownList("MAT_MONTH", new SelectList(ViewBag.MonthList, "Value", "Text", Model.MAT_MONTH), new { @id = "MAT_MONTH-" + @Model.Std_id, @disabled = "disabled" })
+                    </td>
+                    <td align="center">&nbsp;Matric Year</td>
+                    <td align="center">
+                        @Html.HiddenFor(m => m.MAT_YEAR)
+                        @Html.DropDownList("MAT_YEAR", new SelectList(ViewBag.MatricYearList, "Value", "Text", Model.MAT_YEAR), new { @id = "MAT_YEAR-" + @Model.Std_id, @disabled = "disabled" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Matric Result</td>
+                    <td align="center">OBT:<input type="text" onkeypress="return isNumberKey(event);" maxlength="4" placeholder="Total Obtain Marks" id="MR_TOTAL-@Model.Std_id" onpaste="return false;" value="@Model.MR_TOTAL" readonly /></td>
+                    <td align="center">TOTAL:<input type="text" onkeypress="return isNumberKey(event);" maxlength="4" placeholder="Total Marks" id="MR_TOTMAX-@Model.Std_id" onpaste="return false;" value="@Model.MR_TOTMAX" readonly /></td>
+                    <td align="center">@Html.HiddenFor(m => m.MR_RESULT)RESULT:@Html.DropDownList("MR_RESULT", new SelectList(ViewBag.ResultList, "Value", "Text", Model.MR_RESULT), new { @id = "MR_RESULT-" + @Model.Std_id, @disabled = "disabled" })</td>
+
+                </tr>
+
+                <tr><td colspan="4"><h1>Subject Details</h1></td></tr>
+                <tr>
+                    <td colspan="4">
+                        <div class="row" style="padding-top : 20px">
+                            <div class="col-md-12">
+                                <table style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px" border="1" class="tbl">
+                                    <tr class="active-tr">
+                                        <td align="center">Sr.No</td>
+                                        <td align="center" width="20%">SUB</td>
+                                        <td align="center">OBT</td>
+                                        <td align="center">MIN</td>
+                                        <td align="center">MAX</td>
+                                    </tr>
+                                    @*1*@
+                                    <tr>
+                                        <td align="center">1.</td>
+                                        <td align="center">
+                                            @Html.DropDownList("SUB1", new SelectList(ViewBag.MatricSubjectList, "Value", "Text", Model.SUB1), "--Select Subject--", new { @id = "SUB1-" + @Model.Std_id, @disabled = "@isabled" })
+                                            <input type="text" readonly onkeypress="return ValidateAlpha(event);" maxlength="30" placeholder="Enter Subject Name" id="txtOther1" value="@Model.SUBNM1" onpaste="return false;" />
+                                        </td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="TOT1-@Model.Std_id" onpaste="return false;" value="@Model.TOT1" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MIN1-@Model.Std_id" onpaste="return false;" value="@Model.MIN1" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MAX1-@Model.Std_id" onpaste="return false;" value="@Model.MAX1" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                    </tr>
+                                    @*2*@
+                                    <tr>
+                                        <td align="center">2.</td>
+                                        <td align="center">
+                                            @Html.DropDownList("SUB2", new SelectList(ViewBag.MatricSubjectList, "Value", "Text", Model.SUB2), "--Select Subject--", new { @id = "SUB2-" + @Model.Std_id, @disabled = "@isabled" })
+                                            <input type="text" readonly onkeypress="return ValidateAlpha(event);" maxlength="30" placeholder="Enter Subject Name" id="txtOther2" value="@Model.SUBNM2" onpaste="return false;" />
+                                        </td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="TOT2-@Model.Std_id" onpaste="return false;" value="@Model.TOT2" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MIN2-@Model.Std_id" onpaste="return false;" value="@Model.MIN2" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MAX2-@Model.Std_id" onpaste="return false;" value="@Model.MAX2" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                    </tr>
+                                    @*3*@
+                                    <tr>
+                                        <td align="center">3.</td>
+                                        <td align="center">
+                                            @Html.DropDownList("SUB3", new SelectList(ViewBag.MatricSubjectList, "Value", "Text", Model.SUB3), "--Select Subject--", new { @id = "SUB3-" + @Model.Std_id, @disabled = "@isabled" })
+                                            <input type="text" readonly onkeypress="return ValidateAlpha(event);" maxlength="30" placeholder="Enter Subject Name" id="txtOther3" value="@Model.SUBNM3" onpaste="return false;" />
+                                        </td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="TOT3-@Model.Std_id" onpaste="return false;" value="@Model.TOT3" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MIN3-@Model.Std_id" onpaste="return false;" value="@Model.MIN3" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MAX3-@Model.Std_id" onpaste="return false;" value="@Model.MAX3" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                    </tr>
+                                    @*4*@
+                                    <tr>
+                                        <td align="center">4.</td>
+                                        <td align="center">
+                                            @Html.DropDownList("SUB4", new SelectList(ViewBag.MatricSubjectList, "Value", "Text", Model.SUB4), "--Select Subject--", new { @id = "SUB4-" + @Model.Std_id, @disabled = "@isabled" })
+                                            <input type="text" readonly onkeypress="return ValidateAlpha(event);" maxlength="30" placeholder="Enter Subject Name" id="txtOther4" value="@Model.SUBNM4" onpaste="return false;" />
+                                        </td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="TOT4-@Model.Std_id" onpaste="return false;" value="@Model.TOT4" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MIN4-@Model.Std_id" onpaste="return false;" value="@Model.MIN4" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MAX4-@Model.Std_id" onpaste="return false;" value="@Model.MAX4" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                    </tr>
+                                    @*5*@
+                                    <tr>
+                                        <td align="center">5.</td>
+                                        <td align="center">
+                                            @Html.DropDownList("SUB5", new SelectList(ViewBag.MatricSubjectList, "Value", "Text", Model.SUB5), "--Select Subject--", new { @id = "SUB5-" + @Model.Std_id, @disabled = "@isabled" })
+                                            <input type="text" readonly onkeypress="return ValidateAlpha(event);" maxlength="30" placeholder="Enter Subject Name" id="txtOther5" value="@Model.SUBNM5" onpaste="return false;" />
+                                        </td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="TOT5-@Model.Std_id" onpaste="return false;" value="@Model.TOT5" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MIN5-@Model.Std_id" onpaste="return false;" value="@Model.MIN5" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MAX5-@Model.Std_id" onpaste="return false;" value="@Model.MAX5" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                    </tr>
+                                    @*6*@
+                                    <tr>
+                                        <td align="center">6.</td>
+                                        <td align="center">
+                                            @Html.DropDownList("SUB6", new SelectList(ViewBag.MatricSubjectList, "Value", "Text", Model.SUB6), "--Select Subject--", new { @id = "SUB6-" + @Model.Std_id, @disabled = "@isabled" })
+                                            <input type="text" readonly onkeypress="return ValidateAlpha(event);" maxlength="30" placeholder="Enter Subject Name" id="txtOther6" value="@Model.SUBNM6" onpaste="return false;" />
+                                        </td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="TOT6-@Model.Std_id" onpaste="return false;" value="@Model.TOT6" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MIN6-@Model.Std_id" onpaste="return false;" value="@Model.MIN6" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MAX6-@Model.Std_id" onpaste="return false;" value="@Model.MAX6" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                    </tr>
+                                    @*7*@
+                                    <tr>
+                                        <td align="center">7.</td>
+                                        <td align="center">
+                                            @Html.DropDownList("SUB7", new SelectList(ViewBag.MatricSubjectList, "Value", "Text", Model.SUB7), "--Select Subject--", new { @id = "SUB7-" + @Model.Std_id, @disabled = "@isabled" })
+
+                                            <input type="text" readonly onkeypress="return ValidateAlpha(event);" maxlength="30" placeholder="Enter Subject Name" id="txtOther7" value="@Model.SUBNM7" onpaste="return false;" />
+                                        </td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="TOT7-@Model.Std_id" onpaste="return false;" value="@Model.TOT7" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MIN7-@Model.Std_id" onpaste="return false;" value="@Model.MIN7" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                        <td align="center"><input type="text" maxlength="4" readonly id="MAX7-@Model.Std_id" onpaste="return false;" value="@Model.MAX7" onkeypress="return isNumberKey(event);" onblur="CheckMarks(this,@Model.Std_id)" /></td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <br />@Html.RadioButtonFor(m => m.ChangeStatus, "S")<span class="kdsfont">  (I Agree with the matric result displayed)</span>
+                    </td>
+                    <td colspan="2" align="center">
+                        <br />  @Html.RadioButtonFor(m => m.ChangeStatus, "U") <span class="kdsfont"> (I do not Agree with the matric result displayed, I need to modify)</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="12" align="center">
+                        <br />
+
+                        @if (!string.IsNullOrEmpty(Model.FilePath) && !string.IsNullOrEmpty(Model.ChangeStatus) && Model.ChangeStatus == "U")
+                        {
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/Upload/Upload2020/@Model.FilePath" target="_blank" class="btn">Download - Scanned Attested Copy Of Matriculation Certificate</a></span>
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 50,
+            "order": [[0, 'desc']],
+            language: { searchPlaceholder: "Search By Roll Number, UniqueID, Student Name or Any." },
+        })
+    });
+</script>
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#dShowResult").dialog({
+            modal: true,
+            title: "Alert",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                    window.location.href = "/RegistrationPortal/SeniorStudentMatricResultMarks";
+                },
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        hideOther();
+        notAllowed();
+        $(':radio:not(:checked)').attr('disabled', true);
+    });
+
+    function hideOther() {
+        $('#txtOther1').hide();
+        $('#txtOther2').hide();
+        $('#txtOther3').hide();
+        $('#txtOther4').hide();
+        $('#txtOther5').hide();
+        $('#txtOther6').hide();
+        $('#txtOther7').hide();
+    }
+    function notAllowed() {
+
+        $("#tr_file").hide();
+        $("#FilePath").val('');
+        $("#FilePath").prop('required', false);
+        $("#MAT_ROLL-" + @Model.Std_id).prop("readonly", true);
+        $("#MAT_BOARD-" + @Model.Std_id).prop("disabled", true);
+        $("#MAT_MONTH-" + @Model.Std_id).prop("disabled", true);
+        $("#MAT_YEAR-" + @Model.Std_id).prop("disabled", true);
+        $("#SUB1-" + @Model.Std_id).prop("disabled", true);
+        $("#TOT1-" + @Model.Std_id).prop("readonly", true);
+        $("#MAX1-" + @Model.Std_id).prop("readonly", true);
+        $("#MIN1-" + @Model.Std_id).prop("readonly", true);
+        $("#SUB2-" + @Model.Std_id).prop("disabled", true);
+        $("#TOT2-" + @Model.Std_id).prop("readonly", true);
+        $("#MAX2-" + @Model.Std_id).prop("readonly", true);
+        $("#MIN2-" + @Model.Std_id).prop("readonly", true);
+        $("#SUB3-" + @Model.Std_id).prop("disabled", true);
+        $("#TOT3-" + @Model.Std_id).prop("readonly", true);
+        $("#MAX3-" + @Model.Std_id).prop("readonly", true);
+        $("#MIN3-" + @Model.Std_id).prop("readonly", true);
+        $("#SUB4-" + @Model.Std_id).prop("disabled", true);
+        $("#TOT4-" + @Model.Std_id).prop("readonly", true);
+        $("#MAX4-" + @Model.Std_id).prop("readonly", true);
+        $("#MIN4-" + @Model.Std_id).prop("readonly", true);
+        $("#SUB5-" + @Model.Std_id).prop("disabled", true);
+        $("#TOT5-" + @Model.Std_id).prop("readonly", true);
+        $("#MAX5-" + @Model.Std_id).prop("readonly", true);
+        $("#MIN5-" + @Model.Std_id).prop("readonly", true);
+        $("#SUB6-" + @Model.Std_id).prop("disabled", true);
+        $("#TOT6-" + @Model.Std_id).prop("readonly", true);
+        $("#MAX6-" + @Model.Std_id).prop("readonly", true);
+        $("#MIN6-" + @Model.Std_id).prop("readonly", true);
+        $("#SUB7-" + @Model.Std_id).prop("disabled", true);
+        $("#TOT7-" + @Model.Std_id).prop("readonly", true);
+        $("#MAX7-" + @Model.Std_id).prop("readonly", true);
+        $("#MIN7-" + @Model.Std_id).prop("readonly", true);
+        $("#MR_TOTAL-" + @Model.Std_id).prop("readonly", true);
+        $("#MR_TOTMAX-" + @Model.Std_id).prop("readonly", true);
+        $("#MR_RESULT-" + @Model.Std_id).prop("disabled", true);
+
+    }
+    function Allowed() {
+        $("#tr_file").show();
+        $("#FilePath").prop('required', true);
+
+        $("#MAT_ROLL-" + @Model.Std_id).prop("readonly", false);
+        $("#MAT_BOARD-" + @Model.Std_id).prop("disabled", false);
+        $("#MAT_MONTH-" + @Model.Std_id).prop("disabled", false);
+        $("#MAT_YEAR-" + @Model.Std_id).prop("disabled", false);
+        $("#SUB1-" + @Model.Std_id).prop("disabled", false);
+        $("#TOT1-" + @Model.Std_id).prop("readonly", false);
+        $("#MAX1-" + @Model.Std_id).prop("readonly", false);
+        $("#MIN1-" + @Model.Std_id).prop("readonly", false);
+        $("#SUB2-" + @Model.Std_id).prop("disabled", false);
+        $("#TOT2-" + @Model.Std_id).prop("readonly", false);
+        $("#MAX2-" + @Model.Std_id).prop("readonly", false);
+        $("#MIN2-" + @Model.Std_id).prop("readonly", false);
+        $("#SUB3-" + @Model.Std_id).prop("disabled", false);
+        $("#TOT3-" + @Model.Std_id).prop("readonly", false);
+        $("#MAX3-" + @Model.Std_id).prop("readonly", false);
+        $("#MIN3-" + @Model.Std_id).prop("readonly", false);
+        $("#SUB4-" + @Model.Std_id).prop("disabled", false);
+        $("#TOT4-" + @Model.Std_id).prop("readonly", false);
+        $("#MAX4-" + @Model.Std_id).prop("readonly", false);
+        $("#MIN4-" + @Model.Std_id).prop("readonly", false);
+        $("#SUB5-" + @Model.Std_id).prop("disabled", false);
+        $("#TOT5-" + @Model.Std_id).prop("readonly", false);
+        $("#MAX5-" + @Model.Std_id).prop("readonly", false);
+        $("#MIN5-" + @Model.Std_id).prop("readonly", false);
+        $("#SUB6-" + @Model.Std_id).prop("disabled", false);
+        $("#TOT6-" + @Model.Std_id).prop("readonly", false);
+        $("#MAX6-" + @Model.Std_id).prop("readonly", false);
+        $("#MIN6-" + @Model.Std_id).prop("readonly", false);
+        $("#SUB7-" + @Model.Std_id).prop("disabled", false);
+        $("#TOT7-" + @Model.Std_id).prop("readonly", false);
+        $("#MAX7-" + @Model.Std_id).prop("readonly", false);
+        $("#MIN7-" + @Model.Std_id).prop("readonly", false);
+        $("#MR_TOTAL-" + @Model.Std_id).prop("readonly", false);
+        $("#MR_TOTMAX-" + @Model.Std_id).prop("readonly", false);
+        $("#MR_RESULT-" + @Model.Std_id).prop("disabled", false);
+    }
+
+
+
+</script>
+
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+

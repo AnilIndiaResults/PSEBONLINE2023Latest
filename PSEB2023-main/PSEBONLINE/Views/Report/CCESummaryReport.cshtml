@@ -1,0 +1,114 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "CCE Summary Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4L.css" />
+<h1 class="noprint">CCE-Theory Summary Report</h1>
+<div class="row">
+    <div class="col-md-12 noprint">
+        @using (Html.BeginForm("CCESummaryReport", "Report", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+        {
+        @Html.Hidden("Filevalue", "CENT")
+        <div class="row">
+            <div class="col-md-3">
+                Select Type @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "", id = "SelectItem1", required = "required" })
+            </div>
+            <div class="col-md-3">
+                Select Class @Html.DropDownList("SelClass", new SelectList(ViewBag.Mycls, "Value", "Text", ViewBag.Selectedcls), "--Select---", new { @class = "", id = "SelClass", required = "required" })
+            </div>
+            <div class="col-md-6">
+                <br />
+                <input type="submit" name="submit" value="Submit" /> <input type="submit" name="submit" value="Download" />  <input type="button" value="Back" class="btn" onclick="history.go(-1)" />
+            </div>
+        </div>
+        }
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-right noprint">
+        @if (ViewBag.TotalCount > 0)
+        {
+        <span>Total :</span> @ViewBag.TotalCount
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        }
+    </div>
+    <div class="col-md-12">
+            <table border="0" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td width="10%" colspan="3"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></td>
+                        <td width="75%" style="font-size:16px;text-align:center;line-height:25px;" colspan="4">
+                            @if (ViewBag.SelectedItem == "2")
+                            {
+                                <span style="font-size:22px;">Punjab School Education Board</span><br /><span>Elective Theory Pending School Report, March 2020</span>
+                             }
+                            else
+                            {
+                                <span style="font-size:22px;">Punjab School Education Board</span><br /><span>C.C.E Pending School Report, March 2020</span>
+                            }
+                        </td>
+                        <td width="15%" align="right" colspan="1">
+                            Print Date: @DateTime.Now.ToString("dd/MM/yyyy")<br />@*FINAL SBMITTED ON :*@
+                        </td>
+                    </tr>
+                    <tr style="font-size:12px">
+                        <td colspan="8"  align="left">
+                            Class: @if (ViewBag.Selectedcls == "2")
+                            {<span>Matric</span>}
+                            else
+                            {<span>Senior</span>}
+                        </td>
+                    </tr>
+                    <tr class="active-tr">
+                        <th>User Type</th>
+                        <th>Set</th>
+                        <th>SCHL</th>
+                        <th>SCHL Name</th>
+                        <th>Mobile</th>
+                        <th>Total</th>
+                        <th>Noc</th>
+                        <th>Roll List</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var USERTYPE = Model.StoreAllData.Tables[0].Rows[i]["USERTYPE"].ToString();
+                                var SET = Model.StoreAllData.Tables[0].Rows[i]["SET"].ToString();
+                                var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                var SCHLNM = Model.StoreAllData.Tables[0].Rows[i]["SCHLNM"].ToString();
+                                var MOBILE = Model.StoreAllData.Tables[0].Rows[i]["MOBILE"].ToString();
+                                var TOTAL = Model.StoreAllData.Tables[0].Rows[i]["TOTAL"].ToString();
+                                var NOC = Model.StoreAllData.Tables[0].Rows[i]["NOC"].ToString();
+                                var Roll_List = Model.StoreAllData.Tables[0].Rows[i]["Roll_List"].ToString();
+                                <tr>
+                                    <td>@USERTYPE</td>
+                                    <td>@SET</td>
+                                    <td>@SCHL</td>
+                                    <td>@SCHLNM</td>
+                                    <td>@MOBILE</td>
+                                    <td>@TOTAL</td>
+                                    <td>@NOC</td>
+                                    <td>@Roll_List</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="8">Record Not Found</td></tr>
+                        }
+
+                    }
+                </tbody>
+            </table>
+     
+
+
+
+    </div>
+</div>

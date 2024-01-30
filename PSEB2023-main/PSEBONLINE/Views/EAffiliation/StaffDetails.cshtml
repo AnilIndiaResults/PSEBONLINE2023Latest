@@ -1,0 +1,842 @@
+﻿@model PSEBONLINE.Models.EAffiliationStaffDetailsModel
+@{
+    ViewBag.Title = "Staff Details";
+    Layout = "~/Views/Shared/_HeaderEAffiliation.cshtml";
+}
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<section class="content-header">
+    <h1>Staff Details</h1>
+</section>
+<div id="loading1"></div>
+@using (Html.BeginForm("StaffDetails", "EAffiliation", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+
+    if (ViewBag.TotalEStaff > 0) // For update
+    {
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var val1 = '@ViewBag.SelectedSubjectId';
+                var val2 = '@ViewBag.subjectName';
+                var selectedCadreId = '@ViewBag.SelectedCadreId';
+                if (selectedCadreId != "") {
+                    $('#Cadre').val(selectedCadreId);
+                }
+
+                if (val1 != "") {
+                    $("#Subject").text('').append('<option value="' + val1 + '">' + val2 + '</option>');
+                }
+            });
+
+        </script>
+        <h3>Modify Staff Details of @Model.eStaffId </h3>
+        @Html.HiddenFor(m => m.eStaffId)
+
+        <div class="box">
+            <div class="row">
+                <div class="col-md-4">
+                    Name<span style="color:red">*</span>
+                </div>
+                <div class="col-md-8">@Html.TextBoxFor(model => model.Name, new { @required = "required", @maxlength = "70" })</div>
+                <div class="clearfix"></div>
+                <div class="col-md-4"> Father's Name<span style="color:red">*</span> </div>
+                <div class="col-md-8">@Html.TextBoxFor(model => model.FName, new { @required = "required", @maxlength = "70" })</div>
+                <div class="col-md-4">
+                    DOB<span style="color:red">*</span>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.DOB, new { @required = "required", id = "DOB", @class = "datepicker", @maxlength = "10" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Qualification<span style="color:red">*</span>
+                </div>
+                <div class="col-md-8">@Html.TextBoxFor(model => model.Qualification, new { @required = "required", id = "Qualification", @maxlength = "15" })</div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Gender<span style="color:red">*</span>
+                </div>
+                <div class="col-md-8">
+                    @{
+                        var listItems = new List<System.Web.UI.WebControls.ListItem>();
+                        listItems.Add(new System.Web.UI.WebControls.ListItem { Text = "--Select--", Value = "" });
+                        listItems.Add(new System.Web.UI.WebControls.ListItem { Text = "Male", Value = "Male" });
+                        listItems.Add(new System.Web.UI.WebControls.ListItem { Text = "Female", Value = "Female" });
+                    }
+
+                    @Html.DropDownListFor(m => m.Gender, new SelectList(listItems, "Value", "Text"), new { @required = "required", id = "Gender", onchange = "findYear()" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Aadhar No<span style="color:red">*</span>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.AadharNo, new { @required = "required", id = "AadharNo", onkeypress = "return validateAadhar(event)", @maxlength = "12" })
+                    @*<span class="rqf">
+                If Aadhar Number is not yet alloted, then Aadhar Enrolment Id is Required. All the digits in enrolment ID & Date and Time of enrolment  to be entered continuously. For example Enrollment ID: 1234/12345/12345 & Date/Time of Enrollment:- 01/12/206 11:50:22 to be entered as <b>1234123451234501122016115022</b>
+            </span>*@
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Cadre <span style="color:red">*</span>
+                </div><div class="col-md-8">
+                    @Html.DropDownListFor(model => model.Cadre, new SelectList(ViewBag.cadre, "Value", "Text"), "---Select Cadre---", new { @required = "required" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Subject <span style="color:red">*</span>
+                </div>
+                <div class="col-md-8">
+                    @Html.DropDownListFor(model => model.Subject, new SelectList(String.Empty), "---Select Subject---", new { @required = "required", id = "Subject" })
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Mobile No.<span style="color:red">*</span>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.MOBILENO, new { @required = "required", id = "MOBILENO", onkeypress = "return validateNumber(event)", @maxlength = "10" })
+                </div>
+                @*<div class="clearfix"></div>
+                <div class="col-md-4">
+                    Service Experience (Year/Month) <span style="color:red"> (Optional) </span>
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(model => model.ExpYear, new { id = "ExpYear", onkeypress = "return validateYear(event)", @maxlength = "2" })
+                    <span style="color:red">Max 2 digit Year.</span>
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(model => model.ExpMonth, new { id = "ExpMonth", onkeypress = "return validateMonth(event)", @maxlength = "2" })
+                    <span style="color:red">Max 11 month.</span>
+                </div>*@
+
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Salary<span style="color:red">*</span>
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(model => model.Salary, new { @required = "required", id = "Salary", onkeypress = "return isNumberKey(event)", @maxlength = "8" })
+                </div>
+                <div class="col-md-4">
+                    @{
+                        var listItems2 = new List<System.Web.UI.WebControls.ListItem>();
+                        listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "--Select--", Value = "" });
+                        listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Cash", Value = "Cash" });
+                        listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Ac Payee", Value = "Ac Payee" });
+                        listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Cheque", Value = "Cheque" });
+                    }
+                    @Html.DropDownListFor(m => m.SalaryMode, new SelectList(listItems2, "Value", "Text"), new { @required = "required", })
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-4">
+                    Qualification Certificates <span style="color:red">*</span>
+                </div>
+                <div class="col-md-4">
+                    @if (!string.IsNullOrEmpty(Model.StaffFile))
+                    {
+                        @Html.TextBoxFor(a => a.StaffFile, null, new { id = "StaffFile", type = "file", @onchange = "CheckStaffFile(this)" })
+                        @Html.HiddenFor(a => a.StaffFile)<span class="rqf">(Size limit upto 1MB)</span>
+                        <a href="@ViewBag.StaffFile" target="_blank" class="btn">Download File</a>
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(a => a.StaffFile, null, new { @required = "required", id = "StaffFile", type = "file", @onchange = "CheckStaffFile(this)" })
+                        @Html.HiddenFor(a => a.StaffFile)<span class="rqf">(Size limit upto 1MB)</span>
+
+                    }
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 text-left">
+                    <span style="color:red"> (Note : Must upload B.A., B.ed. Certificate. Upload all documents in single PDF file.)</span>
+                   
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 text-center">
+                    <input type="submit" value="Update" name="cmd" onclick="return validateothers()" style="@(Session["eDataSubmissionAllow"].ToString() == "0" ? "display:block" : "display:none")" />
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-12 text-right noprint">
+            <a data-toggle="modal" class="btn" data-target="#myModal">ADD STAFF DETAILS</a>
+        </div>
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3>Add Staff</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Name<span style="color:red">*</span>
+                                    </div>
+                                    <div class="col-md-8">@Html.TextBoxFor(model => model.Name, new { @maxlength = "70" })</div>
+
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4"> Father's Name<span style="color:red">*</span> </div>
+                                    <div class="col-md-8">@Html.TextBoxFor(model => model.FName, new { @maxlength = "70" })</div>
+                                    <div class="col-md-4">
+                                        DOB<span style="color:red">*</span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.DOB, new { id = "DOB", @class = "datepicker", @maxlength = "10" })
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">
+                                        Qualification<span style="color:red">*</span>
+                                    </div>
+                                    <div class="col-md-8">@Html.TextBoxFor(model => model.Qualification, new { id = "Qualification", @maxlength = "15" })</div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">
+                                        Gender<span style="color:red">*</span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @{
+                                            var listItems = new List<System.Web.UI.WebControls.ListItem>();
+                                            listItems.Add(new System.Web.UI.WebControls.ListItem { Text = "--Select--", Value = "" });
+                                            listItems.Add(new System.Web.UI.WebControls.ListItem { Text = "Male", Value = "Male" });
+                                            listItems.Add(new System.Web.UI.WebControls.ListItem { Text = "Female", Value = "Female" });
+                                        }
+
+                                        @Html.DropDownListFor(m => m.Gender, new SelectList(listItems, "Value", "Text"), new { id = "Gender", onchange = "findYear()" })
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">
+                                        Aadhar No<span style="color:red">*</span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.AadharNo, new { id = "AadharNo", onkeypress = "return validateAadhar(event)", @maxlength = "12" })
+                                        @*<span class="rqf">
+                If Aadhar Number is not yet alloted, then Aadhar Enrolment Id is Required. All the digits in enrolment ID & Date and Time of enrolment  to be entered continuously. For example Enrollment ID: 1234/12345/12345 & Date/Time of Enrollment:- 01/12/206 11:50:22 to be entered as <b>1234123451234501122016115022</b>
+            </span>*@
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">
+                                        Cadre <span style="color:red">*</span>
+                                    </div><div class="col-md-8">
+                                        @Html.DropDownListFor(model => model.Cadre, new SelectList(ViewBag.cadre, "Value", "Text"), "---Select Cadre---")
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">
+                                        Subject <span style="color:red">*</span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.DropDownListFor(model => model.Subject, new SelectList(String.Empty), "---Select Subject---", new { id = "Subject" })
+
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">
+                                        Mobile No.<span style="color:red">*</span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.MOBILENO, new { id = "MOBILENO", onkeypress = "return validateNumber(event)", @maxlength = "10" })
+                                    </div>
+                                    @*<div class="clearfix"></div>
+                                    <div class="col-md-4">
+                                        Service Experience (Year/Month)<span style="color:red">*</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(model => model.ExpYear, new { id = "ExpYear", onkeypress = "return validateYear(event)", @maxlength = "2" })
+                                        <span style="color:red">Max 2 digit Year.</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(model => model.ExpMonth, new { id = "ExpMonth", onkeypress = "return validateMonth(event)", @maxlength = "2" })
+                                        <span style="color:red">Max 11 month.</span>
+                                    </div>*@
+
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">
+                                        Salary<span style="color:red">*</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(model => model.Salary, new { id = "Salary", onkeypress = "return isNumberKey(event)", @maxlength = "8" })
+                                    </div>
+                                    <div class="col-md-4">
+                                        @{
+                                            var listItems2 = new List<System.Web.UI.WebControls.ListItem>();
+                                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "--Select--", Value = "" });
+                                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Cash", Value = "Cash" });
+                                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Ac Payee", Value = "Ac Payee" });
+                                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Cheque", Value = "Cheque" });
+                                        }
+                                        @Html.DropDownListFor(m => m.SalaryMode, new SelectList(listItems2, "Value", "Text"))
+                                    </div>
+
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-4">
+                                        Qualification Certificates <span style="color:red">* (Note : Must upload B.A., B.ed. Certificate. Upload all documents in single PDF file.)</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(a => a.StaffFile, null, new { id = "StaffFile", type = "file", @onchange = "CheckStaffFile(this)" })
+                                        @Html.HiddenFor(a => a.StaffFile)<span class="rqf">(Size limit upto 1MB)</span>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-12 text-center">
+                            <input type="submit" value="Submit" name="cmd" onclick="return validateothers()" style="@(Session["eDataSubmissionAllow"].ToString() == "0" ? "display:block" : "display:none")" />
+                        </div>
+
+                        <div id="loading1"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-12" style="margin-bottom:80px;overflow:scroll">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="t01">
+                        <tr class="active-tr">
+                            <th>Sr No</th>
+                            <th>Name</th>
+                            <th>Father's Name</th>
+                            <th>DOB</th>
+                            <th>Gender</th>
+                            <th>Aadhar No</th>
+                            <th>Qualification</th>
+                            <th>Cadre</th>
+                            <th>Subject</th>
+                            @*<th>Experience<br />Year/Month</th>*@
+                            <th>Mobile</th>
+                            <th>Salary<br />SalaryMode</th>
+                            <th>Document</th>
+                            <th>Action</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 20 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var eStaffId = Model.StoreAllData.Tables[0].Rows[i]["eStaffId"].ToString();
+                                    var APPNO = Model.StoreAllData.Tables[0].Rows[i]["APPNO"].ToString();
+                                    var name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                    var fname = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                                    var dob = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                    var gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                                    var aano = Model.StoreAllData.Tables[0].Rows[i]["AadharNo"].ToString();
+                                    var mobno = Model.StoreAllData.Tables[0].Rows[i]["MOBILENO"].ToString();
+                                    var Qualification = Model.StoreAllData.Tables[0].Rows[i]["Qualification"].ToString();
+                                    var cadre = Model.StoreAllData.Tables[0].Rows[i]["cadre"].ToString();
+                                    var subj = Model.StoreAllData.Tables[0].Rows[i]["Subject"].ToString();
+
+                                    //var ExpYear = Model.StoreAllData.Tables[0].Rows[i]["ExpYear"].ToString();
+                                    //var ExpMonth = Model.StoreAllData.Tables[0].Rows[i]["ExpMonth"].ToString();
+                                    var Salary = Model.StoreAllData.Tables[0].Rows[i]["Salary"].ToString();
+                                    var SalaryMode = Model.StoreAllData.Tables[0].Rows[i]["SalaryMode"].ToString();
+                                    var StaffFile = Model.StoreAllData.Tables[0].Rows[i]["StaffFile"].ToString();
+                                    
+                                    Count = Count + 1;
+                                                <tr>
+                                                    <td>
+                                                        @Count
+                                                    </td>
+                                                    @*<td>
+													@eStaffId
+													</td>*@
+                                                    <td>
+                                                        @name
+                                                    </td>
+                                                    <td>
+                                                        @fname
+                                                    </td>
+                                                    <td>
+                                                        @dob
+                                                    </td>
+                                                    <td>
+                                                        @gender
+                                                    </td>
+                                                    <td>
+                                                        @aano
+                                                    </td>
+                                                    <td>
+                                                        @Qualification
+                                                    </td>
+                                                    <td>
+                                                        @cadre
+                                                    </td>
+                                                    <td>
+                                                        @subj
+                                                    </td>
+
+                                                    <td>
+                                                        @mobno
+                                                    </td>
+                                                    <td>
+                                                        @Salary<br />@SalaryMode
+                                                    </td>
+                                                    <td>
+                                                        @if (string.IsNullOrEmpty(StaffFile))
+                                                        { <span> No Document</span>}
+                                                        else { <a href="/Upload/@StaffFile" target="_blank" class="btn">Download</a>}
+                                                        
+                                                    </td>
+                                                    <td>
+                                                        <div class="cart">
+                                                            Choose Action <span class="caret"></span>
+                                                            <div id="sidebar">
+                                                                <ul>
+                                                                    <li>
+                                                                        @Html.ActionLink("Modify", "StaffDetails", new { id = APPNO, eStaffId = eStaffId, act = "U" }, new { onclick = "return confirm('Are you sure want to Modify ?');" })
+                                                                    </li>
+                                                                    @*<li><a href="~/EAffiliation/School_Staff_Details_View/@id?command=View"> View</a></li>*@
+                                                                    @*<li><a href="~/EAffiliation/School_Staff_Details/@eStaffId?command=modify"> Modify</a></li>*@
+                                                                    <li> @Html.ActionLink("Delete", "ActionStaffDetails", new { id = APPNO, eStaffId = eStaffId, act = "D" }, new { onclick = "return confirm('Are you sure want to Delete ?');" })</li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+
+
+
+                                    if (d == ViewBag.TotalCount)
+                                    {
+                                        <tr>
+                                            <td colspan="13">
+                                                Page @ViewBag.pagesize of @ViewBag.pn
+
+                                                &nbsp;
+
+                                                @if (ViewBag.pagesize == 1)
+
+                                                {
+                                                    @:<<
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @:< Prev
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        @Html.ActionLink("Next >", "StaffDetails", new { page = ViewBag.pagesize + 1 })
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @Html.ActionLink(">>", "StaffDetails", new { page = ViewBag.pn })
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink("<<", "StaffDetails", new { page = 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink("< Prev", "StaffDetails", new { page = ViewBag.pagesize - 1 })
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        @Html.ActionLink("Next >", "StaffDetails", new { page = ViewBag.pagesize + 1 })
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @Html.ActionLink(">>", "StaffDetails", new { page = ViewBag.pn })
+                                                    }
+
+                                                }
+
+
+                                            </td>
+                                        </tr>
+                                    }
+
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="13">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+}
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1" && ViewBag.Action != "update")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                    window.location.href = '@Url.Action("StaffDetails", "EAffiliation")';
+                </script>
+}
+            else if (ViewData["result"].ToString() == "1" && ViewBag.Action == "update")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Updated SuccessFully..");
+                    window.location.href = '@Url.Action("StaffDetails", "EAffiliation")';
+                </script>
+}
+            else if (ViewData["result"].ToString() == "DUP")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Duplicate Aadhar Number.");
+                </script>
+            }
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                    //alert('ViewBag.Mesaage');
+                </script>
+            }
+
+        }
+    }
+}
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#Cadre").change(function () {
+            $("#Subject").empty();
+            if ($("#Cadre").val() != "") {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("SubjectList")', // we are calling json method
+                    dataType: 'json',
+                    data: { id: $("#Cadre").val() },
+                    success: function (subjects) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller  -- Select Category --
+                        $("#Subject").append('<option value="">-- Select Subject --</option>');
+                        $.each(subjects, function (i, subject) {
+                            $("#Subject").append('<option value="' + subject.Value + '">' + subject.Text + '</option>');
+                        }); // here we are adding option for States
+                    },
+                    error: function (ex) {
+                        alert('Failed to bing subjects.' + ex);
+                    }
+                });
+            }
+
+        });
+        //AadharNo
+        $("#aadno").change(function () {
+            if ($("#aadno").val() != "") {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("jsCheckAadharDuplicate")', // we are calling json method
+                    dataType: 'json',
+                    data: { id: $("#aadno").val() },
+                    success: function (response) {
+                        if (response.sn != "") {
+                            alert("Your entered Aadhar No. is duplicate  with this staff: \n" + response.sn);
+                        }
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve data: ' + ex);
+                    }
+                });
+            }
+
+        });
+
+
+
+    });
+
+    function findYear() {
+        var msg = $("#dob").val();
+        var array = msg.split("/");
+        syear = array[2];
+        var d = new Date();
+        var n = d.getFullYear();
+        var diff = parseInt(n) - parseInt(syear);
+        if (parseInt(diff) < 18) {
+            alert("Invalid DOB");
+            $("#dob").val("");
+        }
+
+    }
+    function validateNumber(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $("#MobileNo").val();
+
+        if (event.keyCode === 8 || event.keyCode === 46
+        || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c.length > 9) {
+            return false;
+        }
+
+        else return true;
+                    };
+
+</script>
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    //
+
+
+    $(document).ready(function () {
+
+        $(".datepicker").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1969:' + (new Date().getFullYear())
+        });
+
+    });
+
+</script>
+
+
+
+<script>
+    function validateAadhar(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $("#aadno").val();
+        if (event.keyCode === 8 || event.keyCode === 46
+            || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c.length > 11) {
+            return false;
+        }
+
+        else return true;
+    }
+
+    function validateMonth(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $("#ExpMonth").val();
+        //alert(c);
+        if (event.keyCode === 8 || event.keyCode === 46
+            || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c > 11) {
+            $("#ExpMonth").val("");
+            alert('Please enter maximum 11 month other wise enter in year');
+            return false;
+        }
+        if (c.length > 1) {
+            return false;
+        }
+
+
+        else return true;
+    }
+    function validateYear(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $("#ExpYear").val();
+        if (event.keyCode === 8 || event.keyCode === 46
+            || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c.length > 1) {
+            return false;
+        }
+
+        else return true;
+    }
+</script>
+
+<script>
+    function validateothers() {
+        //alert(document.getElementById("Name").value);
+        var name = document.getElementById("Name").value;
+        if (name == "") {
+            alert("Enter Your Name.");
+            document.getElementById("Name").focus();
+            return false;
+        }
+        var FName = document.getElementById("FName").value;
+        if (FName == "") {
+            alert("Enter Father name");
+            document.getElementById("FName").focus();
+            return false;
+        }
+
+        var DOB = document.getElementById("DOB").value;
+        if (DOB == "") {
+            alert("Fill your DOB");
+            document.getElementById("DOB").focus();
+            return false;
+        }
+
+        var Quali = document.getElementById("Qualification").value;
+        if (Quali == "") {
+            alert("Fill your Qualification");
+            document.getElementById("Qualification").focus();
+            return false;
+        }
+        var gen = document.getElementById("Gender").value;
+        if (gen == "" || gen == "0") {
+            alert("Fill your Gender");
+            document.getElementById("Gender").focus();
+            return false;
+        }
+        var aadno = document.getElementById("AadharNo");
+        if (aadno.value == "" || aadno.value == "0") {
+            alert("Fill your Aadhar no.");
+            document.getElementById("AadharNo").focus();
+            return false;
+        }
+
+        var cader = document.getElementById("Cadre");
+        if (cader.value == "" || cader.value == "0") {
+            document.getElementById("Cadre").focus();
+            alert("Fill your Cadre");
+            return false;
+        }
+        var subject = document.getElementById("Subject");
+        if (subject.value == "" || subject.value == "0") {
+            document.getElementById("Subject").focus();
+            alert("Fill your subject");
+            return false;
+        }
+
+        var mobno = document.getElementById("MOBILENO");
+        if (mobno.value == "" || mobno.value == "0") {
+            document.getElementById("MOBILENO").focus();
+            alert("Fill your Mobile no");
+            return false;
+        }
+
+
+        var ExpMonth = document.getElementById("ExpMonth");
+        var ExpYear = document.getElementById("ExpYear");
+
+        if (ExpMonth.value == "" && ExpYear.value == "") {
+            ExpYear.focus();
+            alert("Fill your Experiance in Month and Year");
+            return false;
+        }
+        else if (ExpMonth.value > 11 || ExpYear.value > 50) {
+            ExpYear.focus();
+            alert("Fill your Experiance in Month (max 11 month) and Year (max 50 year)");
+            return false;
+        }
+
+
+        var SalaryMode = document.getElementById("SalaryMode");
+        var Salary = document.getElementById("Salary");
+
+        if (SalaryMode.value == "" || Salary.value == "") {
+            Salary.focus();
+            alert("Please Fill Salary & Salary Mode Details");
+            return false;
+        }
+
+    };
+</script>
+
+<script type="text/javascript">
+    function CheckStaffFile(input) {
+        if (typeof ($("#StaffFile")[0].files) != "undefined") {
+
+            var ext = $('#StaffFile').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'PDF']) == -1) {
+                alert('Only .pdf format file allowed ');
+                $('#StaffFile').val('');
+                return false;
+            }
+
+
+            var size = parseFloat($("#StaffFile")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 1024) {
+                var filerdr = new FileReader();
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#StaffFile').val('');
+                }
+                if (parseInt(size) > 1024) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#StaffFile').val('');
+                }
+            }
+        }
+
+    }
+</script>

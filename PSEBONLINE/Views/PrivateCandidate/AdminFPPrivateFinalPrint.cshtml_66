@@ -1,0 +1,597 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+     Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+ <link rel="stylesheet" href="/Content/prvprint.css" />
+
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+
+@if (Session["refno"] == null || Session["refno"].ToString() == "")
+{ Response.Redirect("~/Admin"); }
+
+@using (Html.BeginForm("AdminFPPrivateFinalPrint", "PrivateCandidate", FormMethod.Post, new { id = "Oroll", enctype = "multipart/form-data" }))
+{
+    var refnoH = Session["refno"].ToString().Substring(3, 2);
+    var yearH = "20" + Session["refno"].ToString().Substring(5, 2);
+    var feecatH = Session["form"].ToString();
+    if (feecatH == "SrSec_Reap_SciComm")
+    {
+        refnoH = "June";
+        <h1 class="noprint">Sr. Secondary Supplementary Exam (Compartment Science/Commerce), @refnoH -@yearH</h1> }
+    else if (refnoH == "03")
+    {
+        refnoH = "March";
+        <h1 class="noprint">Matric/Sr.Secondary Supplementary Exam(Reap/Compartment/DIC), @refnoH -@yearH</h1>
+    }
+    else if (refnoH == "07")
+    {
+        refnoH = "July";
+        <h1 class="noprint">Matric/Sr.Secondary Supplementary Exam(Reap/Compartment/Additional), @refnoH-@yearH</h1>
+    }
+    else if (refnoH == "08")
+    {
+        refnoH = "August";
+        <h1 class="noprint">Matric/Sr.Secondary Supplementary Exam(Reap/Compartment/Additional), @refnoH-@yearH</h1>
+    }
+    else if (refnoH == "09")
+    {
+        refnoH = "September";
+        <h1 class="noprint">Matric/Sr. Secondary Supplementary Golden Chance Exam (Reap/Improvement/Additional), @refnoH -@yearH</h1> }
+    else if (refnoH == "10")
+    {
+        refnoH = "October";
+        <h1 class="noprint">Matric/Sr.Secondary Supplementary Exam(Reap/Compartment), @refnoH -@yearH</h1> }
+
+    <table style="width:100%;" border="0">
+        <tr>
+            <td>
+                <table style="width:100%;" border="0" class="noprint">
+                    <tr>
+                        <td style="text-align:right;padding-bottom:3px">
+                            <input type="button" value="Print" class="btn" onclick="window.print()" />
+                            <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                            @*<input value="Back" type="button" onclick="javascript:document.location.href='@Url.Action("PrivateCandidateConfirmation", "PrivateCandidate")'" />*@
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table style="width:100%;border:4px solid #000;">
+                    <tr>
+                        <td align="center" style="padding-top:15px">
+                            <table border="0" style="width:96%;">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2">
+                                            <table width="100%">
+                                                <tr>
+                                                    <td width="5%"><img src="~/Images/Slogo.jpg" /></td>
+                                                    <td width="95%" style="font-size:22px;text-align:center;line-height:28px;">
+                                                        Punjab School Education Board<br />
+                                                        @{
+                                                            if (Model.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "10" || Model.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "12")
+                                                            {
+                                                                var classNM = Model.StoreAllData.Tables[0].Rows[0]["class"].ToString();
+                                                                if (classNM == "10") { classNM = "Matriculation"; }
+                                                                if (classNM == "12") { classNM = "Senior Secondary"; }
+                                                                var CATEGORY = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                                                                if (CATEGORY == "R") { CATEGORY = "Reappear/Compartment"; }
+                                                                if (CATEGORY == "D") { CATEGORY = "Division improvement"; }
+                                                                if (CATEGORY == "A") { CATEGORY = "Additional subject"; }
+                                                                var EXAMTYPE = Model.StoreAllData.Tables[0].Rows[0]["rp"].ToString();
+                                                                if (EXAMTYPE == "R") { EXAMTYPE = "Regular"; }
+                                                                if (EXAMTYPE == "O") { EXAMTYPE = "Open"; }
+                                                                if (EXAMTYPE == "P") { EXAMTYPE = "Private"; }
+                                                                if (EXAMTYPE == "SR") { EXAMTYPE = "Golden Chance Re-Appear"; }
+                                                                if (EXAMTYPE == "SD") { EXAMTYPE = "Golden Chance DIC"; }
+                                                                if (EXAMTYPE == "SA") { EXAMTYPE = "Golden Chance Additional"; }
+                                                               <span style="font-size:16px;">@classNM Examination Form For @Html.DisplayFor(a => a.Exam_Type) (@EXAMTYPE) , @*@refnoH*@ November-@yearH</span>
+                                                            }
+
+                                                        }
+                                                      
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="text-align:left;padding-top:4px">
+                                            <table width="100%">
+                                                <tr>
+                                                    <td style="font-size:14px" width="24%">
+                                                        <div class="border" style="text-align:center;border-radius:4px">
+                                                            Reference No. :<br />@Html.DisplayFor(a => a.refNo)
+                                                        </div>
+                                                    </td>
+                                                    <td width="1%"></td>
+                                                    <td width="65%">
+                                                        <div class="border" style="text-align:left;border-radius:4px">
+                                                            &nbsp;<i>For Office Use Only</i> :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Old Set :&nbsp;@Html.DisplayFor(a => a.OsetNo) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dealing Set :&nbsp;..................................<br />
+                                                            &nbsp;Sheet No.:&nbsp;...............................&nbsp;&nbsp;&nbsp;&nbsp;Roll No.:&nbsp;...............................&nbsp;&nbsp;&nbsp;&nbsp;Centre Code:&nbsp;...............................
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3" style="height:5px"></td>
+
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="text-align:left">
+                                             <table border="1" width="100%">
+                            <tr>
+                                <td width="18%">&nbsp;District Code/Name</td>
+                                <td width="30%">&nbsp;@Html.DisplayFor(a => a.SelExamDist).ToString().ToUpper()</td>
+                                <td width="15%">&nbsp;Category</td>
+                                <td colspan="2">&nbsp;@Html.DisplayFor(a => a.Exam_Type)</td>
+                            </tr>
+                                                 <tr>
+                                                     <td width="15%">&nbsp;Exam Type</td>
+                                                     <td>
+                                                         &nbsp;@{
+                                                             var EXAMTYPE1 = Model.StoreAllData.Tables[0].Rows[0]["rp"].ToString();
+                                                             if (EXAMTYPE1 == "R") { EXAMTYPE1 = "REGULAR"; }
+                                                             if (EXAMTYPE1 == "O") { EXAMTYPE1 = "OPEN"; }
+                                                             if (EXAMTYPE1 == "P") { EXAMTYPE1 = "PRIVATE"; }
+                                                         }@EXAMTYPE1
+                                                     </td>
+                                                     <td style="text-align:left;font-size:11px" colspan="2">
+                                                         &nbsp;@{
+                                                             var CATEGORY1 = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                                                             if (CATEGORY1 == "R" || CATEGORY1 == "SR" || CATEGORY1 == "SD" || CATEGORY1 == "SA") { CATEGORY1 = "Want to Appear In Practical Exam"; }
+                                                             if (CATEGORY1 == "D") { CATEGORY1 = ""; }
+                                                             if (CATEGORY1 == "A") { CATEGORY1 = ""; }
+                                                         }@CATEGORY1
+                                                     </td>
+                                                     <td width="5%">
+                                                         @{
+                                                             var Practical = Model.StoreAllData.Tables[0].Rows[0]["prac"].ToString();
+                                                             if (Practical == "True" && (Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "R" || Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "SR" || Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "SD" || Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "SA")) { Practical = "Yes"; }
+                                                             else if (Practical == "False" && (Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "R" || Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "SR" || Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "SD" || Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "SA")) { Practical = "No"; }
+                                                             else { Practical = ""; }
+                                                         } &nbsp;@Practical
+                                                     </td>
+                                                 </tr>
+                            
+                            <tr>
+                                <td>&nbsp;Differentaly  abled</td>
+                                 <td>&nbsp;@Html.DisplayFor(a => a.phyChal).ToString().ToUpper()</td>
+                                <td style="text-align:left;font-size:11px" colspan="2">&nbsp;Do you want Writer (Scribe) (Attach Certificate)</td>
+                                <td width="5%">
+                                    @{
+                                        var writer = Model.StoreAllData.Tables[0].Rows[0]["writer"].ToString();
+                                        if (writer == "True") { writer = "Yes"; }
+                                        else { writer = "No"; }
+                                    } &nbsp;@writer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;Desired Exam Centres</td>
+                                <td>&nbsp;1.&nbsp;@Html.DisplayFor(a => a.Choice1).ToString().ToUpper()</td>
+                                <td colspan="3">&nbsp;2.&nbsp;@Html.DisplayFor(a => a.Choice2).ToString().ToUpper()</td>
+                            </tr>
+                            </table>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:left">&nbsp;Personal Information</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <table width="100%" border="1">
+                                                <tr>
+
+
+                                                    <td colspan="2" width="18%">&nbsp;Ref. No.</td>
+                                                    <td>&nbsp;@Html.DisplayFor(a => a.refNo)</td>
+                                                    @{
+                                                        if (Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "A")
+                                                        {
+                                                            <td colspan="2"></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>&nbsp;Registration No.</td>
+                                                            <td>&nbsp;@Html.DisplayFor(a => a.RegNo)</td>
+                                                        }
+                                                    }
+
+                                                    @{
+                                                        var strP = Convert.ToString(ViewBag.Photo);
+                                                        if (strP.Contains("Batch0320"))
+                                                        {
+                                                            ViewBag.Photo = "https://registration2022.pseb.ac.in/upload/upload2019/" + Convert.ToString(ViewBag.Photo);
+                                                            ViewBag.sign = "https://registration2022.pseb.ac.in/upload/upload2019/" + Convert.ToString(ViewBag.sign);
+                                                        }
+                                                        else
+                                                        {
+                                                            ViewBag.Photo = "https://registration2022.pseb.ac.in/upload/upload2023/" + Convert.ToString(ViewBag.Photo);
+                                                            ViewBag.sign = "https://registration2022.pseb.ac.in/upload/upload2023/" + Convert.ToString(ViewBag.sign);
+                                                        }
+                                                        //ViewBag.Photo = "/upload/upload2018/" + Convert.ToString(ViewBag.Photo);
+                                                        //ViewBag.sign = "/upload/upload2018/" + Convert.ToString(ViewBag.sign);
+                                                        //if (ViewBag.sign.Contains("open2016"))
+                                                        //{
+                                                        //    ViewBag.Photo = ViewBag.Photo.Replace("/upload", "");
+                                                        //}
+
+                                                        //if (ViewBag.sign.Contains("open2016"))
+                                                        //{
+                                                        //    ViewBag.sign = ViewBag.sign.Replace("/upload", "");
+                                                        //}
+                                                    }
+                                                    <td rowspan="7" style="text-align:center"><img src="@ViewBag.Photo" style="height:140px;width:140px;border:1px solid #000;padding:1px" alt="Photograph" id="imgPhoto" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="vertical-align:top">
+                                                        &nbsp;Candidate Name<br />@*&nbsp;(In English / Punjabi)*@
+                                                    </td>
+                                                    <td colspan="3" style="vertical-align:top">
+                                                        &nbsp;@Html.DisplayFor(a => a.Candi_Name) / <span class="kdsfont">@Html.DisplayFor(a => a.Pname)</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="vertical-align:top">
+                                                        &nbsp;Father&#39;s Name<br />@*&nbsp;(In English / Punjabi)*@
+                                                    </td>
+                                                    <td colspan="3" style="vertical-align:top">
+                                                        &nbsp;@Html.DisplayFor(a => a.Father_Name) / <span class="kdsfont">@Html.DisplayFor(a => a.PFname)</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="vertical-align:top">
+                                                        &nbsp;Mother&#39;s Name<br />@*&nbsp;(In English / Punjabi)*@
+                                                    </td>
+                                                    <td colspan="3" style="vertical-align:top">
+                                                        &nbsp;@Html.DisplayFor(a => a.Mother_Name) / <span class="kdsfont">@Html.DisplayFor(a => a.PMname)</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">&nbsp;Caste</td>
+                                                    <td>&nbsp;@Html.DisplayFor(a => a.CastList).ToString().ToUpper()</td>
+                                                    @{
+                                                        if (Model.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "12")
+                                                        {
+                                                            <td colspan="2"></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>&nbsp;Date of Birth</td>
+                                                            <td>&nbsp;@Html.DisplayFor(a => a.DOB)</td>
+                                                        }
+                                                    }
+
+
+
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">&nbsp;Gender</td>
+                                                    <td width="23%">&nbsp;@Html.DisplayFor(a => a.Gender).ToString().ToUpper()</td>
+                                                    <td width="15%">&nbsp;Religion</td>
+                                                    <td width="23%">&nbsp;@Html.DisplayFor(a => a.Relist).ToString().ToUpper()</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">&nbsp;Mobile No.</td>
+                                                    <td>&nbsp;@Html.DisplayFor(a => a.mobileNo)</td>
+                                                    <td width="15%">&nbsp;Stream/Group</td>
+                                                    <td width="23%">&nbsp;@Html.DisplayFor(a => a.Stream).ToString().ToUpper()</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">&nbsp;Email ID</td>
+                                                    <td colspan="3">&nbsp;@Html.DisplayFor(a => a.emailID).ToString().ToUpper()</td>
+                                                    <td rowspan="2" style="text-align:center"><img src="@ViewBag.sign" style="height:55px;width:140px;border:1px solid #000;padding:1px" alt="Signature" id="img1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="vertical-align:top">&nbsp;Address</td>
+                                                    <td colspan="3" style="height:40px;vertical-align:top">&nbsp;@Html.DisplayFor(a => a.addressfull).ToString().ToUpper()</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="2">
+                                            <table width="100%" border="1">
+                                                <tr>
+                                                    <td>
+                                                        <table width="100%" border="1">
+                                                            <tr>
+                                                                <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left">&nbsp;Previous Class Details</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="18%">&nbsp;Old Roll No.</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.OROLL)</td>
+                                                                <td width="15%">&nbsp;Session / Year</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.SelMonth) / @Html.DisplayFor(a => a.SelYear)</td>
+                                                                <td width="15%">&nbsp;Result Details </td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.SearchResult)</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="2">
+                                            <table width="100%" border="1">
+                                                <tr>
+                                                    <td>
+                                                        @{
+                                                            if (@ViewBag.TotalCount > 0)
+                                                            {
+
+                                                                var challanid = Model.StoreAllData.Tables[0].Rows[0]["challanid"].ToString();
+                                                                var Bank = Model.StoreAllData.Tables[0].Rows[0]["Bank"].ToString();
+                                                                var BRANCH = Model.StoreAllData.Tables[0].Rows[0]["BRANCH"].ToString();
+                                                                var DEPOSITDT = Model.StoreAllData.Tables[0].Rows[0]["DEPOSITDT"].ToString();
+                                                                var J_REF_NO = Model.StoreAllData.Tables[0].Rows[0]["J_REF_NO"].ToString();
+                                                                var ExpireVDate = Model.StoreAllData.Tables[0].Rows[0]["challanvdateN"].ToString();
+                                                                var totalfee = Model.StoreAllData.Tables[0].Rows[0]["totfee"].ToString();
+                                                                var feeCat = Model.StoreAllData.Tables[0].Rows[0]["feeCat"].ToString();
+                                                                <table width="100%" border="1">
+                                                                    <tr>
+                                                                        <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:center">Fee Details</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td width="15%">&nbsp;Challan No.</td>
+                                                                        <td width="15%">&nbsp;@challanid</td>
+                                                                        <td width="15%">&nbsp;Challan Amount</td>
+                                                                        <td width="15%">&nbsp;@totalfee</td>
+                                                                        <td width="15%">&nbsp;Challan Valid Date</td>
+                                                                        <td width="25%">&nbsp;@ExpireVDate</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>&nbsp;Bank/Branch</td>
+                                                                        <td colspan="5">&nbsp;@Bank / @BRANCH</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>&nbsp;Bank Ref No.</td>
+                                                                        <td>&nbsp;@J_REF_NO</td>
+                                                                        <td>&nbsp;Deposit Date</td>
+                                                                        <td>&nbsp;@DEPOSITDT</td>
+                                                                        <td colspan="2"></td>
+                                                                    </tr>
+                                                                </table>
+                                                            }
+                                                        }
+                                                    </td>
+                                                   
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:left">&nbsp;Subjects Details</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <table width="100%" border="1">
+                                                <tr>
+                                                    <td width="5%">&nbsp;Sr.</td>
+                                                    <td width="5%">&nbsp;Code</td>
+                                                    <td width="45%">&nbsp;Subject Name</td>
+                                                    <td width="5%">&nbsp;Sr.</td>
+                                                    <td width="5%">&nbsp;Code</td>
+                                                    <td width="45%">&nbsp;Subject Name</td>
+                                                </tr>
+                                                @{
+                                                    if (@ViewBag.TotalCount > 0)
+                                                    {
+                                                        var rsub1code = Model.StoreAllData.Tables[0].Rows[0]["rsub1code"].ToString();
+                                                        var rsub2code = Model.StoreAllData.Tables[0].Rows[0]["rsub2code"].ToString();
+                                                        var rsub3code = Model.StoreAllData.Tables[0].Rows[0]["rsub3code"].ToString();
+                                                        var rsub4code = Model.StoreAllData.Tables[0].Rows[0]["rsub4code"].ToString();
+                                                        var rsub5code = Model.StoreAllData.Tables[0].Rows[0]["rsub5code"].ToString();
+                                                        var rsub6code = Model.StoreAllData.Tables[0].Rows[0]["rsub6code"].ToString();
+                                                        var rsub7code = Model.StoreAllData.Tables[0].Rows[0]["rsub7code"].ToString();
+                                                        var rsub8code = Model.StoreAllData.Tables[0].Rows[0]["rsub8code"].ToString();
+                                                        var i = 0;
+                                                        <tr>
+                                                            @if (rsub1code != "")
+                                                            {
+                                                                i = i + 1;
+                                                                <td>&nbsp;@i</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub1code)</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub1)</td>
+                                                            }
+                                                            @if (rsub2code != "")
+                                                            {
+                                                                i = i + 1;
+                                                                <td>&nbsp;@i</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub2code)</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub2)</td>
+                                                            }
+                                                        </tr>
+                                                        <tr>
+                                                            @if (rsub3code != "")
+                                                            {
+                                                                i = i + 1;
+                                                                <td>&nbsp;@i</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub3code)</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub3)</td>
+                                                            }
+                                                            @if (rsub4code != "")
+                                                            {
+                                                                i = i + 1;
+                                                                <td>&nbsp;@i</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub4code)</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub4)</td>
+                                                            }
+                                                        </tr>
+                                                        <tr>
+                                                            @if (rsub5code != "")
+                                                            {
+                                                                i = i + 1;
+                                                                <td>&nbsp;@i</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub5code)</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub5)</td>
+                                                            }
+                                                            @if (rsub6code != "")
+                                                            {
+                                                                i = i + 1;
+                                                                <td>&nbsp;@i</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub6code)</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub6)</td>
+                                                            }
+                                                        </tr>
+                                                        <tr>
+                                                            @if (rsub7code != "")
+                                                            {
+                                                                i = i + 1;
+                                                                <td>&nbsp;@i</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub7code)</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub7)</td>
+                                                            }
+                                                            @if (rsub8code != "")
+                                                            {
+                                                                i = i + 1;
+                                                                <td>&nbsp;@i</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub8code)</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.sub8)</td>
+                                                            }
+                                                        </tr>
+                                                    }
+
+                                                }
+                                               
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:center">Declaration</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                           <table width="100%" border="1">
+                                                <tr>                                                    
+                                                    <td>
+<div style="font-size:10px;line-height:12px;padding:0 4px" class="kdsfont">
+                                                         ¦ÝÌÛÂÒØÏ ÂØ ÚÉ¤ØÅ :-<br />(¦) Ìè ÚÉ¤ØÅ ¨ÏÂØ / ¨ÏÂÛ ÕÙ Ú¨ ÌãÏã ÂÝ¤ØÏØ ÇØÏÌ ÚÒó° ÊÏã ¬¥ã ÓØÏã ÒãÏÒã ÓÕÛ ÕÅ ¢ Ìè Ðë¾ÛÂã ÂÓ¼ØÒã² ÅóÁÛ ¨Ï ÚÏÕØ/ÏÕÛ ÕÙ ¢ ÇØÏÌ ÚÒó° ¨Û¼Û Ú¨Óã ÒÛ ¬Ð¼ ÚÉ¤ØÅÛ Ð¥Û Ìè ÆÞÏÛ ¼ÏðÙ Ú²âÌãÒØÏ ÕëÒÙ¬Ø/ÕëÒÙ¬Û¢ Ìè ÉëÏ¸ ÂÝ¤ØÏØ ÌØÅ¼Ø ÆñØÆ¼ Ú¨Óã ÓâÓÁØ ÂÝ¤ØÏØ ÚÅ¨ØÐØ-ÆñØÆ¼ ¨óºã ¬¥ã Õë» Âã ¨ØÏ» ÆÏÛÚª¤Ø ÚÒó° Éè•» ¼ë ÒÏÚ²¼ ÅÕÛ ²Ù ÉëÏ¸ ÒóÐë ÌèÅÞâ Ú¨Óã ÆÏÛÚª¤Ø ¼ë ¤Íë¬ ¨ÏØÏ ÅÕÛ ÚÂó¼Ø Ú¬¤Ø¢ Ìè Ú¥Ó ÚÒóÚÂ¤¨ ÓØÐ ÚÒó° Ú¨Óã ÒÛ ÓÏ¨ØÏÛ/ÌØÅ¼Ø ÆñØÆ¼ Ó¨ÞÐ ÚÒó° ÅÕÜ Æ¾ ÚÏÕØ/ÏÕÛ ÕÙ¢ Ìè Ú¥Ó ÆÏÛÚª¤Ø ÇØÏÌ ¼ë Ú¥ÐØÒØ Ú¥Ó ÆÏÛÚª¤Ø Ð¥Û ÕëÏ ¨ë¥Û ÆÏÛÚª¤Ø ÇØÏÌ ÅÕÛ ÊÚÏ¤Ø¢
+(¤) ÌãÏã ÒÐë Ú¨Óã ÒÛ Ú¨ÓÌ Âã ´¬¾ã ÂÛ ÓÞÏ¼ ÚÒó° ¨ØÅÝâÅÛ ¨ØÏÒØ¥Û ¨ãÒÐ ¤²Û¼¬¾ð ÓÚÄ¼ ¤ÂØÐ¼ ÚÒó° ÕÛ ¨Û¼Û ²ØÒã¬Ûã¢ 
+
+                                                        <br />ÚÌ¼Û......................................................................<span style="font-family:Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>ÓÁØÅ......................................................................<span style="font-family:Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>¦ÝÌÛÂÒØÏ Âã ÕÓ¼ØªÏ......................................................................
+                                                        <br />
+                                                        ¼ÓÂÛ¨ :-<br /><span style="font-family:Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>        Ìè ¼ÓÂÛ¨ ¨ÏÂØ/¨ÏÂÛ ÕÙ Ú¨ ¦ÝÌÛÂÒØÏ ...................................................................... ÓÆÝó¼Ï/ÓÆÝó¼ÏÛ ÓñÛ ...................................................................... ÓñÛÌ¼Û ...................................................................... Åã ........ ÓÖñã»Û ÂÛ ÆÏÛÚª¤Ø ÏëÐ Åâ ............................................ÓèÓÅ/ÓØÐ ..................ÉëÏ¸ ............................¼ë ÚÂó¼Û ÓÛ, Ú²ÓÂØ Å¼Û²Ø ..................... Õè, ÆÏÛÚª¤Ø ÇØÏÌ ÚÒó° ÊÏã ÒãÏÒã ÓÕÛ ÕÅ, ¦ÝÌÛÂÒØÏ Åã ÕÓ¼ØªÏ ÌãÏÛ ÕØ²ÏÛ ÚÒó° ¨Û¼ã ÕÅ ¤¼ã Ú¥Õ ¦ÝÌÛÂÒØÏ Ú¥Ó ÆÏÛÚª¤Ø Ð¥Û Íë¬ Õè¢
+...........................................................(ÆÝÏØ ÅÙ)
+<br />
+
+                                                        ...........................................................(ÆÝÏØ ÅÙ)<br />
+                                                        ¤ÕÝÂØ .....................................................................<br />
+                                                        ÌëÉØ¥ÛÐ Åâ /¶èÐÛÇëÅ ÅâÉÏ ¨ë¸ ÓÌã¼ ...........................                 <span style="float:right;padding-right:5px">¼ÓÂÛ¨ ¨ÏÅ ÒØÐã ¤ÚÄ¨ØÏÛ Âã ÕÓ¼ØªÏ ¤¼ã ÌëÕÏ</span>
+</div>                                                        
+</td>
+<td width="22%" style="vertical-align:top;text-align:center">
+<div class="border" style="height:160px;text-align:center;margin:4px"><br />Paste Recent<br />Attested<br />
+Passport size<br />Colored<br />
+Photograph.<br /><br />
+DO  NOT STAPLE</div> 
+
+
+</td>
+                                                </tr>
+
+                                                </table>                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:center">Permanent Address of Candidate</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="padding-bottom:15px">
+                                          <table width="100%" border="0">
+<tr>
+<td style="padding:4px 0" colspan="2"><div style="border-bottom:1px dashed #000"></div></td>
+</tr>
+                                                <tr>
+                                                    <td width="50%">
+                                                        <table width="100%" border="1">
+<tr>
+                                                                <td width="26%">&nbsp;Roll Number</td>
+                                                                <td>&nbsp;</td>
+<td>&nbsp;Ref. No.</td>
+<td>&nbsp;@Html.DisplayFor(a => a.refNo)</td>
+</tr>
+                                                            <tr>
+                                                                <td width="26%">&nbsp;Name</td>
+                                                                <td colspan="3">&nbsp;@Html.DisplayFor(a => a.Candi_Name).ToString().ToUpper()</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>&nbsp;Father's Name</td>
+                                                                <td colspan="3">&nbsp;@Html.DisplayFor(a => a.Father_Name).ToString().ToUpper()</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="vertical-align:top">&nbsp;Address</td>
+                                                                <td colspan="3" style="height:40px;vertical-align:top">&nbsp;@Html.DisplayFor(a => a.address).ToString().ToUpper()</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>&nbsp;District </td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.distName).ToString().ToUpper()</td>
+                                                                <td width="20%">&nbsp;Pin Code</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.pinCode)</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>&nbsp;Mobile</td>
+                                                                <td colspan="3">&nbsp;@Html.DisplayFor(a => a.mobileNo)</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                    <td width="50%">
+                                                        <table width="100%" border="1">
+ <tr>
+                                                                <td width="26%">&nbsp;Roll Number</td>
+                                                                <td>&nbsp;</td>
+<td>&nbsp;Ref. No.</td>
+<td>&nbsp;@Html.DisplayFor(a => a.refNo)</td>
+</tr>
+                                                            <tr>
+                                                                <td width="26%">&nbsp;Name</td>
+                                                                <td colspan="3">&nbsp;@Html.DisplayFor(a => a.Candi_Name).ToString().ToUpper()</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>&nbsp;Father's Name</td>
+                                                                <td colspan="3">&nbsp;@Html.DisplayFor(a => a.Father_Name).ToString().ToUpper()</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="vertical-align:top">&nbsp;Address</td>
+                                                                <td colspan="3" style="height:40px;vertical-align:top">&nbsp;@Html.DisplayFor(a => a.address).ToString().ToUpper()</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>&nbsp;District </td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.distName).ToString().ToUpper()</td>
+                                                                <td width="20%">&nbsp;Pin Code</td>
+                                                                <td>&nbsp;@Html.DisplayFor(a => a.pinCode)</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>&nbsp;Mobile</td>
+                                                                <td colspan="3">&nbsp;@Html.DisplayFor(a => a.mobileNo)</td>
+                                                            </tr>
+                                                        </table>
+
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
+            }

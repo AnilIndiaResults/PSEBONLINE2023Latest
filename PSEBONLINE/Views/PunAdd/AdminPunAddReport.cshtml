@@ -1,0 +1,237 @@
+﻿@model PSEBONLINE.Models.PunAddModels
+@{
+    ViewBag.Title = "Admin Punjabi Additional Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4L.css" />
+@*<style type="text/css">
+        body {
+            font-size: 11px;
+        }
+        table { page-break-inside:auto }
+        tr    { page-break-inside:avoid; page-break-after:auto }
+        thead { display:table-header-group }
+        tfoot { display:table-footer-group }
+    </style>*@
+    <style type="text/css">
+        .brack {
+        page-break-after: always/*height:900px;*/
+    }
+        .tds td{padding:10px 0}
+    </style>
+
+@using (Html.BeginForm("AdminPunAddReport", "PunAdd", FormMethod.Post, new { id = "searchform" }))
+{
+
+    <div class="row">
+        <div class="col-md-12 noprint">
+            <h1>Pun Add Report </h1>
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Select Batch/Year  @Html.DropDownList("batchYear", new SelectList(ViewBag.ResultBatchList, "Value", "Text", ViewBag.MybatchYear), "--Select Batch---", new { @class = "", required = "required" })
+                </div>               
+                <div class="col-md-2">
+                            @{
+                                List<SelectListItem> setNo = new List<SelectListItem>();
+                                setNo.Add(new SelectListItem { Text = "---Select----", Value = "0" });
+                                setNo.Add(new SelectListItem { Text = "A", Value = "A" });
+                                setNo.Add(new SelectListItem { Text = "B", Value = "B" });
+                            }
+                            Select Set @Html.DropDownList("setNo", setNo, new { id = "setNo", ViewBag.MysetNo })
+                        </div>
+                <div class="col-md-3 noprint" style="display:none"><input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-3 noprint"><br /><input type="submit" value="Search" onclick="return formVal();" /></div>
+</fieldset>
+            <P class="noprint" style="text-align:right">
+                <input type="button" value="Print" class="btn" onclick="window.print()" />
+            </P>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <!-- 01-->
+            @if (ViewBag.TotalCount > 0)
+            {
+                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                {
+                    var minmaxroll = Model.StoreAllData.Tables[0].Rows[i]["minmaxroll"].ToString();
+                    var gDate = Model.StoreAllData.Tables[0].Rows[i]["gdate"].ToString();
+                    var Sett = Model.StoreAllData.Tables[0].Rows[i]["Set"].ToString();
+                    var SetNo = 0;
+                    var batch = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+                    var batcha = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+                    var yr = Model.StoreAllData.Tables[0].Rows[i]["yr"].ToString();
+                    if (Sett == "A")
+                    {
+                        SetNo = 1;
+                    }
+                    if (Sett == "B")
+                    {
+                        SetNo = 2;
+                    }
+
+                    switch (batcha.Trim())
+                    {
+                        case "1": batcha = "¤ÆñèÐ"; break;
+                        case "2": batcha = "²ÝÐØ¥Û"; break;
+                        case "3": batcha = "¤¨¼ÞÉÏ"; break;
+                        case "4": batcha = "²ÅÒÏÛ"; break;
+                    }
+                    <table style="width:100%" class="brack">
+                        <tr>
+                            <td width="15%"></td>
+                            <td width="70%" style="text-align:center;padding-top:35px;line-height:42px">
+                                <span class="kdsfont" style="font-size:72px">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span><br />
+                                <span class="kdsfont" style="font-size:36px">ÓØÚÕÉ²ÖØÂØ ¤²Û¼ ÚÓâ® Å¬Ï</span>
+                            </td>
+                            <td width="15%"><span class="kdsfont">ÆñÛ</span> - @SetNo<br />@batch / @yr</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align:center;padding-bottom:30px;padding-top:30px"><img src="/Images/Printlogo.jpg" alt="PSEB" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align:center;line-height:30px;font-size:28px" class="kdsfont">
+                                <span class="" style="font-size:36px">Å¼Û²Ø ¬²Ö¶</span><br />
+                                <span class="">Ú²ÖÐðã :</span> <span class="">ÓØÏã Ú²Ððã</span><br />
+                                <span class="">Æâ²ØÉÛ ÒØÄÞ ÚÒÓÖØ ÓÆèÓÖÐ ÆñÛÚª¤Ø (ÌèÚ¶ñ¨ ÆóÄÏ Æâ²ØÉÛ) @batcha, @yr ÂØ Å¼Û²Ø ¬²Ö¶</span><br />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="padding-bottom:60px;text-align:center"><br /><span class="kdsfont" style="font-size:36px"><u>ÏëÐ ÅâÉÏ</u></span><br /></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                                <span style="float:left;font-size:28px" class="kdsfont">ÒØÄÞ ÚÒÓÖã</span>
+                                <span style="float:right;font-size:28px">@minmaxroll</span>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align:center;padding-top:130px"><span class="kdsfont" style="font-size:36px">¤ÚÄ¨ØÏ ÏØÕÛ Æñ¨ØÚÓÖ¼ ¨Û¼Ø Ú¬¤Ø¢</span></td>
+                        </tr>
+
+                    </table>
+
+                <!-- 02-->
+                    <table style="width:100%;" class="kdsfont brack tds">
+                        <tr>
+                            <td colspan="2" style="border-bottom:2px dashed #000;text-align:center;font-size:26px;line-height:28px" class="kdsfont">
+                                <span class="kdsfont" style="font-size:34px">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span><br />
+                                ¤ÚÄÓÞ°ÅØ (Åë¶ÛÚÇ¨ãÓÖÅ) ÅâÉÏ Æâ²ØÉÛ ÒØÄÞ ÚÒÓÖØ ÓÆèÓÖÐ ÆñÛÚª¤Ø (ÌèÚ¶ñ¨ ÆóÄÏ Æâ²ØÉÛ) @batcha, @yr ÂØ Å¼Û²Ø @*2012/1*@<br />
+                                @*Æâ²ØÉÛ ÒØÄÞ ÚÒÓÖØ ÓÆèÓÖÐ ÆñÛÚª¤Ø (ÌèÚ¶ñ¨ ÆóÄÏ Æâ²ØÉÛ) ¤ÆñèÐ, 2012 ÂØ Å¼Û²Ø<br />*@
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="kdsfont" style="line-height:28px">
+                                ²ÏÞÏÛ Åë¶ :<br />
+                                ¬²Ö¶ ÚÒó° Å¼Û²ã ÓÉâÄÛ ÓâªãÆ Òó²ë× ÒÏ¼ã ¬¥ã ÓÖÉÂÙ ÂØ ÓâªãÆ ¨ÏÅ Ú¥Ó Æñ¨ØÏ Õè :
+                            </td>
+                        </tr>
+                        <tr><td width="5%">1</td>	<td>ÆñÛÚª¤ØÏÁÛ Âã Æâ²ØÉ ÚÒÓÖã Âã ÆãÆÏ ¥ã ¤¼ã ÆãÆÏ ÉÛ Âã ¤â¨Ù ÂØ ¨ãÒÐ ²ë¾ ÂÏÓØÚ¥¤Ø Ú¬¤Ø Õè¢</td></tr>
+                        <tr> <td>2</td>	<td>Ì ÖÐ Ö	¼ë× ÊØÒ Õè Ú¨ ÆñÛÚª¤ØÏÁÛ ÆñÛÚª¤Ø ÚÒó° ÆØÓ Õè Æñâ¼Þ ¦ÝÓ Âã Ú¨Óã Ú¥ó¨ ÆãÆÏ Âã ÅâÉÏ ¤Ø¦Ý»ã ÉØ¨Û ÕÅ¢  Ú¥Ó Ð¥Û ÆñØÆ¼ ¤â¨/Å¼Û²Ø ÉØ¤Â ÚÒó° ®ëÚÓÖ¼ ¨Û¼Ø ²ØÒã¬Ø¢</td></tr>
+                        <tr> <td>3</td>	<td>¬ ÖÕ Ö</td></tr>
+                        <tr> <td>4</td>	<td>Ï ÖÐ Ö¤ Ö</td></tr>
+                        <tr> <td>5</td>	<td>Ï ÖÐ Ö(¤ Ö¦ ÖÓ Ö)	¤»-¦ÝÚ°¼ ÓØÄÅÙ ÂÛ ÒÏ¼ë× ÓÉâÄÛ ¨ãÓÙ ÂØ ÇèÓÐØ  Õë ²Ø» ¦ÝÆÏâ¼ Å¼Û²Ø ®ëÚÓÖ¼ ¨Û¼Ø ²ØÒã¬Ø¢</td></tr>
+                        <tr> <td>6</td>	<td>Ï ÖÐ Ö(Ó)		Ú¨Óã Ú¨ÓÌ ÂÛ ÆñÛÚª¤Ø ¨ã×ÂÏ ¼ë× ¤Ø¥Û Õë¥Û ÚÓÖ¨ØÚ¥¼ ÂØ ÚÅÆ¶ØÏØ Õë» ¦ÝÆÏâ¼ Å¼Û²Ø ®ëÚÓÖ¼ ¨Û¼Ø ²ØÒã¬Ø¢</td></tr>
+                        <tr>
+                            <td>7</td>
+                            <td>
+                                ÏóÂ / Ï ÖÐ Ö(ÇÛÓ)	²ã Ú¨Óã ¦ÝÌÛÂÒØÏ Âã ÂØªÐØ ÇØÏÌ ÚÒó° ¨ë¥Û ªØÌÛ ÕëÒã/ÇÛÓ ÉØ¨Û ÕëÒã ¼Ù ¦ÝÓ ÅâÞ °ØÕÛÂØ Õè Ú¨ ÆñÛÚª¤Ø ÓÖÝÏÞ Õë» ¼ë× ÆÚÕÐÙ ªØÌÛ ÂØ ÚÅÆ¶ØÏØ ¨Ïë/ ÉØ¨Û ÇÛÓ ÂãÒã¢  ²ã ¦ÝÕ ªØÌÛ¤Ù ÂØ ÚÅÆ¶ØÏØ ÅÕÛ× ¨ÏÂØ ¼Ù ¦ÝÓ ÅâÞ Å¼Û²ã Âã ¤èÐØÅ ¼ó¨ ªØÌÛ ÂØ ÚÅÆ¶ØÏØ ¨ÏÅ Ð¥Û ²Ù ÉØ¨Û ÇÛÓ, ²ã ¨ë¥Û ÕëÒã, Êã²» ÂØ Ú¥ó¨ ÕëÏ ¤ÒÓÏ ÚÂó¼Ø ²ØÒã¬Ø¢  ²ã Ú¥ÅðÙ ²¼ÅÙ Âã ÉØÒ²ÞÂ ¦ÝÕ ¤ØÆ»ã ¨ãÓ ÂØ ÕóÐ ÅÕÛ× ¨ÏÂØ ¼Ù ¦ÝÓ ÂÛ ¦ÝÌÛÂÒØÏÛ ÌÝ¤ó¼Ð ¨Ï ÚÂó¼Û ²ØÒã¬Û¢
+                                ÆñâñÊÞ Ú²Ó ¦ÝÌÛÂÒØÏ ÂÛ ¦ÝÌÛÂÒØÏÛ ÌÝ¤ó¼Ð ¨Û¼Û ²ÙÂÛ Õè, ¦ÝÕ ¦ÝÓ ÆñÛÚª¤Ø ÂØ Å¼Û²Ø ¤èÐØÅ ¨Û¼ã ²Ø» ÚÆó±ë× ÉØ¨Û ÇÛÓ ÂØ ÂÝ¬»Ø ¤ÂØ ¨Ïã¬Ø ¤¼ã Å¼Û²Ø ¤èÐØÅã ²Ø» ¼ó¨ ÂÛ ¼ØÏÛª ¼ë× Ú¥ó¨ ÓØÐ Âã ¤âÂÏ ¦ÝÌÛÂÒØÏÛ ÂÛ ÉÕØÐÛ ÇÛÓ Âã ¼ïÏ ¼ã 100 ÏÝÆ¥ã ¤¼ã ÉØ¤Â ÚÒó° 200 ÏÝÆ¥ã Æñ¼Û ÓØÐ ¤Ú¼ÚÏ¨¼ ÇÛÓ ÒÛ ¤ÂØ ¨Ïã¬Ø¢
+                            </td>
+                        </tr>
+                        <tr><td>8</td>	<td>ÏóÂ Íë¬¼Ø ¼ë× ÊØÒ Õè Ú¨ ÆñÛÚª¤ØÏÁÛ ÆñÛÚª¤Ø Âã» Ð¥Û Íë¬¼Ø ÆÞÏÛ ÅÕÛ× ¨ÏÂØ¢</td></tr>
+                        <tr> <td>9</td>	<td>¬²Ö¶ ÚÒó° ÚÒÓÖØ Æâ²ØÉÛ ÓÉâÄÛ ÓâªãÆ Ò²ë× ÓÖÉÂ Æ ÒÏÚ¼¤Ø Ú¬¤Ø Õè¢</td></tr>
+                    </table>
+                <!-- 03-->
+                    <table style="border-collapse:collapse;width:100%;" border="1" class="brack">
+                        @if (ViewBag.TotalCount > 0)
+                        {
+                            //for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            //{
+                            //    var PrintDate = Model.StoreAllData.Tables[0].Rows[i]["PrintDate"].ToString();
+                            //    var gDate = Model.StoreAllData.Tables[0].Rows[i]["gdate"].ToString();
+                            //    var Sett = Model.StoreAllData.Tables[0].Rows[i]["Set"].ToString();
+                            //    var SetNo = 0;
+                            //    var batch = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+                            //    var yr = Model.StoreAllData.Tables[0].Rows[i]["yr"].ToString();
+                            //    if (Sett=="A")
+                            //    {
+                            //        SetNo = 1;
+                            //    }
+                            //    if (Sett == "B")
+                            //    {
+                            //        SetNo = 2;
+                            //    }
+                            <thead>
+                                <tr>
+                                    <td style="border-right:0 !important" colspan="2" width="22%"><div style="padding:2px"><img src="/Images/Printlogo.jpg" alt="PSEB" width="70" height="70" /></div></td>
+                                    <td colspan="3" width="55%" style="font-size:22px;text-align:center;line-height:32px;vertical-align:top;border-left:0 !important;border-right:0 !important">
+                                        <span style="font-size:32px" class="kdsfont">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span>
+                                        <br />
+                                        <span style="font-size:24px" class="kdsfont">Æâ²ØÉÛ ÒØÄÞ ÚÒÓÖØ ÓÆèÓÖÐ ÆñÛÚª¤Ø (ÌèÚ¶ñ¨ ÆóÄÏ Æâ²ØÉÛ) @batcha, @yr ÂØ Å¼Û²Ø</span>
+                                    </td>
+                                    <td colspan="2" width="26%" style="border-left:0 !important" align="right"><br />Set - @Sett &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="kdsfont">ÆñÛ</span> - @SetNo &nbsp;&nbsp; @*Print Date : @PrintDate &nbsp;*@</td>
+                                </tr>
+                                <tr style="background-color:#c4c4c4;">
+                                    <td width="10%">&nbsp;<span class="kdsfont" style="font-weight:bold">ÏëÐ ÅâÉÏ</span></td>
+                                    <td width="48%" colspan="2">&nbsp;<span class="kdsfont" style="font-weight:bold">ÅÙ, ÚÆ¼Ø ÂØ ÅÙ, ÌØ¼Ø ÂØ ÅÙ</span></td>
+                                    <td width="13%">&nbsp;<span class="kdsfont" style="font-weight:bold">Ú²ÖÐðØ</span></td>
+                                    <td width="11%">&nbsp;<span class="kdsfont" style="font-weight:bold">ÚÒÓÖØ</span></td>
+                                    <td width="11%">&nbsp;<span class="kdsfont" style="font-weight:bold">ÆñØÆ¼ ¤â¨</span></td>
+                                    <td width="11%">&nbsp;<span class="kdsfont" style="font-weight:bold">Å¼Û²Ø</span></td>
+                                </tr>
+                            </thead>
+                            for (int j = 0; j < Model.StoreAllData.Tables[1].Rows.Count; j++)
+                            {
+                                var cnm = Model.StoreAllData.Tables[1].Rows[j]["Candi_Name_P"].ToString();
+                                var fnm = Model.StoreAllData.Tables[1].Rows[j]["Father_Name_P"].ToString();
+                                var mnm = Model.StoreAllData.Tables[1].Rows[j]["Mother_Name_P"].ToString();
+                                var cnmE = Model.StoreAllData.Tables[1].Rows[j]["Candi_Name"].ToString();
+                                var fnmE = Model.StoreAllData.Tables[1].Rows[j]["Father_Name"].ToString();
+                                var mnmE = Model.StoreAllData.Tables[1].Rows[j]["Mother_Name"].ToString();
+                                var distnm = Model.StoreAllData.Tables[1].Rows[j]["distnm"].ToString();
+                                var roll = Model.StoreAllData.Tables[1].Rows[j]["roll"].ToString();
+                                var refno = Model.StoreAllData.Tables[1].Rows[j]["refno"].ToString();
+                                var th1 = Model.StoreAllData.Tables[1].Rows[j]["th1"].ToString();
+                                var th2 = Model.StoreAllData.Tables[1].Rows[j]["th2"].ToString();
+                                var Result = Model.StoreAllData.Tables[1].Rows[j]["resultdtl"].ToString();
+                                var Set = Model.StoreAllData.Tables[1].Rows[j]["Set"].ToString();
+                                Result = Result.ToString().Trim().Replace(" ", "-");
+                                var name = cnm + " / " + fnm + " / " + mnm;
+                                var nameE = cnmE + " / " + fnmE + " / " + mnmE;
+                                if (Sett == Set)
+                                {
+                                    <tr>
+                                        <td>&nbsp;@roll</td>
+                                        <td colspan="2"><div style="padding:0 2px;display:block"><span class="kdsfont">@name</span><br />@nameE</div></td>
+                                        <td><div style="padding:0 2px;display:block">@distnm</div></td>
+                                        <td>&nbsp;<span class="kdsfont">Pun-A, Pun-B</span></td>
+                                        <td>&nbsp;<span>@th1, @th2</span></td>
+                                        <td>&nbsp;@Result</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                        //}
+                        else
+                        {
+                            <tr><td colspan="7">@ViewBag.Message</td></tr>
+                        }                       
+                            <tr>
+                                <td colspan="5" style="border:0!important">
+                                    &nbsp;<span class="kdsfont">ÓØÚÕÉ²ØÂØ ¤²Û¼ ÚÓâ® Å¬Ï</span><br />
+                                    &nbsp;<span class="kdsfont">ÚÌ¼Û</span>:@gDate
+                                </td>
+                                <td colspan="2" style="border:0!important;text-align:center">
+                                    <span class="kdsfont">ÒØ¥ÛÓ °ã¤ÏÌèÅ</span><BR />
+                                    <span class="kdsfont">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span>
+                                </td>
+                            </tr>
+                            </table>
+                }
+            }
+        </div>
+    </div>
+}

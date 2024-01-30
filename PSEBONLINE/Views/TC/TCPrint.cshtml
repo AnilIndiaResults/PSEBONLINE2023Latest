@@ -1,0 +1,237 @@
+﻿@model PSEBONLINE.Models.TCModels
+@{
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+}
+<style type="text/css">
+    table {border-collapse: collapse;}
+    body {font-family: Arial, Helvetica, sans-serif;}
+    TD {font-size: 13PX;line-height: 24px;}
+    b {border-bottom: 1px dashed #000 !important;}
+</style>
+@if (Session["Session"] == null)
+{Response.Redirect("~/Index");}
+
+<link href="https://registration2022.pseb.ac.in/content/print.css" rel="stylesheet" />
+@using (Html.BeginForm("TCPrint", "TC", FormMethod.Post, new { id = "TCPrint", enctype = "multipart/form-data" }))
+{
+    <form id="myForm">
+        <div class="PRS">
+            <table style="width:100%;" border="0">
+                <tr>
+                    <td>
+                        <table style="width:100%;" border="0" class="noprint">
+                            <tr>
+                                <td style="text-align:right;padding-bottom:6px">
+                                    @*<input type="button" class="btn" value="Go to School List" onclick="javascript:document.location.href='@Url.Action("TCRegProcess", "TC")'" />*@
+                                    <input type="button" value="Print" class="btn" onclick="window.print()" />
+                                    @*<a href="javascript:void(0);" class="btn" onclick="history.go(-1);">Back</a>*@
+                                    @if (Session["RoleType"].ToString() == "Admin")
+                                    {
+                                        <input type="button" value="Back" class="btn" onclick="javascript:document.location.href='@Url.Action("TCRequest", "TC")'" />
+                                    }
+                                    else
+                                    { 
+                                    <input type="button" value="Back" class="btn" onclick="javascript:document.location.href='@Url.Action("TCRequestSchl", "TC")'" />
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                @*--------------------------------------------------------------------------*@
+                <tr>
+                    <td>
+                        <table style="width:100%;border:4px solid #000;">
+                            <tr>
+                                <td align="center">
+                                    <table border="0" style="width:96%;">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="2" style="font-size:32px;text-align:center;line-height:32px;padding-top:10px">
+                                                    Punjab School Education Board<br />
+                                                    <span class="kdsfont" style="font-size:32px;">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="text-align:center;padding-top:6px"><span style="background-color:#000 !important;color:#fff !important;padding:5px 15px;border-radius:6px"> <span class="kdsfont" style="color:#fff !important;">Ó¨ÞÐ ±ó¸» ÂØ ÓÏ¶ÛÚÇ¨ã¶</span> (Transfer Certificate) </span></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="text-align:center">Class: @Model.FormName &nbsp;<span class="kdsfont">ÓèÓÖÅ</span> @Html.DisplayFor(a => a.SelYear)</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="padding-top:5px;padding-bottom:5px">
+                                                    <table width="100%" border="0">
+                                                        <tr>
+                                                            <td width="25%"><span class="kdsfont">Ó¨ÞÐ Ú¸ÓÆè° Åâ</span> <b>@Html.DisplayFor(a => a.dispatchNo)</b></td>
+                                                            <td width="22%"><span class="kdsfont">ÚÌ¼Û</span> <b>@Html.DisplayFor(a => a.TCdate)</b></td>
+                                                            <td width="33%"><span class="kdsfont">ÕÒØÐØ Åâ.</span> (Ref No.) <b>@Html.DisplayFor(a => a.TCrefno)</b></td>
+                                                            <td width="20%" align="right">Unique ID <b>@Html.DisplayFor(a => a.idno)</b>&nbsp;</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="color:#fff !important;background-color:#000 !important;">&nbsp;School Details </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <table width="100%" border="1">
+                                                        <tr>
+                                                            <td width="20%">&nbsp;School Code</td>
+                                                            <td width="10%">&nbsp;@Html.DisplayFor(a => a.SchlCode)</td>
+                                                            <td width="14%">&nbsp;District Code</td>
+                                                            <td width="7%">&nbsp;@Html.DisplayFor(a => a.distCode)</td>
+                                                            <td width="14%">&nbsp;District Name</td>
+                                                            <td width="35%">&nbsp;@Html.DisplayFor(a => a.distName) / <span class="kdsfont">@Html.DisplayFor(a => a.distNameP)</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;School Category</td>
+                                                            <td colspan="5">&nbsp;@Html.DisplayFor(a => a.SCHLType)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;School Name<br />&nbsp;</td>
+                                                            <td colspan="5" style="line-height:20px">
+                                                                &nbsp;@Html.DisplayFor(a => a.SCHLfullNM_E)<br />&nbsp;<span class="kdsfont">@Html.DisplayFor(a => a.SCHLfullNM_P)</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="color:#fff !important;background-color:#000 !important;">&nbsp;Candidate's Personal Details</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <table width="100%" border="1">
+                                                        <tr>
+                                                            <td width="20%">&nbsp;Registration No.</td>
+                                                            <td colspan="3">&nbsp;@Html.DisplayFor(a => a.RegNo)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;Candidate Name</td>
+                                                            <td colspan="3">&nbsp;@Html.DisplayFor(a => a.Candi_Name) / <span class="kdsfont">@Html.DisplayFor(a => a.Pname)</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;Father's Name</td>
+                                                            <td colspan="3">&nbsp;@Html.DisplayFor(a => a.Father_Name) / <span class="kdsfont">@Html.DisplayFor(a => a.PFname)</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;Mother's Name</td>
+                                                            <td colspan="3">&nbsp;@Html.DisplayFor(a => a.Mother_Name) / <span class="kdsfont">@Html.DisplayFor(a => a.PMname)</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;Date of Birth</td>
+                                                            <td>&nbsp;@Html.DisplayFor(a => a.DOB)</td>
+                                                            <td>&nbsp;Category</td>
+                                                            <td>&nbsp;@Html.DisplayFor(a => a.Caste)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;Gender</td>
+                                                            <td>&nbsp;@Html.DisplayFor(a => a.Gender)</td>
+                                                            <td>&nbsp;Religion</td>
+                                                            <td>&nbsp;@Html.DisplayFor(a => a.Religion)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;Nationality</td>
+                                                            <td width="17%">&nbsp;@Html.DisplayFor(a => a.Nation)</td>
+                                                            <td width="23%">&nbsp;Aadhar No.</td>
+                                                            <td width="40%">&nbsp;@Html.DisplayFor(a => a.aadhar)</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="color:#fff !important;background-color:#000000 !important;">&nbsp;Class Details & Result</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <table width="100%" border="1">
+                                                        <tr>
+                                                            <td width="20%">&nbsp;Admission No.</td>
+                                                            <td width="17%">&nbsp;@Html.DisplayFor(a => a.admno)</td>
+                                                            <td width="23%">&nbsp;Admission Withdrawal No.</td>
+                                                            <td width="14%">&nbsp;@Html.DisplayFor(a => a.AWRegisterNo)</td>
+                                                            <td width="14%">&nbsp;Admission Date</td>
+                                                            <td width="12%">&nbsp;@Html.DisplayFor(a => a.AdmDate)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;Class</td>
+                                                            <td>&nbsp;@Html.DisplayFor(a => a.FormName)</td>
+                                                            <td>&nbsp;Roll No./ Section</td>
+                                                            <td colspan="3">&nbsp;@Html.DisplayFor(a => a.OROLL)/&nbsp;@Html.DisplayFor(a => a.Section)</td>
+                                                        </tr>
+                                                        @if (Model.FormName.Contains("11") || Model.FormName.Contains("12"))
+                                                        {
+                                                            <tr>
+                                                                <td>&nbsp;Stream</td>
+                                                                <td colspan="5">&nbsp;@Html.DisplayFor(a => a.Group_Name)</td>
+
+                                                            </tr>
+                                                        }
+                                                        else if (Model.FormName.Contains("M"))
+                                                        {
+                                                            if (Model.NSQF_flag == "1")
+                                                            {
+                                                                <tr>
+                                                                    <td>&nbsp;NSQF</td>
+                                                                    <td colspan="5">&nbsp;YES</td>
+                                                                </tr>
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td>&nbsp;NSQF</td>
+                                                                    <td colspan="5">&nbsp;NO</td>
+                                                                </tr>
+                                                            }
+
+                                                        }
+
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" class="kdsfont">¼ÓÂÛ¨ ¨Û¼Ø ²ÙÂØ Õè Ú¨ ¦ÝÆÏë¨¼ ÂÏ² ÆñÛÚª¤ØÏÁÛ Ú¥Ó ÓâÓÁØ ÚÒó° Æ¾ÂØ ¤Ø ÚÏÕØ Õè¢ Ú¥Ó ÆñÛÚª¤ØÏÁÛ ÒóÐë× Ó¨ÞÐ ÓÉâÄÛ É»ÂÛ¤Ù ÓØÏÛ¤Ù ¤ÂØÚ¥¬Û¤Ù ¨Ï ÚÂó¼Û¤Ø ¬¥Û¤Ø ÕÅ¢ </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <p style="padding-left:15px" class="kdsfont">
+                                                        1. ¦Ý¨¼ ÆñÛÚª¤ØÏÁÛ ÂØ Ìï²ÞÂØ ÓÖñã»Û ÚÒó°ë× Å¼Û²ÖØ ( ¨ÝóÐ ¤â¨ <b>@Html.DisplayFor(a => a.Totmark)</b> ÆñØÆ¼ ¤â¨ <b>@Html.DisplayFor(a => a.obtmark)</b> Å¼Û²ÖØ <b>@Html.DisplayFor(a => a.Result)</b> ) É»ÂØ Õè¢<br />
+                                                        2. ¦Ý¨¼ ÆñÛÚª¤ØÏÁÛ ÂÛ¤Ù ¨ÝóÐ <b>@Html.DisplayFor(a => a.attendanceTot)</b> ÚÒó°ë× <b>@Html.DisplayFor(a => a.attendancePresnt)</b> ÕØ²ÖÏÛ¤Ù É»ÂÛ¤Ù ÕÅ¢<br />
+                                                        3. Ú¥Ó ÆñÛÚª¤ØÏÁÛ ÂØ ÚÌ¼Û <b>@Html.DisplayFor(a => a.struckOffdt)</b> ÅÞâ Ó¨ÞÐ ÚÒó°ë× ÅØÌ ¨óó¶ ÚÂó¼Ø Ú¬¤Ø Õè/ÓÛ¢
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" height="20px">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" class="kdsfont">Ó¨ÞÐ ÚÏ¨ØÏ¸ ¤ÅÝÓØÏ Ú¥Ó ÆñÛÚª¤ØÏÁÛ Âã ¦ÝÆÏë¨¼ ÒãÏÒã ÓÕÛ ÆØ¥ã ²Ø» ¦ÝÆÏâ¼ ¤ó² ÚÌ¼Û <b>@Html.DisplayFor(a => a.TCdate)</b> ÅÞâ Ó¨ÞÐ ÐÛÚÒâ¬ ÓÏ¶ÛÚÇ¨ã¶ ²ØÏÛ ¨Û¼Ø ²ÙÂØ Õè ¤¼ã ÕëÏ Ó¨ÞÐ ÚÒó° ÂØªÐØ Ðè» Ð¥Û ÕÒØÐØ Åâ. (Ref No.) <b>@Html.DisplayFor(a => a.TCrefno)</b> ²ØÏÛ ¨Û¼Ø ²ÙÂØ Õè¢</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" height="60px"> &nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="kdsfont">ÂÓ¼ª¼ ÂØªÐØ ªØÏ² ÏÚ²Ó¶Ï Ú¥â°ØÏ²</td>
+                                                <td class="kdsfont">Ó¨ÞÐ ÌÝóªÛ (ÓÌã¼ ÌëÕÏ)</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" height="60px">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" class="kdsfont" style="padding-bottom:10px">Åë¶ : ÓÏ¶ÛÚÇ¨ã¶ ÂÛ Âë ÆÏ¼Ù ÚÆñâ¶ ¨Û¼Û¤Ù ²Ø», Ú¥Ó ÚÒó°ë× Ú¥ó¨ ¨ØÆÛ Ó¨ÞÐ ÚÏ¨ØÏ¸ ÚÒó° ÏóªÛ ²ØÒã ¤¼ã ÂÞÓÏÛ ¨ØÆÛ ÆñÛÚª¤ØÏÁÛ ÅÞâ ²ØÏÛ ¨Û¼Û ²ØÒã¢</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+}

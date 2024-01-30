@@ -1,0 +1,408 @@
+﻿@model PSEBONLINE.Models.MigrateSchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="/Scripts/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>Migration Form</h1>
+@using (Html.BeginForm("MigrationForm", "MigrateSchool", FormMethod.Post, new { id = "Migrate", enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-12">            
+                @ViewBag.Message            
+            <fieldset style="margin-bottom:15px">
+                @*<div class="col-md-1">
+                        Total <label>@ViewBag.TotalCount</label>
+                    </div>*@
+                @Html.HiddenFor(a => a.FormName)
+                
+                    <div class="col-md-2">
+                        School Code <label>@ViewBag.schlCode</label>
+                    </div>
+                    <div class="col-md-2">
+                        School ID <label>@ViewBag.schlID</label>
+                    </div>
+                    <div class="col-md-8">
+                        School Name <label>@ViewBag.schlName</label>
+                    </div>
+</fieldset>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-4">
+    <h4>Migration Details</h4>
+        <div class="row">
+ <div class="col-md-5">Student ID</div><div class="col-md-7"> @Html.TextBoxFor(a => a.idno, new { @ReadOnly = "ReadOnly" })</div>
+            <div class="clearfix"></div>
+            @{
+                if (ViewBag.FormName == "1")
+                {
+                    if (Model.FormName != "N1" && Model.FormName != "N2" && Model.FormName != "N3" && Model.FormName != "M1" && Model.FormName != "M2")
+                    {
+                        <div class="col-md-5">Student Stream/Group</div><div class="col-md-7"> @Html.TextBoxFor(a => a.Std_SubOld, new { @ReadOnly = "ReadOnly" })</div>
+                        <div class="clearfix"></div>
+                    }
+                }
+
+
+            }
+            
+ <div class="col-md-5">School Code </div><div class="col-md-7"> @Html.TextBoxFor(a => a.SchlCode, new { id = "SCode", @ReadOnly = "ReadOnly" })</div>
+             <div class="clearfix"></div>
+ <div class="col-md-5">Registration No. </div><div class="col-md-7"> @Html.TextBoxFor(a => a.RegNo, new { @ReadOnly = "ReadOnly" }) </div>
+             <div class="clearfix"></div>
+ <div class="col-md-5">Candidate's Name </div><div class="col-md-7"> @Html.TextBoxFor(a => a.Candi_Name, new { @ReadOnly = "ReadOnly" })</div>
+             <div class="clearfix"></div>
+ <div class="col-md-5">Father's Name </div><div class="col-md-7"> @Html.TextBoxFor(a => a.Father_Name, new { @ReadOnly = "ReadOnly" })</div>
+             <div class="clearfix"></div>
+ <div class="col-md-5">Mother's Name </div><div class="col-md-7"> @Html.TextBoxFor(a => a.Mother_Name, new { @ReadOnly = "ReadOnly" })</div>
+             <div class="clearfix"></div>
+ <div class="col-md-5">New School Code </div><div class="col-md-7"> @Html.TextBoxFor(a => a.SchlCodeNew, new { id = "SchlCodeNew", @maxlength = "7" })</div>
+             <div class="clearfix"></div>
+ <div class="col-md-12"> @Html.TextBoxFor(m => m.schlName, new { id = "schlName", @maxlength = "100", @ReadOnly = "ReadOnly" })</div>
+             <div class="clearfix"></div>
+            <div class="col-md-5">Select Exam Group </div><div class="col-md-7">
+    @*@{
+        if (ViewBag.FormName == "1")
+        {
+            if (Model.FormName != "N1" && Model.FormName != "N2" && Model.FormName != "N3" && Model.FormName != "M1" && Model.FormName != "M2")
+            {
+                List<SelectListItem> groupList = new List<SelectListItem>();
+                groupList.Add(new SelectListItem { Text = "--Select---", Value = "0" });
+                groupList.Add(new SelectListItem { Text = "AGRICULTURE", Value = "AGRICULTURE" });
+                groupList.Add(new SelectListItem { Text = "COMMERCE", Value = "COMMERCE" });
+                groupList.Add(new SelectListItem { Text = "HUMANITIES", Value = "HUMANITIES" });
+                groupList.Add(new SelectListItem { Text = "SCIENCE", Value = "SCIENCE" });
+                //groupList.Add(new SelectListItem { Text = "TECHNICAL",Value= "TECHNICAL"});
+                groupList.Add(new SelectListItem { Text = "VOCATIONAL", Value = "VOCATIONAL" });
+            @Html.DropDownList("Std_Sub", groupList, new { id = "Std_Sub" })
+            }
+            else
+            {
+                List<SelectListItem> groupList = new List<SelectListItem>();
+                groupList.Add(new SelectListItem { Text = "--Select---", Value = "0" });
+                groupList.Add(new SelectListItem { Text = "GENERAL", Value = "GENERAL" });
+                groupList.Add(new SelectListItem { Text = "NSQF", Value = "NSQF" });
+            @Html.DropDownList("Std_Sub", groupList, new { id = "Std_Sub" })
+                }
+            }
+        }*@
+            @{
+                List<SelectListItem> groupList = new List<SelectListItem>();
+                if (Session["Class"].ToString()=="1" || Session["Class"].ToString() == "2")
+                {
+                    groupList.Add(new SelectListItem { Text = "--Select---", Value = "0" });
+                    groupList.Add(new SelectListItem { Text = "GENERAL", Value = "GENERAL" });
+                    groupList.Add(new SelectListItem { Text = "NSQF", Value = "NSQF" });
+                }
+
+            }
+            @Html.DropDownList("Std_Sub", groupList, new { id = "Std_Sub"})
+
+
+</div>
+            <div class="clearfix"></div>
+            </div>                            
+</div>
+        <div class="col-md-4">
+            <h4>Migration Fee Details</h4>
+                    <div class="row">
+ <div class="col-md-5">Fee Mode</div><div class="col-md-7">
+     @Html.RadioButtonFor(a => a.rdoDD, "rdoDD", new { id = "rdoDD", @checked = true })
+     Demand Draft
+     @Html.RadioButtonFor(a => a.rdoDD, "rdoBrdRcpt", new { id = "rdoBrdRcpt", })Board Reciept
+     </div>                       
+                <div class="clearfix"></div>
+                      @*@{         
+                                DateTime dt = DateTime.Now;                               
+                                DateTime str = DateTime.Parse(dt.ToString("MM/dd/yyyy").Replace('-', '/'));
+                                DateTime date = str;                                
+                                if (date >= DateTime.Parse("09-10-2016 00:00:00") && date <= DateTime.Parse("12-31-2016 00:00:00"))
+                                {
+                                  <div class="col-md-5">Migration Fees</div> <div class="col-md-7">@Html.TextBoxFor(a => a.Migrationfee, new { @ReadOnly = "ReadOnly", Value = "1000", @maxlength = "4" })</div> <div class="clearfix"></div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-5">Migration Fees</div> <div class="col-md-7">@Html.TextBoxFor(a => a.Migrationfee, new { @ReadOnly = "ReadOnly", Value = "1500", @maxlength = "4" })</div> <div class="clearfix"></div>
+                                }
+                            }*@
+                        
+                        
+                        <div class="col-md-5">Migration Fees</div>
+                        <div class="col-md-7">
+                            @Html.RadioButtonFor(a => a.Migrationfee, "0", new { id = "Migrationfee", }) 0/-&nbsp;
+                            @Html.RadioButtonFor(a => a.Migrationfee, "1000", new { id = "Migrationfee2", @checked = true }) 1000/-&nbsp;
+                            @Html.RadioButtonFor(a => a.Migrationfee, "1500", new { id = "Migrationfee3", }) 1500/-&nbsp;
+                        </div> <div class="clearfix"></div>
+
+
+                            <div class="clearfix"></div>
+                            <div class="col-md-5">DD No. / Reciept No.</div><div class="col-md-7">@Html.TextBoxFor(a => a.DDRcptNo, new { id = "DDRcptNo", @maxlength = "6" }) </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-5">Amount</div><div class="col-md-7">@Html.TextBoxFor(a => a.Amount, new { id = "Amount", onkeypress = "return isNumberKey(event);", @maxlength = "4" })</div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-5"> Deposit Date</div><div class="col-md-7">
+                                @Html.TextBoxFor(a => a.DepositDt, new
+                                                                                    {
+                                                                                        id = "txtDepositDt",
+                                                                                        @readonly = "readonly",
+                                                                                        @maxlength = "10",
+                                                                                        //onkeypress = "javascript: return false;",
+                                                                                        onpaste = "return false;",
+                                                                                        oncopy = "return false;",
+                                                                                        oncut = "return false;"
+
+                                                                                        //onkeydown = "return false;"
+                                                                                    })
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-5">Bank Name</div><div class="col-md-7">@Html.TextBoxFor(a => a.BankName)</div>
+                        </div>
+          </div>
+        <div class="col-md-4">
+            <h4>Order Details</h4>
+                                <div class="row">
+ <div class="col-md-5">Diary/Order No. </div><div class="col-md-7"> @Html.TextBoxFor(a => a.DiryOrderNo)</div>
+            <div class="clearfix"></div>
+                            <div class="col-md-5">
+                                Order Date
+                                @*<label>@Html.TextBoxFor(a => a.OrderDt)</label>*@
+                                </div><div class="col-md-7">
+                                @Html.TextBoxFor(a => a.OrderDt, new
+                           {
+                               id = "txtOrderDt",
+                               @readonly = "readonly",
+                               @maxlength = "10",
+                               //onkeypress = "javascript: return false;",
+                               onpaste = "return false;",
+                               oncopy = "return false;",
+                               oncut = "return false;"
+
+                               //onkeydown = "return false;"
+                           })
+
+                            </div>
+            <div class="clearfix"></div>
+                           <div class="col-md-5">Order by </div><div class="col-md-7">@Html.TextBoxFor(a => a.OrderBy)</div>
+            <div class="clearfix"></div>
+                           <div class="col-md-5">Remark </div><div class="col-md-7">@Html.TextArea("Remark", null, new { @class = "form-control" })  @*@Html.TextArea(a => a.Remark,)*@</div>
+            <div class="clearfix"></div>
+        </div>
+</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-center">
+        <br />
+        <input type="submit" value="Migration Done" onclick="return formVal();" />
+        <a href="javascript:void(0);" onclick="history.go(-1);" class="btn">Back</a>
+    </div>
+    </div>
+    
+}
+@{
+
+    if (ViewData["MigrateStatus"] != null)
+    {
+        var result = ViewData["MigrateStatus"].ToString();
+        if (result=="0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Migrated School not to be same");
+                history.go(-1);
+            </script>
+        }
+    }
+    if (ViewData["MigrateStatus"] != null)
+    {
+        var result = ViewData["MigrateStatus"].ToString();
+        if (result == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Already Migrated");
+                history.go(-1);
+            </script>
+        }
+    }
+    if (ViewData["MigrateStatus"] != null)
+    {
+        var result = ViewData["MigrateStatus"].ToString();
+        if (result == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Migrate Successfully Done. click ok to view Migrate Record");
+                document.location.href = '@Url.Action("MigrationPrint/"+ ViewData["StdID"], "MigrateSchool")';
+            </script>
+        }
+    }
+
+    if (ViewData["ComResult"] != null)
+    {
+        if (ViewData["ComResult"].ToString() == "0")
+        {
+        <script type="text/javascript" language="javascript">
+        alert("Particular Stream / Subject Is Not Available In This School");
+        history.go(-1);
+            </script>
+        }
+    }
+
+}
+
+
+<script>
+    $(document).ready(function () {
+        var acFee = $('[name="Migrationfee"]:checked').val();
+        $('#Amount').val(acFee)
+        $('#SchlCodeNew').change(function () {
+            var selectedText = { SCHL: $("#SchlCodeNew").val() };
+            $.ajax({
+                url: '@Url.Action("GetTehID", "MigrateSchool")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedText),
+                success: function (result) {
+                    // alert("School Name: " + result);
+                    $('#schlName').val(result);
+                }
+            });
+
+//------Begin Binding Group Name --------
+            var selectedGrp = { SCHL: $("#SchlCodeNew").val(),sid: $("#idno").val() };
+            $.ajax({
+                url: '@Url.Action("GetGroupList", "MigrateSchool")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(selectedGrp),
+                success: function (result) {
+                    //$('#Std_Sub').val(result);
+                    $("#Std_Sub").empty();
+                    $.each(result, function (i, MyGroupList) {
+                        $("#Std_Sub").append('<option value="'
+                           + MyGroupList.Value + '">'
+                           + MyGroupList.Text + '</option>');
+                    });
+
+                    if (@Session["Class"]=="1"||@Session["Class"]=="2") {
+                        $("#Std_Sub").empty();                        
+                        $("#Std_Sub").append('<option value="0">--Select---</option>');
+                        $("#Std_Sub").append('<option value="GENERAL">GENERAL</option>');
+                        $("#Std_Sub").append('<option value="NSQF">NSQF</option>');                    
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+//------End Binding Group Name --------
+        });
+    });
+    $(document).on("change", "input[type=radio]", function () {
+        var acFee = $('[name="Migrationfee"]:checked').val();
+        $('#Amount').val(acFee)
+    });
+        </script>
+
+<script>
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    
+    function formVal() {
+       
+
+        if (document.getElementById("SchlCodeNew").value == '' || document.getElementById("SchlCodeNew").value == null || document.getElementById("schlName").value == 'School Name Not Found') {
+            alert('Enter New School Code');
+            document.getElementById("SchlCodeNew").focus();
+            return false;
+        }
+        if (document.getElementById("Std_Sub").value == '' || document.getElementById("Std_Sub").value == null || document.getElementById("Std_Sub").value == '0') {
+            alert('Please select stream of the student');
+            document.getElementById("Std_Sub").focus();
+            return false;
+        }
+        if (document.getElementById("rdoDD").checked == false && document.getElementById("rdoBrdRcpt").checked == false) {
+            alert('Choose Fee Mode');
+            document.getElementById("rdoDD").focus();
+            return false;
+        }
+        if (document.getElementById("DDRcptNo").value == '' || document.getElementById("DDRcptNo").value == null) {
+            alert('Enter DD No./Receipt No.');
+            document.getElementById("DDRcptNo").focus();
+            return false;
+        }
+        if (document.getElementById("Amount").value == '' || document.getElementById("Amount").value == null) {
+            alert('Enter Amount.');
+            document.getElementById("Amount").focus();
+            return false;
+        }
+        //if (document.getElementById("Amount").value != 1000) {
+        //    alert('Enter Same Amount of Migration Fees.');
+        //    document.getElementById("Amount").focus();
+        //    return false;
+        //}
+
+        if (document.getElementById("txtDepositDt").value == '' || document.getElementById("txtDepositDt").value == null) {
+            alert('Enter Deposit Date.');
+            document.getElementById("txtDepositDt").focus();
+            return false;
+        }
+        if (document.getElementById("BankName").value == '' || document.getElementById("BankName").value == null) {
+            alert('Enter Bank Name.');
+            document.getElementById("BankName").focus();
+            return false;
+        }
+
+        if (document.getElementById("DiryOrderNo").value == '' || document.getElementById("DiryOrderNo").value == null) {
+            alert('Enter Diry Order No.');
+            document.getElementById("DiryOrderNo").focus();
+            return false;
+        }
+        if (document.getElementById("txtOrderDt").value == '' || document.getElementById("txtOrderDt").value == null) {
+            alert('Enter Order Date.');
+            document.getElementById("txtOrderDt").focus();
+            return false;
+        }
+        if (document.getElementById("OrderBy").value == '' || document.getElementById("OrderBy").value == null) {
+            alert('Enter Order By.');
+            document.getElementById("OrderBy").focus();
+            return false;
+        }
+
+    }
+    $(document).ready(function () {
+
+        $("#txtDepositDt").datepicker({
+
+
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: '0',
+            //maxDate: '10/08/2016',
+            yearRange: "2014:2020"
+
+        });
+        $("#txtOrderDt").datepicker({
+
+
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: '0',
+            yearRange: "2014:2020"
+
+        });
+    });
+</script>

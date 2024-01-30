@@ -1,0 +1,537 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    ViewBag.Title = "Final Print";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+<div class="container KDBG">
+    @{
+        //var refnoH = Session["refno"].ToString();
+        if (ViewBag.TotalCount > 0)
+        {
+            var refnoH = Session["refno"].ToString().Substring(3, 2);
+            var yearH = "20" + Session["refno"].ToString().Substring(5, 2);
+            var feecatH = Session["form"].ToString();
+
+            var refnoMonthNM = PSEBONLINE.AbstractLayer.DBClass.GetMonthFullNameBYNumber().SingleOrDefault(s => s.Value == refnoH).Text;
+
+            var classNM = Model.StoreAllData.Tables[0].Rows[0]["class"].ToString();
+            var categoryNM = Model.category.ToUpper();
+            if (classNM == "10") { classNM = "Matriculation"; }
+            else if (classNM == "12") { classNM = "Senior Secondary"; }
+            else if (classNM == "5") { classNM = "Primary"; }
+            else if (classNM == "8") { classNM = "Middle"; }
+            var CATEGORY = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+            if (CATEGORY == "R") { CATEGORY = "Reappear/Compartment"; }
+            if (CATEGORY == "D") { CATEGORY = "Division improvement"; }
+            if (CATEGORY == "A") { CATEGORY = "Additional subject"; }
+            var EXAMTYPE = Model.StoreAllData.Tables[0].Rows[0]["rp"].ToString();
+            if (EXAMTYPE == "R") { EXAMTYPE = "Regular"; }
+            if (EXAMTYPE == "O") { EXAMTYPE = "Open"; }
+            if (EXAMTYPE == "P") { EXAMTYPE = "Private"; }
+            if (EXAMTYPE == "SR") { EXAMTYPE = "Golden Chance Re-Appear"; }
+            if (EXAMTYPE == "SD") { EXAMTYPE = "Golden Chance DIC"; }
+            if (EXAMTYPE == "SA") { EXAMTYPE = "Golden Chance Additional"; }
+            <h1>@classNM Examination Form For @categoryNM (@EXAMTYPE) , @refnoMonthNM-@yearH</h1>
+        }
+        <form name="myForm">
+            <div class="row text-center"><h3>&nbsp;&nbsp; View Page</h3></div>
+            <div class="row">
+                <div class="col-md-2">Reference Number</div>  <div class="col-md-4">@Html.TextBoxFor(a => a.capcha, new { id = "capcha", @ReadOnly = "ReadOnly" })</div>
+                <div class="col-md-2">Exam District <span class="rqf"></span></div>
+                <div class="col-md-4">@Html.DropDownList("SelExamDist", new SelectList(ViewBag.MyExamDist, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+            </div>
+            <div class="clearfix"></div>
+            <h4>Old Class Details</h4>
+            <div class="row">
+                <div class="col-md-2">Exam Type</div>
+                <div class="col-md-2">
+                    @Html.TextBoxFor(a => a.Exam_Type, new { id = "Exam_Type", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-1">Category</div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(a => a.category, new { id = "category", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-1">Class</div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(a => a.Class, new { id = "Class", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-2">Roll Number</div>
+                <div class="col-md-2">
+                    @Html.TextBoxFor(a => a.OROLL, new { id = "OROLL", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-1">Session/Year</div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(a => a.Session, new { id = "Session", @ReadOnly = "ReadOnly" })
+                </div>
+                <div class="col-md-1">Result</div>
+                <div class="col-md-3">@Html.TextBoxFor(a => a.Result, new { @ReadOnly = "ReadOnly" })</div>
+            </div>
+            <h4>Candidate Personal Details</h4>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        @{
+                            var cat2 = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                            if (cat2 == "A" || cat2 == "D")
+                            {
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Registration No.</div>
+                                <div class="col-md-9">@Html.TextBoxFor(a => a.RegNo)</div>
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Candidate Name</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.Candi_Name)</div>
+                                <div class="col-md-4 kdsfont">
+                                    @Html.TextBoxFor(a => a.Pname, new
+                               {
+                                   id = "Pname",
+                                   @class = "keyboardInput",
+                                   onKeyPress = "javascript:convertThis(event)",
+                                   onpaste = "return false;",
+                                   oncopy = "return false;",
+                                   oncut = "return false;",
+                                   onclick = "toggleKBMode1(event)",
+                                   lang = "pa"
+                               })
+                                </div>
+
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Father's Name</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.Father_Name)</div>
+                                <div class="col-md-4 kdsfont">
+                                    @Html.TextBoxFor(a => a.PFname, new
+                               {
+                                   id = "PFname",
+                                   @class = "keyboardInput",
+                                   onKeyPress = "javascript:convertThis(event)",
+                                   onpaste = "return false;",
+                                   oncopy = "return false;",
+                                   oncut = "return false;",
+                                   onclick = "toggleKBMode1(event)",
+                                   lang = "pa"
+                               })
+                                </div>
+
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Mother's Name</div>
+                                <div class="col-md-4">@Html.TextBoxFor(a => a.Mother_Name)</div>
+                                <div class="col-md-4 kdsfont">
+                                    @Html.TextBoxFor(a => a.PMname, new
+                               {
+                                   id = "PMname",
+                                   @class = "keyboardInput",
+                                   onKeyPress = "javascript:convertThis(event)",
+                                   onpaste = "return false;",
+                                   oncopy = "return false;",
+                                   oncut = "return false;",
+                                   onclick = "toggleKBMode1(event)",
+                                   lang = "pa"
+                               })
+                                </div>
+
+                                if (Model.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "12")
+                                { }
+                                else
+                                {
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-3">Date Of Birth</div>
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(a => a.DOB, new
+                                   {
+                                       id = "DOB",
+                                       @readonly = "readonly",
+                                       @maxlength = "10",
+                                       //onkeypress = "javascript: return false;",
+                                       onpaste = "return false;",
+                                       oncopy = "return false;",
+                                       oncut = "return false;",
+                                       //onkeydown = "return false;"
+                                   })
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-md-3">Registration No.</div>
+                                <div class="col-md-9">@Html.TextBoxFor(a => a.RegNo, new { id = "RegNo", @ReadOnly = "ReadOnly" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Candidate Name</div>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @Html.TextBoxFor(a => a.Candi_Name, new { @ReadOnly = "ReadOnly" })
+                                        </div>
+                                        <div class="col-md-6">
+                                            @Html.TextBoxFor(a => a.Pname, new { @ReadOnly = "ReadOnly", @class = "kdsfont" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Father's Name</div>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @Html.TextBoxFor(a => a.Father_Name, new { @ReadOnly = "ReadOnly" })
+                                        </div>
+                                        <div class="col-md-6"> @Html.TextBoxFor(a => a.PFname, new { @ReadOnly = "ReadOnly", @class = "kdsfont" })</div>
+                                    </div>
+                                </div>
+
+
+                                <div class="clearfix"></div>
+                                <div class="col-md-3">Mother's Name</div>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @Html.TextBoxFor(a => a.Mother_Name, new { @ReadOnly = "ReadOnly" })
+                                        </div>
+                                        <div class="col-md-6 ">@Html.TextBoxFor(a => a.PMname, new { @ReadOnly = "ReadOnly", @class = "kdsfont" })</div>
+                                    </div>
+                                </div>
+                                if (Model.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "12")
+                                {
+                                }
+                                else
+                                {
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-3">Date Of Birth</div>
+                                    <div class="col-md-9">@Html.TextBoxFor(a => a.DOB, new { id = "DOB", @ReadOnly = "ReadOnly" })</div>
+                                }
+
+                            }
+                        }
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Email ID</div>
+                        <div class="col-md-9">@Html.TextBoxFor(a => a.emailID, new { id = "emailID", @ReadOnly = "ReadOnly" })</div>
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Mobile No.</div>
+                        <div class="col-md-9">@Html.TextBoxFor(a => a.mobileNo, new { id = "mobileNo", @ReadOnly = "ReadOnly" })</div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Gender</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> Gender = new List<SelectListItem>();
+                                Gender.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                                Gender.Add(new SelectListItem { Text = "Male", Value = "Male" });
+                                Gender.Add(new SelectListItem { Text = "Female", Value = "Female" });
+                            }
+                            @Html.TextBoxFor(a => a.Gender, new { @ReadOnly = "ReadOnly" })
+                        </div>
+                        <div class="col-md-1">Caste</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> CastList = new List<SelectListItem>();
+                                CastList.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                CastList.Add(new SelectListItem { Text = "General", Value = "General" });
+                                CastList.Add(new SelectListItem { Text = "BC", Value = "BC" });
+                                CastList.Add(new SelectListItem { Text = "OBC", Value = "OBC" });
+                                CastList.Add(new SelectListItem { Text = "SC", Value = "SC" });
+                                CastList.Add(new SelectListItem { Text = "ST", Value = "ST" });
+                                CastList.Add(new SelectListItem { Text = "Others", Value = "Others" });
+                            }
+                            @Html.TextBoxFor(a => a.CastList, new { @ReadOnly = "ReadOnly" })
+
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Area</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> Area = new List<SelectListItem>();
+                                Area.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                                Area.Add(new SelectListItem { Text = "Rural", Value = "Rural" });
+                                Area.Add(new SelectListItem { Text = "Urban", Value = "Urban" });
+                            }
+                            @Html.TextBoxFor(a => a.Area, new { @ReadOnly = "ReadOnly" })
+
+                            @*@Html.DropDownList("MyDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--Select---", new { @class = "" })*@
+                        </div>
+                        <div class="col-md-1">Religion</div>
+                        <div class="col-md-4">
+                            @{
+                                List<SelectListItem> Relist = new List<SelectListItem>();
+                                Relist.Add(new SelectListItem { Text = "---Select---", Value = "0" });
+                                Relist.Add(new SelectListItem { Text = "Hindu", Value = "Hindu" });
+                                Relist.Add(new SelectListItem { Text = "Muslim", Value = "Muslim" });
+                                Relist.Add(new SelectListItem { Text = "Sikh", Value = "Sikh" });
+                                Relist.Add(new SelectListItem { Text = "Christian", Value = "Christian" });
+                                Relist.Add(new SelectListItem { Text = "Others", Value = "Others" });
+
+                            }
+                            @Html.TextBoxFor(a => a.Relist, new { @ReadOnly = "ReadOnly" })
+
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-3">Differently Abled</div>
+                        <div class="col-md-9">
+                            @{
+                                List<SelectListItem> phyChal = new List<SelectListItem>();
+                                phyChal.Add(new SelectListItem { Text = "N.A.", Value = "N.A." });
+                                phyChal.Add(new SelectListItem { Text = "Blind/Visually Impaired", Value = "Blind/VisuallyImpaired" });
+                                phyChal.Add(new SelectListItem { Text = "Deaf and Dumb/Hearing", Value = "Deaf and Dumb/Hearing" });
+                                phyChal.Add(new SelectListItem { Text = "Others", Value = "Others" });
+                            }
+
+                            @Html.TextBoxFor(a => a.phyChal, new { @ReadOnly = "ReadOnly" })
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        @{
+                            var phychal = Model.StoreAllData.Tables[0].Rows[0]["phy_chal"].ToString();
+                            var writer = Model.StoreAllData.Tables[0].Rows[0]["writer"].ToString();
+
+                            if (phychal != "N.A." && phychal != "")
+                            {
+                                if (writer == "True")
+                                {
+                                    <div id="wantWriter" style="display:block">
+                                        <div class="col-md-3">If yes, do you want writer (Scribe) </div>
+                                        <div class="col-md-3">
+                                            @Html.RadioButtonFor(a => a.rdoWantWriter, "Yes", new { id = "rdoWantWriterY", @checked = true, @disabled = "disabled" })
+                                            Yes
+                                            @Html.RadioButtonFor(a => a.rdoWantWriter, "No", new { id = "rdoWantWriterN", @disabled = "disabled" })
+                                            No
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                }
+                                else
+                                {
+                                    <div id="wantWriter" style="display:block">
+                                        <div class="col-md-3">Do you Want Writer</div>
+                                        <div class="col-md-3">
+                                            @Html.RadioButtonFor(a => a.rdoWantWriter, "Yes", new { id = "rdoWantWriterY", @disabled = "disabled" })
+                                            Yes
+                                            @Html.RadioButtonFor(a => a.rdoWantWriter, "No", new { id = "rdoWantWriterN", @checked = true, @disabled = "disabled" })
+                                            No
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                }
+
+                            }
+                        }
+
+                        @{
+                            var prac = Model.StoreAllData.Tables[0].Rows[0]["prac"].ToString();
+                            var cat = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                            if (cat == "A" || cat == "D")
+                            {
+                                <div class="clearfix"></div>
+                            }
+                            else
+                            {
+                                if (Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "1" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "2" || Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString() == "3")
+                                {
+                                    if (prac == "True")
+                                    {
+                                        <div class="clearfix"></div>
+                                        <div class="col-md-3">Do you want to Appear in Practical Exam</div>
+                                        <div class="col-md-3">
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "Yes", new { id = "rdoPraticalExamY", @checked = true, @disabled = "disabled" })
+                                            Yes
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "No", new { id = "rdoPraticalExamN", @disabled = "disabled" })
+                                            No
+                                        </div>
+                                    }
+
+                                    else if (prac == "False")
+                                    {
+                                        <div class="clearfix"></div>
+                                        <div class="col-md-3">Do you want to Appear in Practical Exam</div>
+                                        <div class="col-md-3">
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "Yes", new { id = "rdoPraticalExamY", @disabled = "disabled" })
+                                            Yes
+                                            @Html.RadioButtonFor(a => a.IsPracExam, "No", new { id = "rdoPraticalExamN", @checked = true, @disabled = "disabled" })
+                                            No
+                                        </div>
+                                    }
+                                }
+                            }
+
+
+                        }
+                        <div class="clearfix"></div>
+                        @{
+                            if (Model.Class == "5" || Model.Class == "8" || Model.Class == "Primary" || Model.Class == "Middle")
+                            {
+                                <div style="display:none;">
+                                    <div class="col-md-3">Exam Centre 1.</div>
+                                    <div class="col-md-4">@Html.DropDownList("tehsilEC", new SelectList(ViewBag.MyTehsilEC, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+                                    <div class="col-md-1">2.</div>
+                                    <div class="col-md-4">@Html.DropDownList("tehsilEC2", new SelectList(ViewBag.MyTehsilEC2, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+
+                                </div>
+                            }
+                            else
+                            {
+                    <div>
+                        <div class="col-md-3">Exam Centre 1.</div>
+                        <div class="col-md-4">@Html.DropDownList("tehsilEC", new SelectList(ViewBag.MyTehsilEC, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+                        <div class="col-md-1">2.</div>
+                        <div class="col-md-4">@Html.DropDownList("tehsilEC2", new SelectList(ViewBag.MyTehsilEC2, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+                    </div>   
+                                }
+                            }
+
+                                </div>
+
+
+                            </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            Photo
+
+                            @{
+                                var strP = Convert.ToString(ViewBag.Photo);
+                                if (strP.Contains("Batch0320"))
+                                {
+                                    ViewBag.Photo = "https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/Upload2019/" + Convert.ToString(ViewBag.Photo);
+                                    ViewBag.sign = "https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/Upload2019/" + Convert.ToString(ViewBag.sign);
+                                }
+                                else
+                                {
+                                    ViewBag.Photo = "https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/Upload2023/" + Convert.ToString(ViewBag.Photo);
+                                    ViewBag.sign = "https://psebdata.s3.ap-south-1.amazonaws.com/allfiles/Upload2023/" + Convert.ToString(ViewBag.sign);
+                                }
+
+                            }
+
+                        </div>
+
+                        <div class="col-md-4"><img src="@ViewBag.Photo" class="img-responsive" alt="Photo" id="imgPhoto" /></div>
+
+                        <div class="clearfix"></div>
+                        <div class="col-md-8">
+                            <br />
+                            Signature
+                        </div>
+                        <div class="col-md-4"><br /><img src="@ViewBag.sign" class="img-responsive" alt="Signature" id="imgSign" /></div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="clearfix"></div>
+            <h4>Address Details</h4>
+            <div class="row">
+                <div class="clearfix"></div>
+
+
+                @{
+                    <div class="col-md-2">Address<span class="rqf">*</span></div>
+                    <div class="col-md-10">@Html.TextBoxFor(a => a.address, new { @ReadOnly = "ReadOnly" })</div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">Landmark</div>
+                    <div class="col-md-10">@Html.TextBoxFor(a => a.landmark, new { @ReadOnly = "ReadOnly" })</div>
+                    <div class="col-md-2">Block<span class="rqf">*</span></div>
+                    <div class="col-md-2">@Html.TextBoxFor(a => a.block, new { @ReadOnly = "ReadOnly" })</div>
+                    <div class="col-md-1">District<span class="rqf">*</span></div>
+                    <div class="col-md-2">@Html.DropDownList("SelDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+                    <div class="col-md-1">Tehsil<span class="rqf">*</span></div>
+                    <div class="col-md-2">@Html.DropDownList("tehsil", new SelectList(ViewBag.MyTehsil, "Value", "Text"), "--Select---", new { @class = "", @disabled = "disabled" })</div>
+                }
+
+
+                <div class="col-md-1">
+                    Pin Code<span class="rqf">*</span>
+                </div>
+                <div class="col-md-1">
+                    @Html.TextBoxFor(a => a.pinCode, new { @ReadOnly = "ReadOnly" })
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <h4>Subject Details</h4>
+            <div class="row">
+
+                @{
+                    var Cat = Model.StoreAllData.Tables[0].Rows[0]["cat"].ToString();
+                    var Class = Model.StoreAllData.Tables[0].Rows[0]["class"].ToString();
+                    var Sub1 = Model.StoreAllData.Tables[0].Rows[0]["Rsub1"].ToString();
+                    var Sub2 = Model.StoreAllData.Tables[0].Rows[0]["Rsub2"].ToString();
+                    var Sub3 = Model.StoreAllData.Tables[0].Rows[0]["Rsub3"].ToString();
+                    var Sub4 = Model.StoreAllData.Tables[0].Rows[0]["Rsub4"].ToString();
+                    var Sub5 = Model.StoreAllData.Tables[0].Rows[0]["Rsub5"].ToString();
+                    var Sub6 = Model.StoreAllData.Tables[0].Rows[0]["Rsub6"].ToString();
+
+
+                    if (Cat == "R" || Cat == "D" || Cat == "SR" || Cat == "SD" || Cat == "SA")
+                    {
+                        if (Sub1 != "")
+                        {
+                            <div class="col-md-2">Subject1:</div><div class="col-md-4">@Html.TextBoxFor(a => a.sub1, new { @ReadOnly = "ReadOnly" })</div>
+                        }
+                        if (Sub2 != "")
+                        {
+                            <div class="col-md-2">Subject2:</div><div class="col-md-4">@Html.TextBoxFor(a => a.sub2, new { @ReadOnly = "ReadOnly" })</div>
+                        }
+                        if (Sub3 != "")
+                        {
+                            <div class="col-md-2">Subject3:</div><div class="col-md-4">@Html.TextBoxFor(a => a.sub3, new { @ReadOnly = "ReadOnly" })</div>
+                        }
+                        if (Sub4 != "")
+                        {
+                            <div class="col-md-2">Subject4:</div><div class="col-md-4">@Html.TextBoxFor(a => a.sub4, new { @ReadOnly = "ReadOnly" })</div>
+                        }
+                        if (Sub5 != "")
+                        {
+                            <div class="col-md-2">Subject5:</div><div class="col-md-4">@Html.TextBoxFor(a => a.sub5, new { @ReadOnly = "ReadOnly" })</div>
+                        }
+                        if (Sub6 != "")
+                        {
+                            <div class="col-md-2">Subject6:</div><div class="col-md-4">@Html.TextBoxFor(a => a.sub6, new { @ReadOnly = "ReadOnly" })</div>
+                        }
+
+                    }
+
+
+                    else if (Cat == "A" && Class == "10")
+                    {
+                        <div class="col-md-2">Subject1:</div><div class="col-md-4">
+                            @Html.TextBoxFor(a => a.MatricSub, new { id = "MatricSub", @ReadOnly = "ReadOnly" })
+                        </div>
+                        <div class="col-md-2">Subject2:</div><div class="col-md-4">
+                            @Html.TextBoxFor(a => a.MatricSub2, new { id = "MatricSub2", @ReadOnly = "ReadOnly" })
+                        </div>
+                    }
+                    else if (Cat == "A" && Class == "12")
+                    {
+                        <div class="col-md-2">Subject1:</div><div class="col-md-4">
+                            @Html.TextBoxFor(a => a.TwelveSub, new { id = "MatricSub", @ReadOnly = "ReadOnly" })
+                        </div>
+                    }
+                }
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center">
+                @{
+                    var OROLL = Model.StoreAllData.Tables[0].Rows[0]["roll"].ToString();
+                    var FormStatus = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+                    var ChallanNo = Model.StoreAllData.Tables[0].Rows[0]["challanid"].ToString();
+                    var Challanid = Model.StoreAllData.Tables[0].Rows[0]["challanid"].ToString();
+                    var ChallanVerify = Model.StoreAllData.Tables[0].Rows[0]["verified"].ToString();
+                    var ChallanExpdate = Model.StoreAllData.Tables[0].Rows[0]["ExpireVDate"].ToString();
+                    var errRefNo = Model.StoreAllData.Tables[0].Rows[0]["errRefNo"].ToString();
+
+                    <input value="Print Application Form" type="button" title="Print Application Form" onclick="javascript:document.location.href='@Url.Action("AdminFPPrivateFinalPrint", "PrivateCandidate")'" />
+                    <input value="Back" type="button" onclick="javascript:document.location.href='@Url.Action("AdminFPPrivateSearch", "PrivateCandidate")'" />
+                    @*<input type="button" value="Logout" title="Logout" onclick="javascript:document.location.href='@Url.Action("Private_Candidate_Examination_Form", "PrivateCandidate")'" />*@
+                    @*<input value="Generate Challan" type="button" onclick="javascript:document.location.href='@Url.Action("PaymentForm", "PrivateCandidate")'" />*@
+                }
+            </div>
+        </form>
+    }
+</div>

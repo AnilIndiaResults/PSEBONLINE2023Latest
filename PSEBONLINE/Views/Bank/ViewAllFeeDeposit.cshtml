@@ -1,0 +1,196 @@
+﻿@model PSEBONLINE.Models.BankModels
+@{
+    ViewBag.Title = "View All Fee Deposit Details";
+    Layout = "~/Views/Shared/_BankLayout.cshtml";
+}
+<h1>List of Challan's which fee paid but fee verification pending by Bank</h1>
+										
+@using (Html.BeginForm("ViewAllFeeDeposit", "Bank", FormMethod.Post))
+{
+
+    <div class="row">
+        <div class="col-md-3">
+            Search By:  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+        </div>
+        <div class="col-md-3">
+            &nbsp;<br />
+            <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+        </div>
+        <div class="col-md-3">
+            <br /><input type="submit" value="Search" onclick="return valForm();" />
+            <input type="button" value="Download as Excel" onclick=" javascript:document.location.href='@Url.Action("ViewAllFeeDeposit", "Bank", new { id = "download" })    ' " />
+            <input type="button" value="Back" onclick=" javascript:document.location.href='@Url.Action("Welcome", "Bank", new { File = "Back" })    ' " />
+        </div>
+    </div>
+}
+<div class="row">
+    <div class="col-md-12">Total Count:  @ViewBag.TotalCount</div>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>ChallanId</th>                
+                    <th>SCHLREGID</th>
+                    <th>App No/ Ref No</th>    
+                    <th>School/Candidate Name</th>
+                    <th>Mobile</th>
+                    <th>Download Status</th>
+                    <th>Challan : Valid Date</th>
+                    <th>Amount</th>
+                    <th>Branch</th>                    
+                    <th>Bank J_Ref No</th>
+                    <th>Deposit Date</th>                   
+                    <th>Fee Details Submit Date</th>                   
+                   								                
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.BankMasterData.Tables[0].Rows.Count; i++)
+                        {
+                            var ChallanId = Model.BankMasterData.Tables[0].Rows[i]["ChallanId"].ToString();
+                            var Mobile = Model.BankMasterData.Tables[0].Rows[i]["Mobile"].ToString();
+                            var BRCODE = Model.BankMasterData.Tables[0].Rows[i]["BRCODECAND"].ToString(); //challanVdateNew
+                            var BRANCH = Model.BankMasterData.Tables[0].Rows[i]["BRANCHCAND"].ToString();
+                            var J_REF_NO = Model.BankMasterData.Tables[0].Rows[i]["J_REF_NOCAND"].ToString();
+                            var DEPOSITDT = Model.BankMasterData.Tables[0].Rows[i]["DEPOSITDTCAND"].ToString();
+                            var CHLNDATE = Model.BankMasterData.Tables[0].Rows[i]["CHLNDATE"].ToString().Split(' ')[0].ToString();
+                            var CHLNVDATE = Model.BankMasterData.Tables[0].Rows[i]["CHLNVDATE"].ToString().Split(' ')[0].ToString();
+                            var FEE = Model.BankMasterData.Tables[0].Rows[i]["FEE"].ToString();         
+                            var TOTFEE = Model.BankMasterData.Tables[0].Rows[i]["PaidFees"].ToString();
+                            var APPNO = Model.BankMasterData.Tables[0].Rows[i]["APPNO"].ToString();
+                            var SCHLREGID = Model.BankMasterData.Tables[0].Rows[i]["SCHLREGID"].ToString();
+                            var SCHLCANDNM = Model.BankMasterData.Tables[0].Rows[i]["SCHLCANDNM"].ToString();
+                            var DOWNLDDATE = Model.BankMasterData.Tables[0].Rows[i]["DOWNLDDATE"].ToString().Split(' ')[0].ToString();
+                            var DOWNLDFLOT = Model.BankMasterData.Tables[0].Rows[i]["DOWNLDFLOT"].ToString();
+                            var DOWNLDStatus = Model.BankMasterData.Tables[0].Rows[i]["DOWNLDFLG"].ToString() == "1" ? "Downloaded on "+DOWNLDDATE+" in Lot " + DOWNLDFLOT : "Not Downloaded";
+                            var SUBMITCAND = Model.BankMasterData.Tables[0].Rows[i]["SUBMITCAND"].ToString().Split(' ')[0].ToString();
+                            int Count = i + 1;
+
+                           
+                            <tr>
+                                <td>@Count</td>
+                                <td>@ChallanId</td>
+                                <td>@SCHLREGID</td>
+                                <td>@APPNO</td>
+                                <td>@SCHLCANDNM</td>
+                                <td>@Mobile</td>
+                                <td>@DOWNLDStatus</td>
+                                <td>@CHLNVDATE</td>
+                                <td>@TOTFEE</td>                               
+                                <td>@BRANCH</td>
+                                <td>@J_REF_NO</td>
+                                <td>@DEPOSITDT</td>
+                                <td>@SUBMITCAND</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+</div>
+
+<script type='text/javascript'>
+
+    $(document).ready(function () {
+        var value = document.getElementById('SelectItem').value;
+
+        if (value == 3 ||value == 4) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "2017:2017"
+
+            });
+
+        }
+        else if (value == 1 || value == 2) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var charCode = (evt.which) ? evt.which : event.keyCode
+                if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+                    return true;
+                }
+                else {
+                    alert("Invalid character...Enter Only Number!!");
+                    return false;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+
+
+     $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            if (value == 3 || value == 4) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: "2017:2017"
+
+                });
+
+            }
+            else if (value ==1 || value == 2) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    }
+
+                });
+
+
+
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+</script>
+

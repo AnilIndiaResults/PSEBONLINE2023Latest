@@ -1,0 +1,711 @@
+﻿@model PSEBONLINE.Models.DEOModel
+@{
+    Layout = "~/Views/Shared/_Headerdeo.cshtml";
+}
+
+<style type="text/css">
+input[type="checkbox"]:focus {
+    box-shadow: 0 0 1px 2px #cc0000;  
+    border:2px solid #cc0000;
+}
+
+</style>
+<h1>View Staff Details</h1>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+@using (Html.BeginForm("VIEWSTAFF", "DeoPortal", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <div class="row" >
+        <div class="col-md-3" style="display:none">
+            <div class="row">
+                <fieldset>
+                    <legend>Download Sample File</legend>
+                    <div class="col-md-3">
+                        <br />
+                        <a download="" href="~/PDF/StaffBulk.xls" class="btn">Click Here to Download Sample File</a>
+
+                    </div>
+                    </fieldset>
+            </div>
+            </div>
+            <div class="col-md-4" style="display:none">
+                <div class="row">
+                    <fieldset>
+                        <legend>Bulk Upload Staff Details</legend>
+                        <div class="col-md-9">
+                            Upload Staff File @Html.TextBoxFor(m => m.file, new { id = "MIS_FILE", type = "file" })
+                        </div>
+                        <div class="col-md-3">
+                            <br /><input type="submit" value="Upload" name="cmd" onclick="return valForm();" />
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="col-md-5" style="display:none">
+                <div class="row">
+                    <fieldset>
+                        <legend>Staff Error List</legend>
+                        <div class="col-md-9">
+                            Staff Error List
+                            @if (@ViewBag.StaffBulkErrorList == null)
+                           {
+                                @Html.DropDownList("ErrorList", new SelectList(string.Empty, "Value", "Text"), "--Select To See ErrorList---", new { @class = "" })
+                            }
+                            else
+                            {
+                                @Html.DropDownList("ErrorList", new SelectList(ViewBag.StaffBulkErrorList, "Value", "Text"), "--Select To See ErrorList---", new { @class = "" })
+                            }
+
+                        </div>
+                        <div class="col-md-3">
+                            <br />
+                            <input type="submit" value="Download" name="cmd" onclick="return valFormErrorlist();" />
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+
+
+            @*<input type="button" value="Back" class="btn" onclick="history.go(-1);" />*@
+            @*<input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Welcome", "Bank", new { File = "Back" })    '" />*@
+
+            @*<div class="col-md-12">
+            </div>*@
+
+            <div class="clearfix"></div>
+
+            @Html.Hidden("hdnccode", (string)ViewBag.ViewClsid)
+            <div class="col-md-12">
+                <table class="table table-bordered" id="t01">
+                    <tbody>
+                        <tr class="active-tr">
+                            <th>Block Code</th>
+                            <th>BLOCK NAME</th>
+                            <th>Block Building Name</th>
+                            <th>Required Staff</th>
+                            <th>Staff Added</th>
+                            <th>Diffrence</th>
+                        </tr>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+
+                                <tr>
+                                    <td>@ViewBag.ClusterCode</td>
+                                    <td>@ViewBag.ClusterName</td>
+                                    <td>@ViewBag.Address</td>
+                                    <td>@ViewBag.rstaff</td>
+                                    <td>@ViewBag.staff</td>
+                                    <td>@ViewBag.diff</td>
+                                </tr>
+
+                            }
+
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-right">
+                @*<input type="button" value="Back" onclick="history.go(-1);" />*@
+                <input type="button" value="Back" onclick="location.href='@Url.Action("ClusterList", "DeoPortal")'">
+                <span>
+                <input type="button" value="Import STAFF" onclick="location.href='@Url.Action("Indexdeo", "Webservice",new { CCODEID = encrypt.QueryStringModule.Encrypt(ViewBag.ClusterCode) })'">
+                
+                @*<input type="button"  value="Add STAFF" onclick="location.href='@Url.Action("ADDSTAFF", "DeoPortal",new { CCODEID = encrypt.QueryStringModule.Encrypt(ViewBag.ClusterCode) })'"></span>*@
+                <input type="button" value="Shift Staff To Other Block" class="" data-target="#myModal" onclick="return valFormModalpop();">
+                @*<button type="button" class="" data-toggle="modal" data-target="#myModal">Create Cluster</button>*@
+            </div>
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <span style="font-size:24px">Add Block To Staff</span>
+                        </div>
+                        <div class="modal-body">
+                            <table style="width:100%">
+
+                                <tr>
+                                    <td>Block Code</td>
+                                    <td>@Html.DropDownList("ClusterCode", new SelectList(ViewBag.ClstCode, "Value", "Text"), "--Select Block Code---", new { @class = "" })</td>
+                                </tr>
+                                <tr>
+                                    <td> <input type="submit" value="Submit" onclick="return valFormChk();" />   </td>
+                                    @*@*<td><input type="button" class="btn" value="Save Cluster Details" id="btnCreateCluster" onclick="CreateCluster()" /></td>*@
+                                    @*<td><input type="button" class="btn" value="Save Cluster Details" id="btnCreateCluster" onclick="CreateCluster(@k,@CENT)" /> <input type="button" value="Cancel" /> </td>*@
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+            <div class="row">
+                <div class="table-responsive">
+                    <div class="col-md-12">
+                        <table id="t01" class="table table-bordered">
+                            <tr class="active-tr">
+
+                                <th>SLNO. </th>
+                                <th>ePunjab ID</th>
+                                <th>Block Code </th>
+                                <th>Teacher Name</th>
+                                <th>Father's Name</th>
+                                <th>Designation</th>
+                                <th>Type Of Duty</th>                                
+                                <th>Mobile</th>
+                                <th>Aadhar</th>
+                                <th>lot</th>
+                                <th><input type="checkbox" id="select_all" /></th>
+                                <th>Update Details</th>
+
+                            </tr>
+                            <tr>
+                                @{
+                                    if (@ViewBag.message == "1")
+                                    {
+                                        if (ViewBag.TotalCount > 0)
+                                        {
+                                            int d = 0;
+                                            int Count = 0;
+                                            //if (ViewBag.pagesize == 1)
+                                            //{
+                                            //    Count = 0;
+                                            //}
+                                            //else
+                                            //{
+                                            //    Count = 10 * (ViewBag.pagesize - 1);
+                                            //}
+                                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                            {
+                                                //CCODE, TeacherName, FatherName, Designation, TypeOfDuty, Mobile
+                                                d = d + 1;
+                                                var staffid = Model.StoreAllData.Tables[0].Rows[i]["staffid"].ToString();
+                                                var epunjabid = Model.StoreAllData.Tables[0].Rows[i]["epunjabid"].ToString();
+                                                
+                                                                    var CCODE = Model.StoreAllData.Tables[0].Rows[i]["CCODE"].ToString();
+                                                var TeacherName = Model.StoreAllData.Tables[0].Rows[i]["name"].ToString();
+                                                var FatherName = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                                                var VDesignation = Model.StoreAllData.Tables[0].Rows[i]["subject"].ToString();
+                                                var TypeOfDuty = Model.StoreAllData.Tables[0].Rows[i]["dutytype"].ToString();
+                                                var lot = Model.StoreAllData.Tables[0].Rows[i]["lot"].ToString();
+                                                var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                                var aadhar = Model.StoreAllData.Tables[0].Rows[i]["adharno"].ToString();
+                                                Count = Count + 1;
+                                            <tr>
+                                                <td>@Count </td>
+                                                <td>@epunjabid </td>
+                                                <td>@CCODE</td>
+                                                <td>@TeacherName</td>
+                                                <td>@FatherName</td>
+                                                <td>@VDesignation</td>
+                                                <td>@TypeOfDuty</td>                                                
+                                                <td>@Mobile</td>
+                                                <td>@aadhar</td>
+                                                <td>@lot</td>
+                                                <td>
+                                                    <input type="checkbox" value="@staffid" name="StaffName" class="checkbox" />
+                                                </td>
+                                                <td>
+                                                    <div class="cart">
+                                                        Choose Action
+                                                        <span class="caret"></span>
+                                                        <div id="sidebar">
+                                                            <ul>
+                                                                
+                                                                @*<li>@Html.ActionLink("Update STAFF", "UPDATESTAFF", new { id = encrypt.QueryStringModule.Encrypt(staffid), CCODE = encrypt.QueryStringModule.Encrypt(CCODE) })</li>*@
+                                                                
+                                                                 @if (@lot == "0")
+                                                                {
+                                                                    <li>
+                                                                        @Html.ActionLink("DELETE", "STAFFDELETE", new { id = staffid }, new { onclick = "return confirm('Are You Sure, Delete Particular Staff?');" })
+                                                                    </li>
+                                                                    @*<li>
+                                                                        @Html.ActionLink("MODIFY", "AddStaffModify", new { id = encrypt.QueryStringModule.Encrypt(staffid) }, new { onclick = "return confirm('Are You Sure, Modify Particular Staff?');" })
+                                                                    </li>*@
+                                                                    @*<li>
+                                                                        @Html.ActionLink("MODIFY", "UPDATESTAFF", new { id = encrypt.QueryStringModule.Encrypt(staffid), CCODE = encrypt.QueryStringModule.Encrypt(CCODE) }, new { onclick = "return confirm('Are You Sure, Modify Particular Staff?');" })
+                                                                    </li>*@
+
+                                                                 }
+
+
+                                                            </ul>
+
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+
+                                            }
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                            <tr>
+                                                <td colspan="7">
+                                                    @ViewBag.Message
+                                                </td>
+                                            </tr>
+                                                                                            }
+
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                        <td colspan="4">@ViewBag.message </td>
+                                                                                        }
+
+                                                                                    }
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                }
+                @{
+                    if (ViewData["result"] != null)
+                    {
+                        if (ViewData["result"].ToString() == "1")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Data Deleted Successfully");
+                                // window.location.href = '@Url.Action("ADDSTAFF", "DeoPortal")';
+                            </script>}
+                        else if (ViewData["result"].ToString() == "0")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Data Already Exist");
+                            </script>
+                        }
+                        else if (ViewData["result"].ToString() == "-1")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Data not saved..plz try again");
+                            </script>
+                        }
+                    }
+                    if (TempData["result"] != null)
+                    {
+                        if (TempData["result"].ToString() == "1")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                var impcn = @TempData["TotImported"];
+                                //alert(impcn);
+                                alert("Selected Staff is shifted successfully to '"+impcn+"' Block.")
+                                //alert(impcn+" Records Imported Successfully");
+                            </script>
+                        }
+                        else if (TempData["result"].ToString() == "0")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Data Not Shifted");
+                            </script>
+                        }
+                        else if (TempData["result"].ToString() == "-1")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Data not Shifted..plz try again");
+                            </script>
+                        }
+                    }
+                    if (TempData["Uploadresult"] != null)
+                    {
+                        if (TempData["Uploadresult"].ToString() == "1")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Staffs uploaded successfully.")
+                            </script>
+                        }
+                        else if (TempData["Uploadresult"].ToString() == "0")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Staffs Not uploaded");
+                            </script>
+                        }
+                        else if (TempData["Uploadresult"].ToString() == "-1")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Staffs Not uploaded..plz try again");
+                            </script>
+                        }
+                        else if (TempData["Uploadresult"].ToString() == "0")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Duplicate mobile Number");
+                            </script>
+                        }
+                    }
+                    if (TempData["chkMIS"] != null)
+                    {
+                        if (TempData["chkMIS"].ToString() == "-1")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert(@Html.Raw(Json.Encode(TempData["chkMISMessage"])));
+                                @*var chkmsg = @TempData["chkMISMessage"];
+                alert("Error '"+chkmsg+"'");
+                alert("Error '"+chkmsg+"'");
+                alert(<p>@TempData["chkMISMessage"]</p>);*@
+                                @*<p>@TempData["chkMISMessage"]</p>*@
+                                //alert("Please Check Your Excel Sheet.")
+                            </script>
+                        }
+
+                    }
+                    if (TempData["chkExcelSheet"] != null)
+                    {
+                        if (TempData["chkExcelSheet"].ToString() == "2")
+                        {
+                            <script type="text/javascript" language="javascript">
+                                alert("Please Upload Only .xls and .xlsx only.")
+                            </script>
+                        }
+
+                    }
+                }
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+                        var selectedError = { errl: $("#ErrorList").val() };
+                        $.ajax({
+                            url: '@Url.Action("GETExcelErrorlist", "DeoPortal")',
+                            type: 'Post',
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            data: JSON.stringify(selectedError),
+                            success: function (ExcError) {
+                                //$("#desi").empty();
+                                $.each(ExcError, function (i, ErrList) {
+
+                                    $("#ErrorList").append('<option value="'
+                                       + ErrList.Value + '">'
+                                       + ErrList.Text + '</option>');
+                                });
+                                if (ErrList.success) {
+
+
+                                }
+                                else {
+                                    window.location.href = '@Url.Action("Index", "DeoPortal")';
+                                    alert('invalid ID' + data.success);
+                                }
+                            }
+                        });
+
+
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(function () {
+                        $("#select_all").change(function () {
+                            //alert($(this).val());
+                            //"select all" change
+                            var status = this.checked; // "select all" checked status
+                            $('.checkbox').each(function () { //iterate all listed checkbox items
+                                this.checked = status; //change ".checkbox" checked status
+                            });
+                        });
+
+                        //uncheck "select all", if one of the listed checkbox item is unchecked
+                        $('.checkbox').change(function () { //".checkbox" change
+
+                            //alert($(this).val());
+                            if (this.checked == false) { //if this item is unchecked
+                                $("#select_all")[0].checked = false; //change "select all" checked status to false
+                            }
+                        });
+
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+                        $("#schlcode").change(function () {
+
+                            var selectedSCHL = { SCHL: $("#schlcode").val() };
+                            $.ajax({
+                                url: '@Url.Action("GETSchoolName", "DeoPortal")',
+                                type: 'Post',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(selectedSCHL),
+                                success: function (Schools) {
+
+                                    $.each(Schools, function (i, SCHList) {
+                                        // alert(SCHList.Value);
+                                        $("#Selschool").val(SCHList.Value);
+                                        //$("#Selschool").append('<option value="'
+                                        //   + SCHList.Value + '">'
+                                        //   + SCHList.Text + '</option>');
+                                    });
+                                    if (SCHList.success) {
+
+                                    }
+                                    else {
+                                        alert('invalid ID' + data.success);
+                                    }
+                                }
+                            });
+                        });
+
+                        $("#Selschool").change(function () {
+
+                            var selectedSCHL = { SCHL: $("#Selschool").val() };
+                            $.ajax({
+                                url: '@Url.Action("GETSchoolName", "DeoPortal")',
+                                type: 'Post',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(selectedSCHL),
+                                success: function (Schools) {
+
+                                    $.each(Schools, function (i, SCHList) {
+                                        $("#schlcode").val(SCHList.Value);
+
+                                    });
+                                    if (SCHList.success) {
+
+                                    }
+                                    else {
+                                        alert('invalid ID' + data.success);
+                                    }
+                                }
+                            });
+                        });
+                        $("#cadre").change(function () {
+                            var selectedCAD = { CAD: $("#cadre").val() };
+                            $.ajax({
+                                url: '@Url.Action("GETDSTAFFESIGNATION", "DeoPortal")',
+                                type: 'Post',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(selectedCAD),
+                                success: function (cadres) {
+                                    $("#desi").empty();
+                                    $.each(cadres, function (i, desiList) {
+
+                                        $("#desi").append('<option value="'
+                                           + desiList.Value + '">'
+                                           + desiList.Text + '</option>');
+                                    });
+                                    if (desiList.success) {
+
+
+                                    }
+                                    else {
+                                        alert('invalid ID' + data.success);
+                                    }
+                                }
+                            });
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+
+                    function valFormModalpop()
+                    {
+                        //var chks = document.getElementsByName('StaffName');
+                        //$('StaffName').on('change', function (e) {
+                        //    if (e.target.checked) {
+                        //        $('#myModal').modal();
+                        //    }
+                        //    else
+                        //    {
+                        //        $("#myModal").modal('hide');
+                        //    }
+                        //});
+
+                        var chks = document.getElementsByName('StaffName');
+                        var hasChecked = false;
+                        for (var i = 0; i < chks.length; i++) {
+                            if (chks[i].checked) {
+                                hasChecked = true;
+                                $("#myModal").modal('show');
+                                break;
+                                // data-toggle="modal";
+                            }
+                        }
+                        if (hasChecked == false) {
+                            alert("Please Select Atleast One CheckBox For Staff Shift To Block Code");
+                            document.getElementById('select_all').focus();
+                            return false;
+                        }
+
+                        //return true;
+                    }
+                    function valFormChk()
+                    {
+                        var ClsCode = document.getElementById("ClusterCode");
+                        if (ClsCode.value == "" || ClsCode.value == "0")
+                        {
+                            alert("Please Choose Atleast One Block Code");
+                            ClsCode.focus();
+                            return false;
+                        }
+
+                        //var checkboxes = document.getElementsByName('StaffName');
+                        //var selected = [];
+                        //for (var i = 0; i < checkboxes.length; i++) {
+                        //    if (checkboxes[i].checked==false) {
+                        //        alert("Please Check Atleast One Staff Shift To Cluster Code");
+                        //        $("#myModal").modal('hide');
+                        //       // $('#select_all').focus();
+                        //       // $('#select_all').style.borderColor = 'red';
+                        //       // document.getElementById("select_all").style.borderColor = "red";
+                        //        return false;
+                        //    }
+                        //}
+                        //var chks = document.getElementsByName('StaffName');
+                        //var hasChecked = false;
+                        //for (var i = 0; i < chks.length; i++) {
+                        //    if (chks[i].checked) {
+                        //        hasChecked = true;
+                        //        break;
+                        //    }
+                        //}
+                        //if (hasChecked == false) {
+                        //    alert("Please Select Atleast One CheckBox For Staff Shift To Cluster Code");
+                        //    $("#myModal").modal('hide');
+                        //    $('#select_all').focus();
+                        //    return false;
+                        //}
+                        return true;
+                    }
+                    function valFormErrorlist()
+                    {
+                        var Errlist = document.getElementById("ErrorList");
+                        if (Errlist.value == "" || Errlist.value == "0") {
+                            alert("Please Choose Error list");
+                            Errlist.focus();
+                            return false;
+                        }
+                    }
+                    function valForm()
+                    {
+                        var Fn = document.getElementById("MIS_FILE");
+                        var td = document.getElementById("typeDuty");
+                        var sn = document.getElementById("StaffName");
+                        var sfn = document.getElementById("StaffFatherName");
+                        var expyear = document.getElementById("experience");
+                        var expmon = document.getElementById("expmonth");
+                        var gen = document.getElementById("gender");
+                        var mob = document.getElementById("Mobile");
+                        var sc = document.getElementById("schlcode");
+                        var scname = document.getElementById("Selschool");
+                        var aadhar = document.getElementById("adharno");
+                        var punid = document.getElementById("teacherepunjabid");
+                        var cadre = document.getElementById("cadre");
+                        var desi = document.getElementById("desi");
+                        var ifc = document.getElementById("ifsccode");
+                        var accno = document.getElementById("bankaccno");
+
+                        if (Fn.value == "" || Fn.value == "0") {
+                            alert("Please Choose File");
+                            Fn.focus();
+                            return false;
+                        }
+
+                        if (td.value == "" || td.value == "0") {
+                            alert("Please Select Type Of Duty");
+                            td.focus();
+                            return false;
+                        }
+                        if (sn.value == "") {
+                            alert("Please Enter Teacher's Name ");
+                            sn.focus();
+                            return false;
+                        }
+                        if (sfn.value == "") {
+                            alert("Please Enter Teacher's Father Name");
+                            sfn.focus();
+                            return false;
+                        }
+                        if (expyear.value == "" || expyear.value == "0") {
+                            alert("Please Select Year");
+                            expyear.focus();
+                            return false;
+                        }
+                        if (expmon.value == "" || expmon.value == "0") {
+                            alert("Please Select Month");
+                            expmon.focus();
+                            return false;
+                        }
+                        if (gen.value == "" || gen.value == "0") {
+                            alert("Please Select Gender");
+                            gen.focus();
+                            return false;
+                        }
+                        if (mob.value == "" ) {
+                            alert("Enter Mobile Number");
+                            mob.focus();
+                            return false;
+                        }
+                        if (sc.value == "") {
+                            alert("Enter School Code");
+                            sc.focus();
+                            return false;
+                        }
+                        if (scname.value == "" || scname.value == "0") {
+                            alert("Please Select School Name");
+                            scname.focus();
+                            return false;
+                        }
+                        if (aadhar.value == "") {
+                            alert("Enter Mobile Adhar number");
+                            aadhar.focus();
+                            return false;
+                        }
+                        if (aadhar != "") {
+                            if (aadhar.value.trim().length != 12) {
+                                alert("Please Enter 12 digits Aadhar No");
+                                aadhar.focus();
+                                return false;
+                            }
+                        }
+                        //if (punid.value == "") {
+                        //    alert("Enter Punjab Id");
+                        //    return false;
+                        //}
+                        if (cadre.value == "" || cadre.value == "0") {
+                            alert("Please Select Cadre");
+                            cadre.focus();
+                            return false;
+                        }
+                        if (desi.value == "" || desi.value == "0") {
+                            alert("Please Enter Subject/Designation ");
+                            desi.focus();
+                            return false;
+                        }
+                        if (ifc.value == "") {
+                            alert("Enter IFSC Code");
+                            td.focus();
+                            return false;
+                        }
+                        if (accno.value == "") {
+                            alert("Enter Bank Account Number");
+                            accno.focus();
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>

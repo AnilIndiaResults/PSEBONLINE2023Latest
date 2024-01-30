@@ -1,0 +1,247 @@
+﻿
+@model PSEBONLINE.Models.ExamCentreConfidentialResources
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+
+<div id="loadingSO"></div>
+<h1>Exam Centre Confidential Resources 2023  </h1>
+<div class="container KDBG">
+    @using (Html.BeginForm("ExamCentreConfidentialResources", "School", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+    {
+
+        <div class="row">
+            <div class="col-md-3">School Code</div>
+            <div class="col-md-3">
+                <label>@Model.schl</label>
+                @Html.HiddenFor(m => m.schl)
+                @Html.HiddenFor(m => m.id)
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Principal Name</div>
+            <div class="col-md-3">
+                <label>@Model.principal</label>
+                @Html.HiddenFor(m => m.principal)
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Mobile Number</div>
+            <div class="col-md-3">
+                <label> @ViewBag.MOBILE</label>
+                @Html.HiddenFor(m => m.mobile)
+                <input type="button" id="btnOTP" value="Send OTP" onclick="return sendOTP();" />
+            </div>
+            <div class="clearfix"></div>
+            <div id="confidentialDIV" style="display:none;">
+                <h1>List of Files </h1>
+                @foreach (var file in Model.confidentialFiles)
+                {
+                    var fileNameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(file);
+                    var fileName = System.IO.Path.GetFileName(file);
+                    <div style="padding : 5px;">
+                        <input type="button" value="@fileNameWithoutExt" onclick="javascript:document.location.href='@Url.Action("DownloadConfidentialFiles", "School", new {  fileName = @fileName})'" />
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    }
+</div>
+
+
+<div class="modal fade" id="myModalOTP" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3>Authorized Persons for Exam Centre</h3>
+            </div>
+            <div class="modal-body">
+                <table width="100%">
+                    <tr>
+                        <td width="30%">Name</td>
+                        <td><input id="ePrincipalName" type="text" readonly /></td>
+                    </tr>
+                    <tr>
+                        <td>Registered Mobile No : </td>
+                        <td><input id="eMOBILENO" type="text" readonly /><input id="eMOBILENOhf" type="hidden" /></td>
+
+                    </tr>
+                    <tr>
+                        <td>Enter OTP </td>
+                        <td><input id="mobileOTP" type="text" maxlength="6" /></td>
+
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="button" class="btn" value="Submit" id="btnsubmitOTP" onclick="VerifOTP('@Model.schl')" />
+                            <div id="loading1"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Exam Centre Resources",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+
+    function validateNumber(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $(".num").val();
+        if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c.length > 9) {
+            return false;
+        }
+        else return true;
+    }
+
+</script>
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<script type="text/javascript">
+
+
+
+    function sendOTP() {
+        var valstatus = true;
+
+        if (valstatus) {
+            var ePrincipalName = '@Model.principal';
+            var eMOBILENO = '@Model.mobile';
+            var mobileOTP = "";
+            var schl = '@Model.schl';
+
+            $('#loadingSO').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Master/SchoolPrincipalMobileOTP", // this for calling the web method function in cs code.
+                data: '{schl: "' + schl + '",ePrincipalName: "' + ePrincipalName + '",eMOBILENO: "' + eMOBILENO + '",mobileOTP: "' + mobileOTP + '",confirmOTP: "' + mobileOTP + '", "Type": "SEND"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $('#loadingSO').empty();
+                    if (response.outstatus == "1") {
+                        alert("OTP Send Successfully");
+                        $("#ePrincipalName").val('@Model.principal');
+                        $("#eMOBILENO").val('@Model.mobile'.replace(/\d(?=\d{4})/g, "X"));
+                        $("#eMOBILENOhf").val('@Model.mobile');
+                        $('#myModalOTP').modal('show');
+                        $('#confidentialDIV').hide();
+                    }
+                    else  {
+                        alert("OTP Verified Failure");
+                    }
+
+
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        }
+        return false;
+    }
+
+
+    function VerifOTP(std_id) {
+        var flag = 0;
+        if ($("#ePrincipalName").val() == "") {
+            $("#ePrincipalName").addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#eMOBILENO").val() == "") {
+            $("#eMOBILENO").addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#mobileOTP").val() == "") {
+            $("#mobileOTP").addClass("input-validation-error");
+            flag = 1;
+        }
+
+
+        if (flag == 1) {
+            return false;
+        }
+        else {
+
+           var ePrincipalName = '@Model.principal';
+            var eMOBILENO = '@Model.mobile';
+            var mobileOTP = $("#mobileOTP").val();
+            var schl = '@Model.schl';
+
+
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/Master/SchoolPrincipalMobileOTP", // this for calling the web method function in cs code.
+                data: '{schl: "' + schl + '",ePrincipalName: "' + ePrincipalName + '",eMOBILENO: "' + eMOBILENO + '",mobileOTP: "' + mobileOTP + '",confirmOTP: "' + mobileOTP + '", "Type": "VERIFIY"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $('#loading1').empty();
+                    $('#confidentialDIV').hide();
+                    if (response.outstatus == "1") {
+                        alert("OTP Verified Successfully");
+                        $("#mobileOTP").val('');
+                        $('#myModalOTP').modal('hide');
+                        $('#confidentialDIV').show();
+
+                    }
+                    else if (response.outstatus == "2") {
+                        alert("Wrong OTP");
+                    }
+                    else if (response.outstatus == "0") {
+                        alert("OTP Verified Failure");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+
+        }
+
+    }
+</script>
+

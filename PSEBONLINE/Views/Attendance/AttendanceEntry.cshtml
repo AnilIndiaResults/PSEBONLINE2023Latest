@@ -1,0 +1,404 @@
+﻿@model PSEBONLINE.Models.vmAttendanceModel
+@*@model PSEBONLINE.Models.SchoolModels*@
+@{
+    ViewBag.Title = "Attendance Entry";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<!-- #endregion -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+
+<h1>Attendance Entry Panel, March 2023</h1>
+
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#dialog").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to  Final Submit?",
+            width: 450,
+            height: 250,
+            buttons: {
+                "Final Submit": function () {
+                    AttendanceFinalSubmit(1);
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        $("#btnFinal").click(function () {
+            $('#dialog').dialog('open');
+        });
+    });
+
+
+</script>
+
+
+<div id="dialog" style="display: none" class="kdsfont">
+    Are you sure to Final Submit, After that you data have been locked?
+</div>
+<div id="loading1"></div>
+<div class="clearfix"></div>
+<div class="row" id="divMain1">
+    @if (ViewBag.TotalCount > 0)
+        {
+    <div class="col-md-12" style="margin-top : 10px;margin-bottom : 10px;">
+        <table id="tblSummary" width="100%" border="1" class="table table-bordered">
+            
+            <tr>
+                <td colspan="6" class="text-bold left active-tr">&nbsp;Summary </td>
+                <td>&nbsp;Exam Batch</td>
+                <td>&nbsp;@ViewBag.examBatch </td>
+                <td>&nbsp;Category</td>
+                <td>&nbsp;@ViewBag.RPname </td>
+            </tr>
+            <tr>
+                @if (Model.attendanceMemoDetail != null)
+                {
+                    <td>&nbsp;School Code & Name </td>
+                    <td colspan="2">&nbsp;(@ViewBag.schl - @Model.attendanceMemoDetail.schle)</td>
+                    <td>&nbsp;Centre Code & Name</td>
+                    <td colspan="6"> &nbsp; (@Model.attendanceMemoDetail.centrecode - @Model.attendanceMemoDetail.centernm) @*(@ViewBag.centrecode) @ViewBag.centernm*@</td>
+                }
+                else
+                {
+                    <td>&nbsp;School Code & Name </td>
+                    <td colspan="2">&nbsp;(@ViewBag.schl@*- @Model.attendanceMemoDetail.schle*@)</td>
+                    <td>&nbsp;Centre Code & Name</td>
+                    <td colspan="6"> &nbsp; @*(@Model.attendanceMemoDetail.centrecode - @Model.attendanceMemoDetail.centernm)*@ (@ViewBag.centrecode) @ViewBag.centernm</td>
+                }
+            </tr>
+            <tr>
+                <td>&nbsp;Class</td>
+                <td>&nbsp;@ViewBag.clsName </td>
+                <td>&nbsp;Date of Exam</td>
+                <td>&nbsp;@ViewBag.examDate </td>
+                <td colspan="2">&nbsp;Subject Code & Name </td>
+                <td colspan="4">&nbsp;(@ViewBag.SubCode)  @ViewBag.SubNm </td>
+            </tr>
+            <tr>
+                <td>&nbsp;Total </td>
+                <td>&nbsp;@ViewBag.Total</td>
+                <td>&nbsp;Present</td>
+                <td>&nbsp;@(Convert.ToInt16(ViewBag.Present) + Convert.ToInt16(ViewBag.Pending)) </td>
+                <td>&nbsp; Absent </td>
+                <td>&nbsp;@ViewBag.Absent</td>
+                <td>&nbsp;Cancel </td>
+                <td>&nbsp;@ViewBag.Cancel</td>
+                <td>&nbsp;UMC</td>
+                <td>&nbsp;@ViewBag.UMC</td>
+            </tr>
+            <tr>
+                <td>&nbsp;Pending </td>
+                <td>&nbsp;0 </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                
+            </tr>
+        </table>
+    </div>
+    }
+
+    <div class="col-md-4">Grid Total:  @ViewBag.TotalCount</div>
+    <div class="col-md-8 text-right"><span class="rqf" style="font-size:20px">Last Date : @ViewBag.LastDate </span></div>
+    <div class="clearfix"></div>   
+        <div class="col-md-6  text-right">
+		<a href="/Attendance/AttendenceSummary" class="btn kbtn">Back</a>
+            @if (ViewBag.TotalCount > 0)
+        {
+               DateTime todayDate = DateTime.Now;
+             DateTime finalSubmitLastDate = Convert.ToDateTime(@ViewBag.LastDate);
+            if (Model.attendanceMemoDetail != null)
+                {
+             if (Model.attendanceMemoDetail.status == "0")
+                        {
+
+
+                                    if (finalSubmitLastDate.Date >= todayDate.Date)
+                                    {
+            <input type="submit" id="save1" onclick="Save('0')" value="Save" />
+                                    }
+
+
+            }
+            }
+            else
+            {   if (finalSubmitLastDate.Date >= todayDate.Date)
+                                    {
+            <input type="submit" id="save2" onclick="Save('0')" value="Save" />
+                                    }}
+       }
+        </div>
+
+        <div class="col-md-6  text-right">
+            @if (Model != null)
+        {
+             DateTime todayDate = DateTime.Now;
+             DateTime finalSubmitLastDate = Convert.ToDateTime(@ViewBag.LastDate);
+            if (Model.attendanceList.Count > 0 || Model.attendanceList.Count > 0)
+            {
+                if (Model.attendanceMemoDetail != null)
+                {
+                    if (ViewBag.memoNumber != "")
+                    {
+                        if (Model.attendanceMemoDetail.status == "0")
+                        {
+            <span class="rqf" style="font-size : 18px; display:none;">Pending (@ViewBag.Pending)</span>
+            <a class="btn" href="/Attendance/AttendancePrint/@ViewBag.memoNumber">Rough Print</a>
+
+            if (ViewBag.Pending  == ViewBag.Pending)
+          {
+              if (finalSubmitLastDate.Date >= todayDate.Date)
+                                    {
+            <input type="button" id="btnFinal" class="btn" value="Click here to Final Submit" />
+                                    }
+
+
+            }
+                        }
+                        else
+                        {
+            <a class="btn" href="/Attendance/AttendancePrint/@ViewBag.memoNumber">Final Print</a>
+                        }
+                    }
+                }
+            else{ <span class="rqf" style="font-size : 18px;display:none;">Pending (@ViewBag.Pending)</span>}
+
+            }
+        }
+
+        </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="example" class="display table table-bordered" style="width:100%">
+                <thead>
+                    <tr class="active-tr">
+                        <th width="10%">Student Id</th>
+                        <th width="10%">Roll Number</th>
+                        <th width="40%">Name/Father Name/Mother Name</th>
+                        <th width="10%">DOB</th>
+                        <th width="14%">Differenty Abled</th>
+                        <th width="6%">Status</th>
+                        <th width="10%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        if (Model != null)
+                        {
+                            foreach (var items in Model.attendanceList)
+                            {
+                        <tr>
+                            <td class="studentId">@items.studentId</td>
+                            <td>@items.rollNo</td>
+                            <td>@items.candidateName/@items.fatherName/@items.motherName</td>
+                            <td>@items.dob</td>
+                            <td>@items.differentlyAbled</td>
+                            <td>
+                                @if(items.attendance != null)
+                                                {<span>Filled</span>}
+                                                else
+                                                {<span class="rqf">Present</span>}
+
+
+                            </td>
+                            <td class="attendanceStatus">
+                                @{
+
+                                if (Model.attendanceMemoDetail != null)
+                {
+                                if (Model.attendanceMemoDetail.status == "0" )
+                                {
+                                    @Html.DropDownList("SelAction", new SelectList(ViewBag.AttendanceStatus, "Value", "Text", @items.attendance), new { @class = "", required = "required" })
+                                }
+                                else  if (Model.attendanceMemoDetail.status == "1"){
+                                    @Html.DropDownList("SelAction", new SelectList(ViewBag.AttendanceStatus, "Value", "Text", @items.attendance), new { @class = "", required = "required",disabled = "disabled" })
+                                }
+                                }
+                                else
+                                { @Html.DropDownList("SelAction", new SelectList(ViewBag.AttendanceStatus, "Value", "Text", @items.attendance), new { @class = "", required = "required" })}
+
+                                }
+
+
+                            </td>
+                        </tr>
+                           }
+
+                        }
+                    }
+
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 50,
+            "order": [[5, 'desc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By Student Id, Candidate Name, Father's Name, Mother's Name, DOB, Status." },
+        })
+    });
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#examDate").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            minDate: 0,
+        });
+    });
+
+    function Save(status) {
+        $('#save1').prop('disabled', true);
+        $('#save2').prop('disabled', true);
+
+        let text;
+        if (confirm("Are you confirm!") == false) {
+            text = "";
+        } else {
+
+
+            var request = {};
+            var attendanceList = [];
+            $("#example tr").each(function () {
+                var self = $(this);
+                var stdid = self.find(".studentId").html();
+                var attendanceStatus = self.find("td:eq(6) select option:selected").val();
+                if (stdid != undefined) {
+                    var subjectAttendance = {};
+                    subjectAttendance.studentId = stdid;
+                    subjectAttendance.attendanceStatus = attendanceStatus;
+                    attendanceList.push(subjectAttendance);
+                }
+            });
+            request.status = status;
+            request.attendanceList = attendanceList;
+            request.centrecode = '@ViewBag.centrecode';
+            request.cid = '@ViewBag.cid';
+
+            if (attendanceList.length > 0) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("AttendanceSave", "Attendance")',
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify(request),
+                    success: function (response) {
+                        if (response.returncode == "1") {
+                            alert("Saved Successfully");
+                            //window.location.href = "/Attendance/AttendanceEntry/@ViewBag.cid";
+                        }
+                        else {
+                            alert("Saved Failure");
+                            $('#save1').prop('disabled', true);
+                            $('#save2').prop('disabled', true);
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response);
+                        $('#save1').prop('disabled', true);
+                        $('#save2').prop('disabled', true);
+                    }
+                });
+            }
+        }
+    }
+
+
+
+    function AttendanceFinalSubmit(status) {
+        var memmonumber = '@ViewBag.memoNumber';
+
+        if ('@(Convert.ToInt16(ViewBag.Present) + Convert.ToInt16(ViewBag.Pending))' > 0) {
+            alert('Please fill pending student attendece before final submit');
+            $('#dialog').dialog('close');
+            return;
+        }
+
+        var request = {};
+        var attendanceList = [];
+        $("#example tr").each(function () {
+            var self = $(this);
+            var stdid = self.find(".studentId").html();
+            var attendanceStatus = self.find("td:eq(6) select option:selected").val();
+            if (stdid != undefined) {
+                var subjectAttendance = {};
+                subjectAttendance.studentId = stdid;
+                subjectAttendance.attendanceStatus = attendanceStatus;
+                attendanceList.push(subjectAttendance);
+            }
+        });
+
+        request.status = status;
+        request.memmoNumber = memmonumber; //memmonumber
+        request.attendanceList = attendanceList;
+        request.centrecode = '@ViewBag.centrecode';
+        request.cid = '@ViewBag.cid';
+
+        if (attendanceList.length>0) {
+            $.ajax({
+				type: "POST",
+                url: '@Url.Action("AttendanceEntryFinal", "Attendance")',
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(request),
+                success: function (response) {
+                    if (response.returncode == "0") {
+                        //alert("Final Submit Successfully of Memo Number : " + response.memonumber)
+                        $('#dialog').dialog('close');
+                        window.location.href = "/Attendance/AttendancePrint/" + response.memonumber;
+					}
+					else {
+                        alert(response.returnmessage);
+					}
+				},
+				failure: function (response) {
+                    alert(response);
+				}
+			});
+        }
+
+    }
+</script>

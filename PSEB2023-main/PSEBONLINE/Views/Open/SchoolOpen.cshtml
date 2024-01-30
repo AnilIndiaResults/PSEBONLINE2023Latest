@@ -1,0 +1,176 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    ViewBag.Title = "";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<div class="container KDBG">
+    <style type="text/css">
+        .ullist li {
+            padding: 6px 4px;
+            font-size: 16px;
+        }
+
+        .ullist {
+            padding-bottom: 50px;
+        }
+    </style>
+    <h1>Open School </h1>
+    <div class="row">
+
+        <div class="col-md-12">
+            <ul class="ullist">
+
+                @if (ViewBag.IsSchlAllow != null)
+                {
+                  <li><a href="/School/SchoolAccreditation"><samp>&#10093;</samp> Open School Accreditation For Session @PSEBONLINE.Repository.SessionSettingMastersRepository.GetSessionSettingMasters().SessionShortYear </a></li>
+                }
+
+                @if (ViewBag.OMatric == "1")
+                {
+                    <li><a href="/Open/Studentlist/M3"><samp>&#10093;</samp> Matriculation Open Admission List Session @Session["Session"].ToString()  </a></li>
+                }
+                @if (ViewBag.OSenior == "1")
+                {
+                    <li><a href="/Open/Studentlist/T3"><samp>&#10093;</samp> Sr. Secondary Open Admission List Session @Session["Session"].ToString()  </a></li>
+                }
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            @*@if (Session["SchType"].ToString() != "ASS" && Session["SchType"].ToString() != "OEC")*@
+
+            @*@if (ViewBag.IsSchlAllow != null)
+            {
+                <h1>Important Links</h1>
+                <ul class="ullist" style="padding-bottom:120px">
+                    <li>
+                        <samp>&#10093;</samp> <span style="color:#ff0000">13.05.2020</span> - <a href="/PDF/accridiationschedule-@PSEBONLINE.Repository.SessionSettingMastersRepository.GetSessionSettingMasters().SessionShortYear.pdf" target="_blank">Revised Schedule For Accreditation Session @PSEBONLINE.Repository.SessionSettingMastersRepository.GetSessionSettingMasters().SessionShortYear</a>
+                    </li>
+                    <li>
+                        <samp>&#10093;</samp> <span style="color:#ff0000">14.01.2021</span> - <a href="/PDF/Accreditation Insructions.pdf" target="_blank">Instruction To Fill Form</a>
+                    </li>
+                    <li>
+                        <samp>&#10093;</samp> <span style="color:#ff0000">14.01.2021</span> - <a href="/PDF/OpenAccreditationSchedule_140120.pdf" target="_blank">Open School Accreditation For Session @PSEBONLINE.Repository.SessionSettingMastersRepository.GetSessionSettingMasters().SessionShortYear  </a>
+                    </li>
+                </ul>
+            }*@
+
+
+
+            <ul class="ullist" style="padding-bottom:120px">
+                @{
+
+                    if (ViewBag.TotalCircular > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 15 * (ViewBag.pagesize - 1);
+                        }
+                        DateTime sDate = DateTime.Today;
+
+                        if (ViewBag.CircularCount > 0)
+                        {
+                            for (int i = 0; i < Model.dsCircular.Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var ID = Model.dsCircular.Rows[i]["ID"].ToString();
+                                var CircularNo = Model.dsCircular.Rows[i]["CircularNo"].ToString();
+                                var Title = Model.dsCircular.Rows[i]["Title"].ToString();
+                                var UploadDate = Model.dsCircular.Rows[i]["UploadDateDD"].ToString().Split(' ')[0];
+                                var ExpiryDate = Model.dsCircular.Rows[i]["ExpiryDateDD"].ToString().Split(' ')[0];
+                                var Category = Model.dsCircular.Rows[i]["IsMarque"].ToString() == "1" ? "Marque" : "Circulars";
+                                var Status = Model.dsCircular.Rows[i]["IsActive"].ToString().ToLower() == "true" ? "Active" : "De-Active";
+                                var NewFlag = Model.dsCircular.Rows[i]["NewFlag"].ToString();
+                                var Attachment = Model.dsCircular.Rows[i]["Attachment"].ToString();
+                                var UrlLink = Model.dsCircular.Rows[i]["UrlLink"].ToString();
+                                Count = Count + 1;
+                                DateTime eDate = DateTime.ParseExact(ExpiryDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+                                if (Model.dsCircular.Rows[i]["IsMarque"].ToString() != "1" && (sDate <= eDate))
+                                {
+                                    <li>
+                                        @if (!string.IsNullOrEmpty(UrlLink))
+                                        {
+                                            <a href='@UrlLink' target="_blank" title="click here to open link">
+                                                <samp>&#10093;</samp><span style="color:#ff0000">@UploadDate</span>
+                                                @Title
+                                                @if (NewFlag == "1")
+                                                {<img src="/images/new.gif" alt="new" />}
+                                            </a>
+                                        }
+                                        else if (!string.IsNullOrEmpty(Attachment))
+                                        {
+                                            <a href="/@Attachment" target="_blank">
+                                                <samp>&#10093;</samp><span style="color:#ff0000">@UploadDate</span>
+                                                @Title
+                                                @if (NewFlag == "1")
+                                                {<img src="/images/new.gif" alt="new" />}
+                                            </a>
+                                        }
+                                    </li>
+                                }
+
+                                //paging
+                                if (d == ViewBag.TotalCircular)
+                                {
+                                    <li>
+
+                                        Page @ViewBag.pagesize of @ViewBag.pn
+                                        &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {
+                                            @:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "SchoolOpen", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "SchoolOpen", new { page = ViewBag.pn })
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("<<", "SchoolOpen", new { page = 1 })
+
+                                            @Html.Raw("&nbsp;");
+
+                                            @Html.ActionLink("< Prev", "SchoolOpen", new { page = ViewBag.pagesize - 1 })
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                @Html.ActionLink("Next >", "SchoolOpen", new { page = ViewBag.pagesize + 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink(">>", "SchoolOpen", new { page = ViewBag.pn })
+                                            }
+
+                                        }
+                                    </li>
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+            </ul>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+

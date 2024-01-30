@@ -1,0 +1,79 @@
+﻿
+@helper GetMenuView(List<PSEBONLINE.Models.SiteMenu> siteMenu, int parentID){
+foreach (var i in siteMenu.Where(a => a.ParentMenuID.Equals(parentID)))
+{
+    var IsMenu = i.IsMenu;
+    var ParentMenuID = i.ParentMenuID;
+    var submenu = siteMenu.Where(a => a.ParentMenuID.Equals(i.MenuID)).Count();
+<li class="@(submenu > 0 && IsMenu == 1 ? "dropdown": "" )">
+@if (submenu > 0 && IsMenu == 1 && ParentMenuID == 0)
+{
+<a class="dropdown-toggle" data-toggle="dropdown" href='javascript:void(0);'>
+        @i.MenuName
+        <span class="caret"></span>
+    </a>
+}
+else
+{
+<a href="@i.MenuUrl">@i.MenuName</a>
+}
+@if (submenu > 0)
+{
+<ul class="dropdown-menu">
+@GetMenuView(siteMenu, i.MenuID)
+@* Recursive  Call for Populate Sub items here*@
+</ul>
+}
+</li>
+}
+}
+
+
+ 
+
+@helper GetTreeView(List<PSEBONLINE.Models.SiteMenu>   siteMenu, int parentID){
+foreach (var i in siteMenu.Where(a=>a.ParentMenuID.Equals(parentID)))
+{    
+                            var IsMenu = i.IsMenu;
+                            var ParentMenuID = i.ParentMenuID;   
+                            @*if(ParentMenuID == 0 && IsMenu == 1){}  -- Menu
+                            if(ParentMenuID != 0 && IsMenu == 1){} -- Submenu
+                            if(ParentMenuID != 0 && IsMenu == 0){} -- Action*@
+    
+       <li>
+        @{var submenu = siteMenu.Where(a => a.ParentMenuID.Equals(i.MenuID)).Count();}
+       
+        @if (submenu > 0)
+        {
+         <span class="collapse collapsible">&nbsp;</span>
+        }
+         else if (submenu ==  0 && (ParentMenuID != 0 && IsMenu == 1) )
+        {
+<span class="collapse collapsible">&nbsp;</span>
+        }
+        else
+        {
+        
+        }   
+        
+            @*<a href="@i.MenuUrl">@i.MenuName</a>*@
+@if (i.IsSelected ==  true)
+{ <input type="checkbox" id="@i.MenuID" class="checkboxP" value="@i.MenuName" checked />}
+else
+{   <input type="checkbox" id="@i.MenuID" class="checkboxP" value="@i.MenuName" />}@i.MenuName
+       
+        @if (submenu > 0)
+        {
+        <ul>
+            @GetTreeView(siteMenu,i.MenuID)
+            @* Recursive  Call for Populate Sub items here*@
+        </ul>
+        }
+           else if (submenu ==  0 && (ParentMenuID != 0 && IsMenu == 1) )
+           {
+           <ul>                
+           </ul>
+           }
+    </li>
+    }
+  }

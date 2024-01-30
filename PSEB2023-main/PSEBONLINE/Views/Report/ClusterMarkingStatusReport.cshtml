@@ -1,0 +1,458 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "Cluster Marking Status Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+</style>
+<style type="text/css">
+    .brack {
+        page-break-after: always;
+    }
+
+    .kdspdlr {
+        padding: 0 2px
+    }
+</style>
+
+@if (Model.DistList != null)
+{
+    <div class="row noprint">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                @using (Html.BeginForm("ClusterMarkingStatusReport", "Report", FormMethod.Post, new { id = "searchform" }))
+                {
+                    <div class="col-md-3">
+                        Search Report Type @Html.DropDownList("SearchReportType", new SelectList(ViewBag.MyReportType, "Value", "Text", ViewBag.SelectedReportType), "--Select---", new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2">
+                        Select District  @Html.DropDownListFor(m => m.Dist, new SelectList(Model.DistList, "Value", "Text"), "--All---", new { })
+                    </div>
+                    <div class="col-md-2">
+                        Search By @Html.DropDownList("SearchList", new SelectList(ViewBag.MySearch, "Value", "Text", ViewBag.SelectedSearch), "--Select---", new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" name="SearchString" value="@Request[" SearchString"]" />
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <input type="submit" name="cmd" value="Search" onclick="return valForm();" />
+                        <a href="/Report/ClusterMarkingStatusReport" class="btn">Reset</a>
+                    </div>
+                }
+            </fieldset>
+        </div>
+    </div>
+}
+<table style="width:100%;" border="0" class="bgimg">
+    <tr>
+        <td>
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        <input type="button" value="Print" class="btn" onclick="window.print()" />
+                        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            @{
+                if (ViewBag.SelectedReportType != null)
+                {
+                    if (ViewBag.SelectedReportType == "1")
+                    {
+
+                        <table border="0" style="width:98%;" align="center" class="brack">
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    <thead>
+                                        <tr>
+                                            <td>
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td width="20%" style="vertical-align:top;text-align:left;font-size:9px"></td>
+                                                        <td width="10%"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="60px" height="60px" /></td>
+                                                        <td width="50%" style="font-size:22px;text-align:center;line-height:24px;vertical-align:top" class="kModel.StoreAllDatafont">
+                                                            <span style="font-size:18px">Punjab School Education Board</span><br />
+                                                            Primary Class Marking Status Examination, March 2023
+                                                        </td>
+                                                        <td width="20%"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3">
+                                                            &nbsp;District Code & Name :
+                                                            @{
+                                                                if (string.IsNullOrEmpty(Model.Dist))
+                                                                { <span>ALL</span> }
+                                                                else
+                                                                { @Model.StoreAllData.Tables[0].Rows[0]["DISTNM"].ToString() <span>(@Model.StoreAllData.Tables[0].Rows[0]["DIST"].ToString())</span> }
+
+                                                            }
+                                                        </td>
+                                                        <td style="text-align:right"> @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")&nbsp;</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                }
+                            }
+                            <tbody>
+
+                                @{
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        if (Model.StoreAllData.Tables.Count > 0)
+                                        {
+                                            if (Model.StoreAllData.Tables[0].Rows.Count > 0)
+                                            {
+                                                var prevCCODE = string.Empty;
+                                                int sno = 0;
+                                                foreach (System.Data.DataRow dr in Model.StoreAllData.Tables[0].Rows)
+                                                {
+                                                    var CCODE = dr["CCODE"].ToString().Trim().ToUpper();
+                                                    var clusternm = dr["clusternm"].ToString().Trim().ToUpper();
+                                                    var chtname = dr["chtname"].ToString().Trim().ToUpper();
+                                                    var chtmobile = dr["chtmobile"].ToString().Trim().ToUpper();
+                                                    var DIST = dr["DIST"].ToString().Trim().ToUpper();
+                                                    var DISTNM = dr["DISTNM"].ToString().Trim().ToUpper();
+
+                                                    var NOS = dr["NOS"].ToString().Trim().ToUpper();
+                                                    var NOSP = dr["NOSP"].ToString().Trim().ToUpper();
+                                                    var FNOS = dr["FNOS"].ToString().Trim().ToUpper();
+                                                    var NOC = dr["NOC"].ToString().Trim().ToUpper();
+                                                    var NOCP = dr["NOCP"].ToString().Trim().ToUpper();
+                                                    var FNOC = dr["FNOC"].ToString().Trim().ToUpper();
+
+                                                    if (CCODE != prevCCODE)
+                                                    {
+                                                        sno = 0;
+                                                        prevCCODE = CCODE;
+                                                        <tr class="active-tr" style="background-color:#d4d4d4 !important;font-weight:bold;color:#000000;font-size:12px">
+                                                            <td>
+                                                                <table width="100%" border="1">
+                                                                    <tr>
+                                                                        <td width="20%">&nbsp;Cluster Code & Name</td>
+                                                                        <td width="20%">&nbsp;@CCODE @Html.Raw("-") @clusternm </td>
+                                                                        <td width="20%">&nbsp;Cluster Head Name & Mobile No</td>
+                                                                        <td width="20%">&nbsp; @chtname @Html.Raw("-") @chtmobile</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <table width="100%" border="1">
+                                                                    <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                                                                        <td width="20%">&nbsp;Total Schools</td>
+                                                                        <td width="20%">&nbsp;Pending Schools</td>
+                                                                        <td width="20%">&nbsp;Total Students</td>
+                                                                        <td width="20%">&nbsp;Pending Students</td>
+                                                                        <td width="20%">&nbsp;MarksEntered Students</td>
+
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+
+
+                                                    }
+                                                    sno++;
+                                                    <tr>
+                                                        <td style="text-align:left">
+                                                            <table width="100%" border="1">
+                                                                <tr>
+                                                                    <td width="20%">&nbsp;@NOS</td>
+                                                                    <td width="20%">&nbsp;@NOSP</td>
+                                                                    <td width="20%">&nbsp;@NOC</td>
+                                                                    <td width="20%">&nbsp;@NOCP</td>
+                                                                    <td width="20%">&nbsp;@FNOC</td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                            </tbody>
+                        </table>
+
+                    }
+                    else if (ViewBag.SelectedReportType == "2")
+                    {
+                        <table border="0" style="width:98%;" align="center" class="brack">
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    <thead>
+                                        <tr>
+                                            <td>
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td width="20%" style="vertical-align:top;text-align:left;font-size:9px"></td>
+                                                        <td width="10%"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="60px" height="60px" /></td>
+                                                        <td width="50%" style="font-size:22px;text-align:center;line-height:24px;vertical-align:top" class="kModel.StoreAllDatafont">
+                                                            <span style="font-size:18px">Punjab School Education Board</span><br />
+                                                            Primary Class Marking Status Examination, March 2023
+                                                        </td>
+                                                        <td width="20%"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3">&nbsp;District Code & Name :
+														 @{
+                                                                if (string.IsNullOrEmpty(Model.Dist))
+                                                                { <span>ALL</span> }
+                                                                else
+                                                                { @Model.StoreAllData.Tables[0].Rows[0]["DISTNM"].ToString() }
+
+                                                            }
+														</td>
+                                                        <td style="text-align:right"> @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")&nbsp;</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                }
+                            }
+                            <tbody>
+
+                                @{
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        if (Model.StoreAllData.Tables.Count > 0)
+                                        {
+                                            if (Model.StoreAllData.Tables[0].Rows.Count > 0)
+                                            {
+                                                var prevCCODE = string.Empty;
+                                                int sno = 0;
+                                                foreach (System.Data.DataRow dr in Model.StoreAllData.Tables[0].Rows)
+                                                {
+												
+                                                    var CCODE = dr["CCODE"].ToString().Trim().ToUpper();
+                                                    var clusternm = dr["clusternm"].ToString().Trim().ToUpper();
+                                                    var chtname = dr["chtname"].ToString().Trim().ToUpper();
+                                                    var chtmobile = dr["chtmobile"].ToString().Trim().ToUpper();
+                                                    var Schl = dr["Schl"].ToString().Trim().ToUpper();
+                                                    var SchlNME = dr["SchlNME"].ToString().Trim().ToUpper();
+                                                    var SchlMOBILE = dr["SchlMOBILE"].ToString().Trim().ToUpper();
+                                                    
+                                                    var DISTNM = dr["DISTNM"].ToString().Trim().ToUpper();
+                                                    
+                                                    var NOC = dr["NOC"].ToString().Trim().ToUpper();
+                                                    
+
+                                                    if (CCODE != prevCCODE)
+                                                    {
+                                                        sno = 0;
+                                                        prevCCODE = CCODE;
+                                                        <tr class="active-tr" style="background-color:#d4d4d4 !important;font-weight:bold;color:#000000;font-size:12px">
+                                                            <td>
+                                                                <table width="100%" border="1">
+                                                                    <tr>
+                                                                        <td width="20%">&nbsp;Cluster Code & Name</td>
+                                                                        <td width="20%">&nbsp;@CCODE @Html.Raw("-") @clusternm </td>
+                                                                        <td width="20%">&nbsp;Cluster Head Name & Mobile No</td>
+                                                                        <td width="20%">&nbsp; @chtname @Html.Raw("-") @chtmobile</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <table width="100%" border="1">
+                                                                    <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                                                                        <td width="5%">&nbsp;Schl</td>
+                                                                        <td width="65%">&nbsp;School Name</td>
+                                                                        <td width="10%">&nbsp;Total Students</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    sno++;
+                                                    <tr>
+                                                        <td style="text-align:left">
+                                                            <table width="100%" border="1">
+                                                                <tr>
+                                                                    <td width="5%">&nbsp;@Schl</td>
+                                                                    <td width="65%">@SchlNME [@SchlMOBILE]</td>
+                                                                    <td width="10%">@NOC</td>
+                                                                    
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                            </tbody>
+                        </table>
+                    }
+
+                    //district count
+                    else if (ViewBag.SelectedReportType == "4")
+                    {
+                        <table border="0" style="width:98%;" align="center" class="brack">
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    <thead>
+                                        <tr>
+                                            <td>
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td width="20%" style="vertical-align:top;text-align:left;font-size:9px"></td>
+                                                        <td width="10%"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="60px" height="60px" /></td>
+                                                        <td width="50%" style="font-size:22px;text-align:center;line-height:24px;vertical-align:top" class="kModel.StoreAllDatafont">
+                                                            <span style="font-size:18px">Punjab School Education Board</span><br />
+                                                            Primary Class District Wise Status Examination, March 2023
+                                                        </td>
+                                                        <td width="20%"></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                }
+                            }
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <table width="100%" border="1">
+                                            <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                                                <th width="20%" rowspan="2" align="left">&nbsp;DISTNM [CODE]</th>
+                                                <th width="10%" rowspan="2" align="left">&nbsp;No. of Cluster</th>
+                                                <th width="30%" colspan="3" style="text-align:center">Schools</th>
+                                                <th width="40%" colspan="4" style="text-align:center">Students</th>
+                                            </tr>
+                                            <tr class="active-tr" style="background-color:#c1c1c1 !important;color:#000">
+                                                @*<td width="20%">&nbsp;DISTNM [CODE]</td>
+                                                    <td width="10%">&nbsp;No. of Cluster</td>*@
+                                                <td width="10%">&nbsp;Total Schools</td>
+                                                <td width="10%">&nbsp;Pending Schools</td>
+                                                <td width="10%">&nbsp;FinalSubmission Schools</td>
+                                                <td width="10%">&nbsp;Total Students</td>
+                                                <td width="10%">&nbsp;Pending Students</td>
+                                                <td width="10%">&nbsp;MarksEntered Students</td>
+                                                <td width="10%">&nbsp;FinalSubmission Students</td>
+
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                @{
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        if (Model.StoreAllData.Tables.Count > 0)
+                                        {
+                                            if (Model.StoreAllData.Tables[0].Rows.Count > 0)
+                                            {
+                                                foreach (System.Data.DataRow dr in Model.StoreAllData.Tables[0].Rows)
+                                                {
+
+                                                    var NoCluster = dr["NoCluster"].ToString().Trim().ToUpper();
+                                                    var DIST = dr["DIST"].ToString().Trim().ToUpper();
+                                                    var DISTNM = dr["DISTNM"].ToString().Trim().ToUpper();
+                                                    var NOS = dr["NOS"].ToString().Trim().ToUpper();
+                                                    var NOSP = dr["NOSP"].ToString().Trim().ToUpper();
+                                                    var FNOS = dr["FNOS"].ToString().Trim().ToUpper();
+                                                    var NOC = dr["NOC"].ToString().Trim().ToUpper();
+                                                    var NOCP = dr["NOCP"].ToString().Trim().ToUpper();
+                                                    var NOCM = dr["NOCM"].ToString().Trim().ToUpper();
+                                                    var FNOC = dr["FNOC"].ToString().Trim().ToUpper();
+                                                    <tr>
+                                                        <td style="text-align:left">
+                                                            <table width="100%" border="1">
+                                                                <tr>
+                                                                    <td width="20%">@DISTNM [@DIST]</td>
+                                                                    <td width="10%">&nbsp;@NoCluster</td>
+                                                                    <td width="10%">@NOS</td>
+                                                                    <td width="10%">@NOSP</td>
+                                                                    <td width="10%">@FNOS</td>
+                                                                    <td width="10%">@NOC</td>
+                                                                    <td width="10%">@NOCP</td>
+                                                                    <td width="10%">@NOCM</td>
+                                                                    <td width="10%">@FNOC</td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                            </tbody>
+                        </table>
+                    }
+                }
+            }
+
+        </td>
+    </tr>
+</table>
+
+
+
+<script>
+    function valForm() {
+
+
+        var SearchReportType = document.getElementById("SearchReportType");
+        var SearchList = document.getElementById("SearchList");
+        var SearchString = document.getElementById("SearchString");
+
+        if (SearchReportType.value == "" || SearchReportType.value == "0") {
+
+            alert("Select Report Type");
+            SearchReportType.focus();
+            return false;
+        }
+
+        if (SearchList.value != "" && SearchList.value != "0") {
+
+            if (SearchString.value == "") {
+                SearchString.focus();
+                return false;
+            }
+        }
+    }
+</script>

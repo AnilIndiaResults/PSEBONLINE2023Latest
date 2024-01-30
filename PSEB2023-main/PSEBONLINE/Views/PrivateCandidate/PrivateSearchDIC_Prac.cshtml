@@ -1,0 +1,490 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    ViewBag.Title = "Final Print Private Update DIC Practical Subject Search";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprint.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+
+    .modal-body td {
+        height: 30px;
+    }
+</style>
+
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+
+<div id="HPL">
+    @{
+        using (Html.BeginForm("PrivateSearchDIC_Prac", "PrivateCandidate", FormMethod.Post, new { id = "searchform" }))
+        {
+            <h1 class="noprint" style="font-size:22px;padding:10px 0;background-color:#336dc0;color:#fff;margin-top:10px;margin-bottom:5px">&nbsp;@ViewBag.ClassName @*Admit Card of Compartment/Re-Appear of @ViewBag.ClassName Examination June 2017*@</h1>
+            {
+
+                <div class="col-md-12">
+                    <fieldset style="margin-bottom:15px;overflow:hidden">
+                        <legend>Search</legend>
+                        <div class="col-md-1">
+                            TotalCount
+                            <label>@ViewBag.TotalCount</label>
+                        </div>
+                        <div class="col-md-2" id="drpdwn_select">
+                            Batch/Year
+                            <select id="dropdown_choice_batch" required>
+                                <option value="0">--Select Batch--</option>
+                                @*<option value="7">June 2017</option>
+                                    <option value="8">August 2017</option>
+                                    <option value="10">November 2017</option>*@
+                                <option value="3">March 2019</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2" id="drpdwn_select">
+                            Select
+                            <select id="dropdown_choice" required>
+                                <option value="0">--Select Search Option--</option>
+                                <option value="1">Ref. No</option>
+                                @*<option value="2">Candidate Name/Father Name</option>
+                                    <option value="3">All Old Roll</option>*@
+                            </select>
+                        </div>
+                        <div class="col-md-3" id="txt_refNo">
+                            Enter Ref. No. &nbsp;
+                            @*@Html.TextBoxFor(m => m.refNo, new { id = "refNo", @maxlength = "15", onkeypress = "return isNumberKey(event);", placeholder = "Ref. No." })*@
+                            @Html.TextBoxFor(m => m.refNo, new { id = "refNo", @maxlength = "15", placeholder = "Ref. No." })
+                        </div>
+                        <div class="col-md-2" id="txt_Candi_Name">
+                            Enter Candidate Name &nbsp;
+                            @Html.TextBoxFor(m => m.Candi_Name, new { id = "Candi_Name", @maxlength = "20", placeholder = "Candidate Name" })
+                        </div>
+                        <div class="col-md-2" id="txt_Father_Name">
+                            Enter Father Name &nbsp;
+                            @Html.TextBoxFor(m => m.Father_Name, new { id = "Father_Name", @maxlength = "20", placeholder = "Father Name" })
+                        </div>
+                        <div class="col-md-3" id="txt_OROLL">
+                            Old Roll No. &nbsp;
+                            @Html.TextBoxFor(m => m.OROLL, new { id = "OROLL", @maxlength = "12", placeholder = "All Old Roll" })
+                        </div>
+                        <div class="col-md-1">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm2();" title="Search Record" /></div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-12"><span class="rqf" style="color:firebrick">Note : For Search Kindly Enter Reference Number Or Enter Minimum 3 Starting Characters of Candidate Name and Father Name or Old Roll No </span></div>
+                    </fieldset>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="t01">
+                            <tr class="active-tr">
+                                <th width="5%">Sl.No.</th>
+                                <th width="5%">BATCH/YEAR</th>
+                                <th width="5%">CLASS</th>
+                                <th width="10%">REF.NO.</th>
+                                <th width="10%">OROLL</th>
+                                <th width="10%">REG.NO.</th>
+                                <th width="15%">Candidate/ Father/ Mother Name</th>
+                                <th width="15%">Practical</th>                                
+                                <th width="20%">Practical Option</th>
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var Utype = Model.StoreAllData.Tables[0].Rows[i]["Utype"].ToString();
+
+                                        var batch = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+                                        var batchYear = Model.StoreAllData.Tables[0].Rows[i]["batchYear"].ToString();
+                                        var Class = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+                                        var cat = Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString();
+
+                                        var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                        var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                        var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                        var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                                        var OROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                        var regno = Model.StoreAllData.Tables[0].Rows[i]["regno"].ToString();
+
+                                        var prac = Model.StoreAllData.Tables[0].Rows[i]["prac"].ToString();
+                                        if (prac == "True")
+                                        {
+                                            prac = "Yes";
+                                        }
+                                        else
+                                        {
+                                            prac = "No";
+                                        }
+
+                                        var examRoll = Model.StoreAllData.Tables[0].Rows[i]["examRoll"].ToString();
+                                        var examcent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                                        var challanverify = Model.StoreAllData.Tables[0].Rows[i]["challanverify"].ToString();
+                                        var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                                        var formstatus = Model.StoreAllData.Tables[0].Rows[i]["formstatus"].ToString();
+
+                                        var feecat = Model.StoreAllData.Tables[0].Rows[i]["feecat"].ToString();
+                                        var exam = Model.StoreAllData.Tables[0].Rows[i]["exam"].ToString();
+                                        var rp = Model.StoreAllData.Tables[0].Rows[i]["rp"].ToString();
+
+                                        var ErrStatus = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                        var ErrDtl = Model.StoreAllData.Tables[0].Rows[i]["ErrDtl"].ToString();
+
+                                        var exammonth = Model.StoreAllData.Tables[0].Rows[i]["exammonth"].ToString();
+
+                                        Count = Count + 1;
+                                        <tr>
+                                            <td>
+                                                @Count
+                                            </td>
+                                            <td>
+                                                @batch/@batchYear
+                                            </td>
+                                            <td>
+                                                @Class
+                                            </td>
+                                            <td>
+                                                @refno
+                                            </td>
+                                            <td>
+                                                @OROLL
+                                            </td>
+                                            <td>
+                                                @regno
+                                            </td>
+                                            <td>
+                                                @Candi_Name / @Father_Name / @Mother_Name
+                                            </td>
+                                            <td>
+                                                @prac 
+                                            </td>
+                                            
+                                            <td>
+                                                @if (cat == "D")
+                                                {
+                                                    <button type="button" class="" data-toggle="modal" data-target="#myModal-@d">Update</button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="button" class="" title="You have no practical subject">Not Practical Subject</button>
+                                                }
+
+
+                                                @*@if (ErrStatus == "1")
+                                                    {<span class="rqf">INCOMPLETE FORM </span>
+                                                    }
+                                                    else if (ErrStatus == "2")
+                                                    {<span class="rqf">FEE NOT VERIFIED </span><br /><span style="font-size:7px;">(If fee paid, then submit challan copy at PSEB HOD)</span>
+                                                    }
+
+                                                    else if ((ErrStatus == "3" || ErrStatus == "4" || ErrStatus == "5") && exammonth.ToUpper()=="MAR")
+                                                    {@Html.ActionLink("Print & View AdmitCard", "AdmitCardPrivate", new { id = @ViewBag.cid, refno = encrypt.QueryStringModule.Encrypt(@refno) }, new { Class = "", title = "Print Admit Card", target = "_blank" })
+                                                    }
+
+
+                                                    else if (ErrStatus == "6")
+                                                    {<span class="" title="tt">NOT ELIGIBLE </span><br />
+                                                    <span style="font-size:7px;">(You had already availed all the chances of Examination of Reapear /Compartment)</span>
+                                                    }*@
+
+                                            </td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="11">
+                                            @ViewBag.Message
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                        </table>
+                    </div>
+                </div>
+                                }
+
+
+@*< Model container begin>*@
+
+    if (Model != null)
+    {
+        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+        {
+
+            var batch = Model.StoreAllData.Tables[0].Rows[i]["batch"].ToString();
+            var batchYear = Model.StoreAllData.Tables[0].Rows[i]["batchYear"].ToString();
+            var Class = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+            var utype= Model.StoreAllData.Tables[0].Rows[i]["utype"].ToString();
+
+            var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+            var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+            var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+            var refno = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+            var OROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+            var regno = Model.StoreAllData.Tables[0].Rows[i]["regno"].ToString();
+
+            var prac = Model.StoreAllData.Tables[0].Rows[i]["prac"].ToString();
+            if (prac == "True")
+            {
+                prac = "Yes";
+            }
+            else
+            {
+                prac = "No";
+            }
+
+            var rsub1 = Model.StoreAllData.Tables[0].Rows[i]["rsub1"].ToString();
+            var rsub2 = Model.StoreAllData.Tables[0].Rows[i]["rsub2"].ToString();
+            var rsub3 = Model.StoreAllData.Tables[0].Rows[i]["rsub3"].ToString();
+            var rsub4 = Model.StoreAllData.Tables[0].Rows[i]["rsub4"].ToString();
+            var rsub5 = Model.StoreAllData.Tables[0].Rows[i]["rsub5"].ToString();
+            var rsub6 = Model.StoreAllData.Tables[0].Rows[i]["rsub6"].ToString();
+
+            int k = i + 1;
+            <div class="container">
+                <!-- Trigger the modal with a button -->
+                <!-- Modal -->
+                <div class="modal fade" id="myModal-@k" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <span style="font-size:24px">Practical Subject Updates</span>
+                            </div>
+                            <div class="modal-body">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td width="40%">Category:</td>
+                                        <td width="60%">@utype</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Refno       :</td>
+                                        <td>@refno</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Roll       :</td>
+                                        <td>@OROLL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Candi / Father / Mother Name:</td>
+                                        <td>@Candi_Name / @Father_Name / @Mother_Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Subjects :</td>                                        
+                                            <td>@rsub1 <br />@rsub2 <br />@rsub3 <br />@rsub4 <br />@rsub5 <br />@rsub6 </td>                                                                                    
+                                    </tr>
+                                    <tr>
+                                        <td>Do you want to appear in Practical Exam:</td>
+                                        @if (prac == "Yes")
+                                        {
+                                            <td><input type="radio" name="practical" value="Y" id="yes" checked="checked"> YES &nbsp; &nbsp;<input type="radio" name="practical" value="N" id="no"> NO</td>
+                                        }
+                                        else if (prac == "No")
+                                        {
+                                            <td><input type="radio" name="practical" value="Y" id="yes" > YES &nbsp; &nbsp;<input type="radio" name="practical" value="N" id="no" checked="checked"> NO</td>
+                                        }
+                                        else
+                                        {
+                                            <td><input type="radio" name="practical" value="Y" id="yes"> YES &nbsp; &nbsp;<input type="radio" name="practical" value="N" id="no"> NO</td>
+                                        }
+                                        
+                                    </tr>
+                                    @*<tr>
+                                        <td>Remarks</td>
+                                        <td><input type="text" /></td>
+                                    </tr>*@
+                                    <tr>
+                                        <td></td>
+                                        <td><input type="button" class="btn" value="Update Practive" id="btnCreateCluster" onclick="CreateCluster(@k,@refno)" /> 
+                                        <input type="button" value="Cancel" data-dismiss="modal" /> </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+            </div>
+        }
+    }
+    @*< Model container end >*@
+
+                                }
+    }
+</div>
+
+
+<script type="text/javascript">
+    function CreateCluster(k, refno) {
+        
+        //return confirm('Are You Sure, Modify Particular Staff?');
+        var Prac = "";
+        
+        if (document.getElementById("yes").checked == true)
+        { Prac = document.getElementById("yes").value; }
+        else if (document.getElementById("no").checked == true)
+        { Prac = document.getElementById("no").value; }
+        else
+        { alert("Please select Practical Yes / No."); return false; }
+        //alert(refno, Prac);
+                    $.ajax({
+                        type: "POST",
+                        url: "../PrivateCandidate/upd_PrivateSearchDIC_Prac", // this for calling the web method function in cs code.
+                        data: '{refno: "' + refno + '",Prac: "' + Prac + '"}',// user name or email value
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.sn=="Yes")
+                            {
+                                alert("Updated Successfully");
+                                window.location.href = "/PrivateCandidate/PrivateSearchDIC_Prac";
+                                $(".modal").hide();
+                            }
+                            else
+                            {
+                                alert("Update Failed.");
+                            }
+                        },
+                        failure: function (response) {
+                            alert(response);
+                        }
+                    });
+
+
+                }
+
+</script>
+
+<script>
+
+
+        $(document).ready(function () {
+            $("#refNo").val("");
+            $("#OROLL").val("");
+            $("#Candi_Name").val("");
+            $("#Father_Name").val("");
+            $("#txt_Candi_Name").hide();
+            $("#txt_Father_Name").hide();
+            $("#txt_OROLL").hide();
+            $("#txt_refNo").hide();
+            $("#dropdown_choice").change(function () {
+                var sel_value = 0;
+                sel_value = $("#dropdown_choice").val();
+                switch (sel_value) {
+                    case "1": $("#txt_refNo").show();
+                        $("#txt_refNo").attr('required',true);
+                        $("#txt").hide();
+                        $("#txt_Candi_Name").hide();
+                        $("#txt_Father_Name").hide();
+                        $("#txt_OROLL").hide();
+                        break;
+
+                    case "2": $("#txt_refNo").hide();
+                        $("#txt").hide();
+                        $("#txt_Candi_Name").show();
+                        $("#txt_Father_Name").show();
+                        $("#txt_OROLL").hide();
+                        $("#txt_Candi_Name").attr('required',true);
+                        break;
+
+                    case "3": $("#txt_refNo").hide();
+                        $("#txt").hide();
+                        $("#txt_Candi_Name").hide();
+                        $("#txt_Father_Name").hide();
+                        $("#txt_OROLL").show();
+                        $("#txt_OROLL").attr('required',true);
+                        break;
+                    default: $("#txt_refNo").attr("style", "display:none");
+                        $("#txt").attr("display", "block");
+                        $("#txt_Candi_Name").attr("style", "display:none");
+                        $("#txt_Father_Name").attr("style", "display:none");
+                        $("#txt_OROLL").attr("style", "display:none");
+                }
+            });
+        });
+</script>
+<script>
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+                return true;
+            }
+            else {
+                alert("Invalid character...Enter Only Number!!");
+                return false;
+            }
+        }
+
+        function valForm2() {
+            var sel_value1 = 0;
+            sel_value1 = $("#dropdown_choice").val();
+            // alert(sel_value1);
+            var txt_refNo =  $("#refNo").val();
+            var txt_OROLL =  $("#OROLL").val();
+            var txt_Candi_Name =  $("#Candi_Name").val();
+            var txt_Father_Name =  $("#Father_Name").val();
+            //alert("ref :" + txt_refNo);
+            //alert("OROLL :" + txt_OROLL);
+            //alert("Candi_Name :" + txt_Candi_Name);
+            //alert("Father_Name :" + txt_Father_Name);
+            if(sel_value1 == "" || sel_value1 == "0")
+            {
+                alert("Please Select Search Option");
+                document.getElementById("dropdown_choice").focus();
+                return false;
+            }
+            else
+            {
+                if(txt_refNo == "" && txt_OROLL == "" && txt_Candi_Name == "" && txt_Father_Name == "")
+                {
+                    alert("Please Enter Text");
+                    return false;
+                }
+
+            }
+        }
+
+        function valForm1() {
+            var category = document.getElementById('category').value;
+            var refNo = document.getElementById('refNo').value;
+            var Candi_Name = document.getElementById('Candi_Name').value;
+            var Father_Name = document.getElementById('Father_Name').value;
+            var OROLL = document.getElementById('OROLL').value;
+
+
+            if ((refNo == "" || refNo.length == 0) && (Candi_Name.length < 3 || Father_Name.length < 3) && (OROLL == "" || OROLL.length == 0)) {
+                if (refNo.length == 0 && Candi_Name.length > 2  && Father_Name.length < 3) {
+                    alert("Enter Candidate and Father Name");
+                    document.getElementById("Father_Name").focus();
+                    return false;
+                }
+                if (refNo.length == 0 && Candi_Name.length < 3 && Father_Name.length > 2) {
+                    alert("Enter Candidate and Father Name");
+                    document.getElementById("Candi_Name").focus();
+                    return false;
+                }
+                alert("Enter RefNo or Candidate and Father Name  or Old Roll No.");
+                document.getElementById("refNo").focus();
+                return false;
+            }
+
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+        function cancel()
+        { $("modal-dialog").close(); }
+</script>

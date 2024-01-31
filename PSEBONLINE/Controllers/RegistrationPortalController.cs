@@ -38,7 +38,7 @@ namespace PSEBONLINE.Controllers
         {
             QRCodeGenerator _qrCode = new QRCodeGenerator();
             // QRCodeData _qrCodeData = _qrCode.CreateQrCode("https://test2022.psebonline.in/AdmitCard/Index/" + qr, QRCodeGenerator.ECCLevel.Q);
-            QRCodeData _qrCodeData = _qrCode.CreateQrCode("https://registration2022.pseb.ac.in/AdmitCard/Index/" + QueryStringModule.Encrypt(qr), QRCodeGenerator.ECCLevel.Q);
+            QRCodeData _qrCodeData = _qrCode.CreateQrCode("https://registration2023.pseb.ac.in/AdmitCard/Index/" + QueryStringModule.Encrypt(qr), QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(_qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
             return (BitmapToBytesCode(qrCodeImage));

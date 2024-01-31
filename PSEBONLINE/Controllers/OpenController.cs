@@ -5890,6 +5890,10 @@ namespace PSEBONLINE.Controllers
 		{
 			try
 			{
+				if (Session["SCHL"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
 
 				ViewBag.Total = 0;
 				Session["Session"] = @PSEBONLINE.Repository.SessionSettingMastersRepository.GetSessionSettingMasters().SessionShortYear;// Add for Challan Print

@@ -22679,6 +22679,7 @@ namespace PSEBONLINE.Controllers
         {
             try
             {
+                ViewBag.IsHistory = null;
                 int AdminId = Convert.ToInt32(Session["AdminId"]);
                 string AdminType = Session["AdminType"].ToString().ToUpper();
                 string AdminUser = Session["AdminUser"].ToString().ToUpper();
@@ -22843,6 +22844,7 @@ namespace PSEBONLINE.Controllers
         {
             try
             {
+                ViewBag.IsHistory = null;
                 if (Session["AdminId"] == null)
                 {
                     return RedirectToAction("Index", "Admin");
@@ -23195,6 +23197,15 @@ namespace PSEBONLINE.Controllers
                 }
                 else
                 {
+                    int VerifyStatus = Convert.ToInt32(spi.StoreAllData.Tables[0].Rows[0]["verified"]);
+                    if (VerifyStatus == 1)
+                    {
+                        ViewBag.IsHistory = 1;
+                    }
+                    else
+                    {
+                        ViewBag.IsHistory = null;
+                    }
                     ViewBag.TotalCount = spi.StoreAllData.Tables[0].Rows.Count;
                     int count = Convert.ToInt32(spi.StoreAllData.Tables[1].Rows[0]["TotalCnt"]);
                     ViewBag.TotalCount1 = count;

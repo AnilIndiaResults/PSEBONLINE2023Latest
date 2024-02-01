@@ -5303,27 +5303,29 @@ namespace PSEBONLINE.AbstractLayer
                         string filelocation = "";
                         if (str != "")
                         {
-                            if (str.ToString().ToUpper().Contains("PvtPhoto"))
-                            {
-                                filelocation = Path.Combine(DwonSp + "/Upload2023/", str);
-                            }
-                            else if (str.ToString().ToUpper().Contains("ImageCorrection"))
-                            {
-                                filelocation = Path.Combine(DwonSp + "/Upload2023/", str);
-                            }
-                            else if (str.ToString().ToUpper().Contains("PVT")
-                                || str.ToString().ToUpper().Contains("OPEN") 
-                                || str.ToString().ToUpper().Contains("OPEN2019") || str.ToString().ToUpper().Contains("OPEN2018"))
-                            {
-                                filelocation = Path.Combine(DwonSp + "/", str);
-                            }
-                            else
-                            {
-                                filelocation = Path.Combine("X:/", str);
-                            }
+							//if (str.ToString().ToUpper().Contains("PvtPhoto"))
+							//{
+							//    filelocation = Path.Combine(DwonSp + "/Upload2023/", str);
+							//}
+							//else if (str.ToString().ToUpper().Contains("ImageCorrection"))
+							//{
+							//    filelocation = Path.Combine(DwonSp + "/Upload2023/", str);
+							//}
+							//else if (str.ToString().ToUpper().Contains("PVT")
+							//    || str.ToString().ToUpper().Contains("OPEN") 
+							//    || str.ToString().ToUpper().Contains("OPEN2019") || str.ToString().ToUpper().Contains("OPEN2018"))
+							//{
+							//    filelocation = Path.Combine(DwonSp + "/", str);
+							//}
+							//else
+							//{
+							//    filelocation = Path.Combine("X:/", str);
+							//}
 
-                            //// check File Exists
-                            if (File.Exists(filelocation) == true)
+							filelocation = Path.Combine("X:/", str);
+
+							//// check File Exists
+							if (File.Exists(filelocation) == true)
                             {
                                 zip.AddFile(filelocation, "PhotoandSign");
                             }

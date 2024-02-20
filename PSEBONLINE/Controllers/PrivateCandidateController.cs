@@ -24,6 +24,7 @@ using Amazon.S3;
 using Amazon;
 using Amazon.S3.IO;
 using PSEBONLINE.AbstractLayer;
+using System.Web.Http.Results;
 
 namespace PSEBONLINE.Controllers
 {
@@ -35,7 +36,7 @@ namespace PSEBONLINE.Controllers
         public static Byte[] QRCoder(string qr)
         {
             QRCodeGenerator _qrCode = new QRCodeGenerator();
-            QRCodeData _qrCodeData = _qrCode.CreateQrCode("https://registration2022.pseb.ac.in/PrivateCandidate/AdmitCardPrivate/Senior?refno=" + QueryStringModule.Encrypt(qr), QRCodeGenerator.ECCLevel.Q);
+            QRCodeData _qrCodeData = _qrCode.CreateQrCode("https://registration2023.pseb.ac.in/PrivateCandidate/AdmitCardPrivate/Senior?refno=" + QueryStringModule.Encrypt(qr), QRCodeGenerator.ECCLevel.Q);
             //QRCodeData _qrCodeData = _qrCode.CreateQrCode("https://test2022.psebonline.in/AdmitCard/Index/" + QueryStringModule.Encrypt(qr), QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(_qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
@@ -6225,11 +6226,95 @@ namespace PSEBONLINE.Controllers
         }
 
 
+        public ActionResult CollectionCentReport(ReportModel report) {
+			AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
+
+			DataSet result = objDB.SelectDist(); // passing Value to DBClass from model
+			ViewBag.MyDist = result.Tables[0];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> items = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MyDist.Rows)
+			{
+				items.Add(new SelectListItem { Text = @dr["DISTNM"].ToString(), Value = @dr["DIST"].ToString() });
+			}
+
+			ViewBag.MyDist = items;
+			ViewBag.MySub = new SelectList(items, "Value", "Text");
+
+			DataSet mysub = objDB.getCollecetionReport("1", "", "", "","", "",""); // passing Value to DBClass from model
+			ViewBag.MySub = mysub.Tables[0];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> mysubList = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MySub.Rows)
+			{
+				mysubList.Add(new SelectListItem { Text = @dr["Subnm"].ToString(), Value = @dr["Sub"].ToString() });
+			}
+            ViewBag.MySub = mysubList;
+            ViewBag.MySubList = "0";
+
+			
+			ViewBag.MySub1 = mysub.Tables[1];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> mysubList1 = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MySub1.Rows)
+			{
+				mysubList1.Add(new SelectListItem { Text = @dr["Subnm"].ToString(), Value = @dr["Sub"].ToString() });
+			}
+			ViewBag.MySub1 = mysubList1;
+			ViewBag.MySubList1 = "0";
+			return View(report); }
+
+        [HttpPost]
+		public ActionResult CollectionCentReport(FormCollection frm) {
+            ReportModel report = new ReportModel();
+			AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
+
+			DataSet result = objDB.SelectDist(); // passing Value to DBClass from model
+			ViewBag.MyDist = result.Tables[0];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> items = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MyDist.Rows)
+			{
+				items.Add(new SelectListItem { Text = @dr["DISTNM"].ToString(), Value = @dr["DIST"].ToString() });
+			}
+
+			ViewBag.MyDist = items;
+			ViewBag.MySub = new SelectList(items, "Value", "Text");
+
+			DataSet mysub = objDB.getCollecetionReport("1", "", "", "", "", "",""); // passing Value to DBClass from model
+			ViewBag.MySub = mysub.Tables[0];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> mysubList = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MySub.Rows)
+			{
+				mysubList.Add(new SelectListItem { Text = @dr["Subnm"].ToString(), Value = @dr["Sub"].ToString() });
+			}
+
+			ViewBag.MySub = mysubList;
+			ViewBag.MySubList = "0";
+
+			ViewBag.MySub1 = mysub.Tables[1];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> mysubList1 = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MySub1.Rows)
+			{
+				mysubList1.Add(new SelectListItem { Text = @dr["Subnm"].ToString(), Value = @dr["Sub"].ToString() });
+			}
+			ViewBag.MySub1 = mysubList1;
+			ViewBag.MySubList1 = "0";
+
+			string cls = frm["classType"].ToString();
+            string cat = frm["CatType"].ToString();
+            string dist = frm["Dist"].ToString();
+            string cent = frm["Cent"].ToString();
+            string sub = frm["sub"].ToString();
+			string ExamDate = frm["ExamDate"].ToString();
+
+			report.StoreAllData = objDB.getCollecetionReport("2", ExamDate, sub,cent, cat, cls, dist);
+
+			return View(report);
+        
+        }
 
 
 
 
-    }
+
+	}
 }
 
 

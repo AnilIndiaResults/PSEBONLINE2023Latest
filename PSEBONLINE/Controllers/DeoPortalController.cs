@@ -7459,7 +7459,9 @@ namespace PSEBONLINE.Controllers
                 ViewBag.clustername = DEO.StoreAllData.Tables[0].Rows[0]["clustername"].ToString();
                 ViewBag.PrintDate = DEO.StoreAllData.Tables[0].Rows[0]["PrintDate"].ToString();
                 ViewBag.centredate = DEO.StoreAllData.Tables[0].Rows[0]["centredate"].ToString();
-            }
+				ViewBag.Nepunjabid = DEO.StoreAllData.Tables[0].Rows[0]["Nepunjabid"].ToString();
+
+			}
             return View(DEO);
         }
         //----------------------------------------------End---------------------------//

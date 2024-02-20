@@ -10786,6 +10786,7 @@ namespace PSEBONLINE.Controllers
 
                                 var duplicates = ds.Tables[0].AsEnumerable()
                                     .GroupBy(i => new { Name = i.Field<string>("REFNO"), Subject = i.Field<string>("ERRCODE") })
+
                                     .Where(g => g.Count() > 1)
                                     .Select(g => new { g.Key.Name, g.Key.Subject }).ToList();
                                 if (duplicates.Count() > 0)
@@ -23024,8 +23025,19 @@ namespace PSEBONLINE.Controllers
                     }
                     //
                     spi.StoreAllData = new AbstractLayer.EAffiliationDB().EAffiliationList(AdminUser, Search, "", pageIndex, 11); // 11 - INBOX
+					int VerifyStatus = Convert.ToInt32(spi.StoreAllData.Tables[0].Rows[0]["Verified"]);
 
-                }
+					if (VerifyStatus == 1)
+					{
+						ViewBag.IsHistory = 1;
+					}
+					else
+					{
+						ViewBag.IsHistory = null;
+					}
+
+
+				}
 
                 else if (AppType == "AC")
                 {
@@ -23100,8 +23112,18 @@ namespace PSEBONLINE.Controllers
                         Search += " and upper(CurrentApplicationBranch)='" + AdminType + "'";
                     }
                     spi.StoreAllData = new AbstractLayer.AffiliationDB().AffiliationContinuationList(AdminUser, Search, "", pageIndex, 11);
+					int VerifyStatus = Convert.ToInt32(spi.StoreAllData.Tables[0].Rows[0]["ChallanVerify"]);
 
-                }
+					if (VerifyStatus == 1)
+					{
+						ViewBag.IsHistory = 1;
+					}
+					else
+					{
+						ViewBag.IsHistory = null;
+					}
+
+				}
                 else if (AppType == "AS")
                 {
 					if (frm["searchstatus"] != "")
@@ -23180,8 +23202,18 @@ namespace PSEBONLINE.Controllers
                         Search += " and upper(CurrentApplicationBranch)='" + AdminType + "'";
                     }
                     spi.StoreAllData = new AbstractLayer.AdditionalSectionDB().AdditionalSectionList(AdminUser, Search, "", pageIndex, 11);
+					int VerifyStatus = Convert.ToInt32(spi.StoreAllData.Tables[0].Rows[0]["ChallanVerify"]);
 
-                }
+					if (VerifyStatus == 1)
+					{
+						ViewBag.IsHistory = 1;
+					}
+					else
+					{
+						ViewBag.IsHistory = null;
+					}
+
+				}
 
 
 
@@ -23197,15 +23229,15 @@ namespace PSEBONLINE.Controllers
                 }
                 else
                 {
-                    int VerifyStatus = Convert.ToInt32(spi.StoreAllData.Tables[0].Rows[0]["verified"]);
-                    if (VerifyStatus == 1)
-                    {
-                        ViewBag.IsHistory = 1;
-                    }
-                    else
-                    {
-                        ViewBag.IsHistory = null;
-                    }
+                    //int VerifyStatus = Convert.ToInt32(spi.StoreAllData.Tables[0].Rows[0]["verified"]);
+                    //if (VerifyStatus == 1)
+                    //{
+                    //    ViewBag.IsHistory = 1;
+                    //}
+                    //else
+                    //{
+                    //    ViewBag.IsHistory = null;
+                    //}
                     ViewBag.TotalCount = spi.StoreAllData.Tables[0].Rows.Count;
                     int count = Convert.ToInt32(spi.StoreAllData.Tables[1].Rows[0]["TotalCnt"]);
                     ViewBag.TotalCount1 = count;

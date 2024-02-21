@@ -179,7 +179,37 @@ namespace PSEBONLINE.AbstractLayer
 
         }
 
-        #endregion
+		#endregion
 
-    }
+
+		public static DataSet GetAllDataStudentAttendanceStatus(string centercode, string schoolcode, string sCls, string category, string ExamDate, string Status, string Subject)
+		{
+			DataSet ds = new DataSet();
+			try
+			{
+
+				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+				SqlCommand cmd = new SqlCommand();
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandTimeout = 300;
+				cmd.CommandText = "StudentAttendanceStatus_sp";
+				//cmd.Parameters.AddWithValue("@centrecode", centercode);
+				cmd.Parameters.AddWithValue("@subjectcode", Subject);
+				//cmd.Parameters.AddWithValue("@schoolcode", schoolcode);
+				cmd.Parameters.AddWithValue("@cls", sCls);
+				cmd.Parameters.AddWithValue("@Rp", category);
+				cmd.Parameters.AddWithValue("@ExamDate", ExamDate);
+				cmd.Parameters.AddWithValue("@Status", Status);
+
+
+				ds = db.ExecuteDataSet(cmd);
+				return ds;
+			}
+			catch (Exception ex)
+			{
+				return ds;
+			}
+
+		}
+	}
 }

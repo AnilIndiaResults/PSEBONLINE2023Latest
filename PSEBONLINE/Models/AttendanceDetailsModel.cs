@@ -11,13 +11,36 @@ namespace PSEBONLINE.Models
 {
 	public class AttendanceDetailsModel
     {
-        public List<AttendanceAdminDetailsReport> AttendanceAdminDetailsReport{ get; set; }
+       public List<AttendanceAdminDtl> AttendanceAdminDtl { get; set; }
+        public List<AttendanceAdminDetailsReport> AttendanceAdminDetailsReport { get; set; }
         public List<AttendanceReportDetailsCount> AttendanceReportDetailsCount { get; set; }
         public List<AttendanceReportCandidateDetails> AttendanceReportCandidateDetails { get; set; }
         
     }
 
-	public class AttendanceAdminDetailsReport
+
+    public class AttendanceAdminDtl
+    {
+       
+        public string rollNo { get; set; }
+        public string studentId { get; set; }
+        public string candidateName { get; set; }
+        public string motherName { get; set; }
+        public string fatherName { get; set; }
+        public string dob { get; set; }
+        public string differentlyAbled { get; set; }
+        public string attendanceStatus { get; set; }
+        public string cls { get; set; }
+
+        public DataSet StoreAllData { get; set; }
+
+
+
+
+
+    }
+
+    public class AttendanceAdminDetailsReport
 	{	
 		public int r { get; set; }
 		public int Total { get; set; }

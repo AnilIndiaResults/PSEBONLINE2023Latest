@@ -24,6 +24,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web.Http.Results;
 using iTextSharp.text.pdf;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace PSEBONLINE.Controllers
 {
@@ -5916,7 +5917,7 @@ namespace PSEBONLINE.Controllers
 					string ChallanId = "";
 					//ViewData["OutError"] = "IsUserInChallan";
 					ViewBag.LastDate = "";
-					FeeOpenModel = openDB.spFeeDetailsOpen_Repayment(schl);
+					FeeOpenModel = openDB.spFeeDetailsOpen_Repayment(schl,"");
 					//ViewBag.Total = _feeOpen.TotalFee + _feeOpen.ExamTotalFee;
 					ViewBag.Total = 1;
 					ViewBag.LastDate = _feeOpen.BankLastDate.ToString("dd/MM/yyyy");
@@ -6007,7 +6008,7 @@ namespace PSEBONLINE.Controllers
 
 					string schl = Session["SCHL"].ToString();
 					string today = DateTime.Today.ToString("dd/MM/yyyy");
-					_feeOpen = openDB.spFeeDetailsOpen_Repayment(schl);
+					_feeOpen = openDB.spFeeDetailsOpen_Repayment(schl,"");
 					ViewBag.Total = 0;
 					int totalFee = 0;
 					int ExamTotalFee = 0;
@@ -6196,7 +6197,16 @@ namespace PSEBONLINE.Controllers
 		//public ActionResult ProcessCheckedItems(List<string> selectedItems,string bankCode)
 		public ActionResult ProcessCheckedItems(FeeOpenModel _feeOpen, FormCollection frm)
 
+		
 		{
+			if (frm["reset"].ToString() == "Reset")
+			{
+				//return View(_feeOpen);
+			  _feeOpen = openDB.spFeeDetailsOpen_Repayment(Session["SCHL"].ToString(), "Reset");
+			  return CalculateFeeForOpenRepayment(Session["SCHL"].ToString());
+			}
+
+
 			string seleitems = frm["selectedItems"].ToString();
 			List<string> str = seleitems.Split(',').ToList<string>();
 			List<string> StudentList = new List<string>();

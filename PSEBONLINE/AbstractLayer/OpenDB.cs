@@ -4613,7 +4613,7 @@ namespace PSEBONLINE.AbstractLayer
 
 		#region calculate fee for open repayment
 
-		public FeeOpenModel spFeeDetailsOpen_Repayment(string schl)
+		public FeeOpenModel spFeeDetailsOpen_Repayment(string schl,string Action)
 		{
             FeeOpenModel FeeOpenModel = new FeeOpenModel();
 			FeeOpenModel.feeopenList = new List<FeeOpen>();
@@ -4629,6 +4629,8 @@ namespace PSEBONLINE.AbstractLayer
 					cmd.CommandType = CommandType.StoredProcedure;
 					cmd.Parameters.Clear();
 					cmd.Parameters.AddWithValue("@schl", schl);
+					cmd.Parameters.AddWithValue("@Action", Action);
+
 					con.Open();
 					ad.SelectCommand = cmd;
 					ad.Fill(result);
@@ -4667,7 +4669,7 @@ namespace PSEBONLINE.AbstractLayer
 								FeeOpenModel.feeopenData.ExamAddSubFee = Convert.ToInt32(dr["AddSubFee_ex"].ToString());
 								FeeOpenModel.feeopenData.ExamStartDate = dr["sDate"].ToString();
 								FeeOpenModel.feeopenData.ExamEndDate = dr["eDate"].ToString();
-								FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
+								//FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
 								FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr["HardCopyCertificateFee"].ToString());
 								FeeOpenModel.feeopenData.lastPaidFee = Convert.ToInt32(dr["lastPaidFee"].ToString());
 								FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);

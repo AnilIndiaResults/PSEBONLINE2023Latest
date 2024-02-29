@@ -6359,7 +6359,7 @@ namespace PSEBONLINE.Controllers
 
             string ExamMonth = Session["DeoLoginExamCentre"].ToString();
             DEO.StoreAllData = OBJDB.DeoNewAppointmentLetter(id, ExamMonth);
-            ViewBag.TotalCount = DEO.StoreAllData.Tables[0].Rows.Count;
+			ViewBag.TotalCount = DEO.StoreAllData != null ? DEO.StoreAllData.Tables[0].Rows.Count : 0;
             return View(DEO);
         }
         //------------------End--------------------------------------//
@@ -6382,7 +6382,7 @@ namespace PSEBONLINE.Controllers
                 ViewBag.SelectedDeoMonthYear = "0";
 
                 DeoUser = Session["USER"].ToString();
-                if (DeoUser.ToUpper() == "ADMIN" || DeoUser == "admin")
+                if (DeoUser.ToUpper() == "ADMIN" || DeoUser == "admin" || DeoUser.ToUpper() == "CONDUCT")
                 {
 
                     DataSet Dresult = OBJDB.AdminGetDeoDIST(DeoUser); // passing Value to DBClass from model            
@@ -6441,7 +6441,7 @@ namespace PSEBONLINE.Controllers
                     year = DEO.DeoMonthYear.Split('-')[1];
                 }
 
-                if (DeoUser.ToUpper() == "ADMIN" || DeoUser == "admin")
+                if (DeoUser.ToUpper() == "ADMIN" || DeoUser == "admin" || DeoUser.ToUpper() == "CONDUCT")
                 {
 
                     DataSet Dresult = OBJDB.AdminGetDeoDIST(DeoUser); // passing Value to DBClass from model            
@@ -8851,8 +8851,8 @@ namespace PSEBONLINE.Controllers
 
                 DeoUser = Session["USER"].ToString();
                 district = Session["Dist"].ToString();
-                if (DeoUser == "ADMIN")
-                {
+				if (DeoUser == "ADMIN" || DeoUser.ToUpper() == "CONDUCT")
+				{
 
                     DataSet Dresult = OBJDB.AdminGetDeoDIST(DeoUser); // passing Value to DBClass from model            
                     List<SelectListItem> DistList = new List<SelectListItem>();
@@ -8938,7 +8938,7 @@ namespace PSEBONLINE.Controllers
 
                 DeoUser = Session["USER"].ToString();
                 district = Session["Dist"].ToString();
-                if (DeoUser == "ADMIN")
+                if (DeoUser == "ADMIN" || DeoUser.ToUpper() == "CONDUCT")
                 {
 
                     DataSet Dresult = OBJDB.AdminGetDeoDIST(DeoUser); // passing Value to DBClass from model            

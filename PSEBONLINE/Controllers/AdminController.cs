@@ -24232,10 +24232,10 @@ namespace PSEBONLINE.Controllers
                         // String[] files = @"C:\ENROLLDOCS\A1.pdf,C:\ENROLLDOCS\A2.pdf".Split(',');
                         string destinationFile = path;
                         String[] sourceFiles = combinedDocumentPath.Split(',');
-                        for (int i = 0; i < sourceFiles.Length; i++)
-                        {
-                            sourceFiles[i] = Path.Combine(Server.MapPath("~/Upload"), sourceFiles[i]);
-                        }
+                        //for (int i = 0; i < sourceFiles.Length; i++)
+                        //{
+                        //    sourceFiles[i] = Path.Combine(Server.MapPath("~/Upload"), sourceFiles[i]);
+                        //}
 
 
                         AbstractLayer.iTextSharpService.MergeFiles(destinationFile, sourceFiles);
@@ -24252,7 +24252,11 @@ namespace PSEBONLINE.Controllers
                                 Response.ClearHeaders();
                                 Response.Buffer = true;
                                 Response.AddHeader("Content-Disposition", "attachment;filename=\"" + saveFileName + "\"");
-                                byte[] data = req.DownloadData(downloadPath);
+								//if (!Directory.Exists(downloadPath))
+								//{
+								//	Directory.CreateDirectory(downloadPath);
+								//}
+								byte[] data = req.DownloadData(downloadPath);
                                 Response.BinaryWrite(data);
                                 Response.End();
                             }

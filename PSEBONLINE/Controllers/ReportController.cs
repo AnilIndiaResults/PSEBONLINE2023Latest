@@ -8477,6 +8477,8 @@ namespace PSEBONLINE.Controllers
 
 				AttendanceData.cls = row["cls"].ToString();
 				AttendanceData.rollNo = row["rollNo"].ToString();
+				AttendanceData.subcode = row["SubCode"].ToString();
+				AttendanceData.subName = row["SubName"].ToString();
 				AttendanceData.studentId = row["studentId"].ToString();
 				AttendanceData.candidateName = row["candidateName"].ToString();
 				AttendanceData.motherName = row["motherName"].ToString();
@@ -8527,5 +8529,33 @@ namespace PSEBONLINE.Controllers
 
 		}
 
+		public ActionResult CentreHeadDetail(CentreHeadDetailModel rpModel)
+		{
+
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+
+				DataSet ds = new DataSet();
+
+				rpModel.StoreAllData = AbstractLayer.AttendanceDB.GetAllDataCentreHeadDetail();
+				//AttendenceSummaryDetailsSPAdmin
+
+
+
+
+
+				return View(rpModel);
+			}
+			catch (Exception ex)
+			{
+				return View(rpModel);
+			}
+
+		}
 	}
 }

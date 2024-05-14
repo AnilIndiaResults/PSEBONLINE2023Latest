@@ -265,5 +265,27 @@ namespace PSEBONLINE.AbstractLayer
 
 		}
 
+		public static DataSet GetAllDataCentreHeadDetail()
+		{
+			DataSet ds = new DataSet();
+			try
+			{
+
+				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+				SqlCommand cmd = new SqlCommand();
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandTimeout = 300;
+				cmd.CommandText = "CentreHeadDetail_sp";
+				//cmd.Parameters.AddWithValue("@centrecode", centercode);
+
+				ds = db.ExecuteDataSet(cmd);
+				return ds;
+			}
+			catch (Exception ex)
+			{
+				return ds;
+			}
+
+		}
 	}
 }

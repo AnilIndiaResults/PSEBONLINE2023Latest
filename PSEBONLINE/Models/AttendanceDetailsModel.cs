@@ -11,7 +11,10 @@ namespace PSEBONLINE.Models
 {
 	public class AttendanceDetailsModel
     {
-       public List<AttendanceAdminDtl> AttendanceAdminDtl { get; set; }
+		
+
+	   public List<CentreHeadDetailModel> CentreHeadDetailModel { get; set; }
+		public List<AttendanceAdminDtl> AttendanceAdminDtl { get; set; }
         public List<AttendanceAdminDetailsReport> AttendanceAdminDetailsReport { get; set; }
         public List<AttendanceReportDetailsCount> AttendanceReportDetailsCount { get; set; }
         public List<AttendanceReportCandidateDetails> AttendanceReportCandidateDetails { get; set; }
@@ -31,8 +34,10 @@ namespace PSEBONLINE.Models
         public string differentlyAbled { get; set; }
         public string attendanceStatus { get; set; }
         public string cls { get; set; }
+		public string subcode { get; set; }
+		public string subName { get; set; }
 
-        public DataSet StoreAllData { get; set; }
+		public DataSet StoreAllData { get; set; }
 
 
 
@@ -101,5 +106,26 @@ namespace PSEBONLINE.Models
 
 
     }
-   
+
+	public class CentreHeadDetailModel
+	{
+
+		public string UserName { get; set; }
+		public string Passward { get; set; }
+		public string CenterHeadName { get; set; }
+		public string Mobile { get; set; }
+		public string EmailId { get; set; }
+		public string chtudise { get; set; }
+		public string clusternm { get; set; }
+		public string dist { get; set; }
+		public string CenterInchargeName { get; set; }
+
+		public DataSet StoreAllData { get; set; }
+
+
+
+
+
+	}
+
 }

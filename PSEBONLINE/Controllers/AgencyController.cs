@@ -845,7 +845,7 @@ namespace PSEBONLINE.Controllers
 
 					string Search = "Reg.schl='" + schl + "'  and FPLot is null and OBTMARKSP is not null and PracFlg=1 ";
 					//Search += " and sb.pcent = '" + AgencyLoginSession.UserName + "'";
-					Search += " and sb.pcent = '" + schl + "'";
+					//Search += " and sb.pcent = '" + schl + "'";
 
 
 					string SelectedAction = "0";
@@ -953,7 +953,7 @@ namespace PSEBONLINE.Controllers
 					ViewBag.pagesize = pageIndex;
 
 					string Search = "Reg.schl='" + schl + "'  and FPLot is null and OBTMARKSP is not null and PracFlg=1 ";
-					Search += " and sb.pcent = '" + AgencyLoginSession.UserName + "'";
+					//Search += " and sb.pcent = '" + AgencyLoginSession.UserName + "'";
 
 					TempData["ViewPracExamFinalSubmitSearch"] = Search;
 					//PracExamFinalSubmit(string class1, string rp, string cent, string Search,int SelectedAction, int pageNumber, string sub)
@@ -1210,10 +1210,8 @@ namespace PSEBONLINE.Controllers
 				{
 
 					string Search = "reg.schl = '" + schl + "' and FPLot is not null and OBTMARKSP is not null and PracFlg=1";
-
 					//Search += " and sb.pcent = '" + AgencyLoginSession.UserName + "'";
-					Search += " and sb.pcent = '" + schl + "'";
-
+					Search = " reg.schl = '" + schl + "'  ";
 
 					if (!string.IsNullOrEmpty(SelLot))
 					{
@@ -1221,7 +1219,7 @@ namespace PSEBONLINE.Controllers
 						Search += " and FPLot='" + SelLot + "'  ";
 					}
 
-					MS.StoreAllData = _agencyRepository.ViewNSQFMarksEntryFinalSubmit(SelClass, RP, Cent, Search, Convert.ToInt32(5), 0, SubCode, schl);
+					MS.StoreAllData = _agencyRepository.ViewNSQFMarksEntryFinalSubmit(SelClass, RP, AgencyLoginSession.UserName, Search, Convert.ToInt32(0), 0, SubCode, schl);
 
 					if (MS.StoreAllData == null || MS.StoreAllData.Tables[0].Rows.Count == 0)
 					{

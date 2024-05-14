@@ -1,0 +1,286 @@
+﻿@model PSEBONLINE.Models.AttendanceAdminDtl
+
+@{
+
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<!-- #endregion -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 11px
+    }
+
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+@*<h1>Centre Exam Date Report @ViewBag.ClassName (Session <b>@Session["Session"].ToString()</b>) </h1>*@
+<h1>Attendance Summary Report</h1>
+@using (Html.BeginForm("AttendanceSummaryReport", "Report", FormMethod.Post))
+{
+    <fieldset style="margin-bottom:15px">
+        <legend>Search</legend>
+        <form id="myForm">
+            <div class="clearefix"></div>
+            <div class="row">
+                <div class="col-md-2">
+                    Exam Batch
+                    <label><span>March 2023</span></label>
+                </div>
+                <div class="col-md-2">
+                    Select Class
+
+                    @Html.DropDownList("Class", new SelectList(ViewBag.MyClass, "Value", "Text", ViewBag.SelectedClass), "---Select Class--", new { id = "Classe", onchange = "CheckExamSub();" })
+                </div>
+                <div class="col-md-2">
+                    Select Category
+                    @Html.DropDownList("SelRP", new SelectList(ViewBag.MyRP, "Value", "Text", ViewBag.SelectedRP), "--Select---", new { @class = "", required = "required" })
+
+                </div>
+                <div class="col-md-3">
+                    Select Subject
+                    @Html.DropDownList("ExamSube", new SelectList(ViewBag.MySubject, "Value", "Text", ViewBag.SelectedSubject), "---Select Subject--", new { id = "ExamSube" })
+                </div>
+                <div class="col-md-2">
+                    Select District
+                    @Html.DropDownList("district", new SelectList(ViewBag.districts, "Value", "Text", ViewBag.SelectedDist), "--All District--", new { @class = "" })
+
+                </div>
+                @*<div class="col-md-2">
+                    Center Code
+                    <input type="text" id="centercode" value='@ViewBag.centercode' name="centercode" />
+
+                </div>*@
+                <div class="col-md-2">
+                    Select Action
+
+                    @Html.DropDownList("SelAction", new SelectList(ViewBag.AttendanceStatus, "Value", "Text", ViewBag.SelectedAction), new { @class = "", required = "required" })
+                </div>
+                <div class="col-md-1">
+                    &nbsp;<br /><input type="submit" value="Search" name="cmd" title="Search Record" />
+
+                </div>
+                <div class="col-md-1">
+                    &nbsp;<br /><input type="submit" value="Export" name="export" title="Export" />
+
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+        </form>
+    </fieldset>
+
+
+    <table style="width:100%;" border="0" class="bgimg">
+
+        <tr>
+            <td align="center">
+                <table border="1" style="width: 100%;" align="center" class="brack">
+                    <thead>
+                        <tr>
+                            <td>Class</td>
+                            <td>@ViewBag.classs </td>
+                            <td>Date of Exam</td>
+                            <td>@ViewBag.examDate</td>
+                            <td>Subject Code & Name </td>
+                            <td>(@ViewBag.subCode)@ViewBag.SubNM </td>
+                        </tr>
+                        <tr>
+                            <td>Total </td>
+                            <td>@ViewBag.Total</td>
+                            <td>Present</td>
+                            <td>@ViewBag.Present </td>
+                            <td>Absent </td>
+                            <td>@ViewBag.Absent</td>
+                        </tr>
+                        <tr>
+                            <td>Cancel </td>
+                            <td>@ViewBag.Cancel</td>
+                            <td>UMC</td>
+                            <td>@ViewBag.UMC</td>
+                            <td>Pending</td>
+                            <td>@ViewBag.Pending</td>
+                        </tr>
+                    </thead>
+                </table>
+
+                <h3>Details of Absent/ Cancel/ UMC Students</h3>
+
+                <table border="1" style="width: 100%;" align="center" class="brack">
+                    <thead>
+
+                        <tr>
+                            <td colspan="2">
+                                <p>Absent Student List</p>
+                            </td>
+                            <td colspan="2">
+                                <p>Cancel Student List</p>
+                            </td>
+                            <td colspan="2">
+                                <p>UMC Student List</p>
+                            </td>
+                        </tr>
+                    </thead>
+                   
+        </table>
+
+    </td>
+    </tr>
+
+
+    </table>
+
+
+    
+}
+<div id="dialog" style="display: none" class="kdsfont">
+    <span id="memoUpdateNo" style="font-size:2px;"></span>
+
+    <div class="col-md-12">
+        Remarks     <textarea id="txtRemark" name="txtRemark"></textarea>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+
+
+
+<script type="text/javascript">
+
+
+
+    function CheckExamSub() {
+
+
+
+        var selectexamsub = document.getElementById("Classe").value;
+        console.log("selectexamsub:::", selectexamsub)
+        $("#ExamSube").empty();
+        var selectedData = { selectclasseValue: selectexamsub };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetSubjectClassWise", "Report")',
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(selectedData),
+                success: function (response) {
+                    $("#ExamSube").append('<option value=""> --Select All-- </option>');
+                    $.each(response.sublist10th, function (i, ExamSube) {
+                        $("#ExamSube").append('<option value="'
+                            + ExamSube.Value + '">'
+                            + ExamSube.Text + '</option>');
+                    });
+
+                },
+
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+
+        };
+
+
+    $(function () {
+        $("#dialog").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to Unlock?",
+            width: 450,
+            height: 250,
+            buttons: {
+                "Unlock": function () {
+                    var vRemark = document.getElementById('txtRemark').value;
+                    var vMemo = document.getElementById('memoUpdateNo').innerHTML;
+                    if (vRemark == "") {
+                        alert("Please Enter Remark");
+                    }
+                    else {
+                        UnlockMemo(vMemo, vRemark);
+                    }
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+    });
+
+</script>
+
+
+
+<script>
+    function Unlock(memono) {
+        document.getElementById('memoUpdateNo').innerHTML = memono;
+        document.getElementById('memoUpdateNo').style.visibility = "hidden";
+        $('#dialog').dialog('open');
+    }
+
+    function UnlockMemo(memono,remark) {
+        $('#dialog').dialog('open');
+        let text;
+        if (true == false) {
+            text = "";
+        } else {
+            var request = {};
+            request.memonumber = memono;
+            request.remarks = remark;
+
+            $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UnlockApplication", "Master")',
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify(request),
+                    success: function (response) {
+                        if (response.returncode == "1") {
+                            alert("Unlocked Sucessfully");
+                            window.location.href = "/Report/AttendanceReport";
+                        }
+                        else {
+                            alert("Saved Failure");
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response);
+                    }
+            });
+
+        }
+    }
+</script>

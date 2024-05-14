@@ -4613,7 +4613,7 @@ namespace PSEBONLINE.AbstractLayer
 
 		#region calculate fee for open repayment
 
-		public FeeOpenModel spFeeDetailsOpen_Repayment(string schl)
+		public FeeOpenModel spFeeDetailsOpen_Repayment(string schl,string Action)
 		{
             FeeOpenModel FeeOpenModel = new FeeOpenModel();
 			FeeOpenModel.feeopenList = new List<FeeOpen>();
@@ -4629,6 +4629,8 @@ namespace PSEBONLINE.AbstractLayer
 					cmd.CommandType = CommandType.StoredProcedure;
 					cmd.Parameters.Clear();
 					cmd.Parameters.AddWithValue("@schl", schl);
+					cmd.Parameters.AddWithValue("@Action", Action);
+
 					con.Open();
 					ad.SelectCommand = cmd;
 					ad.Fill(result);
@@ -4667,7 +4669,7 @@ namespace PSEBONLINE.AbstractLayer
 								FeeOpenModel.feeopenData.ExamAddSubFee = Convert.ToInt32(dr["AddSubFee_ex"].ToString());
 								FeeOpenModel.feeopenData.ExamStartDate = dr["sDate"].ToString();
 								FeeOpenModel.feeopenData.ExamEndDate = dr["eDate"].ToString();
-								FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
+								//FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
 								FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr["HardCopyCertificateFee"].ToString());
 								FeeOpenModel.feeopenData.lastPaidFee = Convert.ToInt32(dr["lastPaidFee"].ToString());
 								FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
@@ -4893,6 +4895,67 @@ namespace PSEBONLINE.AbstractLayer
 		}
 
 
+		public FeeOpenModel selectFeeDetailsOpen_Repayment(string schl)
+		{
+			FeeOpenModel FeeOpenModel = new FeeOpenModel();
+			FeeOpenModel.feeopenList = new List<FeeOpen>();
+			DataSet ds = new DataSet();
+			DataSet result = new DataSet();
+			string OutError = "";
+			SqlDataAdapter ad = new SqlDataAdapter();
+			try
+			{
+				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+				{
+					SqlCommand cmd = new SqlCommand("selectopen_Repayment", con);//spFeeDetailsOpen2017 // spFeeDetailsOpen2017_Phy_Chln
+					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.Parameters.Clear();
+					cmd.Parameters.AddWithValue("@schl", schl);
+					con.Open();
+					ad.SelectCommand = cmd;
+					ad.Fill(result);
+					try
+					{
+						ds = result;
+						if (result.Tables[0].Rows.Count > 0)
+						{
+
+							foreach (DataRow dr in result.Tables[0].Rows)
+							{
+								FeeOpenModel.feeopenData = new FeeOpen();
+								FeeOpenModel.feeopenData.AppNo = dr["roll"].ToString();
+								FeeOpenModel.feeopenData.AddSubFee = Convert.ToInt32(dr["rced_tot"].ToString());
+								FeeOpenModel.feeopenData.LateFee = Convert.ToInt32(dr["recevble_totfee"].ToString());
+								FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr["balance"].ToString());
+
+								FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
+
+
+							}
+
+
+							OutError = "1";
+							return FeeOpenModel;
+						}
+						else
+						{
+							OutError = "0";
+							return FeeOpenModel;
+						}
+					}
+					catch (Exception ex)
+					{
+						OutError = ex.Message;
+						return FeeOpenModel;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				OutError = ex.Message;
+				return FeeOpenModel;
+			}
+		}
 
 
 		#endregion

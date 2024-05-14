@@ -30,8 +30,10 @@ namespace PSEBONLINE.AbstractLayer
 
 
                 int f = 0;
-                // we create a reader for a certain document
-                PdfReader reader = new PdfReader(sourceFiles[f]);
+				// we create a reader for a certain document
+				System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
+				PdfReader reader = new PdfReader(sourceFiles[f]);
                 // we retrieve the total number of pages
                 int n = reader.NumberOfPages;
                 //Console.WriteLine("There are " + n + " pages in the original file.");

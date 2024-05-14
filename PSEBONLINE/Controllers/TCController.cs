@@ -880,8 +880,12 @@ namespace PSEBONLINE.Controllers
                 var itemRec = new SelectList(new[] { new { ID = "1", Name = "All TC Generated" }, new { ID = "2", Name = "All TC Pending" }, }, "ID", "Name", 1);
                 ViewBag.MyRec = itemRec.ToList();
 
-                var itemFilter = new SelectList(new[]{new {ID="1",Name="By UniqueID"},new {ID="2",Name="REGNO"},new{ID="3",Name="Candidate Name"},
-            new{ID="4",Name="Father's Name"},new{ID="5",Name="Mother's Name"},new{ID="6",Name="DOB"},}, "ID", "Name", 1);
+				//var itemFilter = new SelectList(new[]{new {ID="1",Name="By UniqueID"},new {ID="2",Name="REGNO"},new{ID="3",Name="Candidate Name"},
+				//new{ID="4",Name="Father's Name"},new{ID="5",Name="Mother's Name"},new{ID="6",Name="DOB"},}, "ID", "Name", 1);
+
+				var itemFilter = new SelectList(new[]{new {ID="1",Name="By UniqueID"},new {ID="2",Name="REGNO"},new{ID="3",Name="Candidate Name"},
+                new{ID="4",Name="Father's Name"},new{ID="5",Name="Mother's Name"} }, "ID", "Name", 1);
+				
                 ViewBag.MyFilter = itemFilter.ToList();
                 //---------------------------------------------
                 Import obj = new Import();
@@ -1019,10 +1023,12 @@ namespace PSEBONLINE.Controllers
                     return RedirectToAction("Logout", "Login");
                 }
 
-                //var itemFilter = new SelectList(new[] { new { ID = "1", Name = "Student Name" }, new { ID = "2", Name = "Roll No" }, }, "ID", "Name", 1);
-                var itemFilter = new SelectList(new[]{new {ID="1",Name="By UniqueID"},new {ID="2",Name="REGNO"},new{ID="3",Name="Candidate Name"},
-            new{ID="4",Name="Father's Name"},new{ID="5",Name="Mother's Name"},new{ID="6",Name="DOB"},}, "ID", "Name", 1);
-                ViewBag.MyFilter = itemFilter.ToList();
+				//var itemFilter = new SelectList(new[] { new { ID = "1", Name = "Student Name" }, new { ID = "2", Name = "Roll No" }, }, "ID", "Name", 1);
+				//    var itemFilter = new SelectList(new[]{new {ID="1",Name="By UniqueID"},new {ID="2",Name="REGNO"},new{ID="3",Name="Candidate Name"},
+				//new{ID="4",Name="Father's Name"},new{ID="5",Name="Mother's Name"},new{ID="6",Name="DOB"},}, "ID", "Name", 1);
+				var itemFilter = new SelectList(new[]{new {ID="1",Name="By UniqueID"},new {ID="2",Name="REGNO"},new{ID="3",Name="Candidate Name"},
+				new{ID="4",Name="Father's Name"},new{ID="5",Name="Mother's Name"} }, "ID", "Name", 1);
+				ViewBag.MyFilter = itemFilter.ToList();
 
                 //---------------------------------------------
                 Import obj = new Import();

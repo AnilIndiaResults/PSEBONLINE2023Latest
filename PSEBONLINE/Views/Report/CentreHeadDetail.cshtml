@@ -1,0 +1,327 @@
+﻿@model PSEBONLINE.Models.CentreHeadDetailModel
+
+@{
+
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+
+
+
+
+
+
+
+
+
+
+<!-- #endregion -->
+
+
+
+
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 11px
+    }
+
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+
+<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+</style>
+
+<h1>Centre Head Details</h1>
+
+
+<div id="loading1"></div>
+<div class="clearfix"></div>
+<div class="row" id="divMain1">
+    <div class="col-md-4">
+        @*Grid Total:  @{
+            if (Model != null) {  }
+            else
+            { <span>0</span>}
+            }*@
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="example-datatable">
+                <thead>
+                    <tr class="active-tr">
+
+                        <th width="5%">UserName</th>
+                        <th width="5%">Passward</th>
+                        <th width="10%">CenterHeadName</th>
+                        <th width="5%">Mobile</th>
+                        <th width="5%">EmailId</th>
+                        <th width="5%">chtudise</th>
+                        <th width="10%">clusternm</th>
+                        <th width="10%">dist</th>
+                        <th width="10%">CenterInchargeName</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+
+                        var UserName = "";
+                        var Passward = "";
+                        var CenterHeadName = "";
+                        var Mobile = "";
+                        var EmailId = "";
+                        var chtudise = "";
+                        var clusternm = "";
+                        var dist = "";
+                        var CenterInchargeName = "";
+
+                        var noCount = 0;
+                        var noCountval = "";
+
+
+                        if (@Model.StoreAllData != null)
+                        {
+                            for (var i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+
+                                UserName = Model.StoreAllData.Tables[0].Rows[i]["UserName"].ToString();
+                                Passward = Model.StoreAllData.Tables[0].Rows[i]["Pwd"].ToString();
+                                CenterHeadName = Model.StoreAllData.Tables[0].Rows[i]["CenterHeadName"].ToString();
+                                Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                EmailId = Model.StoreAllData.Tables[0].Rows[i]["EmailId"].ToString();
+                                chtudise = Model.StoreAllData.Tables[0].Rows[i]["chtudise"].ToString();
+                                clusternm = Model.StoreAllData.Tables[0].Rows[i]["clusternm"].ToString();
+                                dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                                CenterInchargeName = Model.StoreAllData.Tables[0].Rows[i]["CenterInchargeName"].ToString();
+
+
+                                noCount++;
+                                noCountval = "selectedItems" + noCount;
+
+
+                                <tr>
+                                    <td>@UserName</td>
+                                    <td>
+                                        <input class="form-control-sm" type="password" value="@Passward" id='@noCountval' />
+                                        <button onclick="togglePassword('@noCountval')">show</button>
+                                    </td>
+                                    <td>@CenterHeadName</td>
+                                    <td>@Mobile</td>
+                                    <td>@EmailId</td>
+                                    <td>@chtudise</td>
+                                    <td> @clusternm</td>
+                                    <td>@dist</td>
+                                    <td>@CenterInchargeName</td>
+
+
+                                </tr>
+
+
+
+
+
+                            }
+
+
+
+
+
+                        }
+                    }
+                </tbody>
+                    @*else
+            {
+            <tr><td colspan="13">Record not found</td></tr>
+            }*@
+
+
+                </table>
+        </div>
+    </div>
+</div>
+
+<div id="dialog" style="display: none" class="kdsfont">
+    <span id="memoUpdateNo" style="font-size:2px;"></span>
+
+    <div class="col-md-12">
+        Remarks     <textarea id="txtRemark" name="txtRemark"></textarea>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example-datatable').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 25,
+            //"order": [[0, 'asc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By UniqueID" },
+        })
+
+    });
+    //new DataTable('#example');
+
+    function togglePassword(id) {
+        console.log("id", id);
+        var passwordField = document.getElementById(id);
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+        } else {
+            passwordField.type = "password";
+        }
+    }
+
+
+
+        @*function CheckExamSub() {
+
+
+
+            var selectclasse = document.getElementById("Classe").value;
+            console.log("selectclasse:::", selectclasse)
+            $("#ExamDate").empty();
+            var selectedData = { selectclasseValue: selectclasse };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetExamDateClassWise", "Report")',
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(selectedData),
+                success: function (response) {
+                    $.each(response.ExamDate1, function (i, ExamDate) {
+                        $("#ExamDate").append('<option value="'
+                            + ExamDate.Value + '">'
+                            + ExamDate.Text + '</option>');
+                    });
+
+                },
+
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetSubjectClassWise", "Report")',
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(selectedData),
+                success: function (response) {
+                    $.each(response.sublist10th, function (i, ExamSube) {
+                        $("#ExamSube").append('<option value="'
+                            + ExamSube.Value + '">'
+                            + ExamSube.Text + '</option>');
+                    });
+
+                },
+
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+
+
+
+        };*@
+
+
+        $(function () {
+            $("#dialog").dialog({
+                modal: true,
+                autoOpen: false,
+                title: "Are you sure to Unlock?",
+                width: 450,
+                height: 250,
+                buttons: {
+                    "Unlock": function () {
+                        var vRemark = document.getElementById('txtRemark').value;
+                        var vMemo = document.getElementById('memoUpdateNo').innerHTML;
+                        if (vRemark == "") {
+                            alert("Please Enter Remark");
+                        }
+                        else {
+                            UnlockMemo(vMemo, vRemark);
+                        }
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+
+        });
+
+</script>
+
+
+
+<script>
+        function Unlock(memono) {
+            document.getElementById('memoUpdateNo').innerHTML = memono;
+            document.getElementById('memoUpdateNo').style.visibility = "hidden";
+            $('#dialog').dialog('open');
+        }
+
+        function UnlockMemo(memono, remark) {
+            $('#dialog').dialog('open');
+            let text;
+            if (true == false) {
+                text = "";
+            } else {
+                var request = {};
+                request.memonumber = memono;
+                request.remarks = remark;
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UnlockApplication", "Master")',
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify(request),
+                    success: function (response) {
+                        if (response.returncode == "1") {
+                            alert("Unlocked Sucessfully");
+                            window.location.href = "/Report/AttendanceReport";
+                        }
+                        else {
+                            alert("Saved Failure");
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response);
+                    }
+                });
+
+            }
+        }
+</script>

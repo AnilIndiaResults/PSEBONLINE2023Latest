@@ -29,7 +29,7 @@
 
     <div class="row">
         <div class="col-md-6 " style="text-align:left;font-weight :bold">    <h1>Enter TC Request Information</h1></div>
-        <div class="col-md-6 " style="text-align:right;font-weight :bold"><h3>Last Date : <span class="rqf">@ViewBag.TCGenerateLastDate</span></h3></div>
+        <div class="col-md-6 " style="text-align:right;font-weight :bold;display:none;"><h3>Last Date : <span   class="rqf">@ViewBag.TCGenerateLastDate</span></h3></div>
         <br /><div class="clearfix"></div>
     </div>
     <div style="color:green">@TempData["msg"]</div>
@@ -72,34 +72,36 @@
             <div class="col-md-4">@Html.TextBoxFor(a => a.attendanceTot, new { id = "attendanceTot", @maxlength = "3", onkeypress = "return isNumberKey(event);", onpaste = "return false" })</div>
             <div class="clearfix"></div>
             <div class="col-md-2">Attendance (Present)<span class="rqf">*</span></div>
-            <div class="col-md-4">@Html.TextBoxFor(a => a.attendancePresnt, new { id = "attendancePresnt", @maxlength = "3", onkeypress = "return isNumberKey(event);", onpaste = "return false" })</div>
+            <div class="col-md-4">@Html.TextBoxFor(a => a.attendancePresnt, new { id = "attendancePresnt", @maxlength = "3", onkeypress = "return isNumberKey(event);", onpaste = "return false", onfocusout = "checkAttendecnce()" })</div>
             <div class="clearfix"></div>
             <div class="col-md-2">Struck Off Date<span class="rqf">*</span></div>
             <div class="col-md-4">
                 @Html.TextBoxFor(a => a.struckOff, "{0:dd/MM/yyyy}", new
-                    {
-                        id = "txtstruckOff",
-                        @readonly = "readonly",
-                        @maxlength = "10",
-                        onpaste = "return false;",
-                        oncopy = "return false;",
-                        oncut = "return false;",
+                {
+                    id = "txtstruckOff",
+                    @readonly = "readonly",
+                    @maxlength = "10",
+                    onpaste = "return false;",
+                    oncopy = "return false;",
+                    oncut = "return false;",
 
-                    })
+
+
+                })
             </div>
             <div class="clearfix"></div>
             <div class="col-md-2">TC Generate Date<span class="rqf">*</span></div>
             <div class="col-md-4">
                 @Html.TextBoxFor(a => a.TCdate, "{0:dd/MM/yyyy}", new
-                    {
-                        id = "TCdate",
-                        @readonly = "readonly",
-                        @maxlength = "10",
-                        onpaste = "return false;",
-                        oncopy = "return false;",
-                        oncut = "return false;",
+                {
+                    id = "TCdate",
+                    @readonly = "readonly",
+                    @maxlength = "10",
+                    onpaste = "return false;",
+                    oncopy = "return false;",
+                    oncut = "return false;",
 
-                    })
+                })
             </div>
             <div class="clearfix"></div>
             <div class="col-md-2">Reason Of Leaving</div>
@@ -161,15 +163,16 @@
 
  $(document).ready(function () {
 
+     var currentData = new Date();
         $("#txtstruckOff").datepicker({
             dateFormat: "dd/mm/yy",
             changeMonth: true,
             changeYear: true,
             // minDate: new Date(),
-            minDate: '01/04/2022',
-           // maxDate: '31/07/2022',
-            maxDate:  '@ViewBag.StuckOffLastDate',
-            yearRange: '2021:' + (new Date().getFullYear())
+            minDate: '01/03/2024',
+            maxDate: new Date(),
+           // maxDate:  '@ViewBag.StuckOffLastDate',
+            yearRange: '2024:' + (new Date().getFullYear())
 
         });
 
@@ -178,10 +181,10 @@
             dateFormat: "dd/mm/yy",
             changeMonth: true,
             changeYear: true,
-            // minDate: new Date(),
-            minDate: '01/04/2022',
+             minDate: new Date(),
+            //minDate: '01/04/2022',
              maxDate: new Date(),
-            yearRange: '2021:' + (new Date().getFullYear())
+            yearRange: '2024:' + (new Date().getFullYear())
 
         });
     });
@@ -230,5 +233,29 @@
             document.getElementById("TCdate").focus();
             return false;
         }
+
+
+    if (parseFloat(attendanceTot) < parseFloat(attendancePresnt)) {
+            alert("Enter Valid Attendence");
+            attendancePresnt.focus();
+            return false;
+        }
+
+
     }
+
+    function checkAttendecnce()
+	{
+        var attendanceTot = document.getElementById('attendanceTot').value;
+        var attendancePresnt = document.getElementById('attendancePresnt').value;
+        if (parseFloat(attendanceTot) < parseFloat(attendancePresnt)) {
+            alert("Enter Valid Attendence");
+            $("#attendancePresnt").val("");
+            attendancePresnt.focus();
+            return false;
+        }
+
+    }
+
+
 </script>

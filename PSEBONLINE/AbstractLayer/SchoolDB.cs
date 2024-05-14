@@ -2959,7 +2959,36 @@ namespace PSEBONLINE.AbstractLayer
                 return result = null;
             }
         }
-        public DataSet UpdNinthResult(string ResultList, string totmarks, string obtmarks, string stdid, string schl, string EmpUserId, string UPTREMARKS)//90
+
+
+		public DataSet Get_Ninth_Result_ChallanDetails(string search, string schl, int pageNumber, string class1, int action1)
+		{
+			DataSet result = new DataSet();
+			SqlDataAdapter ad = new SqlDataAdapter();
+			try
+			{
+				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+				{
+					SqlCommand cmd = new SqlCommand("Get_Ninth_Result_ChallanDetails", con);//[GetStudentRegNoNotAllotedSP]
+					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.Parameters.AddWithValue("@search", search);
+					cmd.Parameters.AddWithValue("@schl", schl);
+					cmd.Parameters.AddWithValue("@class", class1);
+					cmd.Parameters.AddWithValue("@PageNumber", pageNumber);
+					cmd.Parameters.AddWithValue("@PageSize", 20);
+					cmd.Parameters.AddWithValue("@Action", action1);
+					ad.SelectCommand = cmd;
+					ad.Fill(result);
+					con.Open();
+					return result;
+				}
+			}
+			catch (Exception ex)
+			{
+				return result = null;
+			}
+		}
+		public DataSet UpdNinthResult(string ResultList, string totmarks, string obtmarks, string stdid, string schl, string EmpUserId, string UPTREMARKS)//90
         {
             DataSet result = new DataSet();
             SqlDataAdapter ad = new SqlDataAdapter();
@@ -3076,7 +3105,7 @@ namespace PSEBONLINE.AbstractLayer
         }
         //-------------------End Ninth Page------------------//
 
-        public void Admin9th11thFinalSubmit(string feemode, int AdminId, string cls, string schl, string receiptno, string receiptfee, string Remarks, out string OutStatus, DateTime? ReceiveDate = null)
+        public string Admin9th11thFinalSubmit(string feemode, int AdminId, string cls, string schl, string receiptno, string receiptfee, string Remarks, string hdselectedItems, out string OutStatus, DateTime? ReceiveDate = null)
         {
             int result;
             try
@@ -3093,15 +3122,18 @@ namespace PSEBONLINE.AbstractLayer
                     cmd.Parameters.AddWithValue("@ReceiveDate", ReceiveDate);
                     cmd.Parameters.AddWithValue("@Remarks", Remarks);
                     cmd.Parameters.AddWithValue("@feemode", feemode);
-                    cmd.Parameters.Add("@OutStatus", SqlDbType.VarChar, 50).Direction = ParameterDirection.Output;
+					cmd.Parameters.AddWithValue("@FeeStudentList", hdselectedItems);
+
+					cmd.Parameters.Add("@OutStatus", SqlDbType.VarChar, 50).Direction = ParameterDirection.Output;
                     con.Open();
                     result = cmd.ExecuteNonQuery();
                     OutStatus = Convert.ToString(cmd.Parameters["@OutStatus"].Value);
+                    return "1";
                 }
             }
             catch (Exception ex)
             {
-                OutStatus = "0";
+               return OutStatus = "0";
             }
         }
 
@@ -6687,5 +6719,178 @@ namespace PSEBONLINE.AbstractLayer
 				return null;
 			}
 		}
+
+		#region Signature Chart and Confidential List Primary Middle Both
+
+		public DataSet SignatureChart(int type, string cls, string SCHL, string cent)
+		{
+			try
+			{
+				SqlCommand cmd = new SqlCommand();
+				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandText = "SignatureChartSP_JuniorForREGPortal";
+				cmd.Parameters.AddWithValue("@type", type);
+				cmd.Parameters.AddWithValue("@cls", cls);
+				cmd.Parameters.AddWithValue("@SCHL", SCHL);
+				cmd.Parameters.AddWithValue("@cent", cent);
+
+				return db.ExecuteDataSet(cmd);
+			}
+			catch (Exception)
+			{
+
+				return null;
+			}
+		}
+
+		public DataSet GetSignatureChart(SchoolModels sm)
+		{
+			try
+			{
+				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+				string roll = "";
+				if (sm.ExamRoll != "")
+				{
+					roll = "and roll='" + sm.ExamRoll + "'";
+				}
+				SqlCommand cmd = new SqlCommand();
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandText = "GetSignatureChartSP_Junior";
+				cmd.Parameters.AddWithValue("@cent", sm.ExamCent);
+				cmd.Parameters.AddWithValue("@sub", sm.ExamSub);
+				cmd.Parameters.AddWithValue("@roll", roll);
+				cmd.Parameters.AddWithValue("@class", sm.CLASS);
+				return db.ExecuteDataSet(cmd);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+
+		public DataSet GetConfidentialList(SchoolModels sm)
+		{
+			try
+			{
+				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+				SqlCommand cmd = new SqlCommand();
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandText = "GetConfidentialListSP_Junior";
+				cmd.Parameters.AddWithValue("@Cent", sm.ExamCent);
+				cmd.Parameters.AddWithValue("@class", sm.CLASS);
+				return db.ExecuteDataSet(cmd);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+
+		#endregion Signature Chart and Confidential List Primary Middle Both
+
+		public static DataSet SchoolOfAmnence(string schl,string Center,string id,string Action)
+		{
+			try
+			{
+				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+				SqlCommand cmd = new SqlCommand();
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandText = "getAmnenceschl";
+				cmd.Parameters.AddWithValue("@schl", schl);
+				cmd.Parameters.AddWithValue("@class", id);
+				cmd.Parameters.AddWithValue("@Center", Center);
+				cmd.Parameters.AddWithValue("@Action", Action);
+
+
+				return db.ExecuteDataSet(cmd);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+
+		public string InsertPaymentForm_For_9th11thResultUpdate(ChallanMasterModel CM, out string SchoolMobile)
+		{
+			SqlConnection con = null;
+			string result = "";
+			try
+			{
+				con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
+				SqlCommand cmd = new SqlCommand("InsertPaymentForm_For_9th11thResultUpdate_SP", con);   //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.Parameters.Clear();
+				cmd.Parameters.AddWithValue("@APPNO", CM.SCHLREGID);
+				cmd.Parameters.AddWithValue("@CHLNDATE", CM.CHLNDATE);
+				cmd.Parameters.AddWithValue("@CHLNVDATE", CM.CHLNVDATE);
+				cmd.Parameters.AddWithValue("@FEEMODE", CM.FEEMODE);
+				cmd.Parameters.AddWithValue("@FEECODE", CM.FEECODE);
+				cmd.Parameters.AddWithValue("@FEECAT", CM.FEECAT);
+				cmd.Parameters.AddWithValue("@BCODE", CM.BCODE);
+				cmd.Parameters.AddWithValue("@BANK", CM.BANK);
+				cmd.Parameters.AddWithValue("@ACNO", CM.ACNO);
+				cmd.Parameters.AddWithValue("@FEE", CM.FEE);
+				cmd.Parameters.AddWithValue("@BANKCHRG", CM.BANKCHRG);
+				cmd.Parameters.AddWithValue("@TOTFEE", CM.TOTFEE);
+				cmd.Parameters.AddWithValue("@SCHLREGID", CM.SCHLREGID);
+				cmd.Parameters.AddWithValue("@DIST", "010");
+				cmd.Parameters.AddWithValue("@DISTNM", CM.DISTNM);
+				cmd.Parameters.AddWithValue("@SCHLCANDNM", CM.SCHLCANDNM);
+				cmd.Parameters.AddWithValue("@BRCODE", CM.BRCODE);
+				cmd.Parameters.AddWithValue("@BRANCH", CM.BRANCH);
+				cmd.Parameters.AddWithValue("@addfee", CM.addfee);
+				cmd.Parameters.AddWithValue("@latefee", CM.latefee);
+				cmd.Parameters.AddWithValue("@prosfee", CM.prosfee);
+				cmd.Parameters.AddWithValue("@addsubfee", CM.addsubfee);
+				cmd.Parameters.AddWithValue("@add_sub_count", CM.add_sub_count);
+				cmd.Parameters.AddWithValue("@regfee", CM.regfee);
+				cmd.Parameters.AddWithValue("@type", CM.type);
+				cmd.Parameters.AddWithValue("@LOT", CM.LOT);
+				cmd.Parameters.AddWithValue("@FeeStudentList", CM.FeeStudentList);
+				if (CM.LSFRemarks != null && CM.LSFRemarks != "")
+				{
+					cmd.Parameters.AddWithValue("@LumsumFine", CM.LumsumFine);
+					cmd.Parameters.AddWithValue("@LSFRemarks", CM.LSFRemarks);
+				}
+				cmd.Parameters.AddWithValue("@ChallanVDateN", CM.ChallanVDateN);
+				//
+				
+				//
+				SqlParameter outPutParameter = new SqlParameter();
+				outPutParameter.ParameterName = "@CHALLANID";
+				outPutParameter.Size = 100;
+				outPutParameter.SqlDbType = System.Data.SqlDbType.VarChar;
+				outPutParameter.Direction = System.Data.ParameterDirection.Output;
+				cmd.Parameters.Add(outPutParameter);
+				SqlParameter outPutParameter1 = new SqlParameter();
+				outPutParameter1.ParameterName = "@SchoolMobile";
+				outPutParameter1.Size = 20;
+				outPutParameter1.SqlDbType = System.Data.SqlDbType.VarChar;
+				outPutParameter1.Direction = System.Data.ParameterDirection.Output;
+				cmd.Parameters.Add(outPutParameter1);
+				con.Open();
+				result = cmd.ExecuteNonQuery().ToString();
+				string outuniqueid = (string)cmd.Parameters["@CHALLANID"].Value;
+				SchoolMobile = (string)cmd.Parameters["@SchoolMobile"].Value;
+				return outuniqueid;
+
+			}
+			catch (Exception ex)
+			{
+				//mbox(ex);
+				SchoolMobile = "";
+				return result = "";
+
+			}
+			finally
+			{
+				con.Close();
+			}
+		}
+
 	}
 }

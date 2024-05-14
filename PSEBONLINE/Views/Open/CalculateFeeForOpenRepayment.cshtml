@@ -33,26 +33,26 @@
 
                             <tr class="active-tr">
                                 <th>Select</th>
-                                <th>std_id</th>
-                                <th>Appno</th>
-                                <th>Add SubFee</th>
-                                <th>Late Fee</th>
-                                <th>HardCopyCertificateFee</th>
-                                <th>Late Fee</th>
+                                @*<th>std_id</th>*@
+                                <th>RollNo</th>
+                                <th>Old Fee</th>
+                                <th>New Fee</th>
+                                <th>Balance</th>
+                                @*<th>Late Fee</th>
                                 <th>ProsFee</th>
                                 <th>RegConti</th>
                                 <th>Admission Fee</th>
 
-                                <th>Total Fee</th>
+                                <th>Total Fee</th>*@
 
-                                <th>Exam Reg Fee</th>
+                                @*<th>Exam Reg Fee</th>
                                 <th>Exam Late Fee</th>
                                 <th>Exam Total Fee</th>
                                 <th>Exam PrSub Fee</th>
                                 <th>Exam AddSub Fee</th>
                                 <th>Total Fee Now</th>
                                 <th>last paid Fee</th>
-                                <th>Total Fee To Pay</th>
+                                <th>Total Fee To Pay</th>*@
 
                             </tr>
 
@@ -132,48 +132,48 @@
                                     TotalFee = Data.TotalFee;
                                     TotalFeesInWords = Data.TotalFeesInWords;
 
-                                    ExamRegFee = Data.ExamRegFee;
-                                    ExamLateFee = Data.ExamLateFee;
-                                    ExamTotalFee = Data.ExamTotalFee;
-                                    ExamNOAS = Data.ExamNOAS;
-                                    ExamNOPS = Data.ExamNOPS;
-                                    ExamPrSubFee = Data.ExamPrSubFee;
-                                    ExamAddSubFee = Data.ExamAddSubFee;
-                                    ExamStartDate = Data.ExamStartDate;
-                                    ExamEndDate = Data.ExamEndDate;
+                                    //ExamRegFee = Data.ExamRegFee;
+                                    //ExamLateFee = Data.ExamLateFee;
+                                    //ExamTotalFee = Data.ExamTotalFee;
+                                    //ExamNOAS = Data.ExamNOAS;
+                                    //ExamNOPS = Data.ExamNOPS;
+                                    //ExamPrSubFee = Data.ExamPrSubFee;
+                                    //ExamAddSubFee = Data.ExamAddSubFee;
+                                    //ExamStartDate = Data.ExamStartDate;
+                                    //ExamEndDate = Data.ExamEndDate;
                                     //ExamBankLastDate += Data.ExamBankLastDate;
                                     HardCopyCertificateFee = Data.HardCopyCertificateFee;
                                     lastpaidFee = Data.lastPaidFee;
                                     totalCalculatedFee = TotalFee + ExamTotalFee;
                                     total_Fee_To_Pay = totalCalculatedFee - lastpaidFee;
-                                    if (total_Fee_To_Pay > 0)
+                                    //if (total_Fee_To_Pay > 0)
                                     {
 
 
                                         <tr>
                                             <td align="center">
-                                                <input type="checkbox" id='@noCountval' onchange="calculateSum(this.id)" name="selectedItems" value="@TotalFee-@ExamTotalFee-@AppNo-@AdmissionFee-@LateFee-@ProsFee-@AddSubFee-@RegConti-@ExamRegFee-@ExamLateFee-@lastpaidFee" />
+                                                <input type="checkbox" id='@noCountval' onchange="calculateSum(this.id)" name="selectedItems" value="@TotalFee-@ExamTotalFee-@AppNo-@AdmissionFee-@LateFee-@ProsFee-@AddSubFee-@RegConti-@ExamRegFee-@ExamLateFee-@lastpaidFee-@HardCopyCertificateFee-@std_id" />
                                             </td>
                                             <td align="center">@std_id</td>
-                                            <td align="center">@AppNo</td>
+                                            @*<td align="center">@AppNo</td>*@
                                             <td align="center">@AddSubFee</td>
                                             <td align="center">@LateFee</td>
                                             <td align="center">@HardCopyCertificateFee</td>
-                                            <td align="center">@LateFee</td>
+                                            @*<td align="center">@LateFee</td>
                                             <td align="center">@ProsFee</td>
                                             <td align="center">@RegConti</td>
                                             <td align="center">@AdmissionFee</td>
 
-                                            <td align="center">@TotalFee</td>
+                                            <td align="center">@TotalFee</td>*@
 
-                                            <td align="center">@ExamRegFee</td>
+                                            @*<td align="center">@ExamRegFee</td>
                                             <td align="center">@ExamLateFee</td>
                                             <td align="center">@ExamTotalFee</td>
                                             <td align="center">@ExamPrSubFee</td>
                                             <td align="center">@ExamAddSubFee</td>
                                             <td align="center">@totalCalculatedFee</td>
                                             <td align="center">@lastpaidFee</td>
-                                            <td align="center">@total_Fee_To_Pay</td>
+                                            <td align="center">@total_Fee_To_Pay</td>*@
 
 
                                         </tr>
@@ -434,7 +434,7 @@
             alert("Are you sure to Final Submit ?");
             $('#myForm').submit();
             // Submit the form using AJAX
-            @*$.ajax({
+            $.ajax({
                 type: "POST",
                 url: "@Url.Action("ProcessCheckedItems", "Open")",
                 data: { selectedItems: selectedItems, bankCode: bankCodehdfc },
@@ -446,7 +446,7 @@
                     // Handle errors if any
                     console.log(error);
                 }
-            });*@
+            });
         });
     });
 </script>
@@ -462,48 +462,114 @@
     var lastpaidFee = 0;
     var sum = 0;
     var totalCount = 0;
+    var roll = 0;
     function calculateSum(id) {
-
+    
         var selId = "#" + id
-
-
         /* if ($("input[name='selectedItems']:checked"))*/
-
-
+        
         if ($(selId).is(':checked')) {
+           // totalCount = 0;
+            $('#sum').val('');
+            $('#totCount').val('');
+      
+            var values = JSON.parse("[" + $(selId).val().split('-').map(Number) + "]");
 
-            // Split the values based on '-' and calculate the sum
-            var values = JSON.parse("[" + $(selId).val().split('-') + "]");
-
-            //var values = $('#selectedItems').val().split('-');
-
-
-
-
-
-            console.log("values.length", values.length);
-
-            totalFee += parseFloat(values[0]) || 0;
-            ExamTotalFee += parseFloat(values[1]) || 0;
-            lastpaidFee += parseFloat(values[10]) || 0;
-
-
-
-
-
-            sum = totalFee + ExamTotalFee;
-            sum = sum - lastpaidFee;
+          
+          
+           
+            lastpaidFee += parseFloat(values[11]) || 0;
+            var valuesArray = [];
+            roll = parseFloat(values[12]) || 0;
+            valuesArray.push(roll);
+            var commaSeparatedValues = valuesArray.join(',');
+        
+            sum = Math.abs(lastpaidFee);
             totalCount++;
 
             $('#sum').val(sum);
             $('#totCount').val(totalCount);
-        } else {
-            $('#sum').val('');
-            $('#totCount').val('');
+        }
+        else {
+            totalCount--;
+            //$('#sum').val('');
+            if ($(selId).prop('checked', false)) {
+                ; // Uncheck the checkbox
+               
+
+                var values = JSON.parse("[" + $(selId).val().split('-').map(Number) + "]");
+
+
+
+
+                lastpaidFee -= parseFloat(values[11]) || 0;
+                sum = Math.abs(lastpaidFee);
+                $('#sum').val(sum);
+
+            }
+            $('#totCount').val(totalCount);
+            //lastpaidFee = 0;
         }
     }
    // });
+
+
+
+
+
+   //////testing
+    //calculateTotal();
+ 
+    //    // Function to calculate the total
+    //    function calculateTotal(id) {
+    //        console.log("fasfdhthyjyjytjz", id);
+    //        var selId =  id
+    //        var total = 0;
+    //        // Loop through each checkbox
+    //        $(selId).each(function () {
+    //            // If checkbox is checked, add its value to total
+    //            if ($(this).is(':checked')) {
+                   
+    //                var values = JSON.parse("[" + $(selId).val().split('-').map(Number) + "]");
+    //                console.log("values[11]", values[11]);
+    //                total += parseFloat(values[11]) || 0;
+    //                sum = total
+    //                totalCount++;
+
+    //                console.log("summmm", total);
+
+    //                $('#sum').val(sum);
+    //                $('#totCount').val(totalCount);
+
+                    
+    //            }
+    //        });
+    //        // Update the total on the page
+    //        //$('#sum').val(sum);
+    //        //$('#totCount').val(totalCount);
+    //    }
+
+    //    // Call calculateTotal() on page load
+    
+
+    //    // Call calculateTotal() whenever a checkbox is clicked
+
+        
+ 
+
+    //function oncheckchange(id) {
+    //    console.log("fdrrerr", id);
+    //    var selId = "#" + id
+    //    calculateTotal(selId);
+    //}
+
+
+   ////testing end
 </script>
+
+
+
+
 
 
 @*

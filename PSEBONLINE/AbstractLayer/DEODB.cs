@@ -4033,37 +4033,73 @@ namespace PSEBONLINE.AbstractLayer
                 return result = null;
             }
         }
-        public string UpdateSportMarkEntry(string Rollno, string refno, string SportName, string currentUser, string ccode, string ag, string ses, string pos)
-        {
-            string result = "";
-            try
-            {
-                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
-                {
-                    SqlCommand cmd = new SqlCommand("UpdateSportMarkEntry_Sp", con);//ReGenerateChallaanByIdSPAdminNew
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Rollno", Rollno);
-                    cmd.Parameters.AddWithValue("@refno", refno);
-                    cmd.Parameters.AddWithValue("@SportName", SportName);
-                    cmd.Parameters.AddWithValue("@currentUser", currentUser);
-                    cmd.Parameters.AddWithValue("@ccode", ccode);
-                    cmd.Parameters.AddWithValue("@ag", ag);
-                    cmd.Parameters.AddWithValue("@ses", ses);
-                    cmd.Parameters.AddWithValue("@pos", pos);
-                    con.Open();
-                    result = cmd.ExecuteNonQuery().ToString();
-                    if (con.State == ConnectionState.Open)
-                        con.Close();
+		public string UpdateSportMarkEntry(string Rollno, string refno, string SportName, string currentUser, string ccode, string ag, string ses, string pos)
+		{
+			string result = "";
+			string sportsmarks = "";
+			if (ccode == "State")
+			{
+				if (pos == "1st")
+				{
+					sportsmarks = "15";
+				}
+				if (pos == "2nd")
+				{
+					sportsmarks = "12";
+				}
+				if (pos == "3rd")
+				{
+					sportsmarks = "9";
+				}
+			}
+			if (ccode == "National")
+			{
+				if (pos == "1st")
+				{
+					sportsmarks = "25";
+				}
+				if (pos == "2nd")
+				{
+					sportsmarks = "22";
+				}
+				if (pos == "3rd")
+				{
+					sportsmarks = "19";
+				}
+				if (pos == "Participation")
+				{
+					sportsmarks = "15";
+				}
+			}
+			try
+			{
+				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+				{
+					SqlCommand cmd = new SqlCommand("UpdateSportMarkEntry_Sp", con);//ReGenerateChallaanByIdSPAdminNew
+					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.Parameters.AddWithValue("@Rollno", Rollno);
+					cmd.Parameters.AddWithValue("@refno", refno);
+					cmd.Parameters.AddWithValue("@SportName", SportName);
+					cmd.Parameters.AddWithValue("@currentUser", currentUser);
+					cmd.Parameters.AddWithValue("@ccode", ccode);
+					cmd.Parameters.AddWithValue("@ag", ag);
+					cmd.Parameters.AddWithValue("@ses", ses);
+					cmd.Parameters.AddWithValue("@pos", pos);
+					cmd.Parameters.AddWithValue("@marks", sportsmarks);
+					con.Open();
+					result = cmd.ExecuteNonQuery().ToString();
+					if (con.State == ConnectionState.Open)
+						con.Close();
 
-                    return result;
-                }
-            }
-            catch (Exception ex)
-            {
-                return result = "";
-            }
-        }
-        public string DeleteSportEntry(string Rollno, string currentUser)
+					return result;
+				}
+			}
+			catch (Exception ex)
+			{
+				return result = "";
+			}
+		}
+		public string DeleteSportEntry(string Rollno, string currentUser)
         {
             string result = "";
             try
@@ -4268,5 +4304,31 @@ namespace PSEBONLINE.AbstractLayer
 				return null;
 			}
 		}
+
+		public DataSet CapacityLetterForSeniorWithNOC(string SCHL)
+		{
+			// SqlConnection con = null;
+			DataSet result = new DataSet();
+			SqlDataAdapter ad = new SqlDataAdapter();
+			try
+			{
+				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+				{
+					SqlCommand cmd = new SqlCommand("CapacityLetterForSeniorWithNOC_Sp", con);
+					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.Parameters.AddWithValue("@SCHL", SCHL);
+					ad.SelectCommand = cmd;
+					ad.Fill(result);
+					//con.Open();
+					return result;
+				}
+
+			}
+			catch (Exception ex)
+			{
+				return result = null;
+			}
+		}
+
 	}
 }

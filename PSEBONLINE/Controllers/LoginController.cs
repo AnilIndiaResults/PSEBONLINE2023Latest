@@ -257,9 +257,11 @@ namespace PSEBONLINE.Controllers
                                 HttpContext.Session["Schtype4form"] = dt.Rows[0]["Schtype4form"].ToString();
                                 HttpContext.Session["12Supt"] = dt.Rows[0]["12Supt"].ToString();
                                 HttpContext.Session["10Supt"] = dt.Rows[0]["10Supt"].ToString();
-                                
+								HttpContext.Session["SOESCHL"] = dt.Rows[0]["SOESCHL"].ToString();
 
-                                HttpContext.Session["EXAMCENTSCHLN"] = dt.Rows[0]["cent"].ToString();
+
+
+								HttpContext.Session["EXAMCENTSCHLN"] = dt.Rows[0]["cent"].ToString();
                                 for (int i = 0; i < dt.Rows.Count; i++)
                                 {
                                     if (dt.Rows[i]["cent"].ToString().Length == 5)

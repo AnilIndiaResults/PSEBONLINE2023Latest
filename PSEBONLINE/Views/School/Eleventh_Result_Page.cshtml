@@ -27,7 +27,7 @@
 
         window.setInterval(function () {
             var current = new Date();
-            var expiry = new Date("May 15, 2023 23:59:59")
+            var expiry = new Date("APR 30, 2024 23:59:59")
             if (current.getTime() > expiry.getTime()) {
                 $("#hideint").hide();
                 $(".hideint").hide();
@@ -41,6 +41,9 @@
 </script>
 
 <script type="text/javascript">
+
+
+
     $(function () {
         $(".kdsddl").change(function () {
             if ($(this).val() == "1") {
@@ -91,7 +94,7 @@
                     {
                         <a href="/School/Eleventh_Result_Page_Report?id=FP" class="btn">Final Report</a>
                         <span class="hideint">
-                            <input type="submit" class="btn" name="cmd" value="Unlock Final Submission" onclick="return confirm('Are Sure To Unlock Final Submission Your Eleventh Result?')" />
+                            <input type="submit" class="btn" name="cmd" value="Unlock Final Submission" onclick="return confirm('Are you sure to Unlock Final Submission of your Result? Once the result is unlocked, you have to final submit it again after all the updations else data will not be locked.')" />
                         </span>
 
                     }
@@ -126,7 +129,7 @@
             }
         </div>
         <div class="col-md-4 text-right">
-            <h3 class="rqf">Last Date : 15/05/2023</h3>
+            <h3 class="rqf">Last Date : 30/04/2024</h3>
         </div>
         <div class="clearfix"></div>
         <div class="col-md-12">
@@ -226,9 +229,14 @@
                                             <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
                                         </td>*@
                                     <td>
-                                        @if (FS == "1" && Result != "RL" && Result != "COMPARTMENT")
+                                        @if (FS == "1" && Result != "RL" && Result != "RE-APPEAR")
                                         {
                                             <button type="button" class="">LOCKED</button>
+                                        }
+                                        else if (FS == "1" && (Result == "RL" || Result == "RE-APPEAR"))
+                                        {
+                                            <button type="button" class="">LOCKED</button>
+                                            <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
                                         }
                                         else
                                         {
@@ -388,9 +396,10 @@
                                                     <tr>
                                                         <td>Result</td>
                                                         <td>@Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target kdsddl", id = "ResultList-" + stdid })</td>
+
                                                     </tr>
                                                     <tr>
-                                                        <td>Total Mark</td>
+                                                        <td>Total Marks</td>
                                                         <td>
                                                             @Html.Raw("")
                                                             <input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="500" readonly="readonly" />
@@ -399,7 +408,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="dvPassport">Obtain Mark</td>
+                                                        <td class="dvPassport">Obtained Marks</td>
                                                         <td class="dvPassport">@Html.Raw("")<input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /><br /></td>
                                                     </tr>
                                                     <tr>
@@ -423,14 +432,14 @@
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td>Total Mark</td>
+                                                            <td>Total Marks</td>
                                                             <td>
                                                                 <input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="500" readonly="readonly" />
                                                                 @*<input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="@totmarks" />*@
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="dvPassport">Obtain Mark</td>
+                                                            <td class="dvPassport">Obtained Marks</td>
                                                             <td class="dvPassport"><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" onfocusout="CalculatePercentFunction(@stdid)" /></td>
                                                         </tr>
                                                         <tr>
@@ -462,6 +471,11 @@
                                                         <tr>
                                                             <td class="dvPassporta">Reason/Remarks </td>
                                                             <td class="dvPassporta"><input type="Text" id="UPTREMARKS-@stdid" name="UPTREMARKS" class="" value="@UPTREMARKS" /></td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev,@schl)" /></td>
                                                         </tr>
                                                     }
                                                 }
@@ -520,7 +534,7 @@
         else if (TempData["result"].ToString() == "10")
         {
             <script type="text/javascript" language="javascript">
-                alert("Unlock Final Submission Successfuly");
+                alert("Result is unlocked successfully, you have to Final Submit it again after doing all the updations otherwise your School's result will not be locked.");
                 window.location.href = '@Url.Action("Eleventh_Result_Page", "School")';
             </script>
         }
@@ -680,7 +694,7 @@
                 totMarks.focus();
                 return false;
             }
-            if (obtMarks == "" || obtMarks == null) {
+            if ((obtMarks == "" || obtMarks == null) && rl == "1") {
                 alert("Please Fill Obtained marks");
                 obtMarks.focus();
                 return false;

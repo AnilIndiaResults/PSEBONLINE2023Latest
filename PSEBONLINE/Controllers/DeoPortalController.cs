@@ -8541,19 +8541,20 @@ namespace PSEBONLINE.Controllers
                 return View(AM);
             }
         }
-        #endregion DEO SCHOOL Data Download
-        //-----------------------------------End------------------------------------------------------
+		#endregion DEO SCHOOL Data Download
+		//-----------------------------------End------------------------------------------------------
 
-        #region Begin Admin Result Update MIS
-        public ActionResult AdminUpdateCentreMaster()
+		#region Begin Admin Result Update MIS
+		[AdminLoginCheckFilter]
+		public ActionResult AdminUpdateCentreMaster()
         {
             try
             {
-                if (Session["User"] == null && (Session["User"].ToString().ToUpper() != "ADMIN"))
-                {
-                    return RedirectToAction("Index", "DeoPortal");
-                }
-                else
+				if (Session["AdminId"] == null)
+				{
+					return RedirectToAction("Index", "Admin");
+				}
+				else
                 {
                     return View();
                 }
@@ -8561,23 +8562,24 @@ namespace PSEBONLINE.Controllers
             catch (Exception)
             {
 
-                return RedirectToAction("Index", "DeoPortal");
+                return RedirectToAction("Index", "Admin");
             }
 
         }
 
         [HttpPost]
-        public ActionResult AdminUpdateCentreMaster(DEOModel AM) // HttpPostedFileBase file
+		[AdminLoginCheckFilter]
+		public ActionResult AdminUpdateCentreMaster(DEOModel AM) // HttpPostedFileBase file
         {
             AbstractLayer.DEODB objDB = new AbstractLayer.DEODB();
             try
             {
-                // firm login // dist 
-                if ((Session["User"].ToString().ToUpper() != "ADMIN"))
-                {
-                    return RedirectToAction("Index", "DeoPortal");
-                }
-                else
+				// firm login // dist 
+				if (Session["AdminId"] == null)
+				{
+					return RedirectToAction("Index", "Admin");
+				}
+				else
                 {
                     //HttpContext.Session["AdminType"]
                     string AdminUser = Session["User"].ToString();
@@ -9899,7 +9901,193 @@ namespace PSEBONLINE.Controllers
 
             }
         }
-        //---------------------------End------------------------------//
+		//---------------------------End------------------------------//
 
-    }
+		public ActionResult CapacityLetterForMeritoriousandSOEexam(DEOModel DEO)
+		{
+			string schl = null;
+			ViewBag.Date = DateTime.Now.ToString("dd/MM/yyyy");
+			try
+			{
+				if ((Session["SCHL"] == null || Session["SCHL"].ToString() == "") && Session["USER"].ToString().ToUpper() != "ADMIN")
+				{
+					Session.Clear();
+					return RedirectToAction("Logout", "Login");
+				}
+
+				//if(Session["USER"].ToString().ToUpper() == "ADMIN")
+				//{
+				//    DataSet Dresult = OBJDB.AdminGetALLSCHL(); //
+				//    List<SelectListItem> DistList = new List<SelectListItem>();
+				//    foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+				//    {
+				//        DistList.Add(new SelectListItem { Text = @dr["schoole"].ToString(), Value = @dr["CSCHL"].ToString() });
+				//    }
+				//    ViewBag.Dist = DistList;
+
+
+				//} 
+				//else
+				//{
+				//    schl = Session["SCHL"].ToString();
+				//}
+
+				schl = Session["SCHL"].ToString();
+				DEO.StoreAllData = OBJDB.CapacityLetter(schl);
+				if (DEO.StoreAllData == null || DEO.StoreAllData.Tables[0].Rows.Count == 0)
+				{
+					ViewBag.Message = "DATA DOESN'T EXIST";
+					ViewBag.TotalCount = 0;
+					return View();
+				}
+				else
+				{
+					ViewBag.TotalCount = DEO.StoreAllData.Tables[0].Rows.Count;
+					return View(DEO);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				return View();
+
+			}
+		}
+		[HttpPost]
+		public ActionResult CapacityLetterForMeritoriousandSOEexam(DEOModel DEO, FormCollection frc)
+		{
+			string schl = null;
+			ViewBag.Date = DateTime.Now.ToString("dd/MM/yyyy");
+			try
+			{
+				if ((Session["SCHL"] == null || Session["SCHL"].ToString() == "") && Session["USER"].ToString().ToUpper() != "ADMIN")
+				{
+					Session.Clear();
+					return RedirectToAction("Logout", "Login");
+				}
+
+				if (Session["USER"].ToString().ToUpper() == "ADMIN")
+				{
+					DataSet Dresult = OBJDB.AdminGetALLSCHL(); //
+					List<SelectListItem> DistList = new List<SelectListItem>();
+					foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+					{
+						DistList.Add(new SelectListItem { Text = @dr["schoole"].ToString(), Value = @dr["CSCHL"].ToString() });
+					}
+					ViewBag.Dist = DistList;
+
+
+
+				}
+				schl = frc["SelDist"].ToString();
+
+				DEO.StoreAllData = OBJDB.CapacityLetter(schl);
+				if (DEO.StoreAllData == null || DEO.StoreAllData.Tables[0].Rows.Count == 0)
+				{
+					ViewBag.Message = "DATA DOESN'T EXIST";
+					ViewBag.TotalCount = 0;
+					return View();
+				}
+				else
+				{
+					ViewBag.TotalCount = DEO.StoreAllData.Tables[0].Rows.Count;
+					return View(DEO);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				//oErrorLog.WriteErrorLog(ex.ToString(), Path.GetFileName(Request.Path));
+				return View();
+
+			}
+		}
+
+
+		//--------------------Capacity Letter For School Login------------------------------//
+		public ActionResult CapacityLetterForSeniorPractical(DEOModel DEO)
+		{
+			string schl = null;
+			ViewBag.Date = DateTime.Now.ToString("dd/MM/yyyy");
+			try
+			{
+				if ((Session["SCHL"] == null || Session["SCHL"].ToString() == "") && Session["USER"].ToString().ToUpper() != "ADMIN")
+				{
+					Session.Clear();
+					return RedirectToAction("Logout", "Login");
+				}
+
+				schl = Session["SCHL"].ToString();
+				DEO.StoreAllData = OBJDB.CapacityLetterForSeniorWithNOC(schl);
+				if (DEO.StoreAllData == null || DEO.StoreAllData.Tables[0].Rows.Count == 0)
+				{
+					ViewBag.Message = "DATA DOESN'T EXIST";
+					ViewBag.TotalCount = 0;
+					return View();
+				}
+				else
+				{
+					ViewBag.TotalCount = DEO.StoreAllData.Tables[0].Rows.Count;
+					return View(DEO);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				return View();
+
+			}
+		}
+		[HttpPost]
+		public ActionResult CapacityLetterForSeniorPractical(DEOModel DEO, FormCollection frc)
+		{
+			string schl = null;
+			ViewBag.Date = DateTime.Now.ToString("dd/MM/yyyy");
+			try
+			{
+				if ((Session["SCHL"] == null || Session["SCHL"].ToString() == "") && Session["USER"].ToString().ToUpper() != "ADMIN")
+				{
+					Session.Clear();
+					return RedirectToAction("Logout", "Login");
+				}
+
+				if (Session["USER"].ToString().ToUpper() == "ADMIN")
+				{
+					DataSet Dresult = OBJDB.AdminGetALLSCHL(); //
+					List<SelectListItem> DistList = new List<SelectListItem>();
+					foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+					{
+						DistList.Add(new SelectListItem { Text = @dr["schoole"].ToString(), Value = @dr["CSCHL"].ToString() });
+					}
+					ViewBag.Dist = DistList;
+
+
+
+				}
+				schl = frc["SelDist"].ToString();
+
+				DEO.StoreAllData = OBJDB.CapacityLetterForSeniorWithNOC(schl);
+				if (DEO.StoreAllData == null || DEO.StoreAllData.Tables[0].Rows.Count == 0)
+				{
+					ViewBag.Message = "DATA DOESN'T EXIST";
+					ViewBag.TotalCount = 0;
+					return View();
+				}
+				else
+				{
+					ViewBag.TotalCount = DEO.StoreAllData.Tables[0].Rows.Count;
+					return View(DEO);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				//oErrorLog.WriteErrorLog(ex.ToString(), Path.GetFileName(Request.Path));
+				return View();
+
+			}
+		}
+		//---------------------------End------------------------------//
+
+	}
 }

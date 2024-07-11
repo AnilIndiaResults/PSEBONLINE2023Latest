@@ -530,7 +530,7 @@ namespace PSEBONLINE.Controllers
             AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
             PrivateCandidateModels MS = new PrivateCandidateModels();
             List<SelectListItem> yearlist1 = new List<SelectListItem>();
-            if (SelBatch == "1" && SelBatchYear == "2022")
+            if (SelBatch == "7" && SelBatchYear == "2024" && (SelCat=="R"))
             {
                 //if (SelCat == "SD" && SelRP == "R")
                 if (SelCat == "SD")
@@ -543,24 +543,24 @@ namespace PSEBONLINE.Controllers
                 // else if (SelCat == "R" && SelClass == "10" && SelRP == "O")
                 else if (SelCat == "R" && SelRP == "O")
                 {
-                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 2019 && Convert.ToInt32(s.Value) <= 2021).ToList();
+                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 2022 && Convert.ToInt32(s.Value) <= 2024).ToList();
                     yearlist.Reverse();
                     ViewBag.MyYear = yearlist;
                     return Json(yearlist);
                 }
                 else if (SelCat == "R" && SelRP == "R")
                 {
-                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 2021 && Convert.ToInt32(s.Value) <= 2021).ToList();
+                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 2024 && Convert.ToInt32(s.Value) <= 2024).ToList();
                     yearlist.Reverse();
                     ViewBag.MyYear = yearlist;
                     return Json(yearlist);
                 }
             }
-            else if (SelBatch == "11" && SelBatchYear == "2021") // OCT
+            else if (SelBatch == "7" && SelBatchYear == "2024" && SelCat == "A") // OCT
             {
                 if (SelCat == "A")
                 {
-                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 1950 && Convert.ToInt32(s.Value) <= 2021).ToList();
+                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 1969 && Convert.ToInt32(s.Value) <= 2024).ToList();
 
                     ViewBag.MyYear = yearlist;
                     return Json(yearlist);
@@ -1283,6 +1283,7 @@ namespace PSEBONLINE.Controllers
 
         }
         public ActionResult PrivateCandidateConfirmation(string refno, PrivateCandidateModels MS)
+        
         {
             ViewBag.YesNoList = new AbstractLayer.DBClass().GetYesNoText();
             AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
@@ -1741,7 +1742,7 @@ namespace PSEBONLINE.Controllers
 
                             if (phtURL != "" && (!phtURL.Contains("allfiles") || !phtURL.Contains("Upload")))
                             {
-                                MS.imgPhoto = MS.imgPhoto.Replace("allfiles/", "");
+                                MS.imgPhoto = MS.imgPhoto.Replace("UPLOAD/", "allfiles/Upload");
                                 MS.imgSign = MS.imgSign.Replace("allfiles/", "");
                                 string Photo = "";
                                 string sign = "";
@@ -2460,7 +2461,7 @@ namespace PSEBONLINE.Controllers
 
 
 
-                MS.IsHardCopyCertificate = "YES";
+                MS.IsHardCopyCertificate = MS.Class=="10" || MS.Class == "12" ?"YES": frm["IsHardCopyCertificate"].ToString();
                 if (string.IsNullOrEmpty(MS.IsHardCopyCertificate))
                 {
                     MS.category = frm["category"].ToString();
@@ -5349,7 +5350,27 @@ namespace PSEBONLINE.Controllers
                         MS.sub6 = MS.StoreAllData.Tables[0].Rows[0]["rsub6code"].ToString();
                         MS.sub7 = MS.StoreAllData.Tables[0].Rows[0]["rsub7code"].ToString();
                         MS.sub8 = MS.StoreAllData.Tables[0].Rows[0]["rsub8code"].ToString();
-                        if (MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "R" || MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "D" || MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "A")
+						if (MS.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "5")
+						{
+							List<SelectListItem> sitems = new List<SelectListItem>();
+							foreach (System.Data.DataRow dr in MS.StoreAllData.Tables[3].Rows)
+							{
+								sitems.Add(new SelectListItem { Text = @dr["name_eng"].ToString(), Value = @dr["sub"].ToString() });
+							}
+							ViewBag.SubFifth = new SelectList(sitems, "Value", "Text");
+						}
+
+						if (MS.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "8")
+						{
+							List<SelectListItem> sitems = new List<SelectListItem>();
+							foreach (System.Data.DataRow dr in MS.StoreAllData.Tables[4].Rows)
+							{
+								sitems.Add(new SelectListItem { Text = @dr["name_eng"].ToString(), Value = @dr["sub"].ToString() });
+							}
+							ViewBag.SubEight = new SelectList(sitems, "Value", "Text");
+						}
+
+						if (MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "R" || MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "D" || MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "A")
                         {
                             //MS.sub1 = MS.StoreAllData.Tables[0].Rows[0]["rsub1"].ToString();
                             //MS.sub2 = MS.StoreAllData.Tables[0].Rows[0]["rsub2"].ToString();
@@ -5449,8 +5470,9 @@ namespace PSEBONLINE.Controllers
 
 
                         MS.FormStatus = MS.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+						MS.SearchString = MS.StoreAllData.Tables[0].Rows[0]["Remarks"].ToString();
 
-                        return View(MS);
+						return View(MS);
                         //return Private_Candidate_Examination_Form();
                         //return Pre_Private_Candidate_Introduction_Form(frm);
                     }
@@ -5536,26 +5558,60 @@ namespace PSEBONLINE.Controllers
                 MS.SelYear = frm["SelYear"].ToString();
                 MS.Result = frm["result"].ToString();
                 MS.Class = frm["Class"].ToString();
-                if (MS.Class.ToLower() == "Matriculation".ToLower())
+
+                if (MS.Class.ToLower() == "10" || MS.Class.ToLower() == "Matriculation".ToLower())
                 {
                     MS.Class = "10";
-                    MS.DOB = frm["DOB"].ToString();
+                    try
+                    {
+						MS.DOB = string.IsNullOrEmpty(frm["DOB"].ToString()) ? "" : frm["DOB"].ToString();
+					}
+                    catch
+                    {
+                        MS.DOB = "";
+
+					}
+                   
                 }
-                else if (MS.Class.ToLower() == "Senior Secondary".ToLower())
+                else if (MS.Class.ToLower() == "12" ||  MS.Class.ToLower() == "Senior Secondary".ToLower())
                 {
                     MS.Class = "12";
-                    MS.DOB = "";
-                }
-                else if (MS.Class.ToLower() == "Primary".ToLower())
+					try
+					{
+						MS.DOB = string.IsNullOrEmpty(frm["DOB"].ToString()) ? "" : frm["DOB"].ToString();
+					}
+					catch
+					{
+						MS.DOB = "";
+
+					}
+				}
+                else if (MS.Class.ToLower() == "5" ||  MS.Class.ToLower() == "Primary".ToLower())
                 {
                     MS.Class = "5";
-                    MS.DOB = frm["DOB"].ToString();
-                }
-                else if (MS.Class.ToLower() == "Middle".ToLower())
+					try
+					{
+						MS.DOB = string.IsNullOrEmpty(frm["DOB"].ToString()) ? "" : frm["DOB"].ToString();
+					}
+					catch
+					{
+						MS.DOB = "";
+
+					}
+				}
+                else if (MS.Class.ToLower() == "8" ||  MS.Class.ToLower() == "Middle".ToLower())
                 {
                     MS.Class = "8";
-                    MS.DOB = frm["DOB"].ToString();
-                }
+					try
+					{
+						MS.DOB = string.IsNullOrEmpty(frm["DOB"].ToString()) ? "" : frm["DOB"].ToString();
+					}
+					catch
+					{
+						MS.DOB = "";
+
+					}
+				}
 
 
                 MS.Candi_Name = frm["Candi_Name"].ToString();

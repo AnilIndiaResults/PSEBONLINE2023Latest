@@ -59,7 +59,8 @@ namespace PSEBONLINE.Models
         public string PrincipalName2 { get; set; }
         public string PrincipalMobile2 { get; set; }
 
-        public int Finalsubmittedforchoice { get; set; }   
+        public int Finalsubmittedforchoice { get; set; }
+        public string password { get; set; }
 
     }
         

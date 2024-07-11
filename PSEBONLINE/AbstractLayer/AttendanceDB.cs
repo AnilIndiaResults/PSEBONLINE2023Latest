@@ -287,5 +287,33 @@ namespace PSEBONLINE.AbstractLayer
 			}
 
 		}
+
+		public static DataSet DownloadImageData(string rollno)
+		{
+			//List<AttendanceAdminReport> subjectAttendancedetail = new List<AttendanceAdminReport>();
+
+			try
+			{
+				DataSet ds = new DataSet();
+				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+				SqlCommand cmd = new SqlCommand();
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandTimeout = 300;
+				cmd.CommandText = "DownloadImageData_sp";
+				//cmd.Parameters.AddWithValue("@centrecode", centrecode);
+				cmd.Parameters.AddWithValue("@roll", rollno);
+
+				ds = db.ExecuteDataSet(cmd);
+
+				return ds;
+			}
+			catch (Exception ex)
+			{
+				return null;
+			}
+
+		}
+
+
 	}
 }

@@ -5543,7 +5543,7 @@ namespace PSEBONLINE.Controllers
 			{
 				//if (Session["UserName"] == null || Session["AdminType"].ToString().ToUpper() != "BRANCH")
 				//{
-				//    return RedirectToAction("Index", "Admin");
+				//	return RedirectToAction("Index", "Admin");
 				//}
 				if (!Session["UserName"].ToString().ToLower().Contains("conduct"))
 				{
@@ -5559,25 +5559,25 @@ namespace PSEBONLINE.Controllers
 				string Search = string.Empty;
 				Search = "a.subnm like '%%'";
 				string UserName = Session["UserName"].ToString();
-				// am.StoreAllData = objDB.ConductPrintList_New(cls, lot, Search);
-				//  ViewBag.TotalCountP = am.StoreAllData.Tables[0].Rows.Count;
-				ViewBag.lot = lot;
-				HttpContext.Session["cls"] = cls;
-				HttpContext.Session["lot"] = lot;
-				ViewBag.Message = "Record Not Found";
-				ViewBag.TotalCount = 0;
-				return View(am);
-				//if (am.StoreAllData == null || am.StoreAllData.Tables[0].Rows.Count == 0)
-				//{
-				//    ViewBag.Message = "Record Not Found";
-				//    ViewBag.TotalCount = 0;
-				//    return View(am);
-				//}
-				//else
-				//{
-				//    ViewBag.TotalCount = 1;
-				//    return View(am);
-				//}
+				am.StoreAllData = objDB.ConductPrintList_New(cls, lot, Search);
+				if (am.StoreAllData == null || am.StoreAllData.Tables[0].Rows.Count == 0)
+				{
+					ViewBag.Message = "Record Not Found";
+					ViewBag.TotalCount = 0;
+					return View(am);
+				}
+				else
+				{
+					ViewBag.TotalCountP = am.StoreAllData.Tables[0].Rows.Count;
+					ViewBag.lot = lot;
+					HttpContext.Session["cls"] = cls;
+					HttpContext.Session["lot"] = lot;
+					ViewBag.TotalCount = am.StoreAllData.Tables[0].Rows.Count;
+					return View(am);
+				}
+			
+				
+				
 			}
 			catch (Exception)
 			{
@@ -27679,6 +27679,135 @@ namespace PSEBONLINE.Controllers
 
 
 		#endregion  Admin Result Update MIS
+
+
+		#region OpenSchoolStreamDataReport
+
+		public ActionResult OpenSchoolStreamDataReport()
+		{
+			string districts = string.Empty;
+			// Dist Allowed
+			string DistAllow = "";
+			if (ViewBag.DistAllow != null)
+			{
+				DistAllow = ViewBag.DistAllow;
+			}
+			List<SelectListItem> OpenDistricts = objDB1.OpenSchoolDistricts();
+			if (ViewBag.DistUser == null || ViewBag.DistAllow == null)
+			{
+				ViewBag.Districts = new AbstractLayer.OpenDB().GetDistrict();
+			}
+			else
+			{
+				ViewBag.Districts = ViewBag.DistUser;
+			}
+
+			List<SelectListItem> dist = new List<SelectListItem>();
+			List<SelectListItem> dist1 = new List<SelectListItem>();
+			dist1 = (List<SelectListItem>)ViewBag.Districts;
+			foreach (SelectListItem sel in dist1)
+			{
+				if (OpenDistricts.Find(f => f.Value == sel.Value) != null)
+				{
+					dist.Add(sel);
+				}
+			}
+
+			ViewBag.Districts = dist;
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult OpenSchoolStreamDataReport(FormCollection fc)
+		{
+			string DistAllow = "";
+			if (ViewBag.DistAllow != null)
+			{
+				DistAllow = ViewBag.DistAllow;
+			}
+			if (ViewBag.DistUser == null || ViewBag.DistAllow == null)
+			{
+				ViewBag.Districts = new AbstractLayer.OpenDB().GetDistrict();
+			}
+			else
+			{
+				ViewBag.Districts = ViewBag.DistUser;
+			}
+			ViewBag.SelectedDist = fc["ddlDist"] != null ? fc["ddlDist"].ToString() : string.Empty;
+
+			if (fc["ddlDist"] != null)
+			{
+				var obj = new AbstractLayer.OpenDB().GetOpenSchoolStreamRecords(fc["ddlDist"].ToString());
+				ViewBag.data = obj;
+			}
+			return View();
+		}
+
+		#endregion OpenSchoolStreamDataReport
+		#region OpenMatricSchoolStreamDataReport
+
+		public ActionResult OpenSchoolStreamMatricDataReport()
+		{
+			string districts = string.Empty;
+			// Dist Allowed
+			string DistAllow = "";
+			if (ViewBag.DistAllow != null)
+			{
+				DistAllow = ViewBag.DistAllow;
+			}
+			List<SelectListItem> OpenDistricts = objDB1.OpenSchoolDistricts();
+			if (ViewBag.DistUser == null || ViewBag.DistAllow == null)
+			{
+				ViewBag.Districts = new AbstractLayer.OpenDB().GetDistrict();
+			}
+			else
+			{
+				ViewBag.Districts = ViewBag.DistUser;
+			}
+
+			List<SelectListItem> dist = new List<SelectListItem>();
+			List<SelectListItem> dist1 = new List<SelectListItem>();
+			dist1 = (List<SelectListItem>)ViewBag.Districts;
+			foreach (SelectListItem sel in dist1)
+			{
+				if (OpenDistricts.Find(f => f.Value == sel.Value) != null)
+				{
+					dist.Add(sel);
+				}
+			}
+
+			ViewBag.Districts = dist;
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult OpenSchoolStreamMatricDataReport(FormCollection fc)
+		{
+			string DistAllow = "";
+			if (ViewBag.DistAllow != null)
+			{
+				DistAllow = ViewBag.DistAllow;
+			}
+			if (ViewBag.DistUser == null || ViewBag.DistAllow == null)
+			{
+				ViewBag.Districts = new AbstractLayer.OpenDB().GetDistrict();
+			}
+			else
+			{
+				ViewBag.Districts = ViewBag.DistUser;
+			}
+			ViewBag.SelectedDist = fc["ddlDist"] != null ? fc["ddlDist"].ToString() : string.Empty;
+
+			if (fc["ddlDist"] != null)
+			{
+				var obj = new AbstractLayer.OpenDB().GetOpenStreamMatricSchoolRecords(fc["ddlDist"].ToString());
+				ViewBag.data = obj;
+			}
+			return View();
+		}
+
+		#endregion OpenSchoolStreamDataReport
+
 	}
 }
 

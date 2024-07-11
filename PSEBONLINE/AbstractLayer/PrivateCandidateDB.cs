@@ -798,7 +798,8 @@ namespace PSEBONLINE.AbstractLayer
             itemSession.Add(new SelectListItem { Text = "2021", Value = "2021" });
             itemSession.Add(new SelectListItem { Text = "2022", Value = "2022" });
             itemSession.Add(new SelectListItem { Text = "2023", Value = "2023" });
-            return itemSession;
+			itemSession.Add(new SelectListItem { Text = "2024", Value = "2024" });
+			return itemSession;
         }
         public DataTable SessionMaster()
         {

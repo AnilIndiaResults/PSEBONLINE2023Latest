@@ -668,8 +668,9 @@ namespace PSEBONLINE.AbstractLayer
             {
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
                 {
-                    SqlCommand cmd = new SqlCommand("LoginSP", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlCommand cmd = new SqlCommand();
+					cmd = new SqlCommand("LoginSP", con);
+					cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@UserName", LM.username);
                     cmd.Parameters.AddWithValue("@Password", LM.Password);
                     cmd.Parameters.Add("@OutStatus", SqlDbType.Int).Direction = ParameterDirection.Output;

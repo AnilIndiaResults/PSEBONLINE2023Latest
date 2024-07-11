@@ -643,16 +643,19 @@
                             }
                         </div>
                         <div class="clearfix"></div>
-                        @*<div class="col-md-3">
+                        <div class="col-md-3">
                                 Do you want Hard Copy of Certificate?<sup style="color:red;font-size:15px;">*</sup>
                             </div>
                             <div class="col-md-9">
 
                                 @{
                                     var FormStatus21 = Model.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
-                                    if (FormStatus21 == "2" || FormStatus21 == "3")
+                                    var cls = Model.StoreAllData.Tables[0].Rows[0]["class"].ToString();
+
+                                    if ((FormStatus21 == "2" || FormStatus21 == "3" || cls=="10" || cls=="12"))
                                     {
-                                        @Html.DropDownListFor(model => model.IsHardCopyCertificate, (List<SelectListItem>)ViewBag.YesNoList, "--Select--", new { required = "required", @disabled = "disabled" })
+
+                                        @Html.DropDownListFor(model => model.IsHardCopyCertificate, (List<SelectListItem>)ViewBag.YesNoList, "YES", new { required = "required", @disabled = "disabled" })
 
                                         @Html.HiddenFor(a => a.IsHardCopyCertificate)
 
@@ -664,7 +667,7 @@
                                 }
 
 
-                            </div>*@
+                            </div>
 
                     </div>
 
@@ -1295,6 +1298,10 @@
                     var errRefNo = Model.StoreAllData.Tables[0].Rows[0]["errRefNo"].ToString();
                     var SUBMITCAND = Model.StoreAllData.Tables[0].Rows[0]["SUBMITCAND"].ToString();
                     var NoOfchallanApplied = Model.StoreAllData.Tables[0].Rows[0]["NoOfchallanApplied"].ToString();
+                    var batch = Model.StoreAllData.Tables[0].Rows[0]["batch"].ToString();
+                    string batchMonth = batch == "3" ? "March" : "July";
+                    <input type="hidden" value="@batchMonth" id="hdnFlag" />
+
 
                     if (Model.Class == "5" || Model.Class == "8" || Model.Class == "Primary" || Model.Class == "Middle")
                     {
@@ -1335,7 +1342,17 @@
                             {
                                 <input value="Unlock Final Submit" type="button" onclick="javascript:document.location.href='@Url.Action("UnlockFinalSubmitPrivateCandidate", "PrivateCandidate")'" />
                             }
-                            <input value="Proceed to Pay Online" type="button" onclick="javascript:document.location.href='@Url.Action("PaymentForm", "PrivateCandidate")'" />
+                            if (batch == "7")
+                            {
+                                <input value="Proceed to Pay Online" type="button" onclick="javascript:document.location.href='@Url.Action("PaymentForm", "PrivateCandidate")'" />
+
+                            }
+                            else
+                            {
+
+                                <input value="Proceed to Pay Online" type="button" onclick="return alert('You are not allowed to submit fee, because your form batch is ' + $('#hdnFlag').val() + ' Currently Fee schedule is available only for July 2024 batch.')" />
+
+                            }
                         }
                         else if (FormStatus == "0" && ChallanNo == "")
                         {

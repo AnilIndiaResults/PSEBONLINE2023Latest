@@ -6339,7 +6339,10 @@ namespace PSEBONLINE.Controllers
                 var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
                 ViewBag.MyClass = itemClass.ToList();
 
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" }, 
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
                 //List<AttendanceAdminReport> obj = new List<AttendanceAdminReport>();
                 //obj = _context.AttendanceAdmin.ToList();
@@ -6374,7 +6377,10 @@ namespace PSEBONLINE.Controllers
                 var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
                 ViewBag.MyClass = itemClass.ToList();
 
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" }, 
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
                 ViewBag.ClassSelected = frm["Class"].ToString();
                 string sCls = frm["Class"].ToString();
@@ -8075,7 +8081,10 @@ namespace PSEBONLINE.Controllers
 				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
 				ViewBag.MyClass = itemClass.ToList();
 
-				var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+				var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" },
+                    //new { ID = "O", Name = "OPEN" },
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
 				ViewBag.MyRP = itemRP.ToList();
 
 				var itemStatus = new SelectList(new[] { new { ID = "P", Name = "Pending" }, new { ID = "F", Name = "Final Submitted" }, }, "ID", "Name", 1);
@@ -8132,7 +8141,10 @@ namespace PSEBONLINE.Controllers
 				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
 				ViewBag.MyClass = itemClass.ToList();
 
-				var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+				var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" },
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
 				ViewBag.MyRP = itemRP.ToList();
 				ViewBag.ClassSelected = frm["Class"].ToString();
 
@@ -8276,7 +8288,10 @@ namespace PSEBONLINE.Controllers
 				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
 				ViewBag.MyClass = itemClass.ToList();
 
-				var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+				var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" },
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
 				ViewBag.MyRP = itemRP.ToList();
 				var itemAttendanceStatus = new SelectList(new[] { new { ID = "All", Name = "All" }, new { ID = "A", Name = "Absent" }, new { ID = "UMC", Name = "UMC" }, new { ID = "Cancel", Name = "Cancel" }, }, "ID", "Name", 1);
 				ViewBag.AttendanceStatus = itemAttendanceStatus.ToList();
@@ -8341,7 +8356,10 @@ namespace PSEBONLINE.Controllers
 				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
 				ViewBag.MyClass = itemClass.ToList();
 
-				var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+				var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" },
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
 				ViewBag.MyRP = itemRP.ToList();
 				ViewBag.ClassSelected = frm["Class"].ToString();
 
@@ -8554,6 +8572,61 @@ namespace PSEBONLINE.Controllers
 			catch (Exception ex)
 			{
 				return View(rpModel);
+			}
+
+		}
+
+		public ActionResult DownloadImage()
+		{
+
+			DownloadImageModel obj = new DownloadImageModel();
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+
+
+
+				return View(obj);
+			}
+			catch (Exception ex)
+			{
+				return View(obj);
+			}
+
+		}
+		[AdminLoginCheckFilter]
+		[HttpPost]
+		public ActionResult DownloadImage(FormCollection frm)
+		{
+			DownloadImageModel obj = new DownloadImageModel();
+
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+
+				string rollno = frm["rollno"].ToString();
+
+
+				ViewBag.rollno = rollno;
+
+				DataSet ds1 = new DataSet();
+				obj.StoreAllData = AbstractLayer.AttendanceDB.DownloadImageData(rollno);
+
+
+
+				return View(obj);
+			}
+			catch (Exception ex)
+			{
+				return View(obj);
 			}
 
 		}

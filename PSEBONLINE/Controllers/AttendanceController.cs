@@ -115,8 +115,8 @@ namespace PSEBONLINE.Controllers
 				var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
 				ViewBag.MyRP = itemRP.ToList();
 
-				//var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, new { ID = "8", Name = "Middle" },}, "ID", "Name", 1);
-				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
+				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, new { ID = "8", Name = "Middle" },}, "ID", "Name", 1);
+				//var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
 				ViewBag.MyClass = itemClass.ToList();
 				ViewBag.SelectedClass = "0";
 
@@ -163,8 +163,8 @@ namespace PSEBONLINE.Controllers
 				var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
 				ViewBag.MyRP = itemRP.ToList();
 
-				//var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, new { ID = "8", Name = "Middle" },}, "ID", "Name", 1);
-				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
+				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, new { ID = "8", Name = "Middle" },}, "ID", "Name", 1);
+				//var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
 				ViewBag.MyClass = itemClass.ToList();
 				ViewBag.SelectedClass = "0";
 
@@ -272,8 +272,8 @@ namespace PSEBONLINE.Controllers
 				ViewBag.SelectedAction = "0";
 
 
-				//var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, new { ID = "8", Name = "Middle" },}, "ID", "Name", 1);
-				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
+				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, new { ID = "8", Name = "Middle" },}, "ID", "Name", 1);
+				//var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
 				ViewBag.MyClass = itemClass.ToList();
 				ViewBag.SelectedClass = "0";
 
@@ -302,7 +302,7 @@ namespace PSEBONLINE.Controllers
 				{
 					ViewBag.LastDate = ds.Tables[1].Rows[0]["LastDate"].ToString();
 				}
-				string exambatch = "MAR24";
+				string exambatch = "July24";
 				ViewBag.examBatch = exambatch;
 
 				obj.attendanceMemoDetail = _context.attendanceMemoDetail.AsNoTracking().Where(s => s.cls == SelClass && s.subCode == SubCode && s.centrecode == centrecode && s.rp == RP && s.examBatch == exambatch).FirstOrDefault();
@@ -580,7 +580,7 @@ o.attendance == "UMC" ? "UMC" : o.attendance == "Cancel" ? "Cancel" : null : o.a
 			string OutStatus = "0";
 
 			DataSet dt = AttendanceDB.StudentAttendanceSave(StudentAttendance, ovmAttendanceModel.centrecode, SubCode, loginSession.SCHL.ToString(), SelClass, RP,
-				"", "MAR23", ovmAttendanceModel.status, createdby, null, empuserid, out OutMemoNumber, out OutStatus);
+				"", "July24", ovmAttendanceModel.status, createdby, null, empuserid, out OutMemoNumber, out OutStatus);
 			//response.returncode = dt.Tables[0].Rows[0]["returncode"].ToString();
 			//response.returnmessage = dt.Tables[0].Rows[0]["returnmessage"].ToString();
 			//response.memonumber = dt.Tables[0].Rows[0]["memonumber"].ToString();
@@ -907,8 +907,8 @@ o.attendance == "UMC" ? "UMC" : o.attendance == "Cancel" ? "Cancel" : null : o.a
 				ViewBag.SelectedAction = "0";
 
 
-				//var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, new { ID = "8", Name = "Middle" },}, "ID", "Name", 1);
-				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
+				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, new { ID = "8", Name = "Middle" },}, "ID", "Name", 1);
+				//var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
 				ViewBag.MyClass = itemClass.ToList();
 				ViewBag.SelectedClass = "0";
 
@@ -937,7 +937,7 @@ o.attendance == "UMC" ? "UMC" : o.attendance == "Cancel" ? "Cancel" : null : o.a
 				{
 					ViewBag.LastDate = ds.Tables[1].Rows[0]["LastDate"].ToString();
 				}
-				string exambatch = "MAR24";
+				string exambatch = "July24";
 				ViewBag.examBatch = exambatch;
 
 				obj.attendanceMemoDetail = _context.attendanceMemoDetail.AsNoTracking().Where(s => s.cls == SelClass && s.subCode == SubCode && s.centrecode == centrecode && s.rp == RP && s.examBatch == exambatch).FirstOrDefault();

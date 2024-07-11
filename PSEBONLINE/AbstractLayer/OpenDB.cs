@@ -4962,6 +4962,33 @@ namespace PSEBONLINE.AbstractLayer
 
 
 
+		public DataSet GetOpenSchoolStreamRecords(string dist)
+		{
+			cmd.CommandText = "sp_GetOpenStreamSchoolRecords";
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Connection = con;
+			cmd.Parameters.Clear();
+			cmd.Parameters.AddWithValue("@dist", dist);
+			DataSet ds = new DataSet();
+			SqlDataAdapter adp = new SqlDataAdapter(cmd);
+			adp.Fill(ds);
+			return ds;
+		}
+
+		public DataSet GetOpenStreamMatricSchoolRecords(string dist)
+		{
+			cmd.CommandText = "sp_GetOpenStreamMatricSchoolRecords";
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Connection = con;
+			cmd.Parameters.Clear();
+			cmd.Parameters.AddWithValue("@dist", dist);
+			DataSet ds = new DataSet();
+			SqlDataAdapter adp = new SqlDataAdapter(cmd);
+			adp.Fill(ds);
+			return ds;
+		}
+
+
 
 	}
 }

@@ -8,7 +8,7 @@
         @*Private Examination Form for Re-Appear of Primary/Middle Class, July 2022 <br />*@
         @*Private Examination Form for Re-Appear/Additional Subject of Matric & Sr. Sec. Class, September 2022*@
         @*Private  Examination Form for Re-Appear/Additional Subject of Matric & Sr. Sec. Class, Supplementary Exam 2024*@
-        Private Examination Form for Regular and  Open School , Re-Appear/Additional Subject of Matric & Sr. Sec. Class, July 2024
+        Private Examination Form for Regular and  Open School , Re-Appear/Additional Subject of Primary, Middle, Matric & Sr. Sec. Class, July 2024
     </h1>
     <div id="loading1"></div>
     <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
@@ -324,23 +324,51 @@
         });
         //----------- On change Exam Type
         $("#Exam_Type1").change(function () {
+            $("#SelYear").empty();
             var selCATE_ET = $("#category").val();
             var selExam_Type = $("#Exam_Type").val();
-            alert(selCATE_ET); alert(selExam_Type);
+
+
+           
             if (selCATE_ET == 'R' && selExam_Type == 'R') {
                 $("#SelYear").empty();
                 $("#SelYear").append('<option value="0">Year</option>');
-                $("#SelYear").append('<option value="2020">2020</option>');
+                $("#SelYear").append('<option value="2024">2024</option>');
             }
             if (selCATE_ET == 'R' && selExam_Type == 'O') {
                 $("#SelYear").empty();
                 $("#SelYear").append('<option value="0">Year</option>');
-                $("#SelYear").append('<option value="2020">2020</option>');
-                $("#SelYear").append('<option value="2019">2019</option>');
-                $("#SelYear").append('<option value="2018">2018</option>');
+                $("#SelYear").append('<option value="2024">2024</option>');
+                $("#SelYear").append('<option value="2023">2023</option>');
+                //$("#SelYear").append('<option value="2019">2019</option>');
+                //$("#SelYear").append('<option value="2018">2018</option>');
                 //$("#SelYear").append('<option value="2017">2017</option>');
 
             }
+            if (selCATE_ET == 'A' || selExam_Type == 'P') {
+                $("#SelYear").append('<option value="2024">2024</option>');
+                $("#SelYear").append('<option value="2023">2023</option>');
+                $("#SelYear").append('<option value="2022">2022</option>');
+                $("#SelYear").append('<option value="2021">2021</option>');
+                $("#SelYear").append('<option value="2020">2020</option>');
+                $("#SelYear").append('<option value="2019">2019</option>');
+                $("#SelYear").append('<option value="2018">2018</option>');
+                $("#SelYear").append('<option value="2017">2017</option>');
+                $("#SelYear").append('<option value="2016">2016</option>');
+                $("#SelYear").append('<option value="2015">2015</option>');
+                $("#SelYear").append('<option value="2014">2014</option>');
+                $("#SelYear").append('<option value="2013">2013</option>');
+                $("#SelYear").append('<option value="2012">2012</option>');
+                $("#SelYear").append('<option value="2011">2011</option>');
+                $("#SelYear").append('<option value="2010">2010</option>');
+                $("#SelYear").append('<option value="2009">2009</option>');
+                $("#SelYear").append('<option value="2008">2008</option>');
+                $("#SelYear").append('<option value="2007">2007</option>');
+                $("#SelYear").append('<option value="2006">2006</option>');
+                $("#SelYear").append('<option value="2005">2005</option>');
+                $("#SelYear").append('<option value="2004">2004</option>');
+            }
+
 
             if ((selCATE_ET == 'SR' || selCATE_ET == 'SA')) {
                 $("#SelYear").empty();
@@ -565,17 +593,17 @@
                 $("#Exam_Type").append('<option value="R">Regular</option>');
             }
             else {
-                if ($("#Class").val() == '10') {
+                if ($("#Class").val() == '10' || $("#Class").val() == '12') {
                     $("#Exam_Type").empty();
                     $("#Exam_Type").append('<option value="0">--Select--</option>');
                     $("#Exam_Type").append('<option value="R">Regular</option>');
                     $("#Exam_Type").append('<option value="O">Open</option>');
                 }
-                else {
+                else if ($("#Class").val() == '8' || $("#Class").val() == '5') {
                     $("#Exam_Type").empty();
                     $("#Exam_Type").append('<option value="0">--Select--</option>');
                     $("#Exam_Type").append('<option value="R">Regular</option>');
-                    $("#Exam_Type").append('<option value="O">Open</option>');
+                   
                 }
             }
         }
@@ -611,15 +639,20 @@
         var selectedData = {
             SelBatch: $("#batch").val(), SelBatchYear: $("#batchYear").val(),
             SelCat: $("#category").val(), SelClass: $("#Class").val(), SelRP: $("#Exam_Type").val()
+
+            
         };
+
+       
 
         $("#SelYear").empty();
 
-        if ($("#batch").val() == '7' && $("#batchYear").val() == '2024') {
-            $("#SelYear").append('<option value="2024">2024</option>');
-        }
-        else {
-
+        //if ($("#batch").val() == '7' && $("#batchYear").val() == '2024' && $("#category").val() == 'R' ) {
+        //    $("#SelYear").append('<option value="2024">2024</option>');
+        //}
+        /*if*/ 
+        {
+            var yearlist;
             $.ajax({
                 url: '@Url.Action("BindYearByBatchandCat", "PrivateCandidate")',
                 type: 'Post',
@@ -637,8 +670,10 @@
                             + yearlist.Value + '">'
                             + yearlist.Text + '</option>');
                     });
+                    
+                    console.log(yearlist);
                     if (yearlist.success) {
-
+                       
                     }
                     else {
                         alert('invalid ID' + data.success);

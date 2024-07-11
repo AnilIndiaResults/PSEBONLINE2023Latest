@@ -128,4 +128,19 @@ namespace PSEBONLINE.Models
 
 	}
 
+	public class DownloadImageModel
+	{
+
+		public string rollNo { get; set; }
+		public string Photo { get; set; }
+		public string Sign { get; set; }
+		public string Session { get; set; }
+		public DataSet StoreAllData { get; set; }
+
+
+
+
+
+	}
+
 }

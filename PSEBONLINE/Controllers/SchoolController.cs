@@ -9770,7 +9770,7 @@ namespace PSEBONLINE.Controllers
             }
             if (result.Tables[0].Rows.Count > 0)
             {
-                if (result.Tables[0].Rows.Count == 2)
+                if (result.Tables[0].Rows.Count == 2 || result.Tables[0].Rows.Count == 3)
                 {
                     ViewBag.Matric = result.Tables[0].Rows[0]["MRP"].ToString();
                     ViewBag.OMatric = result.Tables[0].Rows[1]["MRP"].ToString();
@@ -9791,7 +9791,7 @@ namespace PSEBONLINE.Controllers
             }
             if (result.Tables[1].Rows.Count > 0)
             {
-                if (result.Tables[1].Rows.Count == 2)
+                if (result.Tables[1].Rows.Count == 2 || result.Tables[1].Rows.Count == 3)
                 {
                     ViewBag.Senior = result.Tables[1].Rows[0]["SRP"].ToString();
                     ViewBag.OSenior = result.Tables[1].Rows[1]["SRP"].ToString();

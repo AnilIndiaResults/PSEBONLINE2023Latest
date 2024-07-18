@@ -1,0 +1,162 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+                /**/
+
+                ViewBag.Title = "Practical Chart";
+                Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+
+
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4L.css" />
+<h1 class="noprint">Practical Chart</h1>
+
+@*<style type="text/css">
+    body {
+        font-size: 9px;
+    }
+
+    td {
+        font-weight: normal !important;
+        line-height: 15px;
+        padding: 2px
+    }
+</style>*@
+
+<style type="text/css">
+    body {
+        font-size: 12px;
+    }
+
+    td {
+        font-weight: normal !important;
+        line-height: 18px;
+        padding: 2px
+    }
+
+        td table td {
+            font-weight: normal !important;
+            line-height: 22px;
+            padding: 2px
+        }
+</style>
+@using (Html.BeginForm("PracticalChart", "School", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12 text-right noprint">
+            <input type="button" value="Print" class="btn" onclick="window.print()" />
+            <a href="/School/PracticalChartLink" class="btn">Back</a>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            @if (ViewBag.TotalCount > 0)
+            {
+                <table border="1" width="100%" id="t01" class="tprint">
+                    <thead>
+                        <tr>
+                            <td style="border:0 !important"><img src="~/Images/Printlogo.jpg" alt="PSEB" height="60px" width="60px" /></td>
+                            <td colspan="4" style="text-align:center;border-left:0 !important;border-right:0 !important">
+                                <span style="font-size:32px;" class="kdsfont">Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span><br />
+                                @* 3=S*@
+                                @if (ViewBag.Cls == "3")
+                                {<span style="font-size:26px;" class="kdsfont">ÓÛÅÛ¤Ï Óè¨â¸ÏÛ ÆñÍë¬Û ÆñÛÚª¤Ø Ð¥Û Æñë¬ÏØÌ °ØÏ¶, Ì¥Û 2022</span> }
+                                else
+                                { <span style="font-size:26px;" class="kdsfont">ÂÓÒÜ ÆñÍë¬Û ÆñÛÚª¤Ø Ð¥Û °ØÏ¶, ÌØÏ° 2022-</span>                    }
+                                <br />
+								<!-- <span style="font-size:16px;" class="kdsfont">(ਵੋਕੇਸ਼ਨਲ, ਪ੍ਰੀ-ਵੋਕੇਸ਼ਨਲ ਅਤੇ ਐੱਨ. ਐੱਸ. ਕਿਊ. ਐੱਫ.) </span>        -->
+                            </td>
+                            <td align="right" colspan="2" style="border-left:0 !important">
+                                @* <span class="kdsfont">ÆââÅðÙ Åâ.</span>
+                               @Print Date: DateTime.Now.ToString("dd/MM/yyyy")*@
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="kdsfont">ÆñÛÚª¤Ø ¨ã×ÂÏ ÂØ ÅÙ</span></td>
+                            <td colspan="6">@*schoolmasterview.schl+' : '+schoolmasterview.schlnmp*@ <span class="kdsfont">@Model.StoreAllData.Tables[0].Rows[0]["SCHLDETAILS"].ToString()</span></td>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td width="25%" rowspan="2"><span class="kdsfont">ÆñÍë¬Û ÆñÛÚª¤Ø ÂØ ÚÒÓÖØ</span></td>
+                        @*<td width="25%" rowspan="2"><span class="kdsfont">ÆñÛÚª¤¨ ÂØ ÅÙ ¤¼ã Æ¼Ø</span></td>*@
+                        <td width="10%" rowspan="2"><span class="kdsfont">ÆñÍë¬Û ÆñÛÚª¤Ø Ð¥Û ÚÌ¼Û/ÚÌ¼Û¤Ù</span></td>
+                        <td width="14%" colspan="2"><span class="kdsfont">ÒÏ¼ã ²Ø» ÒØÐã ÆñÓÖÅ Æó¼Ï</span></td>
+                        <td width="21%" rowspan="2" style="text-align:center;"><span class="kdsfont">ÆñÛÚª¤ØÏÁÛ¤Ù ÂÛ Ú¬»¼Û ÚÒÓÖãÓÖ ¨ÁÅ</span></td>
+                        <td width="5%" rowspan="2"><span class="kdsfont">¬ÏÝóÆ</span></td>
+                    </tr>
+                    <tr>
+                        <td width="7%"><span class="kdsfont">ÓÒãÏã</span></td>
+                        <td width="7%"><span class="kdsfont">ÓÖØÌ</span></td>
+                    </tr>
+                    @{
+                        var Name = "";
+                        var Phone = "";
+
+                        for (int i = 0; i < Model.StoreAllData.Tables[1].Rows.Count; i++)
+                        {
+                            var name_eng = Model.StoreAllData.Tables[1].Rows[i]["name_eng"].ToString();
+                            //var k = Model.StoreAllData.Tables[1].Rows[i]["k"].ToString();
+                            var dt202 = Model.StoreAllData.Tables[1].Rows[i]["dt202"].ToString().Replace("\\n", "<br />");
+                            var m202 = Model.StoreAllData.Tables[1].Rows[i]["m202"].ToString();
+                            var e202 = Model.StoreAllData.Tables[1].Rows[i]["e202"].ToString();
+                            var sf = Model.StoreAllData.Tables[1].Rows[i]["sf"].ToString();
+                            var rem = Model.StoreAllData.Tables[1].Rows[i]["rem"].ToString();
+                            var g202 = Model.StoreAllData.Tables[1].Rows[i]["g202"].ToString();
+                            //var Rownumber = Model.StoreAllData.Tables[1].Rows[i]["Rownumber"].ToString();
+                            Name = Model.StoreAllData.Tables[1].Rows[i]["Name"].ToString();
+                            Phone = Model.StoreAllData.Tables[1].Rows[i]["Phone"].ToString();
+
+                            <tr>
+                                <td>
+                                    <span class="kdsfont">@name_eng</span>
+                                </td>
+                                <td><span class="kdsfont">@Html.Raw(dt202)</span></td>
+                                <td><span class="kdsfont">@Html.Raw(m202)</span></td>
+                                <td><span class="kdsfont">@Html.Raw(e202)</span></td>
+                                <td><span class="kdsfont"><span style="text-align:center;">@Html.Raw(sf)</span><br />@rem</span></td>
+                                <td><span class="kdsfont">@Html.Raw(g202)</span></td>
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="7"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="7" class="kdsfont">
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                                    <!-- <tr> -->
+                                        <!-- <td colspan="2" class="kdsfont"><b style="font-size:24px">Åë¶</b></td> -->
+                                    <!-- </tr> -->
+                                    <!-- <tr> -->
+                                        <!-- <td width="3%" valign="top" align="center">1.</td> -->
+                                        <!-- <td class="kdsfont" valign="top">Òë¨ãÓÖÅÐ ¬ÏÝóÆ ÒØÐã ÚÒÓÖã ÂÛ ÆñÍë¬Û ÆñÛÚª¤ØÒÙ ÚÌ¼Û 26/02/2021 ¼ë 12/03/2021 ¼ó¨ ÆñÛÚª¤ØÏÁÛ¤Ù ÂÛ ÓÝÚÒÄØ ¤ÅÝÓØÏ ÆãÆÏ Ú¼¤ØÏ ¨Ï ¨ã Ðè Ð¥Û¤Ù ²Ø»¢@*ÚÓÖÇ¶ ¨Û¼ã ¬¥ã ÚÒÚÂ¤ØÏÁÛ/Ó¨ÞÐ ÆÏÛÚª¤Ø ÓÖÝÏÞ Õë» ¼ë× ÆÚÕÐÙ ÂÞÓÏã Ó¨ÞÐÙ (Ú²óÁã ¦ÝÅðÙ Âã ÚÒÚÂ¤ØÏÁÛ/Ó¨ÞÐ ÚÓÖÇ¶ ¨Û¼ã ÕÅ) ÅØÐ ÓâÆÏ¨ ¨ÏÅ ¼Ù ²ë ¦ÝÅðÙ ÅâÞ ÚÌ¼Û¤Ù/¬ÏÝóÆ ÓÉâÄÛ Æ¼Ø Ðó¬ Ó¨ã¢*@</td> -->
+
+                                    <!-- </tr> -->
+                                    <!-- <tr> -->
+                                        <!-- <td valign="top" align="center">2.</td> -->
+                                        <!-- <td valign="top">¤èÅ.¤èÓ.Ú¨¦Þ.¤èÇ. Âã ÚÒÚÓÖ¤Ù ÂÛ ÆñÍë¬Û ÆÏÛÚª¤Ø ÚÌ¼Û 26/02/2021 ¼ë× 12/03/2021 ¼ó¨ NDSC ÅÒÛ× ÚÂóÐÛ ÂÝ¤ØÏØ Óè¨¶Ï ÓÚ¨Ð ¨ïÓÐ (SSC) ÅÒÛ× ÚÂóÐÛ ÏÙÕÛ DGSE ÂÇÖ¼Ï ÂÛ ÏÌÓØ ÓÖØªØ ÂÝ¤ØÏØ Ð¥Û ²Ø»Û Õè¢@**ÒØÐã ÚÒÓÖã ÂÛ ÆñÍë¬Û ÆñÛÚª¤ØÒÙ ÚÌ¼Û 26/02/2021 ¼ë× 12/03/2021 ¼ó¨ ÆñÛÚª¤ØÏÁÛ¤Ù ÂÛ ÓÝÚÒÄØ ¤ÅÝÓØÏ ÆãÆÏ Ú¼¤ØÏ ¨Ï ¨ã Ðè Ð¥Û¤Ù ²Ø»¢*@</td> -->
+                                    <!-- </tr> -->
+									 <!-- <tr> -->
+                                        <!-- <td valign="top" align="center">3.</td> -->
+                                        <!-- <td valign="top"><span style="font-size:16px;" class="kdsfont">ਉਪਰੋਕਤ ਸੂਚੀ ਵਿੱਚ ਕੰਪਿਊਟਰ ਸਾਇੰਸ ਅਤੇ ਸਵਾਗਤ ਜਿੰਦਗੀ ਦੇ ਕੁੱਲ ਪ੍ਰੀਖਿਆਰਥੀਆਂ ਦੀ ਗਿਣਤੀ ਦਰਸਾਈ ਗਈ ਹੈ ਪ੍ਰੰਤੂ ਉਕਤ ਦਰਜ ਮਿਤੀਆਂ ਅਧੀਨ ਸਿਰਫ ਉਹਨਾਂ ਹੀ ਪ੍ਰੀਖਿਆਰਥੀਆਂ ਦੀ ਪ੍ਰੀਖਿਆ ਲਈ ਜਾਵੇ ਜੋ ਵੋਕੇਸ਼ਨਲ, ਪ੍ਰੀ-ਵੋਕੇਸ਼ਨਲ ਅਤੇ ਐੱਨ. ਐੱਸ. ਕਿਊ. ਐੱਫ. ਨਾਲ ਸਬੰਧਤ ਹਨ।<span></td> -->
+                                    <!-- </tr> -->
+                                    <tr>
+                                        <td colspan="2" style="text-align:right">
+                                            <br />
+                                            <span style="font-size:22px">For Any Query Please Contact</span><br />
+                                            <span class="kdsfont" style="font-size:22px">
+                                                @Name<br />@Phone
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                        </tr>
+
+
+                    }
+                </table>
+            }
+
+        </div>
+    </div>
+}
+

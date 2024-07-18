@@ -1,0 +1,248 @@
+﻿
+@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Differently Abled Marks Entry Report";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4L.css" />
+<style type="text/css">
+    .tprint td {
+        padding: 1px 2px;
+        line-height: 16px;
+    }
+</style>
+<table style="width:100%;" border="0" class="bgimg">
+    <tr>
+        <td>
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        <input type="button" value="Print" class="btn" onclick="window.print()" />
+                        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td align="center">
+            <table border="0" style="width:98%;" align="center" class="brack">
+                <thead>
+                    <tr>
+                        <td colspan="2" style="padding-bottom:5px">
+                            <table width="100%">
+                                <tr>
+                                    <td width="25%"><img src="~/Images/Printlogo.jpg" alt="PSEB" width="70px" /></td>
+                                    <td width="50%" style="font-size:16px;text-align:center;line-height:25px;">
+                                        <span style="font-size:26px;">Punjab School Education Board</span><br />@ViewBag.cid.ToUpper() EXAMINATION (Differently Abled), December 2021<br />Theory Examination December 2021 (Rough Report)
+                                    </td>
+                                    <td width="25%" align="right">
+                                        PRINT DATE :@DateTime.Now.ToString("dd/MM/yyyy")<br />@*FINAL SBMITTED ON :*@
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            Set No:- @ViewBag.SET  School Name/ Code:-  @ViewBag.SchoolName  / (@ViewBag.schlCode))
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">
+                            @if (ViewBag.cid == "Senior")
+                            {
+                                <table width="100%" border="1" class="tprint">
+                                    <thead>
+                                        <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                            <td>S.N </td>
+                                            <td>Student Id</td>
+                                            <td>Roll No.</td>
+                                            <td>Name/Father's Name</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+
+                                        </tr>
+                                    </thead>
+                                    @{
+                                        if (ViewBag.TotalCount > 0)
+                                        {
+                                            int d = 0;
+                                            int Count = 0;
+                                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                            {
+                                                d = d + 1;
+                                                var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                                var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                                var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                                var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                                                Count = Count + 1;
+                                                <tr style="font-size:9px">
+                                                    <td>@Count</td>
+                                                    <td>@stdid</td>
+                                                    <td>@ROLL</td>
+                                                    <td>@FullName</td>
+                                                    @for (int s = 0; s < Model.StoreAllData.Tables[2].Rows.Count; s++)
+                                                    {
+                                                        var candid = Model.StoreAllData.Tables[2].Rows[s]["candid"].ToString();
+                                                        var SUB = Model.StoreAllData.Tables[2].Rows[s]["SUB"].ToString();
+                                                        var SUBABBR = Model.StoreAllData.Tables[2].Rows[s]["SUBABBR"].ToString();
+                                                        var OBTMARKS = Model.StoreAllData.Tables[2].Rows[s]["OBTMARKS"].ToString();
+                                                        var thmin = Model.StoreAllData.Tables[2].Rows[s]["thmin"].ToString();
+                                                        var thmax = Model.StoreAllData.Tables[2].Rows[s]["thmax"].ToString();
+                                                        var Sub1 = SUBABBR + "-" + SUB;
+                                                        var Sub2 = thmax + "/" + thmin;
+                                                        if (stdid == candid)
+                                                        {
+                                                            <td>@Sub1 <br />@Sub2</td>
+                                                            <td>@OBTMARKS</td>
+                                                        }
+                                                    }
+
+
+                                                </tr>
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="19">
+                                                    @ViewBag.Message
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            }
+                            else if (ViewBag.cid == "Matric")
+                            {
+                                <table width="100%" border="1" class="tprint">
+                                    <thead>
+                                        <tr style="background-color:#ccc !important;color:#000 !important;font-size:9px">
+                                            <td>S.N </td>
+                                            <th>Student Id</th>
+                                            <td>Roll No.</td>
+                                            <td>Name/Father's Name</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                            <td>Sub Abbr Max Mrks./Pass Mrks.</td>
+                                            <td>Mrks. Obt</td>
+                                        </tr>
+                                    </thead>
+                                    @{
+                                        if (ViewBag.TotalCount > 0)
+                                        {
+                                            int d = 0;
+                                            int Count = 0;
+                                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                            {
+                                                d = d + 1;
+                                                var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                                var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                                                var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                                var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                                                Count = Count + 1;
+                                                <tr style="font-size:9px">
+                                                    <td>@Count</td>
+                                                    <td>@stdid</td>
+                                                    <td>@ROLL</td>
+                                                    <td>@FullName</td>
+                                                    @for (int s = 0; s < Model.StoreAllData.Tables[2].Rows.Count; s++)
+                                                    {
+                                                        var candid = Model.StoreAllData.Tables[2].Rows[s]["candid"].ToString();
+                                                        var SUB = Model.StoreAllData.Tables[2].Rows[s]["SUB"].ToString();
+                                                        var SUBABBR = Model.StoreAllData.Tables[2].Rows[s]["SUBABBR"].ToString();
+                                                        var OBTMARKS = Model.StoreAllData.Tables[2].Rows[s]["OBTMARKS"].ToString();
+                                                        var thmin = Model.StoreAllData.Tables[2].Rows[s]["thmin"].ToString();
+                                                        var thmax = Model.StoreAllData.Tables[2].Rows[s]["thmax"].ToString();
+                                                        var Sub1 = SUBABBR + "-" + SUB;
+                                                        var Sub2 = thmax + "/" + thmin;
+                                                        if (stdid == candid)
+                                                        {
+                                                            <td>@Sub1 <br />@Sub2</td>
+                                                            <td>@OBTMARKS</td>
+                                                        }
+                                                    }
+
+
+                                                </tr>
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="19">
+                                                    @ViewBag.Message
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            }
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            This is Rough Report Only for School Checking Purpose Don't Send this report to PSEB Head Office. 
+							@*Send Only Final Submitted Report.*@
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </td>
+    </tr>
+
+
+</table>
+
+
+
+
+

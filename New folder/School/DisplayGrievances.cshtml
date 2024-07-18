@@ -1,0 +1,366 @@
+﻿@model PSEBONLINE.Models.CallCenter
+@{
+    ViewBag.Title = "DisplayGrievances";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+<h1>View All Grievances</h1>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Display Complaints</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        .w3-tooltip, .w3-display-container {
+            position: relative;
+        }
+
+            .w3-tooltip .w3-text {
+                display: none;
+            }
+
+            .w3-tooltip:hover .w3-text {
+                display: inline-block;
+            }
+    </style>
+</head>
+<body>
+
+    @if (Session["SchoolLogin"] == null || Convert.ToString(Session["SchoolLogin"]) == string.Empty)
+    {
+        Response.Redirect("~/Login");
+    }
+
+    @using (Html.BeginForm("DisplayGrievances", "School", FormMethod.Post, new { id = "searchform" }))
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <fieldset style="margin-bottom:15px">
+                    <legend>Search</legend>                  
+                    <div class="col-md-3">
+                        Category of Grievance <br>                      
+                        @Html.DropDownListFor(model => model.formname, (List<SelectListItem>)ViewBag.forms, new {  data_val = "false" } )                        
+                    </div>
+                    <div class="col-md-2">
+                        Status<br>
+                        @{
+                            var listItems2 = new List<System.Web.UI.WebControls.ListItem>();
+                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "--Select Status--", Value = "" });
+                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Pending", Value = "0" });
+                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "InProgress", Value = "1" });
+                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Completed", Value = "2" });
+                            listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Rejected", Value = "3" });
+                            if ((Session["Role_Type"] != null && Session["Role_Type"].ToString() != "admin"))
+                            { listItems2.Add(new System.Web.UI.WebControls.ListItem { Text = "Forwarded To Competent Authority", Value = "4" }); }
+                        }
+                        @Html.DropDownList("status1", new SelectList(listItems2, "Value", "Text", ViewBag.stat))
+                    </div>
+                    <div class="col-md-2">
+                        Submitted On<input type="text" id="dateSubmitted" class="date" name="dateSubmitted" onchange="myFunction()" value="@ViewBag.datef" />
+                    </div>
+                    <div class="col-md-2">
+                        Grievance No.<input type="text" id="ticket"  name="ticket" value="@ViewBag.ticket" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <br>
+                        <input type="submit" value="Search">
+                        <input type="button" value="Reset" onclick="javascript:document.location.href='@Url.Action("DisplayGrievances", "School",new { command="reset"})'" />
+                        <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("Grievances", "School",new { })'" />
+                    </div>
+
+                </fieldset>
+            </div>
+        </div>
+                            }
+
+    <div>      
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="t01">
+                        <tr class="active-tr">
+                            <th>Id</th>
+							<th>Grievance</th> 
+                            <th>Grievance No</th>                           
+                            <th>Submited On</th>                            
+                            <th>Status</th>                          
+                        </tr>
+                        @{
+                            List<PSEBONLINE.Models.District> districts = (List<PSEBONLINE.Models.District>)ViewBag.district1;
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 50 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var stdid = Model.StoreAllData.Tables[0].Rows[i]["ccfid"].ToString();
+                                    var distict = Model.StoreAllData.Tables[0].Rows[i]["district"].ToString();
+                                    var schlnm = Model.StoreAllData.Tables[0].Rows[i]["schoolname"].ToString();
+                                    var schoolcode = Model.StoreAllData.Tables[0].Rows[i]["schoolcode"].ToString();
+                                    var classname = Model.StoreAllData.Tables[0].Rows[i]["classname"].ToString();
+                                    var cpname = Model.StoreAllData.Tables[0].Rows[i]["cpname"].ToString();
+                                    var description = Model.StoreAllData.Tables[0].Rows[i]["description"].ToString().ToUpper();
+                                    var cpmobile = Model.StoreAllData.Tables[0].Rows[i]["cpmobile"].ToString();
+                                    var cpemail = Model.StoreAllData.Tables[0].Rows[i]["cpemail"].ToString();
+                                    var status = Model.StoreAllData.Tables[0].Rows[i]["status1"].ToString();
+                                    var statusNo = Model.StoreAllData.Tables[0].Rows[i]["status"].ToString();
+                                    var ticketno = Model.StoreAllData.Tables[0].Rows[i]["ticketNo"].ToString();
+                                    var formname = Model.StoreAllData.Tables[0].Rows[i]["formname"].ToString();
+                                    var remark = Model.StoreAllData.Tables[0].Rows[i]["remarks"].ToString();
+                                    var forwarded_By = Model.StoreAllData.Tables[0].Rows[i]["frwrd_by"].ToString();
+                                    var created_by = Model.StoreAllData.Tables[0].Rows[i]["created_by"].ToString();
+                                    var date = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString();
+                                    var Photo = "/Upload/" + Model.StoreAllData.Tables[0].Rows[i]["photo"].ToString();
+                                    var pdf = Model.StoreAllData.Tables[0].Rows[i]["pdf"].ToString();
+                                    Model.CommaStringToList = Model.StoreAllData.Tables[0].Rows[i]["pdf"].ToString().Split(',').ToList();
+                                    var RemarksCount = Model.StoreAllData.Tables[0].Rows[i]["RemarksCount"].ToString();
+                                    Count = Count + 1;
+                                    <tr>
+                                        <td>
+                                            @Count
+                                        </td>
+										<td>
+                                            @formname
+                                        </td>
+                                        <td>
+                                            <a href="#" class="w3-tooltip" data-toggle="modal" data-target="#myModal1-@d">
+                                              <span>@ticketno</span>
+                                            </a>
+                                            <div class="container">
+                                                <div class="modal fade" id="myModal1-@d" role="dialog">
+                                                    <div class="modal-dialog" style="width:65%">
+                                                        <!-- Modal content-->
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                Grievance Details
+                                                                <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div>
+                                                                    <table width="100%" id="subjects-@d" border="1">
+                                                                        <tr>
+                                                                            <td>Grievance No</td>
+                                                                            <td>@ticketno</td>                                                                       
+                                                                            <td>Category of Grievance</td>
+                                                                            <td>@formname</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Submited On</td>
+                                                                            <td>@Convert.ToDateTime(date).ToString("dd-MMM-yyyy")</td>                                                                        
+                                                                            <td>Contact Person's Name</td>
+                                                                            <td>@cpname</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Contact Person's Mobile</td>
+                                                                            <td>@cpmobile</td>                                                                       
+                                                                            <td>Contact Person's Email</td>
+                                                                            <td>@cpemail</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Grievance Description</td>
+                                                                            <td>@description</td>                                                                       
+                                                                            <td>Grievance Status</td>
+                                                                            <td><span class="rqf">@Html.Raw(status)</span></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Board Remarks</td>
+                                                                            <td colspan="3">@remark</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>View File's</td>
+                                                                            <td colspan="3">
+                                                                                @if (pdf == "")
+                                                                                {<span class="rqf">No File</span> }
+                                                                                else
+                                                                                {
+                                                                                <ul class="attachment">
+                                                                                    @foreach (var item in Model.CommaStringToList)
+                                                                                    {
+                                                                                    <li>
+                                                                                        <a class="title" href="@("/Upload/" + item)" download>Download Files</a>
+                                                                                    </li>
+                                                                                    }
+                                                                                </ul>
+                                                                                }
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                    <table width="100%" id="remarks-@d" border="1">
+                                                                        <tr class="active-tr">
+                                                                            <th>Grievance No</th>
+                                                                            <th>Remarks</th>
+                                                                            <th>Status</th>
+                                                                            <th>Remarks On</th>
+                                                                        </tr>
+                                                                        @if (Model.StoreAllData.Tables[2].Rows.Count > 0)
+                                                                        {
+                                                                            if (Convert.ToInt32(RemarksCount) > 0)
+                                                                            {
+                                                                                for (int j = 0; j < Model.StoreAllData.Tables[2].Rows.Count; j++)
+                                                                                {
+                                                                                    var ticketNo1 = Model.StoreAllData.Tables[2].Rows[j]["ticketNo"].ToString();
+                                                                                    var Status1 = Model.StoreAllData.Tables[2].Rows[j]["Status1"].ToString().ToUpper();
+                                                                                    var Remarks1 = Model.StoreAllData.Tables[2].Rows[j]["Remarks"].ToString().ToUpper();
+                                                                                    var ChangedBy = Model.StoreAllData.Tables[2].Rows[j]["ChangedBy"].ToString();
+                                                                                    var ChangedOn = Model.StoreAllData.Tables[2].Rows[j]["ChangedOn"].ToString();
+                                                                                    if (ticketNo1.ToString().ToUpper() == ticketno.ToString().ToUpper())
+                                                                                    {
+                                                                                    <tr>
+                                                                                        <td>@ticketNo1</td>
+                                                                                        <td>@Status1</td>
+                                                                                        <td>@Remarks1</td>
+                                                                                        <td>@ChangedOn</td>
+                                                                                    </tr>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <tr>
+                                                                                    <td colspan="4"><span class="rqf">No Remarks</span></td>                                                                                  
+                                                                                </tr>
+                                                                            }
+                                                                        }
+
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@Convert.ToDateTime(date).ToString("dd-MMM-yyyy")</td>
+                                        <td class="w3-tooltip">
+                                            @if (statusNo == "2")
+                                            {<span  style='color:green;'>@status</span> }
+                                            else if (statusNo == "0")
+                                            {<span style='color:black;'>@status</span> }
+                                            else if (statusNo == "3")
+                                            {<span style='color:red;'>@status</span> }
+                                            else
+                                            {<span style='color:grey;'>@status</span> }                              
+
+                                            @*<span style="position:absolute;left:0;bottom:18px;color:red;background-color:whitesmoke;" class="w3-text w3-tag">
+            @remark
+        </span>*@
+</td>
+                                    </tr>
+                                    if (d == ViewBag.TotalCount)
+                                    {
+                                        <tr>
+                                            <td colspan="9">
+                                                Page @ViewBag.pagesize of @ViewBag.pn
+                                                &nbsp;
+                                                @if (ViewBag.pagesize == 1)
+                                                {
+                                                    @:<<
+                                                    @Html.Raw("&nbsp;");
+                                                    @:< Prev
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        @Html.ActionLink("Next >", "DisplayGrievances", new { page = ViewBag.pagesize + 1 })
+                                                        @Html.Raw("&nbsp;");
+                                                        @Html.ActionLink(">>", "DisplayGrievances", new { page = ViewBag.pn })
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink("<<", "DisplayGrievances", new { page = 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink("< Prev", "DisplayGrievances", new { page = ViewBag.pagesize - 1 })
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                            if (ViewBag.pn > ViewBag.pagesize)
+                            {
+                                                        @Html.ActionLink("Next >", "DisplayGrievances", new { page = ViewBag.pagesize + 1 })
+
+                                                        @Html.Raw("&nbsp;");
+
+                                                        @Html.ActionLink(">>", "DisplayGrievances", new { page = ViewBag.pn })
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="9">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <script>
+function myPrintFunction() {
+    window.print();
+}
+    </script>
+    <script type="text/javascript">
+
+        //$("#formname").rules("remove", "required");
+
+        $(function () {
+            $(".date").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "2017:2017",
+                maxDate: 0
+                // defaultDate: "+1w",
+                // setDate: new Date()
+
+            });
+        });
+
+
+        function myFunction()
+        {
+            var fullDate = new Date();
+            var twoDigitMonth = ((fullDate.getMonth().length + 1) === 1) ? (fullDate.getMonth() + 1) : '0' + (fullDate.getMonth() + 1);
+            var currentDate = fullDate.getFullYear() + "-" + twoDigitMonth + "-" + fullDate.getDate();
+            var dee = $("#datefrom").val();
+            $("#dateto").val(currentDate);
+        }
+        $(function () {
+            $("#dateSubmitted").datepicker("enable");
+            document.getElementById('dateSubmitted').disabled = false;
+            $("#dateSubmitted").keypress(function (evt) {
+                return false;
+
+            });
+            $("#dateSubmitted").datepicker({
+                dateFormat: "yy-mm-dd",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '2025',
+
+            });
+        });
+    </script>
+</body>

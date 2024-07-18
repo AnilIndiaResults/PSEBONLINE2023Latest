@@ -1,0 +1,239 @@
+﻿@model PSEBONLINE.Models.ChallanDepositDetailsModel
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+    .rqf {
+        color: #cc0000;
+        font-size: 13px
+    }
+</style>
+<div class="container KDBG">
+    <h1>Challan Deposit Details</h1>
+    <div class="dee">
+        <div class="row">
+            <div class="col-md-12 noprint">
+                <div class="col-md-2">
+                    Select Challan
+                </div>
+                <div class="col-md-4">
+                    @if (ViewBag.TotalCount == 1)
+                    {
+                        @Html.DropDownList("ChallanId", new SelectList(ViewBag.MyChallanId, "Value", "Text", ViewBag.SelectedChallanId), "--All---", new { @class = "", id = "ddlChallanId" })
+                    }
+                    else
+                    { <p>Record Not Found</p>}
+            </div>
+        </div>
+    </div>
+    <div id="loading1"></div>
+    @using (Html.BeginForm("ChallanDepositDetails", "Home", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+    {
+        <div id="divP">
+            <div id="divall">
+                <div class="row">
+                    <p id="p1" style="text-align:center;font-size:20px;color:#f00">Fee Details Submit Successfully, Please wait for bank verification.</p>
+                    <div class="col-md-6">
+                        <fieldset style="margin-bottom:15px">
+                            <legend style="font-size:16px">Details of Challan</legend>
+                            <div class="row">
+                                <div class="col-md-5">Challan ID</div>
+                                <div class="col-md-7">@Html.TextBoxFor(a => a.CHALLANID, new { id = "CHALLANID" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-5">SCHL REG ID</div>
+                                <div class="col-md-7">@Html.TextBoxFor(a => a.SCHLREGID, new { id = "SCHLREGID" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-5">App No./Ref. No.</div>
+                                <div class="col-md-7">@Html.TextBoxFor(a => a.APPNO, new { id = "APPNO" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-5">School/Candidate Name</div>
+                                <div class="col-md-7">@Html.TextBoxFor(a => a.SCHLCANDNM, new { id = "SCHLCANDNM" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-5">Challan Generate/Valid Date</div>
+                                <div class="col-md-7">
+                                    <div class="row">
+                                        <div class="col-md-6">@Html.TextBoxFor(a => a.CHLNDATE, new { id = "CHLNDATE" })</div>
+                                        <div class="col-md-6">@Html.TextBoxFor(a => a.CHLVDATE, new { id = "CHLVDATE" })</div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-5">Bank Name</div>
+                                <div class="col-md-7">@Html.TextBoxFor(a => a.BANK, new { id = "BANK" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-5">Fee</div>
+                                <div class="col-md-7">@Html.TextBoxFor(a => a.FEE, new { id = "FEE" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-5">Challan Downloaded by Bank Status</div>
+                                <div class="col-md-7">@Html.TextBoxFor(a => a.DOWNLDDATE, new { id = "DOWNLDDATE" })</div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                        <fieldset style="margin-bottom:15px">
+                            <legend style="font-size:16px">Enter Details of Bank/Fee where Fee Was Deposited</legend>
+                            <div class="row">
+                                <div class="col-md-4">Bank Branch Code<span class="rqf">*</span> </div>
+                                <div class="col-md-8">@Html.TextBoxFor(a => a.BRCODECAND, new { id = "BRCODECAND", @maxlength = "15", onkeypress = "return isNumberKey(event);", placeholder = "Enter BRCODE" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">Bank Branch Name<span class="rqf">*</span></div>
+                                <div class="col-md-8">@Html.TextBoxFor(a => a.BRANCHCAND, new { id = "BRANCHCAND", @maxlength = "50", placeholder = "Enter BRANCH" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">Bank Reference No.<span class="rqf">*</span></div>
+                                <div class="col-md-8">@Html.TextBoxFor(a => a.J_REF_NOCAND, new { id = "J_REF_NOCAND", @maxlength = "15", placeholder = "Enter J_REF_NO" })</div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">Fee Deposit Date<span class="rqf">*</span></div>
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(a => a.DEPOSITDTCAND, new { id = "DEPOSITDTCAND", @class = "date", @maxlength = "15", onkeypress = "return false", placeholder = "Enter DEPOSIT DATE" })
+                                @*@Html.TextBoxFor(a => a.DEPOSITDTCAND, new { id = "DEPOSITDTCANDR", @maxlength = "15", onkeypress = "return false" })*@
+                                @*@Html.TextBoxFor(a => a.DEPOSITDTCAND, new { id = "DEPOSITDTCAND", @class = "date", @maxlength = "15", onkeypress = "return false", placeholder = "Enter DEPOSIT DATE" })*@
+                            </div>
+                            <div class="clearfix"></div>
+                            @if (Session["AdminId"] != null)
+                            {
+                                <div class="col-md-4">Enter Remarks<span class="rqf">*</span></div>
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(a => a.challanremarks, new { id = "challanremarks", placeholder = "Enter Remarks" })
+                                </div>
+                            }
+                            <div class="clearfix"></div>
+                            <div class="col-md-4">
+                                <span class="rqf">* Fields are mandatory.</span>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                @if (Session["AdminId"] != null)
+                                {
+                                    <input type="button" id="Submit" class="btn" value="Submit" onclick="return formValAdmin();" />
+                                }
+                                else
+                                {<input type="button" id="Submit" class="btn" value="Submit" onclick="return formVal();" />}
+
+
+                                <input action="action" onclick="window.history.go(-1); return true;" type="button" class="btn" value="Back" />
+
+                            </div>
+                        </div>
+
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+</div>
+</div>
+<div id="dialog" style="display: none">
+    <fieldset style="margin-bottom:15px">
+        <legend>Verify Fee Submit Details</legend>
+        <table class="table-responsive">
+            <tr>
+                <td colspan="2" class="rqf">Check Following Details, If correct then click OK button otherwise click Cancel button to correct details.</td>
+            </tr>
+            <tr>
+                <td width="50%">CHALLAN ID</td>
+                <td width="50%">
+                    @Html.TextBoxFor(a => a.CHALLANID, new { id = "dCHALLANID" })
+                </td>
+            </tr>
+            <tr>
+                <td>School/Candidate Name</td>
+                <td>
+                    @Html.TextBoxFor(a => a.SCHLCANDNM, new { id = "dSCHLCANDNM" })
+                </td>
+            </tr>
+            <tr>
+                <td>Bank Branch Code </td>
+                <td>
+                    @Html.TextBoxFor(a => a.BRCODECAND, new { id = "dBRCODECAND" })
+                </td>
+            </tr>
+            <tr>
+                <td>Bank Branch Name *</td>
+                <td>
+
+                    @Html.TextBoxFor(a => a.BRANCHCAND, new { id = "dBRANCHCAND" })
+
+                </td>
+            </tr>
+            <tr>
+                <td>Bank Reference No *</td>
+                <td>
+
+                    @Html.TextBoxFor(a => a.J_REF_NOCAND, new { id = "dJ_REF_NOCAND" })
+
+                </td>
+            </tr>
+            <tr>
+                <td>Fee Deposit Date *</td>
+                <td>
+
+                    @Html.TextBoxFor(a => a.DEPOSITDTCAND, new { id = "dDEPOSITDTCAND" })
+
+                </td>
+            </tr>
+            @if (Session["AdminId"] != null)
+            {
+                <tr>
+                    <td>Enter Remarks*</td>
+                    <td>
+
+                        @Html.TextBoxFor(a => a.challanremarks, new { id = "dChallanremarks" })
+
+                    </td>
+                </tr>
+            }
+        </table>
+    </fieldset>
+</div>
+
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                    alert("Fee Details Submit Successfully, Please wait for bank verification.");
+                    window.location.href = '@Url.Action("ChallanDepositDetails", "Home")';
+            </script>
+
+        }
+    }
+}
+<script src="~/Scripts/ChallanDepositDetails.js" type="text/javascript"></script>
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    //$(function () {
+    //    $(".date").datepicker({
+    //        dateFormat: "dd/mm/yy",
+    //        changeMonth: true,
+    //        changeYear: true,
+    //        yearRange: '2019:' + (new Date().getFullYear()),
+    //        maxDate: 0
+    //    });
+    //});
+
+
+    $(document).ready(function () {
+
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+			minDate: new Date('2022/04/01'),
+			maxDate: 0,
+            yearRange: '2021:' + (new Date().getFullYear()),
+            
+        });
+    });
+</script>
+

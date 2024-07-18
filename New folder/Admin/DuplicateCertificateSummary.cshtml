@@ -1,0 +1,251 @@
+﻿@model PSEBONLINE.Models.DuplicateCertificate
+@{
+    ViewBag.Title = "DuplicateCertificateSummary";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<style type="text/css">
+    body{font-size:11px}
+</style>
+<script>
+function myFunction() {
+    window.print();
+}
+</script>
+<h1 class="noprint">Duplicate Certificate Summary</h1>
+<div class="row">
+    <div class="col-md-8 noprint" style="padding-top:5px;padding-bottom:5px">
+        <span style="@(ViewBag.Summary1 == 1 ? "display:inline-block" : "display:none")"><a href="/Admin/DuplicateCertificateSummary/1" id="District" title="District Manager Wise Duplicate Certificate Status Report" class="btn">District Manager Wise Report</a></span> 
+        <span style="@(ViewBag.Summary2 == 1 ? "display:inline-block" : "display:none")"><a href="/Admin/DuplicateCertificateSummary/2" id="Candidate" title="District Branch Wise Duplicate Certificate Status Report" class="btn">District-Branch Wise Report</a></span> 
+        <span style="@(ViewBag.Summary3 == 1 ? "display:inline-block" : "display:none")"><a href="/Admin/DuplicateCertificateSummary/3" id="Branch" title="Branch Dealing Set wise Duplicate Certificate Status Report" class="btn">Branch Wise Report</a></span> 
+    </div>
+    <div class="col-md-4 text-right noprint" style="padding-top:5px;padding-bottom:5px">
+        @if (ViewBag.TotalCount > 0)
+        {
+            <a class="btn" onclick="myFunction()">Print This Page</a>
+        }
+    </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <div class="clear"></div>
+                <div id="loading"></div>
+                <div id="divMain">                  
+                   <div id="dee">
+                        @if (ViewBag.tab == "1")
+                        {
+                            <table width="100%">
+                        <tr>
+                            <td width="20%"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                            <td style="text-align:center;font-size:26px;line-height:26px">Punjab School Education Report<br />
+                               <span style="font-size:16px">District Manager wise Duplicate Certificate Status Report</span> 
+                            </td>
+                            <td width="20%" style="text-align:right;vertical-align:top">Print Date : @DateTime.Now.ToString("dd/MM/yyyy hh:mm")&nbsp;</td>
+                        </tr>
+                    </table>
+                            <table class="table table-bordered" id="tsummary">
+                                <tr class="active-tr">
+                                    <th>Dist</th>
+                                    <th>DistName</th>
+                                    <th>Total</th>
+                                    <th>Pending</th>
+                                    <th>InProcess</th>
+                                    <th>Printing</th>
+                                    <th>DealingSet</th>
+                                    <th>Objection</th>
+                                    <th>Certificate</th>
+                                    <th>Dispatch</th>
+                                </tr>
+                                @{
+                                    if (ViewBag.TotalCount > 0)
+                                    {
+                                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                        {
+                                            var dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                                            var distnm = Model.StoreAllData.Tables[0].Rows[i]["distnm"].ToString();
+                                            var tot = Model.StoreAllData.Tables[0].Rows[i]["tot"].ToString();
+                                            var pend = Model.StoreAllData.Tables[0].Rows[i]["pend"].ToString();
+                                            var Prc = Model.StoreAllData.Tables[0].Rows[i]["Prc"].ToString();
+                                            var Prnt = Model.StoreAllData.Tables[0].Rows[i]["Prnt"].ToString();
+                                            var dset = Model.StoreAllData.Tables[0].Rows[i]["dset"].ToString();
+                                            var desp = Model.StoreAllData.Tables[0].Rows[i]["desp"].ToString();
+                                            var crt = Model.StoreAllData.Tables[0].Rows[i]["crt"].ToString();
+                                            var dspch = Model.StoreAllData.Tables[0].Rows[i]["dspch"].ToString();
+                                            int Count = i + 1;
+                                            <tr>
+                                                <td>@dist</td>
+                                                <td>@distnm</td>
+                                                <td>@tot</td>
+                                                <td>@pend</td>
+                                                <td>@Prc</td>
+                                                <td>@Prnt</td>
+                                                <td>@dset</td>
+                                                <td>@desp</td>
+                                                <td>@crt</td>
+                                                <td>@dspch</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="10">
+                                                @ViewBag.Message
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                                    }
+                                    else if (ViewBag.tab == "2")
+                                    {
+                                        <table width="100%">
+                        <tr>
+                            <td width="20%"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                            <td style="text-align:center;font-size:26px;line-height:26px">Punjab School Education Report<br />
+                               <span style="font-size:16px">Candidate District wise Duplicate Certificate Status Report</span> 
+                            </td>
+                            <td width="20%" style="text-align:right;vertical-align:top">Print Date : @DateTime.Now.ToString("dd/MM/yyyy hh:mm")&nbsp;</td>
+                        </tr>
+                    </table>
+                                        <table class="table table-bordered" id="tsummary">
+                                            <thead>
+                                                <tr class="active-tr">
+                                                    <th>Dist</th>
+                                                    <th>DistName</th>
+                                                    @*<th>DupSet</th>*@
+                                                    <th>Branch</th>
+                                                    <th>Total</th>
+                                                    <th>Pending</th>
+                                                    <th>InProcess</th>
+                                                    <th>Printing</th>
+                                                    <th>DealingSet</th>
+                                                    <th>Objection</th>
+                                                    <th>Certificate</th>
+                                                    <th>Dispatch</th>
+                                                </tr>
+                                            </thead>
+                                            @{
+                                                if (ViewBag.TotalCount > 0)
+                                                {
+                                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                                    {
+                                                        var dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                                                        var dupset = Model.StoreAllData.Tables[0].Rows[i]["dupset"].ToString();
+                                                        var branch = Model.StoreAllData.Tables[0].Rows[i]["Br"].ToString();
+                                                        var distnm = Model.StoreAllData.Tables[0].Rows[i]["distnm"].ToString();
+                                                        var tot = Model.StoreAllData.Tables[0].Rows[i]["tot"].ToString();
+                                                        var pend = Model.StoreAllData.Tables[0].Rows[i]["pend"].ToString();
+                                                        var Prc = Model.StoreAllData.Tables[0].Rows[i]["Prc"].ToString();
+                                                        var Prnt = Model.StoreAllData.Tables[0].Rows[i]["Prnt"].ToString();
+                                                        var dset = Model.StoreAllData.Tables[0].Rows[i]["dset"].ToString();
+                                                        var desp = Model.StoreAllData.Tables[0].Rows[i]["desp"].ToString();
+                                                        var crt = Model.StoreAllData.Tables[0].Rows[i]["crt"].ToString();
+                                                        var dspch = Model.StoreAllData.Tables[0].Rows[i]["dspch"].ToString();
+                                                        int Count = i + 1;
+                                                        <tr>
+                                                            <td>@dist</td>
+                                                            <td>@distnm</td>
+                                                            @*<td>@dupset</td>*@
+                                                            <td>@branch</td>
+                                                            <td>@tot</td>
+                                                            <td>@pend</td>
+                                                            <td>@Prc</td>
+                                                            <td>@Prnt</td>
+                                                            <td>@dset</td>
+                                                            <td>@desp</td>
+                                                            <td>@crt</td>
+                                                            <td>@dspch</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="12">
+                                                            @ViewBag.Message
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </table>
+
+                                                }
+                                                else if (ViewBag.tab == "3")
+                                                {
+                                                    <table width="100%">
+                        <tr>
+                            <td width="20%"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                            <td style="text-align:center;font-size:26px;line-height:26px">Punjab School Education Report<br />
+                               <span style="font-size:16px">Branch Dealing Set wise Duplicate Certificate Status Report</span> 
+                            </td>
+                            <td width="20%" style="text-align:right;vertical-align:top">Print Date : @DateTime.Now.ToString("dd/MM/yyyy hh:mm")&nbsp;</td>
+                        </tr>
+                    </table>
+                                                    <table class="table table-bordered" id="tsummary">
+                                                        <tr class="active-tr">
+                                                            <th>DupSet</th>
+                                                            <th>Branch</th>
+                                                            <th>Total</th>
+                                                            <th>Pending</th>
+                                                            <th>InProcess</th>
+                                                            <th>Printing</th>
+                                                            <th>DealingSet</th>
+                                                            <th>Objection</th>
+                                                            <th>Certificate</th>
+                                                            <th>Dispatch</th>
+                                                        </tr>
+                                                        @{
+                                                            if (ViewBag.TotalCount > 0)
+                                                            {
+                                                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                                                {
+                                                                    var dupset = Model.StoreAllData.Tables[0].Rows[i]["dupset"].ToString();
+                                                                    var branch = Model.StoreAllData.Tables[0].Rows[i]["Br"].ToString();
+                                                                    var tot = Model.StoreAllData.Tables[0].Rows[i]["tot"].ToString();
+                                                                    var pend = Model.StoreAllData.Tables[0].Rows[i]["pend"].ToString();
+                                                                    var Prc = Model.StoreAllData.Tables[0].Rows[i]["Prc"].ToString();
+                                                                    var Prnt = Model.StoreAllData.Tables[0].Rows[i]["Prnt"].ToString();
+                                                                    var dset = Model.StoreAllData.Tables[0].Rows[i]["dset"].ToString();
+                                                                    var desp = Model.StoreAllData.Tables[0].Rows[i]["desp"].ToString();
+                                                                    var crt = Model.StoreAllData.Tables[0].Rows[i]["crt"].ToString();
+                                                                    var dspch = Model.StoreAllData.Tables[0].Rows[i]["dspch"].ToString();
+                                                                    int Count = i + 1;
+                                                                    <tr>
+                                                                        <td>@dupset</td>
+                                                                        <td>@branch</td>
+                                                                        <td>@tot</td>
+                                                                        <td>@pend</td>
+                                                                        <td>@Prc</td>
+                                                                        <td>@Prnt</td>
+                                                                        <td>@dset</td>
+                                                                        <td>@desp</td>
+                                                                        <td>@crt</td>
+                                                                        <td>@dspch</td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="10">
+                                                                        @ViewBag.Message
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </table>
+
+
+                                                            }
+                    </div>
+                </div>
+                <div class="clear"></div>
+
+                @*
+
+
+                *@
+            </div>
+        </div>
+    </div>

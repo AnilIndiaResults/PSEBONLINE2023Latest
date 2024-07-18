@@ -9127,12 +9127,12 @@ namespace PSEBONLINE.Controllers
                 string outstatus = "";
                 string Search = string.Empty;
                 string res = null;
-				//string UserType = "Admin";               
-				//float fee = 0;              
-				//DateTime date;
-				//
-				UPTREMARKS = UPTREMARKS.Replace("'", "");
-				DataSet result = objDB.UpdNinthResult(ResultList, totmarks, obtmarks, stdid, schl, "SCHL", UPTREMARKS);
+                //string UserType = "Admin";               
+                //float fee = 0;              
+                //DateTime date;
+                //
+                UPTREMARKS = UPTREMARKS.Replace("'", "");
+                DataSet result = objDB.UpdNinthResult(ResultList, totmarks, obtmarks, stdid, schl, "SCHL", UPTREMARKS);
                 res = result.Tables[0].Rows.Count.ToString();
                 if (result.Tables[0].Rows.Count.ToString() != "0")
                 {
@@ -9292,10 +9292,10 @@ namespace PSEBONLINE.Controllers
                 ViewBag.MyAction = itemAction.ToList();
                 ViewBag.SelectedAction = "0";
 
-				var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Re-appear" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
-					new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
-				//var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Compartment" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
-				//new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
+                var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Re-appear" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
+                    new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
+                //var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Compartment" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
+                //new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
                 ViewBag.rslist = resultList.ToList();
 
 
@@ -9411,9 +9411,9 @@ namespace PSEBONLINE.Controllers
                 ViewBag.MyAction = itemAction.ToList();
                 ViewBag.SelectedAction = "0";
 
-				var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Re-appear" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
-					new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);                //var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Compartment" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
-				//new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
+                var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Re-appear" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
+                    new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);                //var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Compartment" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
+                                                                                           //new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
                 ViewBag.rslist = resultList.ToList();
 
 
@@ -9953,10 +9953,10 @@ namespace PSEBONLINE.Controllers
                 TempData["SelFilter"] = frm["SelFilter"];
                 ViewBag.SelectedFilter = frm["SelFilter"];
                 int SelValueSch = Convert.ToInt32(frm["SelFilter"].ToString());
-				if (frm["SelFilter"] != "" && frm["SearchString"].ToString() != "")
+                if (frm["SelFilter"] != "" && frm["SearchString"].ToString() != "")
                 {
-					
-					if (SelValueSch == 1)   
+
+                    if (SelValueSch == 1)
                     { Search += "a.roll='" + frm["SearchString"].ToString() + "'"; }
                     if (SelValueSch == 2)
                     { Search += "d.Std_id='" + frm["SearchString"].ToString() + "'"; }
@@ -12436,7 +12436,8 @@ namespace PSEBONLINE.Controllers
 
                 //var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 //  var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, }, "ID", "Name", 1);
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
 
                 //Subject Code, Subject Name,Pending
@@ -22763,323 +22764,323 @@ namespace PSEBONLINE.Controllers
             }
             return Json(newDs.Tables[0].Rows[0]["Status"]);
         }
-		#endregion
+        #endregion
 
-		#region Signature Chart and Confidential List Primary Middle Both
-		[SessionCheckFilter]
-		public ActionResult SignatureChart(string id, SchoolModels sm)
-		{
-			LoginSession loginSession = (LoginSession)Session["LoginSession"];
-			if (string.IsNullOrEmpty(id))
-			{
-				return RedirectToAction("SignatureChart", "School");
-			}
+        #region Signature Chart and Confidential List Primary Middle Both
+        [SessionCheckFilter]
+        public ActionResult SignatureChart(string id, SchoolModels sm)
+        {
+            LoginSession loginSession = (LoginSession)Session["LoginSession"];
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("SignatureChart", "School");
+            }
 
-			ViewBag.cid = id;
-			sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
-			ViewBag.Cls = sm.CLASS;
+            ViewBag.cid = id;
+            sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
+            ViewBag.Cls = sm.CLASS;
 
-			string Schl = loginSession.SCHL.ToString();
-			string Cent = "";
-			try
-			{
-				if (Schl != "")
-				{
-					DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
-					List<SelectListItem> schllist = new List<SelectListItem>();
-					List<SelectListItem> Sublist = new List<SelectListItem>();
+            string Schl = loginSession.SCHL.ToString();
+            string Cent = "";
+            try
+            {
+                if (Schl != "")
+                {
+                    DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
+                    List<SelectListItem> schllist = new List<SelectListItem>();
+                    List<SelectListItem> Sublist = new List<SelectListItem>();
 
-					if (Dresult.Tables[0].Rows.Count > 0)
-					{
-						Cent = Dresult.Tables[0].Rows[0]["cent"].ToString();
-						sm.ExamCent = Cent;
-						foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
-						{
-							schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
-						}
+                    if (Dresult.Tables[0].Rows.Count > 0)
+                    {
+                        Cent = Dresult.Tables[0].Rows[0]["cent"].ToString();
+                        sm.ExamCent = Cent;
+                        foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+                        {
+                            schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
+                        }
 
-					}
+                    }
 
-					if (Dresult.Tables[1].Rows.Count > 0)
-					{
-						foreach (System.Data.DataRow dr in Dresult.Tables[1].Rows)
-						{
-							Sublist.Add(new SelectListItem { Text = @dr["subnm"].ToString(), Value = @dr["sub"].ToString() });
-						}
+                    if (Dresult.Tables[1].Rows.Count > 0)
+                    {
+                        foreach (System.Data.DataRow dr in Dresult.Tables[1].Rows)
+                        {
+                            Sublist.Add(new SelectListItem { Text = @dr["subnm"].ToString(), Value = @dr["sub"].ToString() });
+                        }
 
-					}
+                    }
 
-					ViewBag.MySchCode = schllist;
-					ViewBag.MyExamSub = Sublist;
+                    ViewBag.MySchCode = schllist;
+                    ViewBag.MyExamSub = Sublist;
 
-					sm.ExamCent = Cent;
-					sm.ExamRoll = sm.ExamSub = "";
+                    sm.ExamCent = Cent;
+                    sm.ExamRoll = sm.ExamSub = "";
 
-					return View();
-				}
-				else
-				{
-					ViewBag.TotalCount = 0;
-					ViewBag.msg = "Data Not Found";
-				}
-				return View();
+                    return View();
+                }
+                else
+                {
+                    ViewBag.TotalCount = 0;
+                    ViewBag.msg = "Data Not Found";
+                }
+                return View();
 
-			}
-			catch (Exception ex)
-			{
-				return RedirectToAction("Logout", "Login");
-			}
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Logout", "Login");
+            }
 
-		}
+        }
 
-		[SessionCheckFilter]
-		[HttpPost]
-		public ActionResult SignatureChart(string id, SchoolModels sm, FormCollection frc)
-		{
-			LoginSession loginSession = (LoginSession)Session["LoginSession"];
-			if (string.IsNullOrEmpty(id))
-			{
-				return RedirectToAction("SignatureChart", "School");
-			}
+        [SessionCheckFilter]
+        [HttpPost]
+        public ActionResult SignatureChart(string id, SchoolModels sm, FormCollection frc)
+        {
+            LoginSession loginSession = (LoginSession)Session["LoginSession"];
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("SignatureChart", "School");
+            }
 
-			ViewBag.cid = id;
-			sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
-			ViewBag.Cls = sm.CLASS;
+            ViewBag.cid = id;
+            sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
+            ViewBag.Cls = sm.CLASS;
 
-			try
-			{
+            try
+            {
 
-				string Schl = loginSession.SCHL.ToString();
-				string Cent = frc["ExamCent"].ToString();
-				string roll = frc["ExamRoll"].ToString();
-				if (Cent != "")
-				{
+                string Schl = loginSession.SCHL.ToString();
+                string Cent = frc["ExamCent"].ToString();
+                string roll = frc["ExamRoll"].ToString();
+                if (Cent != "")
+                {
 
-					sm.ExamCent = Cent;
-					sm.ExamSub = frc["ExamSub"].ToString();
-					sm.ExamRoll = frc["ExamRoll"].ToString();
+                    sm.ExamCent = Cent;
+                    sm.ExamSub = frc["ExamSub"].ToString();
+                    sm.ExamRoll = frc["ExamRoll"].ToString();
 
-					DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
-					List<SelectListItem> schllist = new List<SelectListItem>();
-					foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
-					{
-						schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
-					}
+                    DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
+                    List<SelectListItem> schllist = new List<SelectListItem>();
+                    foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+                    {
+                        schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
+                    }
 
-					ViewBag.MySchCode = schllist;
-					List<SelectListItem> Sublist = new List<SelectListItem>();
-					foreach (System.Data.DataRow dr in Dresult.Tables[1].Rows)
-					{
-						Sublist.Add(new SelectListItem { Text = @dr["subnm"].ToString(), Value = @dr["sub"].ToString() });
-					}
+                    ViewBag.MySchCode = schllist;
+                    List<SelectListItem> Sublist = new List<SelectListItem>();
+                    foreach (System.Data.DataRow dr in Dresult.Tables[1].Rows)
+                    {
+                        Sublist.Add(new SelectListItem { Text = @dr["subnm"].ToString(), Value = @dr["sub"].ToString() });
+                    }
 
-					ViewBag.MyExamSub = Sublist;
+                    ViewBag.MyExamSub = Sublist;
 
-					sm.StoreAllData = _schoolRepository.GetSignatureChart(sm);
-					sm.ExamCent = Cent;
-					ViewBag.TotalCount = sm.StoreAllData.Tables[0].Rows.Count;
-					if (ViewBag.SearchMsg == 0)
-					{
-						ViewBag.Message = "No Record Found";
-					}
-					return View(sm);
-				}
-				else
-				{
-					ViewBag.TotalCount = 0;
-					ViewBag.msg = "Data Not Found";
-				}
-				return View();
+                    sm.StoreAllData = _schoolRepository.GetSignatureChart(sm);
+                    sm.ExamCent = Cent;
+                    ViewBag.TotalCount = sm.StoreAllData.Tables[0].Rows.Count;
+                    if (ViewBag.SearchMsg == 0)
+                    {
+                        ViewBag.Message = "No Record Found";
+                    }
+                    return View(sm);
+                }
+                else
+                {
+                    ViewBag.TotalCount = 0;
+                    ViewBag.msg = "Data Not Found";
+                }
+                return View();
 
-			}
-			catch (Exception ex)
-			{
-				return RedirectToAction("Logout", "Login");
-			}
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Logout", "Login");
+            }
 
-		}
+        }
 
-		[SessionCheckFilter]
-		public ActionResult ConfidentialList(string id, SchoolModels sm)
-		{
-			LoginSession loginSession = (LoginSession)Session["LoginSession"];
-			if (string.IsNullOrEmpty(id))
-			{
-				return RedirectToAction("SignatureChart", "School");
-			}
+        [SessionCheckFilter]
+        public ActionResult ConfidentialList(string id, SchoolModels sm)
+        {
+            LoginSession loginSession = (LoginSession)Session["LoginSession"];
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("SignatureChart", "School");
+            }
 
-			ViewBag.cid = id;
-			sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
-			ViewBag.Cls = sm.CLASS;
+            ViewBag.cid = id;
+            sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
+            ViewBag.Cls = sm.CLASS;
 
-			try
-			{
+            try
+            {
 
-				string Schl = loginSession.SCHL.ToString();
-				string Cent = "";
-				if (Schl != "")
-				{
+                string Schl = loginSession.SCHL.ToString();
+                string Cent = "";
+                if (Schl != "")
+                {
 
-					DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
-					List<SelectListItem> schllist = new List<SelectListItem>();
+                    DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
+                    List<SelectListItem> schllist = new List<SelectListItem>();
 
-					if (Dresult.Tables[0].Rows.Count > 0)
-					{
-						Cent = Dresult.Tables[0].Rows[0]["cent"].ToString();
-						sm.ExamCent = Cent;
-						foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
-						{
-							schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
-						}
+                    if (Dresult.Tables[0].Rows.Count > 0)
+                    {
+                        Cent = Dresult.Tables[0].Rows[0]["cent"].ToString();
+                        sm.ExamCent = Cent;
+                        foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+                        {
+                            schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
+                        }
 
-					}
-					ViewBag.MySchCode = schllist;
-					return View();
-				}
-				else
-				{
-					ViewBag.TotalCount = 0;
-					ViewBag.msg = "Data Not Found";
-				}
-				return View();
+                    }
+                    ViewBag.MySchCode = schllist;
+                    return View();
+                }
+                else
+                {
+                    ViewBag.TotalCount = 0;
+                    ViewBag.msg = "Data Not Found";
+                }
+                return View();
 
-			}
-			catch (Exception ex)
-			{
-				return RedirectToAction("Logout", "Login");
-			}
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Logout", "Login");
+            }
 
-		}
+        }
 
-		[SessionCheckFilter]
-		[HttpPost]
-		public ActionResult ConfidentialList(string id, SchoolModels sm, FormCollection frc)
-		{
-			LoginSession loginSession = (LoginSession)Session["LoginSession"];
-			if (string.IsNullOrEmpty(id))
-			{
-				return RedirectToAction("SignatureChart", "School");
-			}
+        [SessionCheckFilter]
+        [HttpPost]
+        public ActionResult ConfidentialList(string id, SchoolModels sm, FormCollection frc)
+        {
+            LoginSession loginSession = (LoginSession)Session["LoginSession"];
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("SignatureChart", "School");
+            }
 
-			ViewBag.cid = id;
-			sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
-			ViewBag.Cls = sm.CLASS;
-			try
-			{
+            ViewBag.cid = id;
+            sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
+            ViewBag.Cls = sm.CLASS;
+            try
+            {
 
-				string Schl = loginSession.SCHL.ToString();
-				string Cent = frc["ExamCent"].ToString();
-				if (Cent != "")
-				{
+                string Schl = loginSession.SCHL.ToString();
+                string Cent = frc["ExamCent"].ToString();
+                if (Cent != "")
+                {
 
-					sm.ExamCent = Cent;
-					DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
-					List<SelectListItem> schllist = new List<SelectListItem>();
-					foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
-					{
-						schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
-					}
+                    sm.ExamCent = Cent;
+                    DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
+                    List<SelectListItem> schllist = new List<SelectListItem>();
+                    foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+                    {
+                        schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
+                    }
 
-					ViewBag.MySchCode = schllist;
-					if (frc["ExamCent"].ToString() != "")
-					{
-						sm.ExamCent = frc["ExamCent"].ToString();
-					}
+                    ViewBag.MySchCode = schllist;
+                    if (frc["ExamCent"].ToString() != "")
+                    {
+                        sm.ExamCent = frc["ExamCent"].ToString();
+                    }
 
-					sm.StoreAllData = _schoolRepository.GetConfidentialList(sm);
-					ViewBag.TotalCount = sm.StoreAllData.Tables[0].Rows.Count;
-					return View(sm);
-				}
-				else
-				{
-					ViewBag.TotalCount = 0;
-					ViewBag.msg = "Data Not Found";
-				}
-				return View();
+                    sm.StoreAllData = _schoolRepository.GetConfidentialList(sm);
+                    ViewBag.TotalCount = sm.StoreAllData.Tables[0].Rows.Count;
+                    return View(sm);
+                }
+                else
+                {
+                    ViewBag.TotalCount = 0;
+                    ViewBag.msg = "Data Not Found";
+                }
+                return View();
 
-			}
-			catch (Exception ex)
-			{
-				return RedirectToAction("Logout", "Login");
-			}
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Logout", "Login");
+            }
 
-		}
-		#endregion  Signature Chart and Confidential List Matric
+        }
+        #endregion  Signature Chart and Confidential List Matric
 
-       
+
         public ActionResult schoolOfamnence(string id)
         {
-			RegistrationModels model = new RegistrationModels();
-			try
+            RegistrationModels model = new RegistrationModels();
+            try
             {
                 if (Session["SCHL"] == null)
                 {
                     return RedirectToAction("Index", "Home");
                 }
 
-                model.StoreAllData = AbstractLayer.SchoolDB.SchoolOfAmnence(Session["SCHL"].ToString(),"",id,"1");
+                model.StoreAllData = AbstractLayer.SchoolDB.SchoolOfAmnence(Session["SCHL"].ToString(), "", id, "1");
                 ViewBag.myCenter = GetListFromDatatable(model.StoreAllData.Tables[1]);
                 ViewBag.SelectedCenter = "";
                 ViewBag.cid = id;
-			   return View(model);
-			}
-            catch(Exception ex)
+                return View(model);
+            }
+            catch (Exception ex)
             {
-				return View(model);
+                return View(model);
 
-			}
-           
+            }
 
-		}
+
+        }
         [HttpPost]
-		public ActionResult schoolOfamnence(FormCollection frm)
-		{
-			RegistrationModels model = new RegistrationModels();
-			try
-			{
-              
-				string SelCenter = frm["SelCenter"].ToString();
-				string cid = frm["cid"].ToString();
-				ViewBag.cid = frm["cid"].ToString();
-
-
-				if (Session["SCHL"] == null)
-				{
-					return RedirectToAction("Index", "Home");
-				}
-				model.StoreAllData = AbstractLayer.SchoolDB.SchoolOfAmnence(Session["SCHL"].ToString(), SelCenter, cid, "1");
-				ViewBag.myCenter = GetListFromDatatable(model.StoreAllData.Tables[1]);
-			
-				
-				
-				return View(model);
-			}
-			catch (Exception ex)
-			{
-				return View(model);
-
-			}
-
-
-		}
-
-
-      public SelectList GetListFromDatatable(DataTable dt)
+        public ActionResult schoolOfamnence(FormCollection frm)
         {
-			List<SelectListItem> list = new List<SelectListItem>();
+            RegistrationModels model = new RegistrationModels();
+            try
+            {
 
-			foreach (DataRow row in dt.Rows)
-			{
-				list.Add(new SelectListItem()
-				{
-					Text = row["Text"].ToString(),
-					Value = row["Value"].ToString()
-				});
-			}
+                string SelCenter = frm["SelCenter"].ToString();
+                string cid = frm["cid"].ToString();
+                ViewBag.cid = frm["cid"].ToString();
 
-			return new SelectList(list, "Value", "Text");
 
-		}
+                if (Session["SCHL"] == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                model.StoreAllData = AbstractLayer.SchoolDB.SchoolOfAmnence(Session["SCHL"].ToString(), SelCenter, cid, "1");
+                ViewBag.myCenter = GetListFromDatatable(model.StoreAllData.Tables[1]);
 
-	}
+
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return View(model);
+
+            }
+
+
+        }
+
+
+        public SelectList GetListFromDatatable(DataTable dt)
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new SelectListItem()
+                {
+                    Text = row["Text"].ToString(),
+                    Value = row["Value"].ToString()
+                });
+            }
+
+            return new SelectList(list, "Value", "Text");
+
+        }
+
+    }
 }

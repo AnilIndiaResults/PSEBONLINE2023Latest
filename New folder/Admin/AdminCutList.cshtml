@@ -1,0 +1,75 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "AdminCutList";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h2>CutList</h2>
+@using (Html.BeginForm("AdminCutList", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">   
+                <div class="col-md-6">
+                    Enter School Code &nbsp;
+                    @Html.TextBoxFor(m => m.SchlCode, new { id = "SchlCode", @maxlength = "7", placeholder = "Enter School Code", required= "required", onkeypress = "return isNumberKey(event);", })                   
+                    @*<input type="text" id="SchoolCode" placeholder="Enter School Code" name="SchoolCode" />*@
+                </div>
+                <div class="col-md-2">&nbsp;<br /><input type="submit"  value="Submit" />
+             <input type="button" value="Reset" onclick="javascript:document.location.href='@Url.Action("AdminCutList", "Admin" )'" /></div>
+                <div class="clearfix"></div>             
+        </div>
+    </div>
+  }
+
+<div class="row" style="@(ViewBag.Show=="1" ? "display:block" : "display:none")">
+   
+    <div class="col-md-12">
+        <ul class="ullist">
+            @if (ViewBag.Matric == "1" && ViewBag.USERCLASS!="12" )
+            {
+                <li><a href="/Admin/CutList/M"><samp>&#10093;</samp>Matric Regular Cut List</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;<a href="/Admin/CutList/ME">Matric Regular Error List</a></li>
+            }
+            @if (ViewBag.OMatric == "1" && ViewBag.USERCLASS != "12")
+            {
+
+                <li><a href="/Admin/CutList/MO"><samp>&#10093;</samp> Matric Open Cut List</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;<a href="/Admin/CutList/MOE"> Matric Open Error List</a></li>
+            }
+            @if (ViewBag.Senior == "1" && ViewBag.USERCLASS != "10")
+            {
+
+                <li><a href="/Admin/CutList/S"><samp>&#10093;</samp> Senior Regular Cut List</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;<a href="/Admin/CutList/SE"> Senior Regular Error List</a></li>
+            }
+            @if (ViewBag.OSenior == "1" && ViewBag.USERCLASS != "10")
+            {
+
+                <li><a href="/Admin/CutList/SO"><samp>&#10093;</samp> Senior Open Cut List</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;<a href="/Admin/CutList/SOE"> Senior Open Error List</a></li>
+            }
+        </ul>
+    </div>
+</div>
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("School Code Not Found");
+            </script>
+        }       
+    }
+}
+
+<script type="text/javascript">
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    </script>

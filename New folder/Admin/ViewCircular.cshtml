@@ -1,0 +1,236 @@
+﻿@model PSEBONLINE.Models.CircularModels
+
+@{
+    ViewBag.Title = "Circular";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+
+<!-- #region datatables files -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+<h2>View All Circulars & Marquee </h2>
+<div class="row" id="divall">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("ViewCircular", "Admin", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-2">Enter Title <input type="text" id="SearchString" placeholder="Title" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2">Upload Date <input type="text"  onkeypress="return false" placeholder="From" id="FromDate" autocomplete="off" name="FromDate" class="date" value="@Request["FromDate"]" />                 </div>
+                <div class="col-md-2"><br /><input type="text" onkeypress="return false" placeholder="To" id="ToDate" autocomplete="off" name="ToDate" class="date" value="@Request["ToDate"]" /></div>
+                <div class="col-md-6">&nbsp;<br /><input type="submit" name="submit" value="Search" />&nbsp;&nbsp; <a href="/Admin/ViewCircular" class="btn">Reset</a> &nbsp;&nbsp;<a href="/Admin/Circular" class="btn">Add Circular</a> </div>
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">Total:  @ViewBag.TotalCircularCount</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="example" class="display table table-bordered" style="width:100%">
+                <thead>
+                    <tr class="active-tr">
+                        <th>S.No</th>
+                        <th>Circular No</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Upload Date</th>
+                        <th>Expire Date</th>
+                        <th>Update Date</th>
+                        <th>Allow To</th>
+                        <th>Remarks</th>
+                        <th>Status</th>
+                        <th>Modify</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;                         
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var ID = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                                var CircularNo = Model.StoreAllData.Tables[0].Rows[i]["CircularNo"].ToString();
+                                var Title = Model.StoreAllData.Tables[0].Rows[i]["Title"].ToString();
+                                var UploadDate = Model.StoreAllData.Tables[0].Rows[i]["UploadDateDD"].ToString().Split(' ')[0];
+                                var ExpiryDate = Model.StoreAllData.Tables[0].Rows[i]["ExpiryDateDD"].ToString().Split(' ')[0];
+                                var Category = Model.StoreAllData.Tables[0].Rows[i]["IsMarque"].ToString() == "1" ? "Marque" : "Circulars";
+                                var Status = Model.StoreAllData.Tables[0].Rows[i]["IsActive"].ToString().ToLower() == "true" ? "Active" : "De-Active";
+                                var CreatedDate = Model.StoreAllData.Tables[0].Rows[i]["CreatedDate"].ToString().Split(' ')[0];
+                                var UpdatedDate = Model.StoreAllData.Tables[0].Rows[i]["UpdatedDate"].ToString().Split(' ')[0];
+                                var Attachment = Model.StoreAllData.Tables[0].Rows[i]["Attachment"].ToString();
+                                var UrlLink = Model.StoreAllData.Tables[0].Rows[i]["UrlLink"].ToString();
+                                var CircularTypes = Model.StoreAllData.Tables[0].Rows[i]["CircularTypes"].ToString();
+                                var CircularTypeName = Model.StoreAllData.Tables[0].Rows[i]["CircularTypeName"].ToString();
+                                var NewFlag = Model.StoreAllData.Tables[0].Rows[i]["NewFlag"].ToString();
+                                var EmpUserId = Model.StoreAllData.Tables[0].Rows[i]["EmpUserId"].ToString();
+                                var Updated_EmpUserId = Model.StoreAllData.Tables[0].Rows[i]["Updated_EmpUserId"].ToString();
+                                var CircularRemarks = Model.StoreAllData.Tables[0].Rows[i]["CircularRemarks"].ToString();
+                                // int Count = i + 1;
+                                        <tr>
+                                            <td>@d</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(UrlLink))
+                                                {
+                                                    <a href='@UrlLink' target="_blank" title="click here to open link">
+                                                        <span style="color:green">@CircularNo</span>
+                                                    </a>
+                                                }
+                                                else if (!string.IsNullOrEmpty(Attachment))
+                                                { <a href='@Attachment' target="_blank" title="click here to open attachment">
+                                                        <span>@CircularNo</span>
+                                                    </a>}
+                                                else
+                                                {<span>@CircularNo</span>}
+                                            </td>
+                                            <td>@Title</td>
+                                            <td>@Category</td>
+                                            @*<td>@Status </td>*@
+                                            <td>
+                                                @UploadDate
+                                                @if (EmpUserId != "" && UploadDate != "")
+                                                {<span class="rqf">[@EmpUserId]</span>}
+                                            </td>
+                                            <td>@ExpiryDate</td>
+                                            <td>
+                                                @UpdatedDate
+                                                @if (UpdatedDate != "" && Updated_EmpUserId != "")
+                                                {<span class="rqf">[@Updated_EmpUserId]</span>}
+
+                                            </td>
+                                            <td>@CircularTypeName</td>
+                                            <td>
+                                                <span class="rqf">@CircularRemarks</span>
+                                            </td>
+                                            <td>
+                                                @*@STATUS.ToUpper()*@
+                                                <a href='@Url.Action("UpdateCircularStatus", "admin", new { id = ID  })' onclick="return confirm('You are sure to change this?');">
+                                                    <img src="@(Status.ToUpper() == "ACTIVE" ? "/Images/enable.gif" : "/Images/disable.gif"  )" />
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href='@Url.Action("Circular", "Admin", new { id = ID  })' onclick="return confirm('You are sure to modify this?');">
+                                                    <img src="/Images/Edit_Icon.png" width="25" title="Modify" />
+                                                </a>
+                                            </td>
+                                        </tr>                             
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "responsive": true,
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
+            "processing": true,
+            "pageLength": 50,
+            "order": [[0, 'asc']],
+            language: { "emptyTable": "No Record Found", searchPlaceholder: "Search By Any.." },
+        })
+    });
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2021:' + (new Date().getFullYear())
+        });
+    });
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+
+<script type="text/javascript">
+
+    function valForm() {
+        var Title = document.getElementById("Title");
+        if (Title.value == "") {
+            alert("Please Enter Title");
+            Title.focus();
+            return false;
+        }
+
+
+        var UploadDate = document.getElementById("UploadDate");
+        if (UploadDate.value == "" || UploadDate.value == "0") {
+            alert("Please Select Upload Date");
+            UploadDate.focus();
+            return false;
+        }
+
+        var ExpiryDate = document.getElementById("ExpiryDate");
+        if (ExpiryDate.value == "" || ExpiryDate.value == "0") {
+            alert("Please Select ExpiryDate");
+            ExpiryDate.focus();
+            return false;
+        }
+
+
+
+
+        var Circulars = document.getElementById("Circulars").checked;
+        var Marque = document.getElementById("Marquee").checked;
+        if (Circulars == false && Marque == false) {
+            alert("Please Select Category");
+            return false;
+        }
+
+        var Active = document.getElementById("Active").checked;
+        var InActive = document.getElementById("InActive").checked;
+        if (Active == false && InActive == false) {
+            alert("Please Select Active/De-Active");
+            return false;
+        }
+
+        return true;
+    }
+
+</script>

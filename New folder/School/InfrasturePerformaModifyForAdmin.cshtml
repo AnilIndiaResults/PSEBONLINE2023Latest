@@ -1,0 +1,928 @@
+﻿@model PSEBONLINE.Models.InfrasturePerformas
+@{
+    ViewBag.Title = "Infrasture Performa";
+    Layout = "~/Views/Shared/_Header.cshtml";
+    var AWS_URL = System.Configuration.ConfigurationManager.AppSettings["AWSURL"].ToString();
+    var pdfname = @Session["SCHOOLDIST"].ToString() + ".pdf";
+}
+<p style="float:right; padding-top:10px;">
+    @*Last Date : @ViewData["lastDate"].ToString()*@
+    Last Date : 30-09-2023
+</p>
+<a href="~/PDF/Instructions_regarding_how_to_fill_infrastructure_form.pdf" style="float: right; padding-top: 10px; color: red; font-size: 14px; font-weight: bold;margin-right:14px;">
+    Instructions regarding how to fill infrastructure form
+</a>
+<div style="clear:both;"></div>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link href="http://fonts.googleapis.com/css?family=Merienda+One" rel="stylesheet" type="text/css" />
+<link href="/Content/css/font-awesome.min.css" rel="stylesheet" />
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+
+    h1 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        font-family: 'Merienda One', cursive;
+        font-family: 'Merienda One', cursive;
+        padding-bottom: 6px;
+    }
+</style>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Alert",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+    });
+</script>
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() == "1")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Infrastructure Performa updated sucessfully.</span>
+            </div>
+        }
+        else if (ViewData["result"].ToString() == "0")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">There is some error during updation of Infrastructure Performa. Please try after sometimes.</span>
+            </div>
+        }
+        else
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">@ViewData["result"].ToString()</span>
+            </div>
+        }
+    }
+}
+@{
+
+    using (Html.BeginForm("InfrasturePerformaModifyForAdmin", "School", FormMethod.Post))
+    {
+        <div class="row">
+            <div class="col-md-12 text-center">
+                @*<p class="kdsfont">
+                        Import ¨Û¼ã ²Ù ÅÒÛ× ¤è×¶ÏÛ ÒØÐã ÚÒÚÂ¤ØÏÁÛ¤Ù ÂÛ ÓÞ°Û Âãª» Ð¥Û Ú¥Ó ÚÐâ¨ ¼ã ¨ÚÐó¨ ¨Û¼Ø ²ØÒã¢ Ú¥Ó ¤ÄÛÅ ÆñÛÚª¤ØÏÁÛ Âã ÒãÏÒã Modify ²Ù Delete ¨Û¼ã ²Ø Ó¨Âã ÕÅ¢ Ú¥Ó ¼ë× Ú¥ÐØÒØ Rough Report or Student Verification Form ÂãªÛ ¤¼ã ÚÆâñ¶ ¨Û¼Û ²Ø Ó¨ÂÛ Õè¢
+                    </p>*@
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    @Html.HiddenFor(a => a.SCHL)
+                    <div>
+                        <span id="lblStatus"></span>
+                        <div id="loading1"></div>
+                    </div>
+                    <table class="table table-bordered" id="">
+                        <tr>
+                            <th colspan="6"><h4>School Student Count Class Wise ):-</h4></th>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding:0">
+                                <table class="table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <td width="10%"></td>
+
+                                            @if (ViewBag.Matric == "1")
+                                            {
+                                                <td width="10%">8th</td>
+                                            }
+                                            @if (ViewBag.Matric == "1")
+                                            {
+                                                <td width="10%">9th</td>
+                                            }
+                                            @if (ViewBag.Matric == "1")
+                                            {
+                                                <td width="10%">10th</td>
+                                            }
+                                            @if (ViewBag.Senior == "1")
+                                            {
+                                                <td width="10%">11th</td>
+                                            }
+                                            @if (ViewBag.Senior == "1")
+                                            {
+                                                <td width="10%">12th</td>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tr>
+                                        <td width="20%">Count of Students</td>
+                                        @if (ViewBag.Matric == "1")
+                                        {
+                                            <td width="15%">@Html.TextBoxFor(a => a.Count8th, new { id = "Count8th", @maxlength = "20", @type = "number", @required = "required" })</td>
+                                        }
+                                        @if (ViewBag.Matric == "1")
+                                        {
+                                            <td width="15%">@Html.TextBoxFor(a => a.Count9th, new { id = "Count9th", @maxlength = "20", @type = "number", @required = "required" })</td>
+                                        }
+                                        @if (ViewBag.Matric == "1")
+                                        {
+                                            <td width="15%">@Html.TextBoxFor(a => a.Count10th, new { id = "Count10th", @maxlength = "20", @type = "number", @required = "required" })</td>
+                                        }
+                                        @if (ViewBag.Senior == "1")
+                                        {
+                                            <td width="15%">@Html.TextBoxFor(a => a.Count11th, new { id = "Count11th", @maxlength = "20", @type = "number", @required = "required" })</td>
+                                        }
+                                        @if (ViewBag.Senior == "1")
+                                        {
+                                            <td width="15%">@Html.TextBoxFor(a => a.Count12th, new { id = "Count12th", @maxlength = "20", @type = "number", @required = "required" })</td>
+                                        }
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="6"><h4>School Infrastructure Details</h4></th>
+                        </tr>
+
+                        @*Name of the nearest bank with address, IFSC Code and SOL id of the branch. (Preference be given to HDFC or Punjab & Sind Bank)
+                            1.Differentiate the Name and IFSC  code of Bank with capacity of Column 100 characters (Alphanumeric Value)
+                            2.SOL ID - numeric value Only Capacity of Column 40 characters*@
+                        <tr>
+
+                            <th>No. of Floors (including ground floor) *</th>
+                            <td>@Html.TextBoxFor(a => a.Col1, new { @type = "number", @required = "required" })</td>
+                            <th>Total Classrooms on ground floor *</th>
+                            <td>@Html.TextBoxFor(a => a.Col2, new { @type = "number", @required = "required" })</td>
+                            <th>Seating capacity on ground floor (no of candidates)</th>
+                            <td>@Html.TextBoxFor(a => a.Col3, new { @type = "number", @required = "required" })</td>
+                        </tr>
+                        <tr>
+                            <th>Total Classrooms on first floor, if any</th>
+                            <td>@Html.TextBoxFor(a => a.Col4, new { @type = "number", @required = "required" })</td>
+                            <th>Seating capacity on first floor (no of candidates)</th>
+                            <td>@Html.TextBoxFor(a => a.Col5, new { @type = "number", @required = "required" })</td>
+                            <th>Total Classrooms on second floor, if any</th>
+                            <td>@Html.TextBoxFor(a => a.Col6, new { @type = "number", @required = "required" })</td>
+                        </tr>
+                        <tr>
+                            <th>Seating capacity on second floor (no of candidates)</th>
+                            <td>@Html.TextBoxFor(a => a.Col7, new { @type = "number", @required = "required" })</td>
+                            <th>Total Classrooms on third floor, if any</th>
+                            <td>@Html.TextBoxFor(a => a.Col8, new { @type = "number", @required = "required" })</td>
+                            <th>Seating capacity on third floor (no of candidates)</th>
+                            <td>@Html.TextBoxFor(a => a.Col9, new { @type = "number", @required = "required" })</td>
+
+                        </tr>
+
+
+                        <tr>
+                            <th>Floor on which the examination centre is created in the school? (Exam Centre should preferably on Ground Floor/First Floor)</th>
+                            @*
+                                <td>@Html.TextBoxFor(a => a.Col10)</td>*@
+                            <td>
+                                @{
+                                    List<SelectListItem>
+                                        floor = new List<SelectListItem>
+                                            ();
+
+                                    floor.Add(new SelectListItem { Text = "Ground Floor", Value = "Ground Floor" });
+                                    floor.Add(new SelectListItem { Text = "First Floor", Value = "First Floor" });
+                                    floor.Add(new SelectListItem { Text = "Second Floor", Value = "Second Floor" });
+                                    floor.Add(new SelectListItem { Text = "Third Floor", Value = "Third Floor" });
+
+                                }
+                                @Html.DropDownListFor(a => a.Col10, floor, new { @required = "required" })
+
+                            </td>
+                            <th>Total seating capacity of candidates in Exam centre</th>
+                            <td>@Html.TextBoxFor(a => a.Col11, new { @type = "number", @required = "required" })</td>
+                            <th>Number of rooms provided for examination centre [Minimum capacity is 24 candidates per room (Single bench single candidate)]</th>
+                            <td>@Html.TextBoxFor(a => a.Col12, new { @type = "number", @required = "required" })</td>
+
+                        </tr>
+                        <tr>
+                            <th>Total No. of Single Benches *</th>
+                            <td>@Html.TextBoxFor(a => a.Col13, new { @type = "number", @required = "required" })</td>
+                            <th>Total No. of Double Benches *</th>
+                            <td>@Html.TextBoxFor(a => a.Col14, new { @type = "number", @required = "required" })</td>
+                            <th>Are CCTV cameras installed in the school campus?</th>
+                            <td>
+                                @{
+                                    List<SelectListItem>
+                                        yesno = new List<SelectListItem>
+                                            ();
+
+                                    yesno.Add(new SelectListItem { Text = "Yes", Value = "Yes" });
+                                    yesno.Add(new SelectListItem { Text = "No", Value = "No" });
+
+                                }
+                                @Html.DropDownListFor(a => a.Col15, yesno)
+
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>How many rooms (used for examination centre) have CCTV cameras?</th>
+                            <td>@Html.TextBoxFor(a => a.Col16, new { @type = "number", @required = "required" })</td>
+                            <th>Capacity for Physics Lab (no of candidates)</th>
+                            <td>@Html.TextBoxFor(a => a.Col17, new { @type = "number", @required = "required" })</td>
+                            <th>Capacity for Chemistry Lab (no of candidates)</th>
+                            <td>@Html.TextBoxFor(a => a.Col18, new { @type = "number", @required = "required" })</td>
+                        </tr>
+                        <tr>
+                            <th>Capacity for Biology Lab (no of candidates)</th>
+                            <td>@Html.TextBoxFor(a => a.Col19, new { @type = "number", @required = "required" })</td>
+                            <th>Gated boundary or not?</th>
+                            <td>@Html.DropDownListFor(a => a.Col22, yesno)</td>
+
+
+                        </tr>
+                        <tr>
+                            <th>R.O's</th>
+                            <td>@Html.DropDownListFor(a => a.Col25A, yesno)</td>
+                            <th>Water coolers</th>
+                            <td>@Html.DropDownListFor(a => a.Col25B, yesno)</td>
+                            <th>Are there separate toilets for boys & girls?</th>
+                            <td>@Html.DropDownListFor(a => a.Col29, yesno)</td>
+
+
+
+                            <!-- <th>Any other source</th> -->
+                            <!-- <td>@Html.DropDownListFor(a => a.Col25B, yesno)</td> -->
+                        </tr>
+                        <tr>
+
+                            <th></th>
+
+
+
+                            <!-- <th>Size and capacity of lab (no of candidates) Specify the purpose of its usage</th> -->
+                            <!-- <td>@Html.TextBoxFor(a => a.Col23, new { @type = "number", @required = "required" })</td> -->
+                            <td></td>
+
+                        </tr>
+
+
+
+
+                        <tr>
+                            <th colspan="6">
+                                <h4>
+                                    Computer , Internet and Power Backup Facility ):-
+                                </h4>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Total no. of Computers in computer lab</th>
+                            <td>@Html.TextBoxFor(a => a.Col20, new { @type = "number", @required = "required" })</td>
+                            <th>Total No. of Working Computers having I3 Processor ,4GB Ram, 128 GB HDD or  above this Configuration and have working Internet on it.</th>
+                            <td>@Html.TextBoxFor(a => a.Col37, new { @type = "number", @required = "required" })</td>
+                            <th>Total No. of working Laptop in the School with internet enable</th>
+                            <td>@Html.TextBoxFor(a => a.Col38, new { @type = "number", @required = "required" })</td>
+                        </tr>
+                        <tr>
+                            <th>Capacity of Computer Lab (no of candidates)</th>
+                            <td>@Html.TextBoxFor(a => a.Col21, new { @type = "number", @required = "required" })</td>
+                            <th>Is Internet Facility available in Computer lab?</th>
+                            <td>@Html.DropDownListFor(a => a.Col23, yesno)</td>
+
+
+                            <th>Type of Internet (Broadband / WiFi / Lease Line)  Working Condition of Wifi ( Yes/ No)</th>
+                            <td>
+                                @{
+                                    List<SelectListItem>
+                                        SelectList = new List<SelectListItem>
+                                            ();
+                                    SelectList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                                    SelectList.Add(new SelectListItem { Text = "Broadband", Value = "Broadband" });
+                                    SelectList.Add(new SelectListItem { Text = "WiFi", Value = "WiFi" });
+                                    SelectList.Add(new SelectListItem { Text = "Lease Line", Value = "LeaseLine" });
+                                }
+
+                                @Html.DropDownList("Col39", SelectList, new { id = "Col39" })
+                                @*@Html.DropDownListFor(a => a.Col39, BroadbandWiFiLeaseLine))*@
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <th>No of working printers </th>
+                            <td>@Html.TextBoxFor(a => a.Col31, new { @type = "number", @required = "required" })</td>
+                            <th>Single side printer / Double side printer</th>
+                            <td>
+                                @{
+                                    List<SelectListItem> SelectLists = new List<SelectListItem>();
+                                    SelectLists.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                                    SelectLists.Add(new SelectListItem { Text = "Single", Value = "Single" });
+                                    SelectLists.Add(new SelectListItem { Text = "Double", Value = "Double" });
+                                }
+
+                                @Html.DropDownList("Col33", SelectLists, new { id = "Col33" })
+                            </td>
+                            <th>Model of Printer</th>
+                            <td>@Html.TextBoxFor(a => a.Col40)</td>
+                        </tr>
+                        <tr>
+
+                            <th>Speed of printing per minute (no of papers)</th>
+                            <td>@Html.TextBoxFor(a => a.Col32, new { @type = "number", @required = "required" })</td>
+                            <th>Photostat machine </th>
+                            <td>@Html.DropDownListFor(a => a.Col34, yesno)</td>
+                            <th>Power backup (UPS / Inverter / Generator)</th>
+                            <td>@Html.DropDownListFor(a => a.Col36, yesno)</td>
+
+                        </tr>
+
+                        <tr>
+
+                            @*<th>No. of A4 and Legal Paper Rim in stock for printing purpose</th>
+                                <td>@Html.TextBoxFor(a => a.Col41)</td>*@
+                            <th> </th>
+                            <td></td>
+                            <th> </th>
+                            <td></td>
+
+
+                        </tr>
+                        <tr>
+
+                            <th>CCTV in Computer Lab</th>
+                            <td>@Html.DropDownListFor(a => a.Col35, yesno)</td>
+                            <th>Invertor</th>
+                            <td>@Html.DropDownListFor(a => a.Col42, yesno)</td>
+                            <th>Generator</th>
+                            <td>@Html.DropDownListFor(a => a.Col43, yesno)</td>
+
+                        </tr>
+
+
+
+                        <tr>
+                            <th colspan="6"><h4>Enter the Details of 3 branches from dropdown banks which are nearby to school (Minimum 1 mandatory ):-</h4></th>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding:0">
+                                <table class="table-bordered" width="100%">
+                                    <tr>
+
+                                        @{
+                                            List
+                                            <SelectListItem>
+                                                banklist = new List<SelectListItem>
+                                                    ();
+
+                                            banklist.Add(new SelectListItem { Text = "HDFC BANK", Value = "HDFC BANK" });
+                                            banklist.Add(new SelectListItem { Text = "PUNJAB AND SIND BANK", Value = "PUNJAB AND SIND BANK" });
+                                            banklist.Add(new SelectListItem { Text = "PUNJAB NATIONAL BANK", Value = "PUNJAB NATIONAL BANK" });
+                                            banklist.Add(new SelectListItem { Text = "PUNJAB GRAMIN BANK ", Value = "PUNJAB GRAMIN BANK" });
+                                            banklist.Add(new SelectListItem { Text = "STATE BANK OF INDIA", Value = "STATE BANK OF INDIA" });
+
+                                        }
+
+                                        <td width="10%">Bank Name</td>
+                                        <td width="14%">@Html.DropDownListFor(a => a.Bank1, banklist)</td>
+                                        <td width="10%">IFSC Code 1</td>
+                                        <td width="12%">@Html.TextBoxFor(a => a.IFSC1, new { id = "IFSC1", @maxlength = "20", @onchange = "IFSCCodeAvailability('1')", @required = "required" })</td>
+
+                                        <td width="16%">Branch Name & Address</td>
+                                        <td width="38%">@Html.TextBoxFor(a => a.BankBranch1, new { @required = "required" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank Name</td>
+                                        <td>@Html.DropDownListFor(a => a.Bank2, banklist)</td>
+                                        <td>IFSC Code 2</td>
+                                        <td>@Html.TextBoxFor(a => a.IFSC2, new { id = "IFSC2", @maxlength = "20", @onchange = "IFSCCodeAvailability('2')", @required = "required" })</td>
+
+                                        <td>Branch Name & Address</td>
+                                        <td>@Html.TextBoxFor(a => a.BankBranch2, new { @required = "required" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank Name</td>
+                                        <td>@Html.DropDownListFor(a => a.Bank3, banklist)</td>
+                                        <td>IFSC Code 3</td>
+                                        <td>@Html.TextBoxFor(a => a.IFSC3, new { id = "IFSC3", @maxlength = "20", @onchange = "IFSCCodeAvailability('3')", @required = "required" })</td>
+
+                                        <td>Branch Name & Address</td>
+                                        <td>@Html.TextBoxFor(a => a.BankBranch3, new { @required = "required" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th colspan="6"><h4>Previous Year (March 2023) Centre Detail  &  Choice of Exam Centre for March 2024 ):-</h4></th>
+                        </tr>
+
+                        <tr>
+                            <td colspan="6" style="padding:0">
+                                <table class="table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <td width="10%">Class </td>
+                                            <td width="20%">Cent Code + School Name </td>
+                                            <td width="10%">Are you statisfied with Existing Exam Centre</td>
+
+                                            <td width="40%">
+                                                Centre code + School Name for New Exam Centre
+                                                <br />
+                                                <a href="~/PDF/School/@pdfname" target="_blank" style="color: red; font-size: 14px; font-weight: bold;" colspan="6">Building Notice of Previous Year (March 2023) Attached </a>
+                                            </td>
+                                            <td width="10%">Distance Between Self School and Exam Cent School  in KM</td>
+                                        </tr>
+                                    </thead>
+
+                                    @if (ViewBag.SchoolCenterName != null)
+                                    {
+                                        var count10th = 0;
+                                        var count12th = 0;
+                                        foreach (var item in ViewBag.SchoolCenterName)
+                                        {
+                                            if (item.CLASS == "8")
+                                            {
+                                                <tr>
+                                                    <td width="10%">8th</td>
+                                                    <td width="10%">
+                                                        @item.CENT,@item.schlnme
+                                                    </td>
+
+                                                    <td>@Html.DropDownListFor(a => a.Statisfied8th, yesno)</td>
+
+                                                    @if (ViewBag.SchoolCenterNameNearest != null && Model.Statisfied8th == "No")
+                                                    {
+                                                        <td width="10%">
+
+                                                            @Html.DropDownList("SchoolCenterNewFor8th", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "" })
+
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            @Html.DropDownList("SchoolCenterNewFor8th", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "", style = "display: none;" })
+                                                        </td>
+                                                    }
+                                                    <td>@Html.TextBoxFor(a => a.Distance8th)</td>
+
+                                                </tr>
+                                            }
+                                            else if (item.CLASS == "2")
+                                            {
+
+                                                if (count10th == 0)
+                                                {
+
+
+                                                    <tr>
+                                                        <td width="10%">10th</td>
+                                                        <td width="10%">
+                                                            @item.CENT,@item.schlnme
+                                                        </td>
+
+                                                        <td>@Html.DropDownListFor(a => a.Statisfied10th, yesno)</td>
+                                                        @if (ViewBag.SchoolCenterNameNearest != null && Model.Statisfied10th == "No")
+                                                        {
+                                                            <td width="10%">@Html.DropDownList("SchoolCenterNewFor10th", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "" })</td>
+                                                        }
+
+                                                        else
+                                                        {
+                                                            <td>
+                                                                @Html.DropDownList("SchoolCenterNewFor10th", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "", style = "display: none;" })
+                                                            </td>
+                                                        }
+                                                        <td>@Html.TextBoxFor(a => a.Distance10th)</td>
+                                                    </tr>
+                                                }
+                                                if (count10th == 1)
+                                                {
+
+
+                                                    <tr>
+                                                        <td width="10%">10th</td>
+                                                        <td width="10%">@item.CENT,@item.schlnme </td>
+
+                                                        <td>@Html.DropDownListFor(a => a.Statisfied10th1, yesno)</td>
+                                                        @if (ViewBag.SchoolCenterNameNearest != null && Model.Statisfied10th1 == "No")
+                                                        {
+                                                            <td width="10%">@Html.DropDownList("SchoolCenterNewFor10th1", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "" })</td>
+                                                        }
+
+                                                        else
+                                                        {
+                                                            <td>
+                                                                @Html.DropDownList("SchoolCenterNewFor10th1", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "", style = "display: none;" })
+                                                            </td>
+                                                        }
+                                                        <td>@Html.TextBoxFor(a => a.Distance10th1)</td>
+                                                    </tr>
+                                                }
+                                                if (count10th == 2)
+                                                {
+
+
+                                                    <tr>
+                                                        <td width="10%">10th</td>
+                                                        <td width="10%">@item.CENT,@item.schlnme </td>
+
+                                                        <td>@Html.DropDownListFor(a => a.Statisfied10th2, yesno)</td>
+                                                        @if (ViewBag.SchoolCenterNameNearest != null && Model.Statisfied10th2 == "No")
+                                                        {
+                                                            <td width="10%">@Html.DropDownList("SchoolCenterNewFor10th2", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "" })</td>
+                                                        }
+
+                                                        else
+                                                        {
+                                                            <td>
+                                                                @Html.DropDownList("SchoolCenterNewFor10th2", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "", style = "display: none;" })
+                                                            </td>
+                                                        }
+                                                        <td>@Html.TextBoxFor(a => a.Distance10th2)</td>
+                                                    </tr>
+                                                }
+                                                count10th++;
+                                            }
+
+                                            else if (item.CLASS == "4")
+                                            {
+                                                if (count12th == 0)
+                                                {
+                                                    <tr>
+                                                        <td width="10%">12th</td>
+                                                        <td width="10%">@item.CENT,@item.schlnme </td>
+
+                                                        <td>@Html.DropDownListFor(a => a.Statisfied12th, yesno)</td>
+                                                        @if (ViewBag.SchoolCenterNameNearest != null && Model.Statisfied12th == "No")
+                                                        {
+                                                            <td width="10%">@Html.DropDownList("SchoolCenterNewFor12th", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "" })</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                @Html.DropDownList("SchoolCenterNewFor12th", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "", style = "display: none;" })
+                                                            </td>
+                                                        }
+                                                        <td>@Html.TextBoxFor(a => a.Distance12th)</td>
+                                                    </tr>
+                                                }
+                                                if (count12th == 1)
+                                                {
+                                                    <tr>
+                                                        <td width="10%">12th</td>
+                                                        <td width="10%">@item.CENT,@item.schlnme </td>
+
+                                                        <td>@Html.DropDownListFor(a => a.Statisfied12th1, yesno)</td>
+                                                        @if (ViewBag.SchoolCenterNameNearest != null && Model.Statisfied12th1 == "No")
+                                                        {
+                                                            <td width="10%">@Html.DropDownList("SchoolCenterNewFor12th1", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "" })</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                @Html.DropDownList("SchoolCenterNewFor12th1", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "", style = "display: none;" })
+                                                            </td>
+                                                        }
+                                                        <td>@Html.TextBoxFor(a => a.Distance12th1)</td>
+                                                    </tr>
+                                                }
+                                                if (count12th == 2)
+                                                {
+                                                    <tr>
+                                                        <td width="10%">12th</td>
+                                                        <td width="10%">@item.CENT,@item.schlnme </td>
+
+                                                        <td>@Html.DropDownListFor(a => a.Statisfied12th2, yesno)</td>
+                                                        @if (ViewBag.SchoolCenterNameNearest != null && Model.Statisfied12th2 == "No")
+                                                        {
+                                                            <td width="10%">@Html.DropDownList("SchoolCenterNewFor12th2", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "" })</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                @Html.DropDownList("SchoolCenterNewFor12th2", new SelectList(ViewBag.SchoolCenterNameNearest, "Value", "Text"), "Choose Centre Code & School Name", new { @class = "", style = "display: none;" })
+                                                            </td>
+                                                        }
+                                                        <td>@Html.TextBoxFor(a => a.Distance12th2)</td>
+                                                    </tr>
+                                                }
+                                                count12th++;
+                                            }
+                                        }
+
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th colspan="6"><h4>Detail of Answer Sheet Collection Centre ):-</h4></th>
+                        </tr>
+                        <tr>
+                            <th colspan="6">
+
+                            </th>
+
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding:0">
+                                <table class="table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <td width="10%">Class </td>
+                                            <td width="50%">Name of Answer Sheet Collection Centre </td>
+                                            <td width="10%">Distance Between Self School and New Exam Cent School  in KM</td>
+                                        </tr>
+                                    </thead>
+                                    <tr>
+                                        <td width="10%">8th</td>
+                                        @if (ViewBag.SchoolCenterAnwerNameNearest != null)
+                                        {
+                                            <td width="30%">@Html.DropDownList("SchoolName1", new SelectList(ViewBag.SchoolCenterAnwerNameNearest, "Value", "Text"), "Select School Name", new { @class = "" })</td>
+                                        }
+                                        else
+                                        {
+                                            <td width="30%">@Html.DropDownList("SchoolName1", new SelectList("", "Value", "Text"), "Select School Name", new { @class = "" })</td>
+                                        }
+                                        <td width="30%">@Html.TextBoxFor(a => a.DistanceFromTheSchool1, new { @type = "number", @required = "required" })</td>
+                                    </tr>
+                                    <tr>
+
+                                        <td width="10%">10ht</td>
+                                        @if (ViewBag.SchoolCenterAnwerNameNearest != null)
+                                        {
+                                            <td width="30%">@Html.DropDownList("SchoolName2", new SelectList(ViewBag.SchoolCenterAnwerNameNearest, "Value", "Text"), "Select School Name", new { @class = "" })</td>
+                                        }
+                                        else
+                                        {
+                                            <td width="30%">@Html.DropDownList("SchoolName2", new SelectList("", "Value", "Text"), "Select School Name", new { @class = "" })</td>
+                                        }
+                                        <td width="30%">@Html.TextBoxFor(a => a.DistanceFromTheSchool2, new { @type = "number", @required = "required" })</td>
+                                    </tr>
+                                    <tr>
+
+                                        <td width="10%">12th</td>
+                                        @if (ViewBag.SchoolCenterAnwerNameNearest != null)
+                                        {
+                                            <td width="30%">@Html.DropDownList("SchoolName3", new SelectList(ViewBag.SchoolCenterAnwerNameNearest, "Value", "Text"), "Select School Name", new { @class = "" })</td>
+                                        }
+                                        else
+                                        {
+                                            <td width="30%">@Html.DropDownList("SchoolName3", new SelectList("", "Value", "Text"), "Select School Name", new { @class = "" })</td>
+                                        }
+                                        <td width="30%">@Html.TextBoxFor(a => a.DistanceFromTheSchool3, new { @type = "number", @required = "required" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="6"><h4>Click the image of the School entrance gate using the PSEB ExamInfraLocate app. It's easy – just get the app on your Android phone from the Play Store or the link provided here ):-</h4></th>
+                        </tr>
+
+                        <tr>
+                            <td colspan="6" style="padding:0">
+                                <table class="table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <td width="10%">School Image </td>
+                                            <td width="20%">Location </td>
+                                            <td width="50%">App Link</td>
+                                        </tr>
+                                    </thead>
+                                    <tr>
+                                        <td width="30%">
+                                            <a href="@ViewData["imgpath"]" target="_blank">
+                                                <img src="@ViewData["imgpath"]" class="img-responsive" alt="Photo" id="imgPhoto" style="width: 319px;height: 210px;" />
+                                            </a>
+                                        </td>
+                                        <td width="40%">
+                                            <iframe src="https://maps.google.com/maps?q=@ViewData["geolocation"]&hl=es;z=14&amp;output=embed" width="500" height="200"
+                                                    style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                                            </iframe>
+                                        </td>
+                                        <td width="30%">
+                                            <a href="https://play.google.com/store/apps/details?id=com.infra.main_pseb_examinfra_locate" target="_blank" style="font-size: 60px;color: darkred;">
+                                                App Link
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="6" style="text-align:center">
+
+
+                                @if (Session["RoleType"].ToString() == "Admin")
+                                {
+
+                                    <input id="btnSubmit" type="submit" name="cmd" value="Save" class="btn" />
+                                    <input id="btnFinal" type="submit" name="cmd" value="Final Submit" class="btn" />
+                                    <a class="btn" href='@Url.Action("ViewInfrasturePerformas", "School",new {SCHL = Model.SCHL})'>Rough Print</a>
+                                }
+                                @if (Model.FinalSubmitStatus == 1)
+
+                                {
+                                    <a class="btn" href='@Url.Action("ViewInfrasturePerformas", "School",new {SCHL = Model.SCHL})'>Final Print</a>
+                                }
+                                @*<input id="btnPrint" type="submit" name="btnPrint" value="Print" class="btn" />*@
+
+
+
+                            </td>
+                        </tr>
+
+
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    }
+
+
+}
+
+
+
+<script type="text/javascript">
+    var Bank;
+    var BankBranch;
+    function IFSCCodeAvailability(id) { //This function call on text change.
+
+        IFSC = "IFSC" + id;
+        Bank = "Bank" + id;
+        BankBranch = "BankBranch" + id;
+
+        $('#loading1').html("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+        $.ajax({
+            type: "POST",
+            url: "../SchoolProfile/GetBankDetailsByIFSC", // this for calling the web method function in cs code.
+            data: '{IFSC: "' + $("#" + IFSC).val() + '" }',// user name or email value
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccess,
+            failure: function (response) {
+                // alert(response);
+            }
+        });
+    }
+    function OnSuccess(response, id) {
+
+        $('#loading1').empty();
+        switch (response.oid) {
+            case "0":
+                alert("IFSC Code not found.");
+                $("#" + BankBranch).val('');
+                $("#" + IFSC).val('');
+                break;
+            case "1":
+                $("#" + BankBranch).val("Bank: " + response.bank + " ,Branch: " + response.br + " ,Dist: " + response.dist);
+                if ($("#" + Bank).val() != response.bank) {
+                    alert("IFSC is not related to selected Bank");
+                    $("#" + BankBranch).val('');
+                    $("#" + IFSC).val('');
+                }
+                break;
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $('#Statisfied8th').change(function () {
+        var selectedText = $("#Statisfied8th").val();
+        if (selectedText == "Yes") {
+
+            $('#SchoolCenterNewFor8th').css('display', 'none')
+            $("#SchoolCenterNewFor8th").prop('selectedIndex', 0);
+        }
+        else {
+            $('#SchoolCenterNewFor8th').css("display", "block");
+        }
+
+
+    });
+
+    $('#Statisfied10th').change(function () {
+        var selectedText = $("#Statisfied10th").val();
+        if (selectedText == "Yes") {
+
+            $('#SchoolCenterNewFor10th').css('display', 'none')
+            $("#SchoolCenterNewFor10th").prop('selectedIndex', 0);
+        }
+        else {
+            $('#SchoolCenterNewFor10th').css("display", "block");
+        }
+
+
+    });
+
+    $('#Statisfied10th1').change(function () {
+        var selectedText = $("#Statisfied10th1").val();
+        if (selectedText == "Yes") {
+
+            $('#SchoolCenterNewFor10th1').css('display', 'none')
+            $("#SchoolCenterNewFor10th1").prop('selectedIndex', 0);
+        }
+        else {
+            $('#SchoolCenterNewFor10th1').css("display", "block");
+        }
+
+
+    });
+
+    $('#Statisfied10th2').change(function () {
+        var selectedText = $("#Statisfied10th2").val();
+        if (selectedText == "Yes") {
+
+            $('#SchoolCenterNewFor10th2').css('display', 'none')
+            $("#SchoolCenterNewFor10th2").prop('selectedIndex', 0);
+        }
+
+        else {
+            $('#SchoolCenterNewFor10th2').css("display", "block");
+        }
+
+
+    });
+
+    $('#Statisfied12th').change(function () {
+        var selectedText = $("#Statisfied12th").val();
+        if (selectedText == "Yes") {
+
+            $('#SchoolCenterNewFor12th').css('display', 'none')
+            $("#SchoolCenterNewFor12th").prop('selectedIndex', 0);
+        }
+        else {
+            $('#SchoolCenterNewFor12th').css("display", "block");
+        }
+
+
+    });
+
+    $('#Statisfied12th1').change(function () {
+        var selectedText = $("#Statisfied12th1").val();
+        if (selectedText == "Yes") {
+
+            $('#SchoolCenterNewFor12th1').css('display', 'none')
+            $("#SchoolCenterNewFor12th1").prop('selectedIndex', 0);
+        }
+        else {
+            $('#SchoolCenterNewFor12th1').css("display", "block");
+        }
+
+
+    });
+
+    $('#Statisfied12th2').change(function () {
+        var selectedText = $("#Statisfied12th2").val();
+        if (selectedText == "Yes") {
+
+            $('#SchoolCenterNewFor12th2').css('display', 'none')
+            $("#SchoolCenterNewFor12th2").prop('selectedIndex', 0);
+        }
+        else {
+            $('#SchoolCenterNewFor12th2').css("display", "block");
+        }
+
+
+    });
+
+</script>

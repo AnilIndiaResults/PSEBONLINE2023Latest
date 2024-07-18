@@ -1,0 +1,308 @@
+﻿@model PSEBONLINE.Models.Printlist
+@{
+    ViewBag.Title = "ViewAllExamForm";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <h1>
+            Exam Form Fee Details For - Session @Session["Session"].ToString()
+        </h1>
+     </div>
+</div>
+<div class="row" id="divMain1">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("ViewAllExamForm", "Admin", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-3">@Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem",@required= "required" })</div>
+                <div class="col-md-3"><input type="text" required id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-3">
+                    <input type="submit" value="Search" />
+                </div>
+
+            }
+        </fieldset>
+    </div>
+    <div class="col-md-12">Total Count:  @ViewBag.TotalCount</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th rowspan="2">Actions</th>
+                    <th rowspan="2" style="text-align:center">Download<br />Exam Form</th>
+                    <th colspan="4" style="text-align:center">Challan Details</th>
+                    <th rowspan="2">Class</th>
+                    <th rowspan="2" style="text-align:center">No. Of Total Candidate</th>
+                    <th colspan="2" style="text-align:center">Exam Fee</th>
+
+                    <th rowspan="2">No of<br />Add Sub</th>
+                    <th colspan="2" style="text-align:center">Additional Subject Fee</th>
+                    <th rowspan="2">No of<br />Pr Sub</th>
+                    <th colspan="2" style="text-align:center">Practical Fee Details</th>
+                    <th rowspan="2">Late Fee</th>
+                    <th rowspan="2">Total Fee</th>
+                    <th rowspan="2">Reg / Open School</th>
+                    <th rowspan="2">Print Lot</th>
+                </tr>
+                <tr class="active-tr">
+                    <th>Status</th>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Valid / Verify Date</th>
+                    <th>Fee Per Candidate</th>
+                    <th>Total Fee</th>
+
+                    <th>Fee Per Candidate</th>
+                    <th>Total Fee</th>
+
+                    <th>Fee Per Candidate</th>
+                    <th>Total Fee</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var Type = Model.StoreAllData.Tables[0].Rows[i]["Type"].ToString();
+                            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var ClassName = Model.StoreAllData.Tables[0].Rows[i]["ClassName"].ToString();
+                            var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            var NOS = Model.StoreAllData.Tables[0].Rows[i]["NOS"].ToString();
+                            var NOCFullFee = Model.StoreAllData.Tables[0].Rows[i]["nocfullFeepayedcandidates"].ToString();
+                            var NOCExemptionFee = Model.StoreAllData.Tables[0].Rows[i]["nocFeeExemptioncandidates"].ToString();
+                            var TotFullFeeCandidate = Model.StoreAllData.Tables[0].Rows[i]["PerfullFeepayedcandidates"].ToString();
+                            var TotExemptionFeeCandidate = Model.StoreAllData.Tables[0].Rows[i]["PerFeeExemptioncandidates"].ToString();
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["Fee"].ToString();
+                            var AddSubFee = Model.StoreAllData.Tables[0].Rows[i]["AddSubFee"].ToString();
+                            var NOAS = Model.StoreAllData.Tables[0].Rows[i]["NOAS"].ToString();
+                            var NOAPS = Model.StoreAllData.Tables[0].Rows[i]["NOAPS"].ToString();
+                            var NOPS = Model.StoreAllData.Tables[0].Rows[i]["NOPS"].ToString();
+                            var PFPC = Model.StoreAllData.Tables[0].Rows[i]["PFPC"].ToString();
+                            var PracFee = Model.StoreAllData.Tables[0].Rows[i]["PracFee"].ToString();
+                            var LateFee = Model.StoreAllData.Tables[0].Rows[i]["LateFee"].ToString();
+                            var TotFee = Model.StoreAllData.Tables[0].Rows[i]["TotFee"].ToString();
+                            var SchoolType = Model.StoreAllData.Tables[0].Rows[i]["SchoolType"].ToString();
+                            var PrintLot = Model.StoreAllData.Tables[0].Rows[i]["PrintLot"].ToString();
+                            var Challanid = Model.StoreAllData.Tables[0].Rows[i]["Challanid"].ToString();
+                            var ChallanStatus = Model.StoreAllData.Tables[0].Rows[i]["ChallanStatus"].ToString();
+                            var ChallanVerify = Model.StoreAllData.Tables[0].Rows[i]["ChallanVerify"].ToString();
+                            var ChallanDate = Model.StoreAllData.Tables[0].Rows[i]["CHLNDATE"].ToString();
+                            var ChallanVDate = Model.StoreAllData.Tables[0].Rows[i]["CHLNVDATE"].ToString();
+                            var ChallanVerifiedOn = Model.StoreAllData.Tables[0].Rows[i]["VERIFYDATE"].ToString();
+
+                            var StatusNumber = Model.StoreAllData.Tables[0].Rows[i]["StatusNumber"].ToString();
+                            var FeeDepositStatus = Model.StoreAllData.Tables[0].Rows[i]["FeeDepositStatus"].ToString();
+                            var ExpireVDate = Model.StoreAllData.Tables[0].Rows[i]["ExpireVDate"].ToString();
+
+                            Count = Count + 1;
+                            <tr>
+                                <td align="center" class="nlink">
+                                    <div class="cart">
+                                        Choose&nbsp;Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+                                                <li>@Html.ActionLink("Complete Details", "ViewCompleteExamFormFeeDetails", new { schlcode = @SCHL, ChallanId = @Challanid }) </li>
+                                                <li>@Html.ActionLink("Subject Wise Details", "ViewSubjectWiseCountOfStudents", new { schlcode = @SCHL, ChallanId = @Challanid }) </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="text-align:center">
+                                    @if (Model.StoreAllData.Tables[0].Rows[i]["PrintStatus"].ToString() == "1" && Model.StoreAllData.Tables[0].Rows[i]["ChallanVerify"].ToString() == "1")
+                                    {
+
+                                        @Html.ActionLink("Download", "DownloadExamFinalReport", new { ChallanId = @Challanid, Filename = @Model.StoreAllData.Tables[0].Rows[i]["FilePath"].ToString() }, new { @class = "btnb tip", target = "_blank", rel = "Download Examination Form" })
+
+                                    }
+                                </td>
+                                <td style="font-size:7px">
+                                    @if (Type == "OPEN")
+                                    {
+                                        <span>Exam Fee Already Paid</span>
+                                    }
+                                    else if (StatusNumber.ToString() == "0" || StatusNumber.ToString() == "1" || StatusNumber.ToString() == "2")
+                                    {
+                                        @ChallanStatus
+                                    }
+                                </td>
+                                <td>@Challanid</td>
+                                <td>@ChallanDate</td>
+                                <td><span style="color:#cc0000">@ChallanVDate</span><br /><span style="color:#129f02">@ChallanVerifiedOn</span></td>
+                                <td>@ClassName</td>
+                                <td>@NOS</td>
+                                <td>@TotFullFeeCandidate</td>
+                                <td>@Fee</td>
+                                <td>@NOAS</td>
+                                <td>@NOAPS</td>
+                                <td>@AddSubFee</td>
+                                <td>@NOPS</td>
+                                <td>@PFPC</td>
+                                <td>@PracFee</td>
+                                <td>@LateFee</td>
+                                <td>@TotFee</td>
+                                <td>@SchoolType</td>
+                                <td>@PrintLot</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                <span class="rqf">@ViewBag.Message</span>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    .btnb {
+        -moz-user-select: none;
+        background-color: #fb9709;
+        background-image: none;
+        border: 1px solid #f08f06;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        border-radius: 4px;
+        color: #fff !important;
+        cursor: pointer;
+        display: block !important;
+        font-size: 9px;
+        font-weight: bold;
+        margin-bottom: 0;
+        padding: 2px 4px;
+        margin-bottom: 2px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .tip {
+        display: inline;
+        position: relative
+    }
+
+        .tip:hover:after {
+            background: #333;
+            background: rgba(248,148,5,.9);
+            border-radius: 5px;
+            bottom: 26px;
+            color: #000;
+            content: attr(rel);
+            left: 20%;
+            padding: 5px 15px;
+            position: absolute;
+            white-space: pre-wrap;
+            z-index: 98;
+            font-family: Arial;
+            font-size: 12px;
+            text-align: justify;
+            width: 320px
+        }
+
+    .table-responsive td {
+        font-size: 8px;
+        font-family: Arial
+    }
+
+    .table-responsive th {
+        font-size: 8px;
+        font-family: Arial
+    }
+    /*.scroll {
+        overflow: scroll !important;
+    }*/
+    .table1-responsive1 {
+        width: 100%;
+        margin-bottom: 15px;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        /*border: 1px solid #dddddd;*/
+        font-size: 10px;
+    }
+
+        .table1-responsive1 > .table1 {
+            margin-bottom: 0;
+            background-color: #fff;
+        }
+
+    .cartq:hover #sidebarq {
+        background-color: #fb9709;
+        display: block;
+    }
+
+    .cartq:hover #sidebarr {
+        background-color: #cc0000;
+        display: block;
+        color: #fff;
+    }
+
+    .cartq {
+        cursor: pointer;
+        display: inline-block;
+        position: relative;
+        width: 100%;
+    }
+
+        .cartq #sidebarq {
+            position: absolute;
+            display: none;
+            top: 100%;
+            width: 100%;
+            z-index: 1;
+            text-align: justify;
+            padding: 2px;
+        }
+
+    #sidebarr {
+        position: absolute;
+        display: none;
+        top: 100%;
+        width: 100%;
+        z-index: 1;
+        text-align: justify;
+        padding: 2px;
+    }
+
+    .cart1 {
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+        color: #000;
+        border-top: 1px solid #fff;
+        border-left: 1px solid #fff;
+        border-right: 1px solid #fff;
+        width: 100%;
+    }
+
+    #sidebar1 {
+        display: none;
+    }
+
+    .cart1:hover {
+        border-top-color: #fb9709;
+        border-left-color: #fb9709;
+        font-size: 12px;
+        border-right-color: #fb9709;
+    }
+
+        .cart1:hover #sidebar1 {
+            position: absolute;
+            z-index: 1;
+            top: 100%;
+            font-size: 12px;
+            display: block;
+            background-color: #fb9709;
+            width: 200%;
+            cursor: pointer;
+            text-transform: capitalize;
+        }
+</style>
+

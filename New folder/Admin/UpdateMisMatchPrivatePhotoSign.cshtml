@@ -1,0 +1,128 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    ViewBag.Title = "UpdateMisMatchPrivatePhotoSign";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1>Update MisMatch Private Photo Sign</h1>
+<div class="row">
+    <div class="col-md-12 noprint">
+        <fieldset style="margin-bottom:15px">
+            <legend>Select </legend>
+            <div class="col-md-3">
+                Select Module
+                @{
+                    List<SelectListItem> catgilist = new List<SelectListItem>();
+                    catgilist.Add(new SelectListItem { Text = "Select", Value = "Select" });
+                    catgilist.Add(new SelectListItem { Text = "Private", Value = "Private" });
+                   // catgilist.Add(new SelectListItem { Text = "Regular", Value = "Regular" });
+                }
+                @Html.DropDownList("Category", catgilist, new { id = "ddlcategory" })
+            </div>
+        </fieldset>
+    </div>
+</div>
+<div class="row" id="divP">
+    <div class="col-md-12">
+        <fieldset>
+            <legend>Update MisMatch Private Photo/Sign MIS File</legend>
+            @using (Html.BeginForm("UpdateMisMatchPrivatePhotoSign", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("Filevalue", "PVT")
+                <div class="row" style="padding-bottom:100px">
+                    <div class="col-md-4">
+                        Upload RefNo MIS File @Html.TextBoxFor(m => m.file, new { id = "PVTMIS", type = "file", required = "required" })
+                    </div>
+                    <div class="col-md-4">
+                        <br />
+                        <input type="submit" name="submit" value="Upload" onclick="return valForm();" />
+                    </div>                 
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        <br />
+                        <a download="" href="~/PDF/UpdateMisMatchPrivatePhotoSignSample.xls" class="btn">Click Here to Download Sample File</a>
+                    </div>
+                    @*<div class="clearfix"></div>
+                    <div class="col-md-12">
+                        <h1>Important Instructions:</h1>
+                        <p style="padding-left:15px">
+                            1) All Fields are compulsory.<br />
+                            2) ROLL Must be of 10 Digits.<br />
+                            3) CENT Must be of 5 Digits.<br />
+                            4) <span class="rqf"> For Download Data -> Upload only REFNO in Excel File </span> <br />
+                        </p>
+                    </div>*@
+
+                </div>
+            }
+        </fieldset>
+    </div>
+</div>
+
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+                // window.location.href = 'Url.Action("Welcome", "Bank")';
+            </script>
+}
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+            </script>
+}
+
+    }
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select only .xls file format');
+            }
+        });
+    });
+
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#divP").hide();
+        //$("#divR").hide();
+
+        $('#ddlcategory').change(function () {
+            // alert('1');
+            var selectedCategory = $("#ddlcategory").val();
+            // alert(selectedCategory);
+            if (selectedCategory != "") {
+
+                if (selectedCategory == "Select") {
+                    $("#divP").hide();
+                   // $("#divR").hide();
+                }
+                else if (selectedCategory == "Private") {
+                    $("#divP").show();
+                   // $("#divR").hide();
+                }
+                else {
+                  //  $("#divR").show();
+                    $("#divP").hide();
+                }
+            } else {
+                alert('Please Selected Module');
+                $("#divP").hide();
+              //  $("#divR").hide();
+            }
+        });
+    });
+</script>
+

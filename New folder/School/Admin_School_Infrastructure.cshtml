@@ -1,0 +1,302 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+
+@{
+    ViewBag.Title = "Search Infrastructure";
+}
+
+@if (Session["UserName"] != null && Session["RoleType"].ToString() == "Admin") { }
+else { Response.Redirect("~/Admin"); }
+
+<div class="container">
+    <h1>Infrastructure Performa Details</h1>
+    <div class="row">
+        @using (Html.BeginForm("Admin_School_Infrastructure", "School", FormMethod.Post, new { id = "searchform" }))
+        {
+        if (ViewBag.MyDist != null)
+        {
+        @*required = "required"*@
+        <div class="col-md-2">@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District---", new { @class = "" })</div>
+        <div class="col-md-2">
+            <select id="SearchBy">
+                <option>All</option>
+                <option>School Code</option>
+            </select>
+        </div>
+        <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request[" SearchString"]" /></div>
+        <div class="col-md-2">
+            <input type="submit" value="Search" /> <input type="submit" name="btn" value="Reset" formaction="CancelForm" formmethod="post" />
+        </div>
+        <div class="col-md-2">
+            <input type="submit" name="Unlock" value="Unlock" formmethod="post" />
+        </div>
+        }
+        }
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <!-- <div class="col-md-12">Total School:  @ViewBag.TotalCount1</div> -->
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>SCHL</th>
+                        <th>School Name</th>
+                        <th>Establishment Year</th>
+                        <th>District</th>
+                        <th>Action</th>
+                    </tr>
+                    @{
+
+                    if (ViewBag.TotalCount > 0)
+                    {
+                    int d = 0;
+                    int Count = 0;
+
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                    d = d + 1;
+                    var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                    //var SCHLE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                    //var DISTE = Model.StoreAllData.Tables[0].Rows[i]["DISTE"].ToString();
+                    //var EstablishmentYear = Model.StoreAllData.Tables[0].Rows[i]["EstablishmentYear"].ToString();
+                    Count = Count + 1;
+                    <tr>
+                        <td>
+                            @SCHL
+
+                        </td>
+                        <td>
+                            @*@SCHLE*@
+                        </td>
+                        <td>
+                            @*@EstablishmentYear*@
+                        </td>
+                        <td>
+                            @*@DISTE*@
+                        </td>
+                        <td>
+                            <div class="cart">
+                                <a href='/School/ViewInfrasturePerformaAdminView?SCHL=@SCHL'>View</a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    }
+                    }
+                    else
+                    {
+                    <tr>
+                        <td colspan="5">
+                            No Record found
+                        </td>
+
+
+                    </tr>
+                    }
+                    }
+
+                </table>
+
+
+
+            </div>
+        </div>
+    </div>
+    @*<a href="javascript:void(0);" onclick="history.go(-1);" style="-moz-user-select: none;background-image: none;border: 1px solid transparent;border-radius: 4px;
+        cursor: pointer;    display: inline-block;    font-size: 14px;    font-weight: 400;    line-height: 1.42857;    margin-bottom: 0;    padding: 6px 12px;    text-align: center;
+        vertical-align: middle;    white-space: nowrap;    background-color: #fb9709;    border-color: #f08f06;    color: #fff;cursor:pointer">Back</a>*@
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<script type="text/javascript">
+
+
+
+    //UnlockCCE
+    function UnlockCCE(k) {
+        var flag = 0;
+        var selcce = [];
+        $.each($(".cce option:selected"), function () {
+            selcce.push($(this).val());
+        });
+        //alert("You have selected the cce - " + selcce.join(", "));
+
+        var selcceValue = selcce.join(", ");
+        if (selcceValue == "") {
+            flag = 1;
+        }
+        if (flag == 1) {
+            alert("Select CCE");
+            return false;
+        }
+        else {
+            $('#loading2').html("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/UnlockCCE", { "Schl": k, "Type": selcceValue }, // 11 for Add Remarks
+                function (data) {
+                    $('#loading2').empty();
+                    if (data.status == "1") {
+                        alert("Unlocked Successfully");
+                        $('#myModal3-' + k).modal('hide');
+                    }
+                    else if (data.status == "2") {
+                        alert("Data Not Found");
+                        $('#myModal3-' + k).modal('hide');
+                    }
+                    else if (data.status == "-1") {
+                        $('#myModal3-' + k).modal('hide');
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Unlocked Failure");
+                    }
+                });
+        }
+    }
+
+
+    //SendPassword
+    function SendPassword(Id, k) {
+
+        var flag = 0;
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/JqSendPasswordEmail", { "Schl": Id, "Type": 1, "SentTo": k }, // 11 for Add Remarks
+                function (data) {
+                    $('#loading1').empty();
+                    if (data.status == "1") {
+                        //  window.location.href = '/Admin/ViewDuplicateCertificate';
+                        alert("Password Send Successfully");
+                        $('#myModal2-' + Id).modal('hide');
+                    }
+                    else {
+                        alert("Failure, Please Try Again.");
+                    }
+                });
+        }
+    }
+
+    function SendEmail(Id, k) {
+        var flag = 0;
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/JqSendPasswordEmail", { "Schl": Id, "Type": 2, "SentTo": k }, // 11 for Add Remarks
+                function (data) {
+                    $('#loading1').empty();
+                    if (data.status == "1") {
+                        alert("Email Send Successfully");
+                        $('#myModal2-' + Id).modal('hide');
+                    }
+                    else {
+                        alert("Failure, Please Try Again.");
+                    }
+                });
+        }
+    }
+</script>
+
+
+<script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'School/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'School/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            if (value == 1 || value == 3 || value == 5) {
+                $("#searchform").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        // alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    };
+                });
+            } else {
+                $("#searchform").off('keypress');
+            }
+
+        });
+    });
+</script>
+
+@*
+<script type='text/javascript'>
+    var isCtrl = false;
+    document.onkeyup = function (e) {
+        if (e.which == 17)
+            isCtrl = false;
+    }
+    document.onkeydown = function (e) {
+        if (e.which == 17)
+            isCtrl = true;
+    }
+    var isNS = (navigator.appName == "Netscape") ? 1 : 0;
+    if (navigator.appName == "Netscape") document.captureEvents(Event.MOUSEDOWN || Event.MOUSEUP);
+    function mischandler() {
+        return false;
+    }
+    function mousehandler(e) {
+        var myevent = (isNS) ? e : event;
+        var eventbutton = (isNS) ? myevent.which : myevent.button;
+        if ((eventbutton == 2) || (eventbutton == 3)) return false;
+    }
+    document.oncontextmenu = mischandler;
+    document.onmousedown = mousehandler;
+    document.onmouseup = mousehandler;
+</script>*@

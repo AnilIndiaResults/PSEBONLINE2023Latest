@@ -1,0 +1,61 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Firm Download Open Student Photo and Sign";
+    //Layout = "~/Views/Shared/_HeaderCorr.cshtml";  By Rohit
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<h1>Download Open Student Photo and Sign</h1>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+@using (Html.BeginForm("FirmDownloadStudentRecordOpen", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-9">            
+            @Html.TextBoxFor(a => a.SdtID, new { id = "SdtID", @maxlength = "1000", pattern = "[0-9,]+", title = "Please enter comma seperated Open StudentID.", placeholder = "Enter comma seperated Open Student ID", onkeypress = "return isNumberKey(event);", onleave="" })                      
+        </div>
+        <div class="col-md-3 text-right">
+            <input type="submit" value="Download Photo Sign" onclick="return valForm();" title="Download Photo and Sign of given Open stuednt Id." />
+            <input type="submit" value="Home" formaction="FirmCorrectionHome" title="Go for Home Page" />
+        </div>  
+    </div>
+   
+      
+}
+@{
+    if (ViewData["result"] != null)
+    {
+      var result = ViewData["result"].ToString();
+        if (result == "1")
+         {
+            <script type="text/javascript" language="javascript">
+                history.go(-1);
+            </script>
+        }       
+    }
+}
+
+<script>
+    function valForm() {
+        var SdtID = document.getElementById("SdtID");
+        if (SdtID.value == "" || SdtID.value == "0") {
+            alert("Enter Required Open Student Id");
+            SdtID.focus();
+            return false;
+        }
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 44)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }   
+</script>
+

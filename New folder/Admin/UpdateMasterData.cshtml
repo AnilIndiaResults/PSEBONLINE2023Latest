@@ -1,0 +1,478 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "UpdateMasterData";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h2>Update Master Data</h2>
+
+<div class="row" id="divR">
+    <div class="col-md-12">
+
+        @using (Html.BeginForm("UpdateMasterData", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+        {
+            <fieldset>
+                <legend>Update Master Data </legend>
+                <div id="dvSearch" class="row" style="padding-bottom:50px">
+                    <div class="col-md-2">
+                        Select Session  @Html.DropDownList("SelYear", new SelectList(ViewBag.SessionList, "Value", "Text"), "---Select Session---", new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2">
+                        Select Type  @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select---", new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2">
+                        Select  @Html.DropDownList("SearchList", new SelectList(ViewBag.MySearch, "Value", "Text", ViewBag.SelectedSearch), "--Select---", new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <input type="submit" name="submit" value="Search" onclick="return valForm();" />
+                        <input type="submit" name="submit" value="Reset" />
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table id="t01" class="table table-bordered">
+                            <tr class="active-tr">
+                                <th>Roll No</th>
+                                <th>Reg No</th>
+                                <th>Name/Fname/Mname</th>
+                                <th>DOB</th>
+                                <th>Last Update Date</th>
+                                <th>Action</th>
+                            </tr>
+                            @if (ViewBag.TotalCount2 > 0)
+                            {
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    var name = Model.StoreAllData.Tables[0].Rows[i]["name"].ToString();
+                                    var pname = Model.StoreAllData.Tables[0].Rows[i]["pname"].ToString();
+                                    var fname = Model.StoreAllData.Tables[0].Rows[i]["fname"].ToString();
+                                    var pfname = Model.StoreAllData.Tables[0].Rows[i]["pfname"].ToString();
+                                    var mname = Model.StoreAllData.Tables[0].Rows[i]["mname"].ToString();
+                                    var pmname = Model.StoreAllData.Tables[0].Rows[i]["pmname"].ToString();
+                                    var roll = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                                    var regno = Model.StoreAllData.Tables[0].Rows[i]["regno"].ToString();
+                                    var dob = Model.StoreAllData.Tables[0].Rows[i]["dob"].ToString();
+                                    var REMARKS = Model.StoreAllData.Tables[0].Rows[i]["REMARKS"].ToString();
+                                    var UPDT = Model.StoreAllData.Tables[0].Rows[i]["UPDT"].ToString();
+                                    var UPDT1 = Model.StoreAllData.Tables[0].Rows[i]["UPDT"].ToString().Split(' ')[0];
+                                    <tr>
+                                        <td>
+                                            @roll
+                                        </td>
+                                        <td>
+                                            @regno
+                                        </td>
+                                        <td>
+                                            @name/ @fname/ @mname
+                                        </td>
+                                        <td>
+                                            @dob
+                                        </td>
+                                        <td>
+                                            @UPDT
+                                        </td>
+
+                                        <td>
+                                            <a href="" data-toggle="modal" data-target="#myModal1-@roll">Modify Details</a>
+                                            <div class="modal fade" id="myModal1-@roll" role="dialog">
+                                                <div class="modal-dialog" style="width:80%">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>Modify Details of Roll Number : @roll</h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                <tr>
+                                                                    <td width="25%">Roll</td>
+                                                                    <td><label>@roll</label></td>
+                                                                    <td>Registratin Number</td>
+                                                                    <td><input type="text" required id="regno-@roll" name="regno" value="@regno" placeholder="Registratin Number" maxlength="50" /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Candidate Name</td>
+                                                                    <td><input type="text" required id="name-@roll" name="name" value="@name" placeholder="Candidate Name" maxlength="50" onchange="updatePunjabiName('c','@roll')"  /></td>
+                                                                    <td>Candidate Name (Punjabi)</td>
+                                                                    <td>
+
+                                                                        @*<input type="text"  class="kdsfont"  required id="pname-@roll" name="pname" value="@pname" placeholder="Candidate Name - Punjabi" maxlength="50" />*@
+                                                                        <input type="text" required id="pname-@roll" name="pname" value="@pname" placeholder="Candidate Name - Punjabi" maxlength="50"
+        class="kdsfont" onKeyPress="javascript:convertThis(event)" onpaste="return false;" oncopy="return false;" oncut="return false;" onclick="toggleKBMode1(event)" lang="pa" />
+
+
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Father Name</td>
+                                                                    <td><input type="text" required id="fname-@roll" name="fname" value="@fname" placeholder="Father Name" maxlength="50" onchange="updatePunjabiName('f','@roll')"  /></td>
+                                                                    <td>Father Name (Punjabi)</td>
+                                                                    <td><input type="text"  required id="pfname-@roll" name="pfname" value="@pfname" placeholder="Father Name - Punjabi" maxlength="50" 
+                                                                               class="kdsfont" onKeyPress="javascript:convertThis(event)" onpaste="return false;" oncopy="return false;" oncut="return false;" onclick="toggleKBMode1(event)" lang="pa"/></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Mother Name</td>
+                                                                    <td><input type="text" required id="mname-@roll" name="mname" value="@mname" placeholder="Mother Name" maxlength="50" onchange="updatePunjabiName('m','@roll')"  /></td>
+                                                                    <td>Mother Name (Punjabi)</td>
+                                                                    <td><input type="text"   required id="pmname-@roll" name="pmname" value="@pmname" placeholder="Mother Name - Punjabi" maxlength="50" 
+                                                                               class="kdsfont" onKeyPress="javascript:convertThis(event)" onpaste="return false;" oncopy="return false;" oncut="return false;" onclick="toggleKBMode1(event)" lang="pa"/></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>DOB</td>
+                                                                    <td><input type="text" id="dob-@roll" name="dob" value="@dob" maxlength="10" class="DOB" required /></td>
+                                                                    <td>Remarks </td>
+                                                                    <td><input type="text" id="remarks-@roll" name="remarks" required></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Update Date </td>
+                                                                    <td><input type="text" id="updt-@roll" name="updt" maxlength="10" class="date" />
+                                                                        <span>Last Updated Date : @UPDT</span>
+                                                                    </td>
+                                                                    <td><input type="button" class="btn" value="Submit" id="btnsubmitRegenate" onclick="updateMasterDataSingle('@roll')" /></td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @*---*@
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                       Record Not Found
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </fieldset>
+            <fieldset>
+                <legend>Update Bulk Master Data </legend>
+                <div id="dvUpload" class="row" style="padding-bottom:50px">
+                    <div class="col-md-2">
+                        Upload Master Data File @Html.TextBoxFor(m => m.file, new { id = "STDIDMIS", type = "file", @class = "form-control" })
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <input type="submit" name="submit" value="Update Data" onclick="return valForm1();" />
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <a download href="~/PDF/UpdateMasterDataSample.xls" class="btn">Download Master Data Sample File</a>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        <h1>Important Instructions:</h1>
+                        <p style="padding-left:15px">
+                            1) All Fields are compulsory.<br />
+                            2) Update File Format must be same as Sample File Format.<br />
+                            3) Date Format of DOB and UPDT are must be in dd/MM/yyyy Format .<br />
+                        </p>
+                    </div>
+                </div>
+            </fieldset>
+        }
+
+    </div>
+</div>
+
+
+
+
+
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('Bulk Master Data Updated Successfully');
+            </script>
+        }
+       
+        else if (ViewData["Result"].ToString() == "20")
+        {
+          }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert('Data Not Found..');
+            </script>}
+
+    }
+}
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select only .xls file format');
+            }
+        });
+    });
+</script>
+
+
+
+
+<script>
+    $(document).ready(function () {
+
+        $(".DOB").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            // maxDate: '-16Y',
+            maxDate: '-10Y',
+            yearRange: "1969:2018"
+
+        });
+
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            setDate: new Date(),
+            yearRange: "2017:2019"
+
+        });
+    });
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+    //updateMasterDataSingle
+    function updateMasterDataSingle(Id) {
+        var flag = 0;
+        if ($("#name-" + Id).val() == "") {
+            $("#name-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#pname-" + Id).val() == "") {
+            $("#pname-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#fname-" + Id).val() == "") {
+            $("#fname-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#pfname-" + Id).val() == "") {
+            $("#pfname-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#mname-" + Id).val() == "") {
+            $("#mname-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#pmname-" + Id).val() == "") {
+            $("#pmname-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#dob-" + Id).val() == "") {
+            $("#dob-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#regno-" + Id).val() == "") {
+            $("#regno-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#remarks-" + Id).val() == "") {
+            $("#remarks-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#updt-" + Id).val() == "") {
+            $("#updt-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+
+        if (flag == 1) {
+            return false;
+        }
+        else {
+           // alert('start');
+           // alert($("updt-" + Id).val());
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+
+
+            $.post("/Admin/JqUpdateMasterDataSingle", {
+                "roll": Id, "regno": $("#regno-" + Id).val(), "dob": $("#dob-" + Id).val(),
+                "name": $("#name-" + Id).val(), "pname": $("#pname-" + Id).val(), "fname": $("#fname-" + Id).val(), "pfname": $("#pfname-" + Id).val(),
+                "mname": $("#mname-" + Id).val(), "pmname": $("#pmname-" + Id).val(), "remarks": $("#remarks-" + Id).val(), "updt": $("#updt-" + Id).val(),
+                "SelYear": '@ViewBag.searchYear', "RP": '@ViewBag.searchRP'},
+                function (data) {
+                    $('#loading1').empty();
+                    if (data.status == "1") {                        
+                        alert("Data Updated Successfully");
+                        $('#myModal1-' + Id).modal('hide');
+                        //window.location.href = '/Admin/UpdateMasterData';
+                    }
+                    else if (data.status == "2") {
+                        alert("Please Fill Mandatory Field");
+                    }
+                    else {
+                        alert("Failure, Please Try Again.");
+                    }
+                });
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+    function valForm() {
+
+        var SelYear = document.getElementById("SelYear");
+        if (SelYear.value == "" || SelYear.value == "0") {
+            alert("Select Year");
+            SelYear.focus();
+            return false;
+        }
+
+
+        var SelList = document.getElementById("SelList");
+        if (SelList.value == "" || SelList.value == "0") {
+            alert("Select Type");
+            SelList.focus();
+            return false;
+        }
+
+
+        var SearchList = document.getElementById("SearchList");
+        if (SearchList.value == "" || SearchList.value == "0") {
+            alert("Select an Item");
+            SearchList.focus();
+            return false;
+        }
+        var SearchString = document.getElementById("SearchString");
+        if (SearchString.value == "") {
+            alert("Enter Search Value.");
+            SearchString.focus();
+            return false;
+        }
+        return true;
+    }
+
+    function valForm1() {
+
+        var SelYear = document.getElementById("SelYear");
+        if (SelYear.value == "" || SelYear.value == "0") {
+            alert("Select Year");
+            SelYear.focus();
+            return false;
+        }
+
+
+        var SelList = document.getElementById("SelList");
+        if (SelList.value == "" || SelList.value == "0") {
+            alert("Select Type");
+            SelList.focus();
+            return false;
+        }
+
+        var STDIDMIS = document.getElementById("STDIDMIS");
+        if (STDIDMIS.value == "" || STDIDMIS.value == "0") {
+            alert("Select File");
+            STDIDMIS.focus();
+            return false;
+        }
+        return true;
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    function updatePunjabiName(k, Id) {       
+        if (k == 'c') {
+            $("#name-" + Id).change(function () {               
+                var selectedText = { text: $("#name-" + Id).val() };
+                var cname = $("#name-" + Id).val();
+                var cnameP = $("#pname-" + Id).val();
+               
+               
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                           // alert("Candidate Name: " + result);
+                            $("#pname-" + Id).val(result);
+                        }
+                    });
+               
+            });
+        }
+        else if (k == 'f') {
+            $("#fname-" + Id).change(function () {
+                var selectedText = { text: $("#fname-" + Id).val() };
+                var cname = $("#fname-" + Id).val();
+                var cnameP = $("#pfname-" + Id).val();
+                
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                           // alert("Father Name: " + result);
+                            $("#pfname-" + Id).val(result);
+                        }
+                    });
+                
+            });
+        }
+        else if (k == 'm') {
+                  $("#mname-" + Id).change(function () {
+                var selectedText = { text: $("#mname-" + Id).val() };
+                var cname = $("#mname-" + Id).val();
+                var cnameP = $("#pmname-" + Id).val();
+                
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                           // alert("Mother Name: " + result);
+                            $("#pmname-" + Id).val(result);
+                        }
+                    });
+              
+            });
+        }
+
+    }
+</script>

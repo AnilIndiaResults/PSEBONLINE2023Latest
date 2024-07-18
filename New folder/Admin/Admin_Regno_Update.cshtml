@@ -1,0 +1,218 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Admin_Regno_Update";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h2>Admin Student Registration Number Update</h2>
+<div style="color:green">@TempData["msg"]</div>
+<div class="clear"></div>
+<div id="loadreg"></div>
+
+<div id="hideme">
+    <div class="dee">
+        @using (Html.BeginForm("Update_Registration", "Admin", FormMethod.Post, new { id = "Update_Registration", enctype = "multipart/form-data" }))
+        {
+
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <div id="UpdateResult">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <p><b>@ViewBag.Message</b></p>
+                                        @Html.HiddenFor(a => a.ID)
+                                        @Html.HiddenFor(a => a.SearchResult)                                        
+                                        <input type="text" id="year" name="year" value=@ViewBag.year style="display:none;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>FORM NAME</td>
+                                    <td>
+                                        <label>@Html.DisplayFor(a => a.FormName)</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>STUDENT ID</td>
+                                    <td>
+                                        <label>@Html.DisplayFor(a => a.SdtID)</label>
+                                        @Html.HiddenFor(a => a.SdtID, new { id = "hdnid" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>CANDIDATE NAME</td>
+                                    <td>
+                                        <label>@Html.DisplayFor(a => a.Candi_Name)</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>FATHER'S NAME</td>
+                                    <td>
+                                        <label>@Html.DisplayFor(a => a.Father_Name)</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>MOTHER'S NAME</td>
+                                    <td>
+                                        <label>@Html.DisplayFor(a => a.Mother_Name)</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>DOB</td>
+                                    <td>
+                                        <label>@Html.DisplayFor(a => a.DOB)</label>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>GENDER</td>
+                                    <td>
+                                        <label>@Html.DisplayFor(a => a.Gender)</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Registration Number</td>
+                                    <td>
+                                        @Html.TextBoxFor(a => a.REGNO, new { id = "registrationno", @maxlength = "20", name = "registrationno" })
+                                        @Html.HiddenFor(a => a.REGNO, new { id = "chkchngornot" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Group./Stream</td>
+                                    <td>
+                                        @Html.DropDownList("EXAM", new SelectList(ViewBag.MyGroup1, "Value", "Text"), new { })
+                                    </td>
+                                </tr>  
+                                <tr>
+                                    <td>Remarks</td>
+                                    <td>
+                                        @Html.TextBoxFor(a => a.Remarks, new { id = "Remarks", @maxlength = "200", name = "Remarks" })
+                                    </td>
+                                </tr>                                  
+                                @*<tr>
+                                        <td>Reclock</td>
+                                        <td>
+                                            @{
+                                                var reclock = Model.StoreAllData.Tables[0].Rows[0]["reclock"].ToString();
+
+                                                List<SelectListItem> reclocklist = new List<SelectListItem>();
+                                                if (@reclock.ToString() == "1")
+                                                {
+                                                    resultlist.Add(new SelectListItem { Text = "LOCK", Value = "LOCK" });
+                                                    resultlist.Add(new SelectListItem { Text = "UNLOCK", Value = "UNLOCK" });
+                                                }
+                                                else
+                                                {
+                                                    resultlist.Add(new SelectListItem { Text = "UNLOCK", Value = "UNLOCK" });
+                                                    resultlist.Add(new SelectListItem { Text = "LOCK", Value = "LOCK" });
+                                                }
+                                                @Html.DropDownList("reclocklist", reclocklist, new { @class = "", id = "reclocklist" })
+                                            }
+
+                                        </td>
+
+                                    </tr>*@
+                                <tr>
+                                    <td>
+                                        @*<input type="submit" name="Update Result" value="Update Result" formaction="Update_Result" formmethod="post" />*@
+                                        <input type="button" id="Update_Registration" onclick="formVal();" value="UPDATE Registration" />
+                                    </td>
+                                    <td>
+
+                                        @*<input type="submit" id="btncancel" formaction="adminresultpage" value="Cancel" />*@
+                                        <input type="button" value="CANCEL" onclick="javascript:document.location.href='@Url.Action("adminregverifypage", "Admin")'" />
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+
+        <script>
+            function isNumberKey(evt) {
+                var charCode = (evt.which) ? evt.which : event.keyCode
+                if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+                    return true;
+                }
+                else {
+                    alert("Invalid character...Enter Only Number!!");
+                    return false;
+                }
+            }
+
+            function formVal() {
+                
+                var EXAM = document.getElementById('EXAM').value;
+                var result = document.getElementById('registrationno').value;
+                var result1 = document.getElementById('chkchngornot').value;
+                var id = document.getElementById('hdnid').value;
+                var year = document.getElementById('year').value;
+                var rmrks = document.getElementById('Remarks').value;
+                //alert(id);
+                if (result == '') {
+                    alert("Enter Registration Number.");
+                    //result.focus();
+                    document.getElementById('registrationno').focus();
+                    //return false;
+                }
+                //else if(result==result1)
+                //{
+                //    alert("Enter different Registration Number.");
+                //    //result.focus();
+                //    document.getElementById('registrationno').focus();
+                //    //return false;
+                //}
+
+                else{
+                  
+                    $("#hideme").hide();
+                    $('div#loadreg').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $.post("/Admin/Jqchkduplicacyonregno", { "regno": result, "GroupNM": EXAM, "hdnid": id, "hdnyear": year, "remarks": rmrks },
+                        function (data) {
+                            // alert(data.status);
+                            if (data.status == "1") {
+                                alert("Sorry This  Registration Number is Allready Exist.");
+                              //  document.getElementById('registrationno').focus();
+                               // return false;
+                            }
+                            else if (data.status == "-1") {
+                                alert("Something Went Wrong.");
+                                //return false;
+
+                            }
+                            else if(data.status=="0")
+                            {
+                                window.location.href = "/Admin/adminregverifypage"
+
+
+                            }
+
+                            
+                        });
+                   
+                    $('#hideme').show();
+                    $('div#loadreg').empty();
+                    
+
+                }
+                
+                
+
+            }
+
+            function OpenDialog() {
+                window.open("some url", "DialogName", "height=200,width=200,modal=yes,alwaysRaised=yes");
+            }
+
+        </script>
+

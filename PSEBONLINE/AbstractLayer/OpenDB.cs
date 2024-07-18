@@ -50,7 +50,7 @@ namespace PSEBONLINE.AbstractLayer
 
                     SqlCommand cmd = new SqlCommand("CorrectEntryOpenSP", con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@id", id);                   
+                    cmd.Parameters.AddWithValue("@id", id);
                     ad.SelectCommand = cmd;
                     ad.Fill(ds);
                     con.Open();
@@ -66,7 +66,7 @@ namespace PSEBONLINE.AbstractLayer
             }
             catch (Exception ex)
             {
-                return -1 ;
+                return -1;
             }
         }
 
@@ -83,12 +83,12 @@ namespace PSEBONLINE.AbstractLayer
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@app_id", app_id);
                     cmd.Parameters.AddWithValue("@imgSign", imgSign);
-                    cmd.Parameters.AddWithValue("@imgPhoto", imgPhoto);                 
-                    cmd.Parameters.Add("@OutError", SqlDbType.VarChar, 1000).Direction = ParameterDirection.Output;                                
+                    cmd.Parameters.AddWithValue("@imgPhoto", imgPhoto);
+                    cmd.Parameters.Add("@OutError", SqlDbType.VarChar, 1000).Direction = ParameterDirection.Output;
                     try
                     {
                         con.Open();
-                        result =  cmd.ExecuteNonQuery();
+                        result = cmd.ExecuteNonQuery();
                         con.Close();
                         return 1;
                     }
@@ -111,7 +111,7 @@ namespace PSEBONLINE.AbstractLayer
 
         public DataSet CheckSubMaster_MINMAX(string cls, string YEAR, string SUB, string MIN, string MAX, string search)
         {
-            string OutError="";
+            string OutError = "";
             DataSet result = new DataSet();
             SqlDataAdapter ad = new SqlDataAdapter();
             try
@@ -155,7 +155,7 @@ namespace PSEBONLINE.AbstractLayer
         }
 
 
-      
+
 
         public DataSet GetChallanDetailsById(string ChallanId)
         {
@@ -247,7 +247,7 @@ namespace PSEBONLINE.AbstractLayer
         {
             List<SelectListItem> streamsList = new List<SelectListItem>();
             streamsList.Add(new SelectListItem { Text = "--Select--", Value = "" });
-			//streamsList.Add(new SelectListItem { Text = "GENERAL", Value = "G" });
+            //streamsList.Add(new SelectListItem { Text = "GENERAL", Value = "G" });
             streamsList.Add(new SelectListItem { Text = "HUMANITIES", Value = "H" });
             streamsList.Add(new SelectListItem { Text = "SCIENCE", Value = "S" });
             streamsList.Add(new SelectListItem { Text = "COMMERCE", Value = "C" });
@@ -695,7 +695,7 @@ namespace PSEBONLINE.AbstractLayer
                         string app_no = dr["APPNO"].ToString();
                         OpenUserLogin _openUserLogin = GetRecord(app_no);
                         if (_openUserLogin != null)
-                        {                            
+                        {
                             _openUserRegistration.APPNO = _openUserLogin.APPNO.ToString();
                             _openUserRegistration.AADHAR_NO = _openUserLogin.AADHAR_NO;
                             _openUserRegistration.BOARD = "";
@@ -926,9 +926,9 @@ namespace PSEBONLINE.AbstractLayer
                 {
                     _openUserRegistration.EXAM = "G";
                     _openUserLogin.STREAM = "GENERAL";
-                    _openUserLogin.STREAMCODE = "G";                 
+                    _openUserLogin.STREAMCODE = "G";
                 }
-              
+
                 _openUserRegistration.EXAM = _openUserLogin.STREAMCODE.ToUpper();
                 _openUserRegistration.NAME = _openUserLogin.NAME;
                 _openUserRegistration.DOB = _openUserLogin.DOB;
@@ -994,7 +994,7 @@ namespace PSEBONLINE.AbstractLayer
             if (_openUserRegistration.REGNOOLD == null) { _openUserRegistration.REGNOOLD = string.Empty; }
             if (_openUserRegistration.CandStudyMedium == null) { _openUserRegistration.CandStudyMedium = string.Empty; }
             if (_openUserRegistration.correctionid == null) { _openUserRegistration.correctionid = string.Empty; }
-            if (_openUserRegistration.AppearingYear == null) { _openUserRegistration.AppearingYear = string.Empty; }           
+            if (_openUserRegistration.AppearingYear == null) { _openUserRegistration.AppearingYear = string.Empty; }
 
             if (IsUserInReg(_openUserRegistration.APPNO) == 1)
             {
@@ -1063,22 +1063,22 @@ namespace PSEBONLINE.AbstractLayer
             cmd.Parameters.AddWithValue("@DisabilityPercent", _openUserRegistration.DisabilityPercent);
             cmd.Parameters.AddWithValue("@IsSmartPhone", _openUserRegistration.IsSmartPhone);
             cmd.Parameters.AddWithValue("@IsHardCopyCertificate", _openUserRegistration.IsHardCopyCertificate);
-            
+
             try
             {
                 con.Close();
-                
+
                 con.Open();
-                
-                 int result = cmd.ExecuteNonQuery();
-               
-                
+
+                int result = cmd.ExecuteNonQuery();
+
+
                 con.Close();
                 if (result > 0)
                 { return 1; }
                 else
                 { return 0; }
-              
+
             }
             catch (Exception e)
             {
@@ -1207,7 +1207,7 @@ namespace PSEBONLINE.AbstractLayer
                 cmd.Parameters.AddWithValue("@HOMEDISTNM", _openUserLogin.HOMEDISTNM.ToUpper());
                 cmd.Parameters.AddWithValue("@correctionid", _openUserLogin.correctionid.ToUpper());
                 cmd.Parameters.AddWithValue("@correction_dt", _openUserLogin.correction_dt);
-                
+
                 try
                 {
                     con.Open();
@@ -1544,7 +1544,7 @@ namespace PSEBONLINE.AbstractLayer
 
         public List<SelectListItem> GetMatricSubjects_1()
         {
-            List<SelectListItem> subjects = new List<SelectListItem>();            
+            List<SelectListItem> subjects = new List<SelectListItem>();
             subjects.Add(new SelectListItem() { Value = "02", Text = "ENGLISH" });
             subjects.Add(new SelectListItem() { Value = "03", Text = "HINDI" });
             subjects.Add(new SelectListItem() { Value = "04", Text = "MATHEMATICS" });
@@ -1555,7 +1555,7 @@ namespace PSEBONLINE.AbstractLayer
             return subjects;
         }
 
-        
+
         public List<SelectListItem> GetMatricSubjects_2_OLD()
         {
             List<SelectListItem> subjects = new List<SelectListItem>();
@@ -1669,19 +1669,19 @@ namespace PSEBONLINE.AbstractLayer
             return subjects;
         }
 
-        public void InsertUserInSubjects(string[] subjects_array,string [] subcat_array, string app_class, string app_id, string app_stream, FormCollection fc)
+        public void InsertUserInSubjects(string[] subjects_array, string[] subcat_array, string app_class, string app_id, string app_stream, FormCollection fc)
         {
 
-           List<tblsubjectopen> _tblsubjectopenList = new List<tblsubjectopen>();
+            List<tblsubjectopen> _tblsubjectopenList = new List<tblsubjectopen>();
             OpenUserSubjects _openUserSubjects = new OpenUserSubjects();
             _openUserSubjects.CLASS = app_class;
             _openUserSubjects.APPNO = app_id;
             _openUserSubjects.INSERTDT = DateTime.Now;
 
-            if (app_class == "10" )
+            if (app_class == "10")
             {
                 _openUserSubjects.STREAM = "GENERAL";
-               _openUserSubjects.STREAMCODE = "G";
+                _openUserSubjects.STREAMCODE = "G";
             }
             else
             {
@@ -1739,17 +1739,17 @@ namespace PSEBONLINE.AbstractLayer
                     }
                     else
                     { _openUserSubjects.SUBCAT = "A"; }
-                        //else
-                        //{
-                        //    if ((_openUserSubjects.CLASS == "10" && i == 5) || (_openUserSubjects.CLASS == "12" && i == 5 && _openUserSubjects.STREAMCODE.Trim().ToUpper() == "C"))
-                        //    { _openUserSubjects.SUBCAT = "R"; }
-                        //    else
-                        //    { _openUserSubjects.SUBCAT = "A"; }
-                        //}
+                    //else
+                    //{
+                    //    if ((_openUserSubjects.CLASS == "10" && i == 5) || (_openUserSubjects.CLASS == "12" && i == 5 && _openUserSubjects.STREAMCODE.Trim().ToUpper() == "C"))
+                    //    { _openUserSubjects.SUBCAT = "R"; }
+                    //    else
+                    //    { _openUserSubjects.SUBCAT = "A"; }
+                    //}
 
 
 
-                        switch (i)
+                    switch (i)
                     {
                         case 0:
                             cc[0] = (fc["Sub_1_Th_Obt"] != "0") ? fc["Sub_1_Th_Obt"] : string.Empty;
@@ -1830,7 +1830,7 @@ namespace PSEBONLINE.AbstractLayer
 
                     if (_openUserSubjects.SUBCAT == "C")
                     {
-                       if (_openUserSubjects.OBTMARKSCC == "000" || _openUserSubjects.OBTMARKSCC == "" || ol.CATEGORY.ToLower().Contains("direct"))
+                        if (_openUserSubjects.OBTMARKSCC == "000" || _openUserSubjects.OBTMARKSCC == "" || ol.CATEGORY.ToLower().Contains("direct"))
                         {
                             _openUserSubjects.OBTMARKS = "";
                             _openUserSubjects.MINMARKS = "";
@@ -1857,7 +1857,7 @@ namespace PSEBONLINE.AbstractLayer
                         _openUserSubjects.MAXMARKSCC = "";
                     }
 
-                    int ivalue = i; 
+                    int ivalue = i;
                     //C - (6)   R
                     //H - (5) R
                     if (i > 5)
@@ -1888,9 +1888,9 @@ namespace PSEBONLINE.AbstractLayer
                         }
                     }
 
-                   
-                    _tblsubjectopenList.Add(new tblsubjectopen 
-                    {                        
+
+                    _tblsubjectopenList.Add(new tblsubjectopen
+                    {
                         APPNO = _openUserSubjects.APPNO,
                         SUB = _openUserSubjects.SUB,
                         MEDIUM = "",
@@ -1903,9 +1903,9 @@ namespace PSEBONLINE.AbstractLayer
                         UPDT = Convert.ToDateTime("1/1/1900 12:00:00 AM"),
                         correctionid = "",
                         correction_dt = Convert.ToDateTime("1/1/1900 12:00:00 AM"),
-                });
+                    });
 
-                   //// // InsertUserSubjects(_openUserSubjects);
+                    //// // InsertUserSubjects(_openUserSubjects);
                     i++;
                 }
             }
@@ -1919,7 +1919,7 @@ namespace PSEBONLINE.AbstractLayer
             //        _context.SaveChanges();
             //    }
 
-                
+
             //    //Loop and insert records.
             //    foreach (tblsubjectopen opensubj in _tblsubjectopenList)
             //    {
@@ -2170,7 +2170,7 @@ namespace PSEBONLINE.AbstractLayer
                     if (_openUserSubjects.SUB == "01")
                     {
                         //Automatic Add/Remove 72 with 01 and 73 with 07 .. sub seq of this subject is 9. (Do it in backend, don't show on entry page)
-//17. Show subject 72 with 01 and 73 with 07 in perview and admission forms etc.. 
+                        //17. Show subject 72 with 01 and 73 with 07 in perview and admission forms etc.. 
                         _tblsubjectopenList.Add(new tblsubjectopen
                         {
                             APPNO = _openUserSubjects.APPNO,
@@ -2467,9 +2467,9 @@ namespace PSEBONLINE.AbstractLayer
             //cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','006','007','019','023','024','025','026','028','031','032','033','035','036','037','038','041','042','043','044','045','049','052','053','054','065','072','141','142','144','150')";
             cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','006','007','019','023','024','025','026','028','031','032','033','035','036','037','038','041','042','043','044','045','049','065','072','141','142','144','150')";
 
-			// by harpal sir for 2023-24
-			// cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','025','026','028','031','032','035','036','037','038','042','045','049','065','072','150')";
-			cmd.CommandType = CommandType.Text;
+            // by harpal sir for 2023-24
+            // cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','025','026','028','031','032','035','036','037','038','042','045','049','065','072','150')";
+            cmd.CommandType = CommandType.Text;
             cmd.Connection = con;
             DataSet ds = new DataSet();
             SqlDataAdapter adp = new SqlDataAdapter(cmd);
@@ -2486,33 +2486,33 @@ namespace PSEBONLINE.AbstractLayer
         }
 
 
-		public List<SelectListItem> GetSeniorSubjects_MainSubjectsForIntiGrated()
-		{
-			List<SelectListItem> subjects = new List<SelectListItem>();
-			//  subjects.Add(new SelectListItem() { Value = "", Text = "--Select--" });
-			cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','006','007','019','023','024','025','026','028','031','032','033','035','036','037','038','041','042','043','044','045','049','052','053','054','065','072','141','142','144','150')";
-			//cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','006','007','019','023','024','025','026','028','031','032','033','035','036','037','038','041','042','043','044','045','049','065','072','141','142','144','150')";
+        public List<SelectListItem> GetSeniorSubjects_MainSubjectsForIntiGrated()
+        {
+            List<SelectListItem> subjects = new List<SelectListItem>();
+            //  subjects.Add(new SelectListItem() { Value = "", Text = "--Select--" });
+            cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','006','007','019','023','024','025','026','028','031','032','033','035','036','037','038','041','042','043','044','045','049','052','053','054','065','072','141','142','144','150')";
+            //cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','006','007','019','023','024','025','026','028','031','032','033','035','036','037','038','041','042','043','044','045','049','065','072','141','142','144','150')";
 
-			// by harpal sir for 2023-24
-			// cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','025','026','028','031','032','035','036','037','038','042','045','049','065','072','150')";
-			cmd.CommandType = CommandType.Text;
-			cmd.Connection = con;
-			DataSet ds = new DataSet();
-			SqlDataAdapter adp = new SqlDataAdapter(cmd);
-			adp.Fill(ds);
-			if (ds.Tables[0].Rows.Count > 0)
-			{
-				foreach (DataRow dr in ds.Tables[0].Rows)
-				{
-					subjects.Add(new SelectListItem() { Text = dr["name_eng"].ToString(), Value = dr["sub"].ToString() });
-				}
-			}
+            // by harpal sir for 2023-24
+            // cmd.CommandText = "select sub,name_eng from ssnew where sub in ('004','005','025','026','028','031','032','035','036','037','038','042','045','049','065','072','150')";
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = con;
+            DataSet ds = new DataSet();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(ds);
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    subjects.Add(new SelectListItem() { Text = dr["name_eng"].ToString(), Value = dr["sub"].ToString() });
+                }
+            }
 
-			return subjects;
-		}
+            return subjects;
+        }
 
 
-		public List<SelectListItem> GetSeniorSubjects_1()
+        public List<SelectListItem> GetSeniorSubjects_1()
         {
             List<SelectListItem> subjects = new List<SelectListItem>();
             //  Old
@@ -3169,7 +3169,7 @@ namespace PSEBONLINE.AbstractLayer
                             _feeOpen.ExamAddSubFee = Convert.ToInt32(dr1["AddSubFee"].ToString());
                             _feeOpen.ExamStartDate = dr1["sDate"].ToString();
                             _feeOpen.ExamEndDate = dr1["eDate"].ToString();
-                            _feeOpen.ExamBankLastDate = Convert.ToDateTime(dr1["BankLastDate"].ToString());                          
+                            _feeOpen.ExamBankLastDate = Convert.ToDateTime(dr1["BankLastDate"].ToString());
                             return _feeOpen;
                         }
                         else
@@ -3280,7 +3280,7 @@ namespace PSEBONLINE.AbstractLayer
                     cmd.Parameters.AddWithValue("@Challandt", dt1);
                     con.Open();
                     ad.SelectCommand = cmd;
-                    ad.Fill(result);                    
+                    ad.Fill(result);
                     try
                     {
                         if (result.Tables[0].Rows.Count > 0)
@@ -3303,7 +3303,7 @@ namespace PSEBONLINE.AbstractLayer
                             _feeOpen.AddSubFee = Convert.ToInt32(dr["AddSubFee"].ToString());
                             _feeOpen.NoAddSub = Convert.ToInt32(dr["NoAddSub"].ToString());
                             _feeOpen.TotalFee = Convert.ToInt32(dr["TotalFee"].ToString());
-                            _feeOpen.TotalFeesInWords = dr["TotalFeesInWords"].ToString();                          
+                            _feeOpen.TotalFeesInWords = dr["TotalFeesInWords"].ToString();
                             // ExamFee
                             DataRow dr1 = result.Tables[1].Rows[0];
                             _feeOpen.ExamRegFee = Convert.ToInt32(dr1["Fee"].ToString());
@@ -3312,7 +3312,7 @@ namespace PSEBONLINE.AbstractLayer
                             _feeOpen.ExamNOAS = Convert.ToInt32(dr1["NOAS"].ToString());
                             _feeOpen.ExamNOPS = Convert.ToInt32(dr1["NOPS"].ToString());
                             _feeOpen.ExamPrSubFee = Convert.ToInt32(dr1["PrSubFee"].ToString());
-                            _feeOpen.ExamAddSubFee= Convert.ToInt32(dr1["AddSubFee"].ToString());
+                            _feeOpen.ExamAddSubFee = Convert.ToInt32(dr1["AddSubFee"].ToString());
                             _feeOpen.ExamStartDate = dr1["sDate"].ToString();
                             _feeOpen.ExamEndDate = dr1["eDate"].ToString();
                             _feeOpen.ExamBankLastDate = Convert.ToDateTime(dr1["BankLastDate"].ToString());
@@ -3532,34 +3532,34 @@ namespace PSEBONLINE.AbstractLayer
             }
         }
 
-		public DataSet OpenStudentlistForRepaymentSP(string schl)
-		{
-			DataSet result = new DataSet();
-			SqlDataAdapter ad = new SqlDataAdapter();
-			try
-			{
-				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
-				{
-					SqlCommand cmd = new SqlCommand("open_Repayment", con);  //SelectPrintList_sp
-					cmd.CommandType = CommandType.StoredProcedure;
-					cmd.Parameters.AddWithValue("@schl", schl); // O for Admin 1 for School else Openstudent
-			
-					ad.SelectCommand = cmd;
-					ad.Fill(result);
-					con.Open();
-					return result;
-				}
-			}
-			catch (Exception ex)
-			{
-				return result = null;
-			}
-		}
+        public DataSet OpenStudentlistForRepaymentSP(string schl)
+        {
+            DataSet result = new DataSet();
+            SqlDataAdapter ad = new SqlDataAdapter();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+                {
+                    SqlCommand cmd = new SqlCommand("open_Repayment", con);  //SelectPrintList_sp
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@schl", schl); // O for Admin 1 for School else Openstudent
+
+                    ad.SelectCommand = cmd;
+                    ad.Fill(result);
+                    con.Open();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return result = null;
+            }
+        }
 
 
 
 
-		public DataSet OpenStudentlistAdmin(string search, string dist, int PageNumber)
+        public DataSet OpenStudentlistAdmin(string search, string dist, int PageNumber)
         {
             DataSet result = new DataSet();
             SqlDataAdapter ad = new SqlDataAdapter();
@@ -3672,9 +3672,9 @@ namespace PSEBONLINE.AbstractLayer
         //#endregion ChangePassword
 
 
-        public int UpdateOpenRegistrationByAdmin(string adminid, OpenUserRegistration _openUserRegistration, string imgSign, string imgPhoto, OpenUserLogin _openUserLogin,string EmpUserId)
+        public int UpdateOpenRegistrationByAdmin(string adminid, OpenUserRegistration _openUserRegistration, string imgSign, string imgPhoto, OpenUserLogin _openUserLogin, string EmpUserId)
         {
-            if (_openUserRegistration.APPNO == null) { return 0; }         
+            if (_openUserRegistration.APPNO == null) { return 0; }
             try
             {
                 OpenUserRegistration _oUserRegistration = GetRegistrationRecord(_openUserRegistration.APPNO);
@@ -3739,7 +3739,7 @@ namespace PSEBONLINE.AbstractLayer
 
                 cmd.Parameters.Clear();
                 cmd.Connection = con;
-                
+
                 cmd.Parameters.AddWithValue("@EmpUserId", EmpUserId);
                 cmd.Parameters.AddWithValue("@adminid", adminid);
                 cmd.Parameters.AddWithValue("@APPNO", _openUserRegistration.APPNO.ToUpper());
@@ -3792,12 +3792,12 @@ namespace PSEBONLINE.AbstractLayer
                 cmd.Parameters.AddWithValue("@correctionid", _openUserRegistration.correctionid.ToUpper());
                 cmd.Parameters.AddWithValue("@correction_dt", _openUserRegistration.correction_dt);
                 cmd.Parameters.AddWithValue("@IMG_RAND", imgPhoto);
-                cmd.Parameters.AddWithValue("@IMGSIGN_RA", imgSign);               
+                cmd.Parameters.AddWithValue("@IMGSIGN_RA", imgSign);
                 cmd.Parameters.AddWithValue("@AppearingYear", _openUserRegistration.AppearingYear);
                 // user login
                 cmd.Parameters.AddWithValue("@STREAM", _openUserLogin.STREAM);
                 cmd.Parameters.AddWithValue("@STREAMCODE", _openUserLogin.STREAMCODE);
-        
+
                 cmd.Parameters.AddWithValue("@MOBILENO", _openUserLogin.MOBILENO.ToUpper());
                 cmd.Parameters.AddWithValue("@EMAILID", _openUserLogin.EMAILID.ToUpper());
                 cmd.Parameters.AddWithValue("@ADDRESS", _openUserLogin.ADDRESS.ToUpper());
@@ -3823,10 +3823,10 @@ namespace PSEBONLINE.AbstractLayer
             else
             { return -1; }
         }
-                
-        public string CancelApplicationOpen(string cancelremarks, string appno, out string outstatus, int AdminId,string EmpUserId)
+
+        public string CancelApplicationOpen(string cancelremarks, string appno, out string outstatus, int AdminId, string EmpUserId)
         {
-            int result;            
+            int result;
             try
             {
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
@@ -3836,7 +3836,7 @@ namespace PSEBONLINE.AbstractLayer
                     cmd.Parameters.AddWithValue("@EmpUserId", EmpUserId);
                     cmd.Parameters.AddWithValue("@appno", appno);
                     cmd.Parameters.AddWithValue("@CancelRemarks", cancelremarks);
-                    cmd.Parameters.AddWithValue("@AdminId", AdminId);       
+                    cmd.Parameters.AddWithValue("@AdminId", AdminId);
                     cmd.Parameters.Add("@OutStatus", SqlDbType.VarChar, 200).Direction = ParameterDirection.Output;
                     con.Open();
                     result = cmd.ExecuteNonQuery();
@@ -3846,7 +3846,7 @@ namespace PSEBONLINE.AbstractLayer
             }
             catch (Exception ex)
             {
-               return  outstatus = "-1";
+                return outstatus = "-1";
             }
         }
 
@@ -4361,7 +4361,7 @@ namespace PSEBONLINE.AbstractLayer
         public void InsertOpenCorrSubjectsNew(string[] subjects_array, string[] subcat_array, string app_class, string app_id, string app_stream, string schl, FormCollection fc, string app_Board, string app_Category, string app_Month, string app_Year)
         {
 
-            List<tblsubjectopen> _tblsubjectopenList = new List<tblsubjectopen>();  
+            List<tblsubjectopen> _tblsubjectopenList = new List<tblsubjectopen>();
             OpenUserSubjects _openUserSubjects = new OpenUserSubjects();
             _openUserSubjects.CLASS = app_class;
             _openUserSubjects.APPNO = app_id;
@@ -4372,7 +4372,7 @@ namespace PSEBONLINE.AbstractLayer
             _openUserSubjects.YEAR = app_Year;
             _openUserSubjects.INSERTDT = DateTime.Now;
 
-           
+
 
             if (app_class == "10")
             {
@@ -4605,138 +4605,136 @@ namespace PSEBONLINE.AbstractLayer
                     InsertOpenCorrSubjects(_openUserSubjects);
                     i++;
                 }
-            }                       
+            }
         }
 
-		#endregion Open Subject Correction DB
+        #endregion Open Subject Correction DB
 
 
-		#region calculate fee for open repayment
+        #region calculate fee for open repayment
 
-		public FeeOpenModel spFeeDetailsOpen_Repayment(string schl,string Action)
-		{
+        public FeeOpenModel spFeeDetailsOpen_Repayment(string schl, string Action)
+        {
             FeeOpenModel FeeOpenModel = new FeeOpenModel();
-			FeeOpenModel.feeopenList = new List<FeeOpen>();
-            DataSet  ds = new DataSet();
-			DataSet result = new DataSet();
+            FeeOpenModel.feeopenList = new List<FeeOpen>();
+            DataSet ds = new DataSet();
+            DataSet result = new DataSet();
             string OutError = "";
-			SqlDataAdapter ad = new SqlDataAdapter();
-			try
-			{
-				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
-				{
-					SqlCommand cmd = new SqlCommand("open_Repayment", con);//spFeeDetailsOpen2017 // spFeeDetailsOpen2017_Phy_Chln
-					cmd.CommandType = CommandType.StoredProcedure;
-					cmd.Parameters.Clear();
-					cmd.Parameters.AddWithValue("@schl", schl);
-					cmd.Parameters.AddWithValue("@Action", Action);
+            SqlDataAdapter ad = new SqlDataAdapter();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+                {
+                    SqlCommand cmd = new SqlCommand("open_Repayment", con);//spFeeDetailsOpen2017 // spFeeDetailsOpen2017_Phy_Chln
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@schl", schl);
+                    cmd.Parameters.AddWithValue("@Action", Action);
 
-					con.Open();
-					ad.SelectCommand = cmd;
-					ad.Fill(result);
-					try
-					{
-						ds = result;
-						if (result.Tables[0].Rows.Count > 0)
-						{
+                    con.Open();
+                    ad.SelectCommand = cmd;
+                    ad.Fill(result);
+                    try
+                    {
+                        ds = result;
+                        if (result.Tables[0].Rows.Count > 0)
+                        {
 
-							foreach (DataRow dr in result.Tables[0].Rows)
-							{
-								FeeOpenModel.feeopenData = new FeeOpen();
-								FeeOpenModel.feeopenData.AppNo = dr["APPNO"].ToString();
-								FeeOpenModel.feeopenData.Appno_std_id = dr["APPNO_Std_id"].ToString();
-								FeeOpenModel.feeopenData.FeeCode = dr["FEECODE"].ToString();
-								FeeOpenModel.feeopenData.FeeCat = dr["FEECAT"].ToString();
-								FeeOpenModel.feeopenData.FORM = dr["form"].ToString();
-								FeeOpenModel.feeopenData.EndDate = dr["eDate"].ToString();
-								FeeOpenModel.feeopenData.BankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
-								FeeOpenModel.feeopenData.LateFee = Convert.ToInt32(dr["latefee"].ToString());
-								FeeOpenModel.feeopenData.ProsFee = Convert.ToInt32(dr["prosfee"].ToString());
-								FeeOpenModel.feeopenData.RegConti = Convert.ToInt32(dr["RegConti"].ToString());
-								FeeOpenModel.feeopenData.RegContiCat = dr["RegContiCat"].ToString();
-								FeeOpenModel.feeopenData.AdmissionFee = Convert.ToInt32(dr["AdmissionFee"].ToString());
-								FeeOpenModel.feeopenData.AddSubFee = Convert.ToInt32(dr["AddSubFee"].ToString());
-								FeeOpenModel.feeopenData.NoAddSub = Convert.ToInt32(dr["NoAddSub"].ToString());
-								FeeOpenModel.feeopenData.TotalFee = Convert.ToInt32(dr["TotalFee"].ToString());
-								FeeOpenModel.feeopenData.TotalFeesInWords = dr["TotalFeesInWords"].ToString();
+                            foreach (DataRow dr in result.Tables[0].Rows)
+                            {
+                                FeeOpenModel.feeopenData = new FeeOpen();
+                                FeeOpenModel.feeopenData.AppNo = dr["APPNO"].ToString();
+                                FeeOpenModel.feeopenData.Appno_std_id = dr["APPNO_Std_id"].ToString();
+                                FeeOpenModel.feeopenData.FeeCode = dr["FEECODE"].ToString();
+                                FeeOpenModel.feeopenData.FeeCat = dr["FEECAT"].ToString();
+                                FeeOpenModel.feeopenData.FORM = dr["form"].ToString();
+                                FeeOpenModel.feeopenData.EndDate = dr["eDate"].ToString();
+                                FeeOpenModel.feeopenData.BankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
+                                FeeOpenModel.feeopenData.LateFee = Convert.ToInt32(dr["latefee"].ToString());
+                                FeeOpenModel.feeopenData.ProsFee = Convert.ToInt32(dr["prosfee"].ToString());
+                                FeeOpenModel.feeopenData.RegConti = Convert.ToInt32(dr["RegConti"].ToString());
+                                FeeOpenModel.feeopenData.RegContiCat = dr["RegContiCat"].ToString();
+                                FeeOpenModel.feeopenData.AdmissionFee = Convert.ToInt32(dr["AdmissionFee"].ToString());
+                                FeeOpenModel.feeopenData.AddSubFee = Convert.ToInt32(dr["AddSubFee"].ToString());
+                                FeeOpenModel.feeopenData.NoAddSub = Convert.ToInt32(dr["NoAddSub"].ToString());
+                                FeeOpenModel.feeopenData.TotalFee = Convert.ToInt32(dr["TotalFee"].ToString());
+                                FeeOpenModel.feeopenData.TotalFeesInWords = dr["TotalFeesInWords"].ToString();
 
-								FeeOpenModel.feeopenData.ExamRegFee = Convert.ToInt32(dr["Fee"].ToString());
-								FeeOpenModel.feeopenData.ExamLateFee = Convert.ToInt32(dr["LateFee_ex"].ToString());
-								FeeOpenModel.feeopenData.ExamTotalFee = Convert.ToInt32(dr["TotFee"].ToString());
-								FeeOpenModel.feeopenData.ExamNOAS = Convert.ToInt32(dr["NOAS"].ToString());
-								FeeOpenModel.feeopenData.ExamNOPS = Convert.ToInt32(dr["NOPS"].ToString());
-								FeeOpenModel.feeopenData.ExamPrSubFee = Convert.ToInt32(dr["PrSubFee"].ToString());
-								FeeOpenModel.feeopenData.ExamAddSubFee = Convert.ToInt32(dr["AddSubFee_ex"].ToString());
-								FeeOpenModel.feeopenData.ExamStartDate = dr["sDate"].ToString();
-								FeeOpenModel.feeopenData.ExamEndDate = dr["eDate"].ToString();
-								//FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
-								FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr["HardCopyCertificateFee"].ToString());
-								FeeOpenModel.feeopenData.lastPaidFee = Convert.ToInt32(dr["lastPaidFee"].ToString());
-								FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
-								// ... (other properties)
+                                FeeOpenModel.feeopenData.ExamRegFee = Convert.ToInt32(dr["Fee"].ToString());
+                                FeeOpenModel.feeopenData.ExamLateFee = Convert.ToInt32(dr["LateFee_ex"].ToString());
+                                FeeOpenModel.feeopenData.ExamTotalFee = Convert.ToInt32(dr["TotFee"].ToString());
+                                FeeOpenModel.feeopenData.ExamNOAS = Convert.ToInt32(dr["NOAS"].ToString());
+                                FeeOpenModel.feeopenData.ExamNOPS = Convert.ToInt32(dr["NOPS"].ToString());
+                                FeeOpenModel.feeopenData.ExamPrSubFee = Convert.ToInt32(dr["PrSubFee"].ToString());
+                                FeeOpenModel.feeopenData.ExamAddSubFee = Convert.ToInt32(dr["AddSubFee_ex"].ToString());
+                                FeeOpenModel.feeopenData.ExamStartDate = dr["sDate"].ToString();
+                                FeeOpenModel.feeopenData.ExamEndDate = dr["eDate"].ToString();
+                                //FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
+                                FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr["HardCopyCertificateFee"].ToString());
+                                FeeOpenModel.feeopenData.lastPaidFee = Convert.ToInt32(dr["lastPaidFee"].ToString());
+                                FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
+                                // ... (other properties)
 
-								//// Find the corresponding row in the second DataTable based on AppNo
-								//DataRow[] matchingRows = result.Tables[1].Select($"id = '{FeeOpenModel.feeopenData.AppNo}'");
+                                //// Find the corresponding row in the second DataTable based on AppNo
+                                //DataRow[] matchingRows = result.Tables[1].Select($"id = '{FeeOpenModel.feeopenData.AppNo}'");
 
-								//if (matchingRows.Length > 0)
-								//{
-								//	DataRow dr1 = matchingRows[0];
+                                //if (matchingRows.Length > 0)
+                                //{
+                                //	DataRow dr1 = matchingRows[0];
 
-								//	// Update properties from the second DataTable
+                                //	// Update properties from the second DataTable
 
-								//	// ... (update other properties from the second DataTable)
-								//}
-
-
-							}
-
-							//foreach (DataRow dr in result.Tables[0].Rows)
-							//{
-							//	FeeOpenModel.feeopenData = new FeeOpen();
-							//	FeeOpenModel.feeopenData.AppNo = dr["APPNO"].ToString();
-							//	FeeOpenModel.feeopenData.FeeCode = dr["FEECODE"].ToString();
-							//	FeeOpenModel.feeopenData.FeeCat = dr["FEECAT"].ToString();
-							//	FeeOpenModel.feeopenData.FORM = dr["form"].ToString();
-							//	FeeOpenModel.feeopenData.EndDate = dr["eDate"].ToString();
-							//	FeeOpenModel.feeopenData.BankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
-							//	FeeOpenModel.feeopenData.LateFee = Convert.ToInt32(dr["latefee"].ToString());
-							//	FeeOpenModel.feeopenData.ProsFee = Convert.ToInt32(dr["prosfee"].ToString());
-							//	FeeOpenModel.feeopenData.RegConti = Convert.ToInt32(dr["RegConti"].ToString());
-							//	FeeOpenModel.feeopenData.RegContiCat = dr["RegContiCat"].ToString();
-							//	FeeOpenModel.feeopenData.AdmissionFee = Convert.ToInt32(dr["AdmissionFee"].ToString());
-							//	FeeOpenModel.feeopenData.AddSubFee = Convert.ToInt32(dr["AddSubFee"].ToString());
-							//	FeeOpenModel.feeopenData.NoAddSub = Convert.ToInt32(dr["NoAddSub"].ToString());
-							//	FeeOpenModel.feeopenData.TotalFee = Convert.ToInt32(dr["TotalFee"].ToString());
-							//	FeeOpenModel.feeopenData.TotalFeesInWords = dr["TotalFeesInWords"].ToString();
-							//	// ... (other properties)
-
-							//	// Find the corresponding row in the second DataTable based on AppNo
-							//	DataRow[] matchingRows = result.Tables[1].Select($"id = '{FeeOpenModel.feeopenData.AppNo}'");
-
-							//	if (matchingRows.Length > 0)
-							//	{
-							//		DataRow dr1 = matchingRows[0];
-
-							//		// Update properties from the second DataTable
-							//		FeeOpenModel.feeopenData.ExamRegFee = Convert.ToInt32(dr1["Fee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamLateFee = Convert.ToInt32(dr1["LateFee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamTotalFee = Convert.ToInt32(dr1["TotFee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamNOAS = Convert.ToInt32(dr1["NOAS"].ToString());
-							//		FeeOpenModel.feeopenData.ExamNOPS = Convert.ToInt32(dr1["NOPS"].ToString());
-							//		FeeOpenModel.feeopenData.ExamPrSubFee = Convert.ToInt32(dr1["PrSubFee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamAddSubFee = Convert.ToInt32(dr1["AddSubFee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamStartDate = dr1["sDate"].ToString();
-							//		FeeOpenModel.feeopenData.ExamEndDate = dr1["eDate"].ToString();
-							//		FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr1["BankLastDate"].ToString());
-							//		FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr1["HardCopyCertificateFee"].ToString());
-							//		FeeOpenModel.feeopenData.lastPaidFee = Convert.ToInt32(dr1["lastPaidFee"].ToString());
-							//		// ... (update other properties from the second DataTable)
-							//	}
-
-							//	FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
-							//}
+                                //	// ... (update other properties from the second DataTable)
+                                //}
 
 
+                            }
+
+                            //foreach (DataRow dr in result.Tables[0].Rows)
+                            //{
+                            //	FeeOpenModel.feeopenData = new FeeOpen();
+                            //	FeeOpenModel.feeopenData.AppNo = dr["APPNO"].ToString();
+                            //	FeeOpenModel.feeopenData.FeeCode = dr["FEECODE"].ToString();
+                            //	FeeOpenModel.feeopenData.FeeCat = dr["FEECAT"].ToString();
+                            //	FeeOpenModel.feeopenData.FORM = dr["form"].ToString();
+                            //	FeeOpenModel.feeopenData.EndDate = dr["eDate"].ToString();
+                            //	FeeOpenModel.feeopenData.BankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
+                            //	FeeOpenModel.feeopenData.LateFee = Convert.ToInt32(dr["latefee"].ToString());
+                            //	FeeOpenModel.feeopenData.ProsFee = Convert.ToInt32(dr["prosfee"].ToString());
+                            //	FeeOpenModel.feeopenData.RegConti = Convert.ToInt32(dr["RegConti"].ToString());
+                            //	FeeOpenModel.feeopenData.RegContiCat = dr["RegContiCat"].ToString();
+                            //	FeeOpenModel.feeopenData.AdmissionFee = Convert.ToInt32(dr["AdmissionFee"].ToString());
+                            //	FeeOpenModel.feeopenData.AddSubFee = Convert.ToInt32(dr["AddSubFee"].ToString());
+                            //	FeeOpenModel.feeopenData.NoAddSub = Convert.ToInt32(dr["NoAddSub"].ToString());
+                            //	FeeOpenModel.feeopenData.TotalFee = Convert.ToInt32(dr["TotalFee"].ToString());
+                            //	FeeOpenModel.feeopenData.TotalFeesInWords = dr["TotalFeesInWords"].ToString();
+                            //	// ... (other properties)
+
+                            //	// Find the corresponding row in the second DataTable based on AppNo
+                            //	DataRow[] matchingRows = result.Tables[1].Select($"id = '{FeeOpenModel.feeopenData.AppNo}'");
+
+                            //	if (matchingRows.Length > 0)
+                            //	{
+                            //		DataRow dr1 = matchingRows[0];
+
+                            //		// Update properties from the second DataTable
+                            //		FeeOpenModel.feeopenData.ExamRegFee = Convert.ToInt32(dr1["Fee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamLateFee = Convert.ToInt32(dr1["LateFee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamTotalFee = Convert.ToInt32(dr1["TotFee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamNOAS = Convert.ToInt32(dr1["NOAS"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamNOPS = Convert.ToInt32(dr1["NOPS"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamPrSubFee = Convert.ToInt32(dr1["PrSubFee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamAddSubFee = Convert.ToInt32(dr1["AddSubFee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamStartDate = dr1["sDate"].ToString();
+                            //		FeeOpenModel.feeopenData.ExamEndDate = dr1["eDate"].ToString();
+                            //		FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr1["BankLastDate"].ToString());
+                            //		FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr1["HardCopyCertificateFee"].ToString());
+                            //		FeeOpenModel.feeopenData.lastPaidFee = Convert.ToInt32(dr1["lastPaidFee"].ToString());
+                            //		// ... (update other properties from the second DataTable)
+                            //	}
+
+                            //	FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
+                            //}
 
 
 
@@ -4745,250 +4743,254 @@ namespace PSEBONLINE.AbstractLayer
 
 
 
-							//foreach (DataRow dr in result.Tables[0].Rows)
-							//                     {
-							//	FeeOpenModel.feeopenData = new FeeOpen();
-							//                         //DataRow dr = result.Tables[0].Rows[0];
-							//                         //FeeOpenModel.feeopenData.SCHL = dr["SCHL"].ToString();
-							//                         FeeOpenModel.feeopenData.AppNo = dr["APPNO"].ToString();
-							//                         FeeOpenModel.feeopenData.FeeCode = dr["FEECODE"].ToString();
-							//                         FeeOpenModel.feeopenData.FeeCat = dr["FEECAT"].ToString();
-							//                         FeeOpenModel.feeopenData.FORM = dr["form"].ToString();
-							//                         FeeOpenModel.feeopenData.EndDate = dr["eDate"].ToString();
-							//                         FeeOpenModel.feeopenData.BankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
-							//                         FeeOpenModel.feeopenData.LateFee = Convert.ToInt32(dr["latefee"].ToString());
-							//                         FeeOpenModel.feeopenData.ProsFee = Convert.ToInt32(dr["prosfee"].ToString());
-							//                         FeeOpenModel.feeopenData.RegConti = Convert.ToInt32(dr["RegConti"].ToString());
-							//                         FeeOpenModel.feeopenData.RegContiCat = dr["RegContiCat"].ToString();
-							//                         FeeOpenModel.feeopenData.AdmissionFee = Convert.ToInt32(dr["AdmissionFee"].ToString());
-							//                         FeeOpenModel.feeopenData.AddSubFee = Convert.ToInt32(dr["AddSubFee"].ToString());
-							//                         FeeOpenModel.feeopenData.NoAddSub = Convert.ToInt32(dr["NoAddSub"].ToString());
-							//                         FeeOpenModel.feeopenData.TotalFee = Convert.ToInt32(dr["TotalFee"].ToString());
-							//	FeeOpenModel.feeopenData.TotalFeesInWords = dr["TotalFeesInWords"].ToString();
-							//	FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
-							//}
-							//                     // ExamFee
-
-							//                     foreach (DataRow dr1 in result.Tables[1].Rows)
-							//                     {
-							//	// Find the corresponding _feeOpen in the list based on a condition, e.g., AppNo
-							//	FeeOpenModel.feeopenData = FeeOpenModel.feeopenList.Find(f => f.AppNo == dr1["id"].ToString());
-
-							//                         if (FeeOpenModel.feeopenData != null)
-							//                         {
-							//		FeeOpenModel.feeopenData.ExamRegFee = Convert.ToInt32(dr1["Fee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamLateFee = Convert.ToInt32(dr1["LateFee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamTotalFee = Convert.ToInt32(dr1["TotFee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamNOAS = Convert.ToInt32(dr1["NOAS"].ToString());
-							//		FeeOpenModel.feeopenData.ExamNOPS = Convert.ToInt32(dr1["NOPS"].ToString());
-							//		FeeOpenModel.feeopenData.ExamPrSubFee = Convert.ToInt32(dr1["PrSubFee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamAddSubFee = Convert.ToInt32(dr1["AddSubFee"].ToString());
-							//		FeeOpenModel.feeopenData.ExamStartDate = dr1["sDate"].ToString();
-							//		FeeOpenModel.feeopenData.ExamEndDate = dr1["eDate"].ToString();
-							//		FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr1["BankLastDate"].ToString());
-							//		FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr1["HardCopyCertificateFee"].ToString());
-							//		FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
-							//	}
-							//                     }
-							OutError = "1";
-							return FeeOpenModel;
-						}
-						else
-						{
-							OutError = "0";
-							return FeeOpenModel;
-						}
-					}
-					catch (Exception ex)
-					{
-						OutError = ex.Message;
-						return FeeOpenModel;
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				OutError = ex.Message;
-				return FeeOpenModel;
-			}
-		}
 
 
-		public string OpenInsertPaymentForm_For_Repayment(ChallanMasterModel CM, out string SchoolMobile)
-		{
-			SqlConnection con = null;
-			string result = "";
-			try
-			{
-				con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
-				SqlCommand cmd = new SqlCommand("OpenInsertPaymentForm_For_Repayment_SP", con);   //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
-				cmd.CommandType = CommandType.StoredProcedure;
-				cmd.Parameters.Clear();
-				cmd.Parameters.AddWithValue("@APPNO", CM.SCHLREGID);
-				cmd.Parameters.AddWithValue("@CHLNDATE", CM.CHLNDATE);
-				cmd.Parameters.AddWithValue("@CHLNVDATE", CM.CHLNVDATE);
-				cmd.Parameters.AddWithValue("@FEEMODE", CM.FEEMODE);
-				cmd.Parameters.AddWithValue("@FEECODE", CM.FEECODE);
-				cmd.Parameters.AddWithValue("@FEECAT", CM.FEECAT);
-				cmd.Parameters.AddWithValue("@BCODE", CM.BCODE);
-				cmd.Parameters.AddWithValue("@BANK", CM.BANK);
-				cmd.Parameters.AddWithValue("@ACNO", CM.ACNO);
-				cmd.Parameters.AddWithValue("@FEE", CM.FEE);
-				cmd.Parameters.AddWithValue("@BANKCHRG", CM.BANKCHRG);
-				cmd.Parameters.AddWithValue("@TOTFEE", CM.TOTFEE);
-				cmd.Parameters.AddWithValue("@SCHLREGID", CM.SCHLREGID);
-				cmd.Parameters.AddWithValue("@DIST", "010");
-				cmd.Parameters.AddWithValue("@DISTNM", CM.DISTNM);
-				cmd.Parameters.AddWithValue("@SCHLCANDNM", CM.SCHLCANDNM);
-				cmd.Parameters.AddWithValue("@BRCODE", CM.BRCODE);
-				cmd.Parameters.AddWithValue("@BRANCH", CM.BRANCH);
-				cmd.Parameters.AddWithValue("@addfee", CM.addfee);
-				cmd.Parameters.AddWithValue("@latefee", CM.latefee);
-				cmd.Parameters.AddWithValue("@prosfee", CM.prosfee);
-				cmd.Parameters.AddWithValue("@addsubfee", CM.addsubfee);
-				cmd.Parameters.AddWithValue("@add_sub_count", CM.add_sub_count);
-				cmd.Parameters.AddWithValue("@regfee", CM.regfee);
-				cmd.Parameters.AddWithValue("@type", CM.type);
-				cmd.Parameters.AddWithValue("@LOT", CM.LOT);
-				cmd.Parameters.AddWithValue("@FeeStudentList", CM.FeeStudentList);
-				if (CM.LSFRemarks != null && CM.LSFRemarks != "")
-				{
-					cmd.Parameters.AddWithValue("@LumsumFine", CM.LumsumFine);
-					cmd.Parameters.AddWithValue("@LSFRemarks", CM.LSFRemarks);
-				}
-				cmd.Parameters.AddWithValue("@ChallanVDateN", CM.ChallanVDateN);
-				//
-				cmd.Parameters.AddWithValue("@OpenExamFee", CM.OpenExamFee);
-				cmd.Parameters.AddWithValue("@OpenLateFee", CM.OpenLateFee);
-				cmd.Parameters.AddWithValue("@OpenTotalFee", CM.OpenTotalFee);
-				//
-				SqlParameter outPutParameter = new SqlParameter();
-				outPutParameter.ParameterName = "@CHALLANID";
-				outPutParameter.Size = 100;
-				outPutParameter.SqlDbType = System.Data.SqlDbType.VarChar;
-				outPutParameter.Direction = System.Data.ParameterDirection.Output;
-				cmd.Parameters.Add(outPutParameter);
-				SqlParameter outPutParameter1 = new SqlParameter();
-				outPutParameter1.ParameterName = "@SchoolMobile";
-				outPutParameter1.Size = 20;
-				outPutParameter1.SqlDbType = System.Data.SqlDbType.VarChar;
-				outPutParameter1.Direction = System.Data.ParameterDirection.Output;
-				cmd.Parameters.Add(outPutParameter1);
-				con.Open();
-				result = cmd.ExecuteNonQuery().ToString();
-				string outuniqueid = (string)cmd.Parameters["@CHALLANID"].Value;
-				SchoolMobile = (string)cmd.Parameters["@SchoolMobile"].Value;
-				return outuniqueid;
+                            //foreach (DataRow dr in result.Tables[0].Rows)
+                            //                     {
+                            //	FeeOpenModel.feeopenData = new FeeOpen();
+                            //                         //DataRow dr = result.Tables[0].Rows[0];
+                            //                         //FeeOpenModel.feeopenData.SCHL = dr["SCHL"].ToString();
+                            //                         FeeOpenModel.feeopenData.AppNo = dr["APPNO"].ToString();
+                            //                         FeeOpenModel.feeopenData.FeeCode = dr["FEECODE"].ToString();
+                            //                         FeeOpenModel.feeopenData.FeeCat = dr["FEECAT"].ToString();
+                            //                         FeeOpenModel.feeopenData.FORM = dr["form"].ToString();
+                            //                         FeeOpenModel.feeopenData.EndDate = dr["eDate"].ToString();
+                            //                         FeeOpenModel.feeopenData.BankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
+                            //                         FeeOpenModel.feeopenData.LateFee = Convert.ToInt32(dr["latefee"].ToString());
+                            //                         FeeOpenModel.feeopenData.ProsFee = Convert.ToInt32(dr["prosfee"].ToString());
+                            //                         FeeOpenModel.feeopenData.RegConti = Convert.ToInt32(dr["RegConti"].ToString());
+                            //                         FeeOpenModel.feeopenData.RegContiCat = dr["RegContiCat"].ToString();
+                            //                         FeeOpenModel.feeopenData.AdmissionFee = Convert.ToInt32(dr["AdmissionFee"].ToString());
+                            //                         FeeOpenModel.feeopenData.AddSubFee = Convert.ToInt32(dr["AddSubFee"].ToString());
+                            //                         FeeOpenModel.feeopenData.NoAddSub = Convert.ToInt32(dr["NoAddSub"].ToString());
+                            //                         FeeOpenModel.feeopenData.TotalFee = Convert.ToInt32(dr["TotalFee"].ToString());
+                            //	FeeOpenModel.feeopenData.TotalFeesInWords = dr["TotalFeesInWords"].ToString();
+                            //	FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
+                            //}
+                            //                     // ExamFee
 
-			}
-			catch (Exception ex)
-			{
-				//mbox(ex);
-				SchoolMobile = "";
-				return result = "";
+                            //                     foreach (DataRow dr1 in result.Tables[1].Rows)
+                            //                     {
+                            //	// Find the corresponding _feeOpen in the list based on a condition, e.g., AppNo
+                            //	FeeOpenModel.feeopenData = FeeOpenModel.feeopenList.Find(f => f.AppNo == dr1["id"].ToString());
 
-			}
-			finally
-			{
-				con.Close();
-			}
-		}
+                            //                         if (FeeOpenModel.feeopenData != null)
+                            //                         {
+                            //		FeeOpenModel.feeopenData.ExamRegFee = Convert.ToInt32(dr1["Fee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamLateFee = Convert.ToInt32(dr1["LateFee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamTotalFee = Convert.ToInt32(dr1["TotFee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamNOAS = Convert.ToInt32(dr1["NOAS"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamNOPS = Convert.ToInt32(dr1["NOPS"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamPrSubFee = Convert.ToInt32(dr1["PrSubFee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamAddSubFee = Convert.ToInt32(dr1["AddSubFee"].ToString());
+                            //		FeeOpenModel.feeopenData.ExamStartDate = dr1["sDate"].ToString();
+                            //		FeeOpenModel.feeopenData.ExamEndDate = dr1["eDate"].ToString();
+                            //		FeeOpenModel.feeopenData.ExamBankLastDate = Convert.ToDateTime(dr1["BankLastDate"].ToString());
+                            //		FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr1["HardCopyCertificateFee"].ToString());
+                            //		FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
+                            //	}
+                            //                     }
+                            OutError = "1";
+                            return FeeOpenModel;
+                        }
+                        else
+                        {
+                            OutError = "0";
+                            return FeeOpenModel;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        OutError = ex.Message;
+                        return FeeOpenModel;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                OutError = ex.Message;
+                return FeeOpenModel;
+            }
+        }
 
 
-		public FeeOpenModel selectFeeDetailsOpen_Repayment(string schl)
-		{
-			FeeOpenModel FeeOpenModel = new FeeOpenModel();
-			FeeOpenModel.feeopenList = new List<FeeOpen>();
-			DataSet ds = new DataSet();
-			DataSet result = new DataSet();
-			string OutError = "";
-			SqlDataAdapter ad = new SqlDataAdapter();
-			try
-			{
-				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
-				{
-					SqlCommand cmd = new SqlCommand("selectopen_Repayment", con);//spFeeDetailsOpen2017 // spFeeDetailsOpen2017_Phy_Chln
-					cmd.CommandType = CommandType.StoredProcedure;
-					cmd.Parameters.Clear();
-					cmd.Parameters.AddWithValue("@schl", schl);
-					con.Open();
-					ad.SelectCommand = cmd;
-					ad.Fill(result);
-					try
-					{
-						ds = result;
-						if (result.Tables[0].Rows.Count > 0)
-						{
+        public string OpenInsertPaymentForm_For_Repayment(ChallanMasterModel CM, out string SchoolMobile)
+        {
+            SqlConnection con = null;
+            string result = "";
+            try
+            {
+                con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
+                SqlCommand cmd = new SqlCommand("OpenInsertPaymentForm_For_Repayment_SP", con);   //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@APPNO", CM.SCHLREGID);
+                cmd.Parameters.AddWithValue("@CHLNDATE", CM.CHLNDATE);
+                cmd.Parameters.AddWithValue("@CHLNVDATE", CM.CHLNVDATE);
+                cmd.Parameters.AddWithValue("@FEEMODE", CM.FEEMODE);
+                cmd.Parameters.AddWithValue("@FEECODE", CM.FEECODE);
+                cmd.Parameters.AddWithValue("@FEECAT", CM.FEECAT);
+                cmd.Parameters.AddWithValue("@BCODE", CM.BCODE);
+                cmd.Parameters.AddWithValue("@BANK", CM.BANK);
+                cmd.Parameters.AddWithValue("@ACNO", CM.ACNO);
+                cmd.Parameters.AddWithValue("@FEE", CM.FEE);
+                cmd.Parameters.AddWithValue("@BANKCHRG", CM.BANKCHRG);
+                cmd.Parameters.AddWithValue("@TOTFEE", CM.TOTFEE);
+                cmd.Parameters.AddWithValue("@SCHLREGID", CM.SCHLREGID);
+                cmd.Parameters.AddWithValue("@DIST", "010");
+                cmd.Parameters.AddWithValue("@DISTNM", CM.DISTNM);
+                cmd.Parameters.AddWithValue("@SCHLCANDNM", CM.SCHLCANDNM);
+                cmd.Parameters.AddWithValue("@BRCODE", CM.BRCODE);
+                cmd.Parameters.AddWithValue("@BRANCH", CM.BRANCH);
+                cmd.Parameters.AddWithValue("@addfee", CM.addfee);
+                cmd.Parameters.AddWithValue("@latefee", CM.latefee);
+                cmd.Parameters.AddWithValue("@prosfee", CM.prosfee);
+                cmd.Parameters.AddWithValue("@addsubfee", CM.addsubfee);
+                cmd.Parameters.AddWithValue("@add_sub_count", CM.add_sub_count);
+                cmd.Parameters.AddWithValue("@regfee", CM.regfee);
+                cmd.Parameters.AddWithValue("@type", CM.type);
+                cmd.Parameters.AddWithValue("@LOT", CM.LOT);
+                cmd.Parameters.AddWithValue("@FeeStudentList", CM.FeeStudentList);
+                if (CM.LSFRemarks != null && CM.LSFRemarks != "")
+                {
+                    cmd.Parameters.AddWithValue("@LumsumFine", CM.LumsumFine);
+                    cmd.Parameters.AddWithValue("@LSFRemarks", CM.LSFRemarks);
+                }
+                cmd.Parameters.AddWithValue("@ChallanVDateN", CM.ChallanVDateN);
+                //
+                cmd.Parameters.AddWithValue("@OpenExamFee", CM.OpenExamFee);
+                cmd.Parameters.AddWithValue("@OpenLateFee", CM.OpenLateFee);
+                cmd.Parameters.AddWithValue("@OpenTotalFee", CM.OpenTotalFee);
+                //
+                SqlParameter outPutParameter = new SqlParameter();
+                outPutParameter.ParameterName = "@CHALLANID";
+                outPutParameter.Size = 100;
+                outPutParameter.SqlDbType = System.Data.SqlDbType.VarChar;
+                outPutParameter.Direction = System.Data.ParameterDirection.Output;
+                cmd.Parameters.Add(outPutParameter);
+                SqlParameter outPutParameter1 = new SqlParameter();
+                outPutParameter1.ParameterName = "@SchoolMobile";
+                outPutParameter1.Size = 20;
+                outPutParameter1.SqlDbType = System.Data.SqlDbType.VarChar;
+                outPutParameter1.Direction = System.Data.ParameterDirection.Output;
+                cmd.Parameters.Add(outPutParameter1);
+                con.Open();
+                result = cmd.ExecuteNonQuery().ToString();
+                string outuniqueid = (string)cmd.Parameters["@CHALLANID"].Value;
+                SchoolMobile = (string)cmd.Parameters["@SchoolMobile"].Value;
+                return outuniqueid;
 
-							foreach (DataRow dr in result.Tables[0].Rows)
-							{
-								FeeOpenModel.feeopenData = new FeeOpen();
-								FeeOpenModel.feeopenData.AppNo = dr["roll"].ToString();
-								FeeOpenModel.feeopenData.AddSubFee = Convert.ToInt32(dr["rced_tot"].ToString());
-								FeeOpenModel.feeopenData.LateFee = Convert.ToInt32(dr["recevble_totfee"].ToString());
-								FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr["balance"].ToString());
+            }
+            catch (Exception ex)
+            {
+                //mbox(ex);
+                SchoolMobile = "";
+                return result = "";
 
-								FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
-
-
-							}
-
-
-							OutError = "1";
-							return FeeOpenModel;
-						}
-						else
-						{
-							OutError = "0";
-							return FeeOpenModel;
-						}
-					}
-					catch (Exception ex)
-					{
-						OutError = ex.Message;
-						return FeeOpenModel;
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				OutError = ex.Message;
-				return FeeOpenModel;
-			}
-		}
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
 
 
-		#endregion
+        public FeeOpenModel selectFeeDetailsOpen_Repayment(string schl)
+        {
+            FeeOpenModel FeeOpenModel = new FeeOpenModel();
+            FeeOpenModel.feeopenList = new List<FeeOpen>();
+            DataSet ds = new DataSet();
+            DataSet result = new DataSet();
+            string OutError = "";
+            SqlDataAdapter ad = new SqlDataAdapter();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+                {
+                    SqlCommand cmd = new SqlCommand("selectopen_Repayment", con);//spFeeDetailsOpen2017 // spFeeDetailsOpen2017_Phy_Chln
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@schl", schl);
+                    con.Open();
+                    ad.SelectCommand = cmd;
+                    ad.Fill(result);
+                    try
+                    {
+                        ds = result;
+                        if (result.Tables[0].Rows.Count > 0)
+                        {
+
+                            foreach (DataRow dr in result.Tables[0].Rows)
+                            {
+                                FeeOpenModel.feeopenData = new FeeOpen();
+                                FeeOpenModel.feeopenData.AppNo = dr["roll"].ToString();
+                                FeeOpenModel.feeopenData.AddSubFee = Convert.ToInt32(dr["rced_tot"].ToString());
+                                FeeOpenModel.feeopenData.LateFee = Convert.ToInt32(dr["recevble_totfee"].ToString());
+                                FeeOpenModel.feeopenData.HardCopyCertificateFee = Convert.ToInt32(dr["balance"].ToString());
+
+                                FeeOpenModel.feeopenList.Add(FeeOpenModel.feeopenData);
 
 
+                            }
 
-		public DataSet GetOpenSchoolStreamRecords(string dist)
-		{
-			cmd.CommandText = "sp_GetOpenStreamSchoolRecords";
-			cmd.CommandType = CommandType.StoredProcedure;
-			cmd.Connection = con;
-			cmd.Parameters.Clear();
-			cmd.Parameters.AddWithValue("@dist", dist);
-			DataSet ds = new DataSet();
-			SqlDataAdapter adp = new SqlDataAdapter(cmd);
-			adp.Fill(ds);
-			return ds;
-		}
 
-		public DataSet GetOpenStreamMatricSchoolRecords(string dist)
-		{
-			cmd.CommandText = "sp_GetOpenStreamMatricSchoolRecords";
-			cmd.CommandType = CommandType.StoredProcedure;
-			cmd.Connection = con;
-			cmd.Parameters.Clear();
-			cmd.Parameters.AddWithValue("@dist", dist);
-			DataSet ds = new DataSet();
-			SqlDataAdapter adp = new SqlDataAdapter(cmd);
-			adp.Fill(ds);
-			return ds;
-		}
+                            OutError = "1";
+                            return FeeOpenModel;
+                        }
+                        else
+                        {
+                            OutError = "0";
+                            return FeeOpenModel;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        OutError = ex.Message;
+                        return FeeOpenModel;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                OutError = ex.Message;
+                return FeeOpenModel;
+            }
+        }
+
+
+        #endregion
 
 
 
-	}
+        public DataSet GetOpenSchoolStreamRecords(string dist)
+        {
+            cmd.CommandText = "sp_GetOpenStreamSchoolRecords";
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 300;
+            cmd.Connection = con;
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@dist", dist);
+            DataSet ds = new DataSet();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(ds);
+            return ds;
+        }
+
+        public DataSet GetOpenStreamMatricSchoolRecords(string dist)
+        {
+            cmd.CommandText = "sp_GetOpenStreamMatricSchoolRecords";
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 300;
+            cmd.Connection = con;
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@dist", dist);
+            DataSet ds = new DataSet();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(ds);
+            return ds;
+        }
+
+
+
+    }
 }

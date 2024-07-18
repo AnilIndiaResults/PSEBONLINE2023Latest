@@ -1,0 +1,752 @@
+﻿@model PSEBONLINE.Models.EAffiliationModel
+
+@{
+    ViewBag.Title = "School Profile";
+    Layout = "~/Views/Shared/_HeaderEAffiliation.cshtml";
+}
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<section class="content-header">
+    <h1>School Information</h1>
+</section>
+<div id="loading1"></div>
+
+@using (Html.BeginForm("SchoolProfile", "EAffiliation", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+
+    <div class="box">
+        <div class="row">
+
+            @{
+                if (Model.EAffType.ToUpper() == "NEW")
+                {
+                    <div class="col-md-2">
+                        School Code
+                    </div>
+                    <div class="col-md-10">
+                        <label>
+                            @Html.DisplayFor(model => model.SCHL, new { @maxlength = "7", @readonly = "readonly" })
+                        </label>
+                        <br />
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        UDISE Code
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.UDISECODE, new { @maxlength = "11", @onchange = "UdiseCodeAvailability()" })
+                        <br />
+                        <sanp style="color:#cc0000;font-size:11px">Enter valid UDISE code to fetch data from E-punjab other wise leave it blank</sanp>
+                        <br /><span id="lblStatus"></span>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        School Name(English)<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.SCHLNME, new { @required = "required", @maxlength = "100" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        School Name(Punjabi)<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+                    <div class="col-md-10">
+
+
+                        @Html.TextBoxFor(a => a.SCHLNMP, new
+                   {
+                       @required = "required",
+                       id = "SCHLNMP",
+                       @class = "keyboardInput",
+                       onkeydown = "javascript:preventInput(event);",
+                       onKeyPress = "javascript:convertThis(event)",
+                       onpaste = "return false;",
+                       oncopy = "return false;",
+                       oncut = "return false;",
+                       onclick = "toggleKBMode1(event)",
+                       lang = "pa",
+                       @maxlength = "100"
+                   })
+                        <br />
+                        <span style="color:red;font-size:12px;"> Use only Virtual Keyboard -></span>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        Village/Locality/Station Name (English)
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.STATIONE, new { @maxlength = "50" })
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        Village/Locality/Station Name (Punjabi)
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(a => a.STATIONP, new
+                   {
+                       id = "STATIONP",
+                       @class = "keyboardInput",
+                       onkeydown = "javascript:preventInput(event);",
+                       onKeyPress = "javascript:convertThis(event)",
+                       onpaste = "return false;",
+                       oncopy = "return false;",
+                       oncut = "return false;",
+                       onclick = "toggleKBMode1(event)",
+                       lang = "pa",
+                       @maxlength = "50"
+                   })
+                        <br />
+                        <span style="color:red;font-size:12px;"> Use only Virtual Keyboard -></span>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        District Name<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label> @Html.DisplayFor(model => model.DISTNME, new { })</label>
+                        @*@Html.DropDownListFor(model => model.DIST, (List<SelectListItem>)ViewBag.DistEList, "--Select District--", new { required = "required", id = "DIST" })*@
+                    </div>
+
+                }
+                else // RENEW
+                {
+
+
+                    <div class="col-md-2">
+                        School Code
+                    </div>
+                    <div class="col-md-10">
+                        <label>@Html.DisplayFor(model => model.SCHL, new { })</label>
+
+                        @Html.HiddenFor(model => model.SCHL)
+
+
+                        <br />
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        UDISE Code
+                    </div>
+                    <div class="col-md-10">
+                        <label>@Html.DisplayFor(model => model.UDISECODE, new { })</label>
+                        @Html.HiddenFor(model => model.UDISECODE)
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        School Name(English)<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+                    <div class="col-md-10">
+                        <label>@Html.DisplayFor(model => model.SCHLNME, new { })</label>
+                        @Html.HiddenFor(model => model.SCHLNME)
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        School Name(Punjabi)<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+                    <div class="col-md-10">
+
+
+                        <label class="kdsfont">@Html.DisplayFor(a => a.SCHLNMP)</label>
+                        @Html.HiddenFor(model => model.SCHLNMP)
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        Village/Locality/Station Name (English)
+                    </div>
+                    <div class="col-md-10">
+                        <label>@Html.DisplayFor(model => model.STATIONE, new { })</label>
+                        @Html.HiddenFor(model => model.STATIONE)
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        Village/Locality/Station Name (Punjabi)
+                    </div>
+                    <div class="col-md-10">
+
+                        <label class="kdsfont">@Html.DisplayFor(a => a.STATIONP)</label>
+                        @Html.HiddenFor(model => model.STATIONP)
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-2">
+                        District Name<sup style="color:red;font-size:15px;">*</sup>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>
+                            @Html.DisplayFor(model => model.DISTNME, new { })
+                            @Html.HiddenFor(model => model.DIST)@Html.HiddenFor(model => model.DISTNME)
+                        </label>
+                        @*@Html.DropDownListFor(model => model.DIST, (List<SelectListItem>)ViewBag.DistEList, "--Select District--", new { required = "required", id = "DIST" })*@
+                    </div>
+                }
+            }
+
+
+
+
+
+            @*<div class="col-md-2">
+             Complete Address of School (English)<sup style="color:red;font-size:15px;">*</sup>
+         </div>
+         <div class="col-md-10">
+             @Html.TextBoxFor(model => model.ADDRESSE,  new { @required = "required",  @maxlength = "250"  })
+         </div>
+         <div class="clearfix"></div>
+         <div class="col-md-2">
+             Complete Address of School (Punjabi)<sup style="color:red;font-size:15px;">*</sup>
+         </div>
+
+         <div class="col-md-10">
+             @Html.TextBoxFor(a => a.ADDRESSP, new
+             {
+            @required = "required",
+                 id = "ADDRESSP",
+            onkeydown = "javascript:preventInput(event);",
+            @class = "keyboardInput",
+                 onKeyPress = "javascript:convertThis(event)",
+                 onpaste = "return false;",
+            oncopy = "return false;",
+                 oncut = "return false;",
+                 onclick = "toggleKBMode1(event)",
+                 lang = "pa",
+            @maxlength = "250"
+        })
+
+         </div>
+         <div class="clearfix"></div>*@
+
+
+            <div class="col-md-2">
+                Tehsil<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+
+            <div class="col-md-4">
+                @*@Html.DropDownListFor(model => model.TehsilCode, new SelectList(string.Empty, "Value", "Text"), "--Select Tehsil---", new { id = "TehsilCode", @class = "" })*@
+                @Html.DropDownListFor(model => model.TehsilCode, (List<SelectListItem>)ViewBag.TehEList, "--Select Tehsil---", new { @required = "required", id = "TehsilCode", @class = "" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Type of Education<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.EducationType, new SelectList(ViewBag.MySchlType, "Value", "Text", ViewBag.SelectedSchlType), "--Select---", new { @class = "form-control", @required = "required" })
+            </div>
+
+            <div class="col-md-2">
+                Area <sup style="color:red;font-size:15px;">*</sup>
+            </div>
+
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.Area, new SelectList(ViewBag.AREAList, "Value", "Text"), "--Select Area--", new { required = "required", id = "AREA", @maxlength = "50" })
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="col-md-2">
+                Pin Code<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.PINCODE, new { @required = "required", @maxlength = "8", onkeypress = "return isNumberKey(event);" })
+                <br /> <span id="lblPinCodeStatus"></span>
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="col-md-2">
+                Registered Email ID<sup style="color:red;font-size:15px;">*</sup>
+            </div>
+
+            <div class="col-md-4">
+                <label> @Html.DisplayFor(model => model.SCHLEMAIL)</label>
+                @*@Html.TextBoxFor(model => model.SCHLEMAIL, new { title = "Enter Valid Email ID", onpaste = "return false;", oncopy = "return false;", oncut = "return false;", required = "required", id = "SCHLEMAIL", type = "email", @maxlength = "70" })*@
+
+            </div>
+
+            <div class="col-md-2">
+                Registred Mobile
+            </div>
+
+            <div class="col-md-4">
+                @*<label> @Html.DisplayFor(model => model.SCHLMOBILE)  @Html.HiddenFor(model => model.SCHLMOBILE)</label>*@
+                @Html.TextBoxFor(model => model.SCHLMOBILE, new { required = "required", id = "SCHLMOBILE", @maxlength = "10", onkeypress = "return isNumberKey(event);", onpaste = "return false;", oncopy = "return false;", oncut = "return false;" })
+                @*@Html.ValidationMessageFor(model => model.SCHLMOBILE, "", new { @class = "text-danger" })*@
+
+            </div>
+            <div class="clearfix"></div>
+            @{
+                if (Model.EAffType == "RENEW")
+                {
+                    <div class="col-md-12">
+                        <h4>Previous Affiliation Details</h4>
+                    </div><div class="clearfix"></div>
+
+                    <div class="col-md-12">
+                        <table id="" class="table table-bordered">
+                            <tr class="active-tr">
+                                <th>Sr No</th>
+                                <th>Class</th>
+                                <th>Group</th>
+                                <th>Session</th>
+                                <th> Aff. type</th>
+                            </tr>
+                            @{
+                                if (Model.dataSetPrevious != null)
+                                {
+                                    int Count = 0;
+                                    for (int i = 0; i < Model.dataSetPrevious.Tables[6].Rows.Count; i++)
+                                    {
+                                        Count = Count + 1;
+                                        var cls = Model.dataSetPrevious.Tables[6].Rows[i]["class"].ToString();
+                                        var group = Model.dataSetPrevious.Tables[6].Rows[i]["group"].ToString();
+                                        var session = Model.dataSetPrevious.Tables[6].Rows[i]["session"].ToString();
+                                        var afftype = Model.dataSetPrevious.Tables[6].Rows[i]["afftype"].ToString();
+
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@cls</td>
+                                            <td>@group</td>
+                                            <td>@session</td>
+                                            <td>@afftype </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </table>
+                    </div>
+                }
+            }
+            <div class="col-md-12">
+                <h4>Principal / Contact Details</h4>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Principal Name  <sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.PrincipalName, new { required = "required", @maxlength = "50", onkeypress = "return ValidateAlpha(event);" })
+            </div>
+
+            <div class="col-md-2">
+                Date of Birth  <sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.DOB, new { required = "required", @maxlength = "10", @class = "datepicker" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Qualification  <sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.Qualification, new { required = "required", @maxlength = "50" })
+            </div>
+
+            <div class="col-md-2">
+                Experience (in Yrs)  <sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.Experience, new { required = "required", @maxlength = "2", onkeypress = "return isNumberKey(event);" })
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="col-md-2">
+                Date of Joining  <sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.DOJ, new { required = "required", @maxlength = "10", @class = "datepicker" })
+            </div>
+
+            <div class="col-md-2">
+                Mobile No <sup style="color:red;font-size:15px;">*</sup>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.PrincipalMobileNo, new { required = "required", @maxlength = "10", onkeypress = "return isNumberKey(event);" })
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="col-md-2">
+                Std Code/Phone
+
+            </div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => model.StdCode, new { @placeholder = "Enter STD", @maxlength = "6", onkeypress = "return isNumberKey(event);" })
+               
+            </div>
+            <div class="col-md-2">
+               
+                @Html.TextBoxFor(model => model.PHONE, new { @placeholder = "Enter Phone", @maxlength = "10", onkeypress = "return isNumberKey(event);" })
+            </div>
+
+            <div class="col-md-2">
+                Other Contact Person Name
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.OtherContactPerson, new { @maxlength = "50" })
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center">
+                @Html.HiddenFor(model => model.EAffType)
+                @Html.HiddenFor(model => model.ID)  @Html.HiddenFor(model => model.APPNO) @Html.HiddenFor(model => model.SCHLEMAIL)
+                &nbsp;<br />
+                <input type="submit" value="Submit" class="btn" onclick="return valForm();" style="@(Session["eDataSubmissionAllow"].ToString() == "0" ? "display:block" : "display:none")" />
+                <br /> &nbsp;<br />
+            </div>
+
+        </div>
+    </div>
+}
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                     window.location.href = '@Url.Action("SchoolProfile", "EAffiliation")';
+                </script>
+}
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                </script>
+            }
+        }
+    }
+}
+
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    //
+
+    function valForm() {       
+        var Experience = document.getElementById("Experience").value;
+        
+        if (Experience != "") {            
+            if (Number(Experience)  < 8) {
+                alert('Experience should be more than equal to 8 years');
+                document.getElementById("Experience").focus();
+                return false;
+
+            }
+        }
+
+        var iChars = "!#$%^&*+=[]\\\;{}|\":<>?";
+        //var iAlpha = "^[a-zA-Z\b]+$";
+		var iAlpha = "^[A-Za-z]+$";
+
+        for (var i = 0; i < document.getElementById("SCHLNMP").value.length; i++) {
+            if (iChars.indexOf(document.getElementById("SCHLNMP").value.charAt(i)) != -1) {
+                alert("School Name (Punjabi) has special characters. \n Please remove them and try again.");
+               // document.getElementById("SCHLNMP").value = "";
+                return false;
+            }
+
+            if (iAlpha.indexOf(document.getElementById("SCHLNMP").value.charAt(i)) != -1) {
+                alert("School Name (Punjabi) has Alphabet characters. \n Please remove them and try again.");
+
+               // document.getElementById("SCHLNMP").value = "";
+                return false;
+            }
+        }
+
+        for (var i = 0; i < document.getElementById("STATIONP").value.length; i++) {
+            if (iChars.indexOf(document.getElementById("STATIONP").value.charAt(i)) != -1) {
+                alert("Station Name (Punjabi) has special characters. \n Please remove them and try again.");
+               // document.getElementById("STATIONP").value = "";
+                return false;
+            }
+           // alert(document.getElementById("STATIONP").value.charAt(i));            
+            if (iAlpha.indexOf(document.getElementById("STATIONP").value.charAt(i)) != -1) {
+                if (document.getElementById("STATIONP").value.charAt(i) != "-" ) {
+                    alert("Station Name (Punjabi) has Alphabet characters. \n Please remove them and try again.");
+                    // document.getElementById("STATIONP").value = "";
+                    return false;
+                }
+            }
+        }
+
+    }
+
+
+    $(document).ready(function () {
+
+        $("#SCHLNMP").on("keydown keypress keyup", false);
+        $("#STATIONP").on("keydown keypress keyup", false);
+
+        $(".datepicker").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+	    maxDate:0,
+            changeYear: true,
+            yearRange: '1950:' + (new Date().getFullYear())
+        });
+
+
+        $("#DIST").change(function () {
+            var selectedDIST = $("#DIST").val() ;
+             $('#loading1').html("<p style='background-color:rgba(0,0,0,0.6);width:100%;height:100%;position:absolute;z-index:9999999'><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+              $.ajax({
+                url: '@Url.Action("GetTehID", "School")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                  data: JSON.stringify({ DIST:selectedDIST}),
+                success: function (States) {
+                    //document.getElementById("Address").value = StatesList;
+                    $("#TehsilCode").empty();
+                    $('#loading1').empty();
+                    $.each(States, function (i, TehList) {
+                        $("#TehsilCode").append('<option value="'
+                           + TehList.Value + '">'
+                           + TehList.Text + '</option>');
+
+                        if(TehList.Text.toLowerCase().includes("no tehsil"))
+                        {
+                            $("#noTehsilLabel").show();
+                        }
+                        else
+                        {
+                            $("#noTehsilLabel").hide();
+                        }
+
+                    });
+                    if (TehList.success) {
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        });
+
+
+        @*$("#PINCODE").change(function () {
+            var selectedPINCODE = $("#PINCODE").val();
+            //$('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+             $('#loading1').html("<p style='background-color:rgba(0,0,0,0.6);width:100%;height:100%;position:absolute;z-index:9999999'><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+              $.ajax({
+                  url: '@Url.Action("CheckPinCodeMaster", "EAffiliation")',
+                 type: 'Post',
+                 contentType: 'application/json',
+                 dataType: 'json',
+                 data: JSON.stringify({ pincode: selectedPINCODE}),
+                 success: function (States) {
+                    //document.getElementById("Address").value = StatesList;
+                     $("#PostOfficeCode").empty();
+                    $('#loading1').empty();
+                    $.each(States, function (i, pincodeList) {
+                        $("#PostOfficeCode").append('<option value="'
+                            + pincodeList.Value + '">'
+                            + pincodeList.Text + '</option>');
+
+                        if (pincodeList.Text.toLowerCase().includes("no tehsil"))
+                        {
+                            $("#lblPinCodeStatus").show();
+                            $("#lblPinCodeStatus").text("PinCode Not Found.");
+                        }
+                        else
+                        {
+                            $("#lblPinCodeStatus").hide();
+                        }
+
+                    });
+                     if (pincodeList.success) {
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        });*@
+
+    });
+
+</script>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#SCHLNME').change(function () {
+                var selectedText = { text: $("#SCHLNME").val() };
+                var cname = document.getElementById('SCHLNME').value;
+                var cnameP = document.getElementById('SCHLNMP').value;
+                if (cnameP == "") {
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                            //  alert("Candidate Name: " + result);
+                            $('#SCHLNMP').val(result);
+                        }
+                    });
+                }
+            });
+            //
+            $('#STATIONE').change(function () {
+                $('#STATIONP').val('');
+                var selectedText = { text: $("#STATIONE").val() };
+                var cname = document.getElementById('STATIONE').value;
+                var cnameP = document.getElementById('STATIONP').value;
+                if (cnameP == "") {
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                            //  alert("Candidate Name: " + result);
+                            $('#STATIONP').val(result);
+                        }
+                    });
+                }
+            });
+
+            //
+
+            $('#ADDRESSE').change(function () {
+                var selectedText = { text: $("#ADDRESSE").val() };
+                var cname = document.getElementById('ADDRESSE').value;
+                var cnameP = document.getElementById('ADDRESSP').value;
+                if (cnameP == "") {
+                    $.ajax({
+                        url: '@Url.Action("getPunjabiName", "School")',
+                        type: 'Post',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(selectedText),
+                        success: function (result) {
+                            //  alert("Candidate Name: " + result);
+                            $('#ADDRESSP').val(result);
+                        }
+                    });
+                }
+            });
+        });
+
+</script>
+
+<script type="text/javascript">
+
+    function UdiseCodeAvailability() { //This function call on text change.
+        $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+        $.ajax({
+            type: "POST",
+            url: "/EAffiliation/GetEAffNewSchlCheckByUdise", // this for calling the web method function in cs code.
+            data: '{udisecode: "' + $("#UDISECODE").val() + '" }',// user name or email value
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccess,
+            failure: function (response) {
+                // alert(response);
+            }
+        });
+    }
+
+    // function OnSuccess
+    function OnSuccess(response) {
+        $('#loading1').empty();
+        var msg = $('#lblStatus');
+        switch (response.oid) {
+            case "0":
+                msg.css("slidedown", "slow");
+                msg.css("color", "red");
+                msg.text("UDISE Code not found.");
+                $("#SCHLNME").val('');
+                $("#PrincipalName").val('');
+                break;
+            case "1":
+                msg.css("slidedown", "slow");
+                msg.css("color", "green");
+                $("#SCHLNME").val(response.schlnme);
+                $("#PrincipalName").val(response.principal);
+                msg.text("schlnme: " + response.schlnme + " ,Principal: " + response.principal + " ,Dist: " + response.distnme);
+                break;
+        }
+    }
+
+
+
+</script>
+
+
+
+@*<script type="text/javascript">
+
+        function PinCodeAvailability() { //This function call on text change.
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.ajax({
+                type: "POST",
+                url: "/EAffiliation/CheckPinCodeMaster", // this for calling the web method function in cs code.
+                data: '{pincode: "' + $("#PINCODE").val() + '" }',// user name or email value
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    // alert(response);
+                }
+            });
+        }
+
+        // function OnSuccess
+        function OnSuccess(response) {
+            $('#loading1').empty();
+            var msg = $('#lblPinCodeStatus');
+            switch (response.oid) {
+                case "0":
+                    msg.css("slidedown", "slow");
+                    msg.css("color", "red");
+                    msg.text("Pin Code not found.");
+                    $("#PostOfficeCode").val('');
+                    break;
+                case "1":
+                    msg.css("slidedown", "slow");
+                    msg.css("color", "green");
+                    $("#PostOfficeCode").val(response.postofficenm);
+                    msg.text("Post Office Name: " + response.postofficenm);
+                   break;
+            }
+        }
+
+
+
+    </script>*@

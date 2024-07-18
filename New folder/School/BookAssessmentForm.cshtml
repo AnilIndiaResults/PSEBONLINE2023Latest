@@ -1,0 +1,308 @@
+﻿@model PSEBONLINE.Models.BookAssessmentForm
+@{
+    ViewBag.Title = "BookAssessmentForm";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+<h1>Book Demand Form for Session @Session["Session"].ToString()</h1>
+
+   @if (!(new[] { "AFF", "ASS" }).Contains(Session["SchType"].ToString(), StringComparer.OrdinalIgnoreCase))
+   {
+       Response.Redirect("~/Login");
+   }
+
+
+<script type="text/javascript">
+    window.setInterval(function () {
+        var current = new Date();
+		var expiry = new Date("May 07, 2022 23:59:59")
+        //var expiry = new Date("Apr 30, 2022 23:59:59")
+		//Remarks : As order through Eoffice File No : 54767 Note #85 - Extend last Date upto 07-05-2022 
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideint').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideint').show();
+        }
+    }, 0);
+</script>
+
+@using (Html.BeginForm("BookAssessmentForm", "School", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true)
+    <div class="row">
+        <div class="col-md-3">
+            School Code <span class="rqf">*</span>
+            <label>@ViewBag.SCHL.ToString()</label>
+            <span style="color:red;display:none">@Html.ValidationMessageFor(model => model.SCHL)</span><span id="lblStatus"></span>
+        </div>
+        <div class="col-md-3">
+            Principal Name <span class="rqf">*</span>
+            <label>@ViewBag.PrincipalName.ToString()</label>
+            <span style="color:red;display:none">@Html.ValidationMessageFor(model => model.PrincipalName)</span>
+        </div>
+        <div class="col-md-3">
+            School Mobile <span class="rqf">*</span>
+            <label>@ViewBag.SchoolMobile.ToString()</label>
+            <span style="color:red;display:none">@Html.ValidationMessageFor(model => model.SchoolMobile)</span>
+        </div>
+        <div class="clearfix"></div>
+        @*<p id="p1" style="text-align:center;font-size:16px;color:#f00">Fill the information to get Registration/Continuation Training for @Session["Session"].ToString() in P.S.E.B</p>*@
+        <div class="col-md-12">
+            <div class="row">
+                @*<fieldset style="margin-bottom:15px">
+                *@
+                @*<legend class="rqf">Fill The Information to get Registration/Continuation Training For @Session["Session"].ToString() in P.S.E.B</legend>*@
+                <div class="col-md-3">
+                    Class @Html.DropDownList("Class", new SelectList(ViewBag.Class, "Value", "Text", ViewBag.SelectedClass), "--All Class---", new { id = "ddlClass" })
+                </div>
+                <div class="col-md-3">
+                    Total Class Student <span class="rqf">*</span> @Html.TextBoxFor(model => model.TOT_STUD, new { id = "txtTotal", onkeypress = "return validateNumber(event)", @maxlength = "3" })
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <span class="hideint">
+                        <input type="submit" value="Get Books" name="cmd" onclick="return formVal();" />
+                    </span>                  
+                    <a href="/School/BookAssessmentForm" class="btn">Reset</a>					
+                </div>
+				
+                <div class="col-md-6 text-right">
+                    <br />
+					<h3 class="rqf">Last Date : 07-May-2022</h3>
+					  <input type="submit" value="View Selected Books List" name="cmd" />
+                    <a href="/School/ViewBookAssessmentForm/RoughPrint" target="_blank" class="btn">Rough Report</a>
+                    <a href="/School/ViewBookAssessmentForm/FinalPrint" target="_blank" class="btn">Final Print of Book Demand</a>
+                </div>
+                @*
+                    </fieldset>*@
+            </div>
+        </div>
+
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="row" style="@(ViewBag.TotalCount > 0 ? " display:block" : "display:none" )">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>Sr No.</th>
+                        <th>Class</th>
+                        <th width="50%">Books</th>
+                        <th>Total No of Books Demand</th>
+                    </tr>
+                    @{
+                        if (Model != null && Model.BookRequestList != null)
+                        {
+                            if (Model.BookRequestList.Count > 0)
+                            {
+                                int Count = 0;
+                                for (int i = 0; i < Model.BookRequestList.Count; i++)
+                                {
+                                    Count = Count + 1;
+                                    <tr>
+                                        <td>@Count @Html.HiddenFor(m => m.BookRequestList[i].BookId)</td>
+                                        <td>@Html.TextBoxFor(m => m.BookRequestList[i].Class, new { @readonly = "readonly" })</td>
+                                        <td><span class="kdsfont">@Html.TextBoxFor(m => m.BookRequestList[i].BookNM, new { @readonly = "readonly" })</span></td>
+                                        <td>@Html.TextBoxFor(m => m.BookRequestList[i].NOS, new { @maxlength = "3", onpaste = "return false;", oncopy = "return false;", oncut = "return false;", onkeypress = "return validateNumber(event)", @onblur = "CheckNOB(this)" })</td>
+                                        @*@onblur = "CheckNOB(this)"*@
+                                    </tr>
+                                }
+                                <tr>
+                                    <td colspan="4" align="center">
+                                        <span class="hideint"><input type="submit" name="cmd" value="Save" id="btnSave" /></span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+    //View
+    <div class="row" style="@(ViewBag.TotalCount1 > 0 ? " display:block" : "display:none" )">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t02" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>SRL</th>
+                        <th>No. Of Books</th>
+                        <th>No. Of Students</th>
+                        <th>Printed On</th>
+                        <th></th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount1 > 0)
+                        {
+                            int Count1 = 0;
+                            if (Model.StoreAllData.Tables[2].Rows.Count > 0)
+                            {
+                                for (int k = 0; k < Model.StoreAllData.Tables[2].Rows.Count; k++)
+                                {
+                                    Count1 = Count1 + 1;
+                                    var NOB = Model.StoreAllData.Tables[2].Rows[k]["NOB"].ToString();
+                                    var NOC = Model.StoreAllData.Tables[2].Rows[k]["NOC"].ToString();
+                                    // var PrintedOn = Model.StoreAllData.Tables[2].Rows[k]["PrintOn"].ToString();
+                                    var PrintedOn = Convert.ToDateTime(Model.StoreAllData.Tables[2].Rows[k]["PrintOn"].ToString()).ToString("dd/MM/yyyy hh:mm tt");
+
+                                    var lot = Model.StoreAllData.Tables[2].Rows[k]["lot"].ToString();
+                                    <tr>
+                                        <td>@Count1</td>
+                                        <td>@NOB</td>
+                                        <td>@NOC</td>
+                                        <td>@PrintedOn</td>
+                                        <td><a class="btn" target="_blank" href="ViewBookAssessmentForm/FinalPrint?Printlot=@lot">Click Here to Print </a></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="5"> Not Printed </td></tr>
+                            }
+                        }
+
+                    }
+                </table>
+
+
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>SRL</th>
+                        <th>Class</th>
+                        <th>Books</th>
+                        <th>Total Books Request</th>
+                        <th>Is Final Printed</th>
+                    </tr>
+                    @if (Model != null && Model.BookRequestList != null)
+                    {
+                        if (Model.BookRequestList.Count > 0)
+                        {
+                            int Count = 0;
+                            for (int i = 0; i < Model.BookRequestList.Count; i++)
+                            {
+                                Count = Count + 1;
+                                <tr>
+                                    <td>@Count</td>
+                                    <td>@Html.DisplayFor(m => m.BookRequestList[i].Class, new { })</td>
+                                    <td class="kdsfont">@Html.DisplayFor(m => m.BookRequestList[i].BookNM, new { })</td>
+                                    <td>@Html.DisplayFor(m => m.BookRequestList[i].NOS, new { })</td>
+                                    <td>
+                                        @if (Model.BookRequestList[i].Flag != null)
+                                        {
+                                            if (Model.BookRequestList[i].Flag.ToString() == "2")
+                                            {<span class="rqf">Printed</span> }
+                                            else
+                                            { <span>Pending</span>}
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+}
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully");
+                    // window.location.reload(true);
+                    window.location.href = 'BookAssessmentForm';
+                </script>
+}
+            else if (ViewData["result"].ToString() == "10")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Please Fill All Fields");
+                </script>
+}
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                </script>
+            }
+        }
+    }
+}
+
+<script src="Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script type="text/javascript">
+
+
+    function validateNumber(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $(".num").val();
+        if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c.length > 9) {
+            return false;
+        }
+        else return true;
+    }
+
+    function formVal() {
+        var ddlClass = document.getElementById('ddlClass').value;
+        var txtTotal = document.getElementById('txtTotal').value;
+        if (ddlClass == '' || ddlClass == "0") {
+            alert("Select Class.");
+            document.getElementById('ddlClass').focus();
+            return false;
+        }
+        else if (txtTotal == '') {
+            alert("Enter Total Class Students");
+            document.getElementById('txtTotal').focus();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function CheckNOB(obj) {
+        // var MaxNOS = 10;
+        var MaxNOS = document.getElementById('txtTotal').value;
+        MaxNOS = parseInt(MaxNOS);
+        if (obj.value > MaxNOS || obj.value < 0) {
+            obj.value = MaxNOS;
+            alert("Invalid, Please Enter Books less than equal to Max Student and Greater than Zero !!");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+</script>
+
+
+

@@ -1,0 +1,247 @@
+﻿@model PSEBONLINE.Models.EAffiliationModel
+@{
+    ViewBag.Title = "OtherInformation";
+    Layout = "~/Views/Shared/_HeaderEAffiliation.cshtml";
+}
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+     textarea {
+        width: 100%;
+        height: 125px;
+    }
+</style>
+<section class="content-header">
+    <h1>Other Information</h1>
+</section>
+<div id="loading1"></div>
+
+@using (Html.BeginForm("OtherInformation", "EAffiliation", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="box">
+        <div class="row">
+            <div class="col-md-12">
+                <table style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px" border="1" class="tbl">
+                    <tr class="active-tr">
+                        <td width="5%">Sr No</td>
+                        <td>Type</td>
+                        <td>Count</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Medium of Study<br /><small class="rqf">*(You can select multiple study medium by using CTRL)</small></td>
+                        <td>
+                            @Html.DropDownList("SelectedStudyMedium", (MultiSelectList)ViewBag.MyStudyMediumList, new { @required = "required", multiple = "multiple", id = "SelectedStudyMedium" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Ownership of Land <span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OLANDTYPE, new SelectList(ViewBag.LandList, "Value", "Text"), "--Select ---", new { @required = "required" })</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Total Area (In Yards)<span class="rqf">*</span></td>
+                        <td>@Html.TextBoxFor(a => a.OTOTALAREA, new { @required = "required", @maxlength = "7", onkeypress = "return isNumberKey(event);" })</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Covered Area (In Yards)<span class="rqf">*</span></td>
+                        <td>@Html.TextBoxFor(a => a.OCOVAREA, new { @required = "required", @maxlength = "7", onkeypress = "return isNumberKey(event);" })</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Size of playground (In Yards)</td>
+                        <td>@Html.TextBoxFor(a => a.OPLAYGROUNDSIZE, new { @maxlength = "7", onkeypress = "return isNumberKey(event);" })</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>If any case is pending in court against the institution?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OCOURT, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required" })</td>
+
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Does your institute have transport facility as per Govt. rules & regulations ?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OTRANSPORT, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Does your institute pay salaries to employees as per affiliation regulation 7 (III)?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OSALARYEMP, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>R.O. Drinking water facility?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OROWATER, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Seperate toilet for Boys & Girls ?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OTOILET, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>Play Ground Distance From Institute Premisses ?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OPLAYGROUND, new SelectList(ViewBag.PlayGroundList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>Display board for special candidates facilities ?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OBOARDSPLCAND, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+
+                    <tr>
+                        <td>13</td>
+                        <td>Is there Computer Lab Available?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OCOMPLAB, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>Is there Science Lab Available ?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OSCILAB, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td> Is there Internet Facility available ?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OINTERNET, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td>Is there Smart Classes available ?<span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OSMARTCLS, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>17</td>
+                        <td>Is fire safety Equipments are available?   <span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OFIRESAFE, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>Is furniture available in institute as per count of student? <span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.OFURNITURE, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+
+                    <tr>
+                        <td>19</td>
+                        <td>Is there library available? <span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.Islibrary, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>20</td>
+                        <td>Is there Physics Lab available?    <span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.IsPhysics, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>21</td>
+                        <td>Is there Chemistry Lab available?    <span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.IsChemistry, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>22</td>
+                        <td>Is there Biology Lab available? <span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.IsBiology, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td>23</td>
+                        <td>No of Rooms?  <span class="rqf">*</span></td>
+                        <td>@Html.TextBoxFor(a => a.ONOCLASSROOMS, new { @required = "required", @maxlength = "7", onkeypress = "return isNumberKey(event);" })</td>
+                    </tr>
+                    <tr>
+                        <td>24</td>
+                        <td>CCTV Camera's are available in school premises? <span class="rqf">*</span></td>
+                        <td>@Html.DropDownListFor(m => m.IsCCTV, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "required", })</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Other Activities & Achievements</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">@Html.TextAreaFor(a => a.OActivitiesAchievements, new { @maxlength = "1000" })</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-md-12">
+                <div style="text-align:center" class="tbp">
+                    @Html.HiddenFor(model => model.ID)  @Html.HiddenFor(model => model.APPNO) @Html.HiddenFor(model => model.SCHLEMAIL)
+
+
+                    <input type="submit" name="submit" value="SAVE" style="@(Session["eDataSubmissionAllow"].ToString() == "0" ? "display:block" : "display:none")" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                      window.location.href = '@Url.Action("OtherInformation", "EAffiliation")';
+                </script>}
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                </script>
+            }
+        }
+    }
+}
+
+
+<script type="text/javascript">
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode != 8 && keyCode != 46 && keyCode != 9) {
+            alert("Only Characters Allowed!!");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    //
+
+
+    $(document).ready(function () {
+
+        $(".datepicker").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1969:' + (new Date().getFullYear())
+        });
+
+    });
+
+</script>
+
+@*<script>
+
+        function valForm() {
+            alert("check fields");
+        }
+    </script>*@

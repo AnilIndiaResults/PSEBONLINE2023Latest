@@ -1,0 +1,94 @@
+﻿
+
+@model PSEBONLINE.Models.EAffiliationModel
+
+@{
+    ViewBag.Title = "History EAffiliation";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+
+
+
+
+    <!-- View <span class="rqf">@ViewBag.AppType</span> History of Application No. : <span class="rqf">@ViewBag.APPNO</span> -->
+<h2 style="text-align:center">ਪੰਜਾਬ ਸਕੂਲ ਸਿੱਖਿਆ ਬੋਰਡ</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+                        <table width="100%" id="view">
+						<tr>
+						<td colspan="2">
+						<div style="text-align:left;line-height:28px">
+@{ 
+    if (ViewBag.AppType == "E-Affiliation")
+    { 
+	<span style="color:#000;font-size:20px">ਵਿਸ਼ਾ - ਐਫੀਲੀਏਸ਼ਨ ਲੈਣ ਸਬੰਧੀ (Application No. @ViewBag.APPNO of Session 2021) </span>
+	}
+    else if (ViewBag.AppType == "Affiliation Continuation")
+    { 
+	<span style="color:#000;font-size:20px">ਵਿਸ਼ਾ - ਸਲਾਨਾ ਪ੍ਰਗਤੀ ਰਿਪੋਰਟ ਸਬੰਧੀ(Application No. @ViewBag.APPNO of Session 2021) </span>
+	}
+    else if (ViewBag.AppType == "Additional Section")
+    { 
+	<span style="color:#000;font-size:20px">ਵਿਸ਼ਾ - ਵਾਧੂ ਸੈਕਸ਼ਨ ਲੈਣ ਸਬੰਧੀ (Application No. @ViewBag.APPNO of Session 2021) </span>
+	}
+}
+<br>
+@if (ViewBag.TotalCount > 0)
+                                {
+	<span style="color:#000;font-size:20px">ਸੰਸਥਾ ਦਾ ਨਾਮ : 
+	@Model.StoreAllData.Tables[0].Rows[0]["SCHLNME"].ToString() </span>
+	}
+</div>
+</td>
+						</tr>
+                            @{
+                                if (ViewBag.TotalCount > 0)
+                                {
+								int k = 0;
+                                    for (int h = 0; h < Model.StoreAllData.Tables[0].Rows.Count; h++)
+                                    {
+									
+                                        var AppType = Model.StoreAllData.Tables[0].Rows[h]["AppType"].ToString();
+                                        var MHID = Model.StoreAllData.Tables[0].Rows[h]["MHID"].ToString();
+                                        var APPNO11 = Model.StoreAllData.Tables[0].Rows[h]["APPNO"].ToString();
+                                        var NewStatus = Model.StoreAllData.Tables[0].Rows[h]["NewStatus"].ToString();
+                                        var Remarks = Model.StoreAllData.Tables[0].Rows[h]["REMARKS"].ToString();
+                                        var SubmitDate = Model.StoreAllData.Tables[0].Rows[h]["SubmitDate"].ToString();
+                                        var SubmitBy = Model.StoreAllData.Tables[0].Rows[h]["SubmitBy"].ToString();
+										 k = h+1;
+										<tr>
+										<td colspan="2" style="padding-bottom:12px;padding-top:5px">Note #@k</td>
+										</tr>
+                                    <tr id="">
+                                        <td colspan="2" style="text-align:justify;padding-bottom:10px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Remarks<br> 
+                                    </td>                                    
+                                </tr>
+								<tr style="border-bottom:1px dotted #000">
+								<td width="75%" style="text-align:left">@SubmitDate</td>
+								<td width="25%" style="text-align:right">@Html.Raw(SubmitBy)</td>
+								</tr>
+                                        }
+                                }
+                                <!-- <tr> -->
+                                    <!-- <td colspan="2"><span class="rqf">No History Found</span></td> -->
+                                <!-- </tr> -->
+                              }
+                        </table>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+

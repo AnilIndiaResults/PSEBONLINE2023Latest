@@ -1,0 +1,805 @@
+﻿@model PSEBONLINE.Models.EAffiliationModel
+
+@{
+    ViewBag.Title = "View E-Affiliation";
+    Layout = "~/Views/Shared/_HeaderEAffiliation.cshtml";
+}
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<section class="content-header">
+    <h1>View Application Form</h1>
+</section>
+<div id="loading1"></div>
+<div class="box">
+    <div class="row">
+        <table style="width:100%;" border="0" class="bgimg">
+            @if (Model != null && ViewBag.TotalCount > 0)
+            {
+                if (Model != null && Model.StoreAllData.Tables.Count > 0)
+                {
+                    <tr>
+                        <td align="center">
+                            <table border="0" style="width:98%;" align="center" class="brack">
+                                @if (Model != null && Model.StoreAllData.Tables.Count > 0)
+                                {
+                                    <tr>
+                                        <td colspan="3">
+                                            <h4>School Profile Details</h4>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    School Code
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <label>@Html.DisplayFor(model => model.SCHL)</label>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">
+                                                    UDISE Code
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <label>@Html.DisplayFor(model => model.UDISECODE)</label>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">
+                                                    School Name(English)
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <label>@Html.DisplayFor(model => model.SCHLNME), @Html.DisplayFor(model => model.STATIONE)</label>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">
+                                                    School Name(Punjabi)
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <label class="kdsfont">@Html.DisplayFor(a => a.SCHLNMP),@Html.DisplayFor(a => a.STATIONP)</label>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">
+                                                    District Name
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <label>@Html.DisplayFor(model => model.DISTNME)</label>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    Tehsil
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <label>@Model.StoreAllData.Tables[0].Rows[0]["TEHSILNAME"].ToString()</label>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    Pin Code
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <label>@Html.DisplayFor(model => model.PINCODE)</label>
+                                                </div>
+
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">
+                                                    Type of Education
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <label>@Html.DisplayFor(model => model.EducationType)</label>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    Area
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <label>@Html.DisplayFor(model => model.Area)</label>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">
+                                                    Registered Email ID
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.SCHLEMAIL)</label>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    Registred Mobile
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.SCHLMOBILE)</label>
+                                                </div>
+
+
+
+                                                <div class="clearfix"></div>
+
+                                                <div class="col-md-2">
+                                                    Applied For Class
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.EAffClass)</label>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    Applied for category
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.EAffType)</label>
+                                                </div>
+
+                                                <div class="clearfix"></div>
+
+                                                @{
+                                                    if (Model.EAffType == "RENEW")
+                                                    {
+                                                        if (Model.EAffClass == "10" || Model.EAffClass == "12")
+                                                        {
+                                                            <div class="col-md-12">
+                                                                <h4>Previous Affiliation Details</h4>
+                                                            </div><div class="clearfix"></div>
+
+                                                            <div class="col-md-12">
+                                                                <table id="" class="table table-bordered">
+                                                                    <tr class="active-tr">
+                                                                        <th>Sr No</th>
+                                                                        <th>Class</th>
+                                                                        <th>Group</th>
+                                                                        <th>Session</th>
+                                                                        <th> Aff. type</th>
+                                                                    </tr>
+                                                                    @{
+                                                                        if (Model.dataSetPrevious != null)
+                                                                        {
+                                                                            int Count = 0;
+                                                                            for (int i = 0; i < Model.dataSetPrevious.Tables[6].Rows.Count; i++)
+                                                                            {
+                                                                                Count = Count + 1;
+                                                                                var cls = Model.dataSetPrevious.Tables[6].Rows[i]["class"].ToString();
+                                                                                var group = Model.dataSetPrevious.Tables[6].Rows[i]["group"].ToString();
+                                                                                var session = Model.dataSetPrevious.Tables[6].Rows[i]["session"].ToString();
+                                                                                var afftype = Model.dataSetPrevious.Tables[6].Rows[i]["afftype"].ToString();
+
+                                                                                <tr>
+                                                                                    <td>@Count</td>
+                                                                                    <td>@cls</td>
+                                                                                    <td>@group</td>
+                                                                                    <td>@session</td>
+                                                                                    <td>@afftype </td>
+                                                                                </tr>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                </table>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+
+
+
+                                                <div class="col-md-12">
+                                                    <h4>Principal / Contact Details</h4>
+                                                </div><div class="clearfix"></div>
+                                                <div class="col-md-2">
+                                                    Principal Name *
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.PrincipalName)</label>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    Date of Birth
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.DOB)</label>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">
+                                                    Qualification *
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.Qualification)</label>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    Experience (in Yrs) *
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.Experience)</label>
+                                                </div>
+
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">
+                                                    Date of Joining *
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.DOJ)</label>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    Mobile No *
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.PrincipalMobileNo)</label>
+                                                </div>
+                                                <div class="clearfix"></div>
+
+                                                <div class="col-md-2">
+                                                    Std Code/Phone
+
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.StdCode) <span>&nbsp;&nbsp;</span> @Html.DisplayFor(model => model.PHONE)</label>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    Other Contact Person
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>@Html.DisplayFor(model => model.OtherContactPerson)</label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="3">
+                                            <h4>Society/Trust details which running the Institution</h4>
+                                            <div class="row">
+                                                <div class="col-md-2">Name</div>
+                                                <div class="col-md-10"><label>@Html.DisplayFor(model => model.SocietyName)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">Registration No</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(model => model.SocietyRegNo)</label></div>
+                                                <div class="col-md-2">Registration Date</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(model => model.SocietyRegDate)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">No of Members</div>
+                                                <div class="col-md-10"><label>@Html.DisplayFor(model => model.SocietyNOM)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">Name of Chairman</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(model => model.SocietyChairmanName)</label></div>
+                                                <div class="col-md-2">Chairman Mobile No</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(model => model.SocietyChairmanMobile)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-12"><h4>Building Safety Certificate Details</h4></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">Validity Period (Yrs)</div>
+                                                <div class="col-md-2">From<label>@Html.DisplayFor(a => a.BSFROM)</label></div>
+                                                <div class="col-md-2">Upto<label>@Html.DisplayFor(a => a.BSTO)</label></div>
+                                                <div class="col-md-2">Issuing Authority</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(a => a.BSIA)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">Memo/Dispatch No.</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(a => a.BSMEMO)</label></div>
+                                                <div class="col-md-2">Issuing Date</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(a => a.BSIDATE)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-12"><h4>Fire Safety Certificate Details</h4></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">Validity Period (Yrs)</div>
+                                                <div class="col-md-2">From<label>@Html.DisplayFor(a => a.FSFROM)</label></div>
+                                                <div class="col-md-2">Upto<label>@Html.DisplayFor(a => a.FSTO)</label></div>
+                                                <div class="col-md-2">Issuing Authority</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(a => a.FSIA)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">Memo/Dispatch No.</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(a => a.FSMEMO)</label></div>
+                                                <div class="col-md-2">Issuing Date</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(a => a.FSIDATE)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-12"><h4>Building Map Details</h4></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">Name of Architect</div>
+                                                <div class="col-md-10"><label>@Html.DisplayFor(model => model.MAPNAME)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">Identity/Reg No</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(model => model.MAPREGNO)</label></div>
+                                                <div class="col-md-2">Issuing Authority</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(a => a.MAPAUTH)</label></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-2">Memo/Dispatch No.</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(a => a.MAPMEMO)</label></div>
+                                                <div class="col-md-2">Issuing Date</div>
+                                                <div class="col-md-4"><label>@Html.DisplayFor(a => a.MAPIDATE)</label></div>
+                                                <div class="clearfix"></div>
+                                                @{
+                                                    if (!string.IsNullOrEmpty(Model.CLUAUTH))
+                                                    {
+                                                        <div class="col-md-12"><h4>CLU Details</h4></div>
+                                                        <div class="clearfix"></div>
+                                                        <div class="col-md-2">Issuing Authority</div>
+                                                        <div class="col-md-4"><label>@Html.DisplayFor(a => a.CLUAUTH)</label></div>
+                                                        <div class="clearfix"></div>
+                                                        <div class="col-md-2">Memo/Dispatch No.</div>
+                                                        <div class="col-md-4"><label>@Html.DisplayFor(a => a.CLUMEMO)</label></div>
+                                                        <div class="col-md-2">Issuing Date</div>
+                                                        <div class="col-md-4"><label>@Html.DisplayFor(a => a.CLUIDATE)</label></div>
+                                                        }
+                                               }
+                                                    </div>
+                                        </td>
+                                    </tr>
+                                }
+
+                                @if (Model != null && Model.StoreAllData.Tables.Count > 1)
+                                {
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="row">
+                                                <div class="col-md-12"><h4>Staff / Teacher Details</h4></div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered" id="t01">
+                                                            <tr class="active-tr">
+                                                                <th>Sr No</th>
+                                                                <th>Name</th>
+                                                                <th>FName</th>
+                                                                <th>DOB</th>
+                                                                <th>Gender</th>
+                                                                <th>Aadhar No</th>
+                                                                <th>Qualification</th>
+                                                                <th>Cadre/Subject</th>
+                                                                @*<th>Experience</th>*@
+                                                                <th>Mobile</th>
+                                                                <th>Salary</th>
+                                                                <th>SalaryMode</th>
+
+                                                            </tr>
+                                                            @{
+                                                                if (ViewBag.TotalCount > 0)
+                                                                {
+                                                                    int d = 0;
+                                                                    int Count = 0;
+                                                                    for (int i = 0; i < Model.StoreAllData.Tables[1].Rows.Count; i++)
+                                                                    {
+                                                                        d = d + 1;
+                                                                        var eStaffId = Model.StoreAllData.Tables[1].Rows[i]["eStaffId"].ToString();
+                                                                        var APPNO = Model.StoreAllData.Tables[1].Rows[i]["APPNO"].ToString();
+                                                                        var name = Model.StoreAllData.Tables[1].Rows[i]["Name"].ToString();
+                                                                        var fname = Model.StoreAllData.Tables[1].Rows[i]["fname"].ToString();
+                                                                        var dob = Model.StoreAllData.Tables[1].Rows[i]["DOB"].ToString();
+                                                                        var gender = Model.StoreAllData.Tables[1].Rows[i]["Gender"].ToString();
+                                                                        var aano = Model.StoreAllData.Tables[1].Rows[i]["AadharNo"].ToString();
+                                                                        var mobno = Model.StoreAllData.Tables[1].Rows[i]["MOBILENO"].ToString();
+                                                                        var Qualification = Model.StoreAllData.Tables[1].Rows[i]["Qualification"].ToString();
+                                                                        var cadre = Model.StoreAllData.Tables[1].Rows[i]["cadre"].ToString();
+                                                                        var subj = Model.StoreAllData.Tables[1].Rows[i]["Subject"].ToString();
+
+                                                                        var ExpYear = Model.StoreAllData.Tables[1].Rows[i]["ExpYear"].ToString();
+                                                                        var ExpMonth = Model.StoreAllData.Tables[1].Rows[i]["ExpMonth"].ToString();
+                                                                        var Salary = Model.StoreAllData.Tables[1].Rows[i]["Salary"].ToString();
+                                                                        var SalaryMode = Model.StoreAllData.Tables[1].Rows[i]["SalaryMode"].ToString();
+                                                                        Count = Count + 1;
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Count
+                                                                            </td>
+                                                                            <td>
+                                                                                @name
+                                                                            </td>
+                                                                            <td>
+                                                                                @fname
+                                                                            </td>
+                                                                            <td>
+                                                                                @dob
+                                                                            </td>
+                                                                            <td>
+                                                                                @gender
+                                                                            </td>
+                                                                            <td>
+                                                                                @aano
+                                                                            </td>
+                                                                            <td>
+                                                                                @Qualification
+                                                                            </td>
+                                                                            <td>
+                                                                                @cadre/ @subj
+                                                                            </td>
+                                                                            @*<td>
+                                                                                @ExpYear@Html.Raw("Y") / @ExpMonth@Html.Raw("M")
+                                                                            </td>*@
+                                                                            <td>
+                                                                                @mobno
+                                                                            </td>
+                                                                            <td>
+                                                                                @Salary
+                                                                            </td>
+                                                                            <td>
+                                                                                @SalaryMode
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <tr>
+                                                                        <td colspan="13">
+                                                                            <p class="rqf">Record Not Found</p>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+
+                                @if (Model != null && Model.StoreAllData.Tables.Count > 0)
+                                {
+
+                                    <tr>
+                                        <td colspan="3">
+                                            <h4>Class wise student Count</h4>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered" id="">
+                                                            <tr>
+                                                                @if (Model.EAffClass == "5" || Model.EAffClass == "0")
+                                                                {
+                                                                    <td>1st</td>
+                                                                    <td>2nd</td>
+                                                                    <td>3rd</td>
+                                                                    <td>4th</td>
+                                                                    <td>5th</td>
+
+
+
+                                                                }
+                                                                else if (Model.EAffClass == "8")
+                                                                {
+                                                                    <td>1st</td>
+                                                                    <td>2nd</td>
+                                                                    <td>3rd</td>
+                                                                    <td>4th</td>
+                                                                    <td>5th</td>
+                                                                    <td>6th</td>
+                                                                    <td>7th</td>
+                                                                    <td>8th</td>
+
+                                                                }
+                                                                else if (Model.EAffClass == "10")
+                                                                {
+                                                                    <td>1st</td>
+                                                                    <td>2nd</td>
+                                                                    <td>3rd</td>
+                                                                    <td>4th</td>
+                                                                    <td>5th</td>
+                                                                    <td>6th</td>
+                                                                    <td>7th</td>
+                                                                    <td>8th</td>
+                                                                    <td>9th</td>
+                                                                    <td>10th</td>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>1st</td>
+                                                                    <td>2nd</td>
+                                                                    <td>3rd</td>
+                                                                    <td>4th</td>
+                                                                    <td>5th</td>
+                                                                    <td>6th</td>
+                                                                    <td>7th</td>
+                                                                    <td>8th</td>
+                                                                    <td>9th</td>
+                                                                    <td>10th</td>
+                                                                    <td>11th Humanties</td>
+                                                                    <td>11th Science</td>
+                                                                    <td>11th Commerce</td>
+                                                                    <td>11th Vocational</td>
+                                                                    <td>12th Humanties</td>
+                                                                    <td>12th Science</td>
+                                                                    <td>12th Commerce</td>
+                                                                    <td>12th Vocational</td>
+                                                                }
+
+                                                            </tr>
+                                                            <tr>
+
+                                                                @if (Model.EAffClass == "5" || Model.EAffClass == "0")
+                                                                {
+                                                                    <td>@Html.DisplayFor(model => model.C1T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C2T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C3T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C4T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C5T)</td>
+                                                                }
+                                                                else if (Model.EAffClass == "8")
+                                                                {
+                                                                    <td>@Html.DisplayFor(model => model.C1T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C2T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C3T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C4T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C5T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C6T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C7T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C8T)</td>
+
+
+
+                                                                }
+                                                                else if (Model.EAffClass == "10")
+                                                                {
+                                                                    <td>@Html.DisplayFor(model => model.C1T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C2T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C3T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C4T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C5T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C6T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C7T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C8T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C9T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C10T)</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>@Html.DisplayFor(model => model.C1T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C2T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C3T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C4T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C5T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C6T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C7T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C8T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C9T)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C10T)</td>
+
+                                                                    <td>@Html.DisplayFor(model => model.C11HT)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C11ST)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C11CT)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C11VT)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C12HT)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C12ST)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C12CT)</td>
+                                                                    <td>@Html.DisplayFor(model => model.C12VT)</td>
+                                                                }
+
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="3">
+                                            <h4>Other Information</h4>
+                                            <table class="table table-bordered">
+                                                <tr class="active-tr">
+                                                    <td width="5%">Sr No</td>
+                                                    <td>Type</td>
+                                                    <td>Count</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Medium of Study</td>
+                                                    <td> @Html.DisplayFor(model => model.OSTUDYMEDIUM)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>Ownership of Land</td>
+                                                    <td>@Html.DisplayFor(m => m.OLANDTYPE)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td> Total Area (In Yards)</td>
+                                                    <td>@Html.DisplayFor(a => a.OTOTALAREA)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>4</td>
+                                                    <td>Covered Area (In Yards)</td>
+                                                    <td>@Html.DisplayFor(a => a.OCOVAREA)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>5</td>
+                                                    <td>Size of playground (In Yards)</td>
+                                                    <td>@Html.DisplayFor(a => a.OPLAYGROUNDSIZE)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>6</td>
+                                                    <td>If any case is pending in court against the institution?</td>
+                                                    <td>@Html.DisplayFor(m => m.OCOURT)</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>7</td>
+                                                    <td>Does your institute have transport facility as per Govt. rules & regulations ?</td>
+                                                    <td>@Html.DisplayFor(m => m.OTRANSPORT)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>8</td>
+                                                    <td>Does your institute pay salaries to employees as per affiliation regulation 7 (III)?</td>
+                                                    <td>@Html.DisplayFor(m => m.OSALARYEMP)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>9</td>
+                                                    <td>R.O. Drinking water facility?</td>
+                                                    <td>@Html.DisplayFor(m => m.OROWATER)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10</td>
+                                                    <td>Seperate toilet for Boys & Girls ?</td>
+                                                    <td>@Html.DisplayFor(m => m.OTOILET)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>11</td>
+                                                    <td>Play Ground Distance From Institute Premisses ?</td>
+                                                    <td>@Html.DisplayFor(m => m.OPLAYGROUND)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>12</td>
+                                                    <td>Display board for special candidates facilities ?</td>
+                                                    <td>@Html.DisplayFor(m => m.OBOARDSPLCAND)</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>13</td>
+                                                    <td>Is there Computer Lab Available?</td>
+                                                    <td>@Html.DisplayFor(m => m.OCOMPLAB)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>14</td>
+                                                    <td>Is there Science Lab Available ?</td>
+                                                    <td>@Html.DisplayFor(m => m.OSCILAB)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>15</td>
+                                                    <td>Is there Internet Facility available ?</td>
+                                                    <td>@Html.DisplayFor(m => m.OINTERNET)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>16</td>
+                                                    <td>Is there Smart Classes available ?</td>
+                                                    <td>@Html.DisplayFor(m => m.OSMARTCLS)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>17</td>
+                                                    <td>Is fire safety Equipments are available?</td>
+                                                    <td>@Html.DisplayFor(m => m.OFIRESAFE)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>18</td>
+                                                    <td>Is furniture available in institute as per count of student?</td>
+                                                    <td>@Html.DisplayFor(m => m.OFURNITURE)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>19</td>
+                                                    <td>Is there library available? </td>
+                                                    <td>@Html.DisplayFor(a => a.Islibrary)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>20</td>
+                                                    <td>Is there Physics Lab available?</td>
+                                                    <td>@Html.DisplayFor(a => a.IsPhysics)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>21</td>
+                                                    <td>Is there Chemistry Lab available?</td>
+                                                    <td>@Html.DisplayFor(a => a.IsChemistry)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>22</td>
+                                                    <td>Is there Biology Lab available?</td>
+                                                    <td>@Html.DisplayFor(a => a.IsBiology)</td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td>23</td>
+                                                    <td>No of Rooms?</td>
+                                                    <td>@Html.DisplayFor(a => a.ONOCLASSROOMS)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>24</td>
+                                                    <td>CCTV Camera's are available in school premises?</td>
+                                                    <td>@Html.DisplayFor(a => a.IsCCTV)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3">Other Activities & Achievements</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3">@Html.DisplayFor(a => a.OActivitiesAchievements)</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                }
+
+                                @if (Model != null && Model.StoreAllData.Tables.Count > 2)
+                                {
+
+                                    @*<tr>
+                                            <td colspan="3">
+                                                <h4>Affiliation Applied for Class & Fee Details :-</h4>
+                                                <table class="table table-bordered" id="">
+                                                    <tr class="active-tr">
+                                                        <th>S.No</th>
+                                                        <th>RefNo</th>
+                                                        <th>Class</th>
+                                                        <th>Challan Id</th>
+                                                        <th>Bank Name</th>
+                                                        <th>Fee</th>
+                                                        <th>LateFe</th>
+                                                        <th>Tot Fee</th>
+                                                        <th>Bank Ref No</th>
+                                                        <th>Deposit Date</th>
+                                                    </tr>
+                                                    @{
+                                                        if (Model.StoreAllData.Tables[2].Rows.Count > 0)
+                                                        {
+                                                            if (Model.StoreAllData.Tables[2].Rows.Count > 0)
+                                                            {
+                                                                for (int i = 0; i < Model.StoreAllData.Tables[2].Rows.Count; i++)
+                                                                {
+                                                                    var RefNo = Model.StoreAllData.Tables[2].Rows[i]["RefNo"].ToString();
+                                                                    var cls = Model.StoreAllData.Tables[2].Rows[i]["Class"].ToString();
+                                                                    var Bank = Model.StoreAllData.Tables[2].Rows[i]["Bank"].ToString();
+                                                                    var ChallanId = Model.StoreAllData.Tables[2].Rows[i]["ChallanId"].ToString();
+                                                                    var ChallanDate = Model.StoreAllData.Tables[2].Rows[i]["CHLNDATE"].ToString();
+                                                                    var ChallanVDate = Model.StoreAllData.Tables[2].Rows[i]["CHLNVDATE"].ToString();
+                                                                    //var ChallanVerifiedOn = Model.StoreAllData.Tables[2].Rows[i]["ChallanVerifiedOn"].ToString();
+                                                                    //var Status = Model.StoreAllData.Tables[2].Rows[i]["Status"].ToString();
+                                                                    var FEE = Model.StoreAllData.Tables[2].Rows[i]["FEE"].ToString();
+                                                                    var LateFee = Model.StoreAllData.Tables[2].Rows[i]["LateFee"].ToString();
+                                                                    var TotalFee = Model.StoreAllData.Tables[2].Rows[i]["TotFee"].ToString();
+                                                                    //var ExpireVDate = Model.StoreAllData.Tables[2].Rows[i]["ExpireVDate"].ToString();
+                                                                    //var FeeDepositStatus = Model.StoreAllData.Tables[2].Rows[i]["FeeDepositStatus"].ToString();
+
+                                                                    var BRCODE = Model.StoreAllData.Tables[2].Rows[i]["BRCODE"].ToString();
+                                                                    var BRANCH = Model.StoreAllData.Tables[2].Rows[i]["BRANCH"].ToString();
+                                                                    var J_REF_NO = Model.StoreAllData.Tables[2].Rows[i]["J_REF_NO"].ToString();
+                                                                    var DEPOSITDT = Model.StoreAllData.Tables[2].Rows[i]["DEPOSITDT"].ToString();
+
+                                                                    int Count = i + 1;
+
+                                                                    <tr>
+                                                                        <td align="left">@Count</td>
+                                                                        <td align="left">@RefNo</td>
+                                                                        <td align="center">@cls</td>
+                                                                        <td align="center">@ChallanId</td>
+                                                                        <td align="center">@Bank</td>
+                                                                        <td align="center">@FEE </td>
+                                                                        <td align="center">@LateFee </td>
+                                                                        <td align="center">@TotalFee </td>
+                                                                        <td align="center">@J_REF_NO</td>
+                                                                        <td align="center">@DEPOSITDT</td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="8">
+                                                                    Record Not Found
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </table>
+                                            </td>
+                                        </tr>*@
+                                }
+                                <tr>
+                                    <td colspan="3" style="height:70px"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>

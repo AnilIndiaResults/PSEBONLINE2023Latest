@@ -777,8 +777,8 @@ o.attendance == "UMC" ? "UMC" : o.attendance == "Cancel" ? "Cancel" : null : o.a
 					}
 					else
 					{
-						//obj.subjectAttendancePrivates = _context.subjectAttendancePrivate.AsNoTracking().Where(s => s.memonumber.ToLower() == id.ToLower()).ToList();
-						obj.subjectAttendancePrivates = GetsubjectAttendanceAttendancePrivate(id.ToLower());
+						obj.subjectAttendancePrivates = _context.subjectAttendancePrivate.AsNoTracking().Where(s => s.memonumber.ToLower() == id.ToLower()).ToList();
+						//obj.subjectAttendancePrivates = GetsubjectAttendanceAttendancePrivate(id.ToLower());
 						obj.attendanceList = (from o in obj.subjectAttendancePrivates
 											  select new SubjectAttendance
 											  {

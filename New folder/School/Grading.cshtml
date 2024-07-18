@@ -1,0 +1,847 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "School Grading";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+@*<h1>Grading Panel For @ViewBag.ClassName (Session <b>@Session["Session"].ToString()</b>) </h1>*@
+<h1>Theory Marks (Elective Subject) For @ViewBag.ClassName (Session <b>@Session["Session"].ToString()</b>) </h1>
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+<script type="text/javascript">
+
+    window.setInterval(function () {
+        var current = new Date();
+       //var expiry = new Date("Apr 30, 2022 23:59:59")	   
+	   var expiry = new Date("May 27, 2022 23:59:59")
+        if (current.getTime() > expiry.getTime()) {
+            $('.hideintm').hide();
+        } else if (current.getTime() < expiry.getTime()) {
+            $('.hideintm').show();
+        }
+    }, 0);
+</script>
+
+
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#dialog").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to Final Submit??",
+            width: 450,
+            height: 250,
+            buttons: {
+                "Proceed": function() {
+                    window.location.href = '@Url.Action("GradingFinalReport", "School", new {id = @ViewBag.cid })';
+                },
+                Cancel: function() {
+                    $(this).dialog( "close" );
+                }
+            }
+        });
+        $("#btnShow").click(function () {
+            $('#dialog').dialog('open');
+        });
+    });
+</script>
+@using (Html.BeginForm("Grading", "School", FormMethod.Post, new { id = "Grading", enctype = "multipart/form-data" }))
+{
+    DateTime todayDate = DateTime.Now;
+    <fieldset style="margin-bottom:15px">
+        <legend>Search</legend>
+        <form id="myForm">
+            <div class="clearefix"></div>
+            <div class="row">
+                <div class="col-md-2">
+                    Select Status:  @Html.DropDownList("SelAction", new SelectList(ViewBag.MyAction, "Value", "Text", ViewBag.SelectedAction), "--All---", new { @class = "" })
+                </div>
+                <div class="col-md-2">
+                    Filter By:  @Html.DropDownList("SelFilter", new SelectList(ViewBag.MyFilter, "Value", "Text", ViewBag.SelectedFilter), "Select", new { @class = "" })
+                </div>
+                <div class="col-md-2">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <input type="submit" value="Search" />
+                    @Html.Hidden("cid", (string)ViewBag.cid)
+                    <a href="/School/CCE_Grading_Portal" class="btn">Back</a>
+                    @if (ViewBag.IsFinal != 1 && ViewBag.IsFinal != -1)
+                    {
+
+                        if (ViewBag.cid == "S")
+                        {
+                            <a href="/School/GradingReport/@ViewBag.cid" class="btn">Print Rough Report</a>
+                            if (ViewBag.IsAllow == "1" && ViewBag.IsActive == "1" && DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                            {
+                                <span class="">
+                                    <input type="button" id="btnShow" class="btn" value="Click here to Final Submit" />
+                                </span>
+                            }
+                            else if (ViewBag.FinalSubmitLastDate != null)
+                            {
+                                DateTime finalSubmitLastDate = Convert.ToDateTime(ViewBag.FinalSubmitLastDate);
+                                if (finalSubmitLastDate.Date >= todayDate.Date)
+                                {
+                                    <input type="button" id="btnShow" class="btn" value="Click here to Final Submit" />
+                                }
+
+                            }
+
+                        }
+                        else if (ViewBag.cid == "M")
+                        {
+                            <a href="/School/GradingReport/@ViewBag.cid" class="btn">Print Rough Report</a>
+                            if (ViewBag.IsAllow == "1" && ViewBag.IsActive == "1" && DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                            { <span class="">
+                                    <input type="button" id="btnShow" class="btn" value="Click here to Final Submit" />
+                                </span>
+                            }
+                            else if (ViewBag.FinalSubmitLastDate != null)
+                            {
+                                DateTime finalSubmitLastDate = Convert.ToDateTime(ViewBag.FinalSubmitLastDate);
+                                if (finalSubmitLastDate.Date >= todayDate.Date)
+                                {
+                                    <input type="button" id="btnShow" class="btn" value="Click here to Final Submit" />
+                                }
+
+                            }
+
+                        }
+                    }
+                    else if (ViewBag.IsFinal == -1)
+                    { }
+                    else
+                    {
+
+                        if (ViewBag.cid == "M")
+                        {
+                            <span>
+                                <a href="/School/GradingFinalReport/@ViewBag.cid" class="btn">Print Final Report</a>
+                            </span>
+                        }
+                        else if (ViewBag.cid == "S" )
+                        {
+                            <span>
+                                <a href="/School/GradingFinalReport/@ViewBag.cid" class="btn">Print Final Report</a>
+                            </span>
+                        }
+                    }
+
+
+                </div>
+            </div>
+
+            <div id="dialog" style="display: none" class="kdsfont">
+                ÌãÏã ÒóÐë× Ú¥Ðè¨Ú¶Ò ÚÒÓÖã Âã ÚÐª¼Û ¤â¨Ù ÂØ ÏÇ ÚÆñâ¶ °â¬Û ¼ÏðÙ °èó¨ ¨Ï ÚÐ¤Ø Ú¬¤Ø Õè, Ú¥Õ ÚÉÐ¨ÝóÐ ÓÕÛ ¤¼ã ÂÏÝÓ¼ ÊÏã ¬¥ã ÕÅ ¢ Ìè× Ú¥Ó¼ë× ÉØ¤Â Ú¥Ó ÚÒó° ¨ë¥Û ÓëÄ ÅÕÛ× ¨ÏÅÛ Õè¢ Ìè× Ú¥Ó ÕÂØÚ¥¼ ¼ë× ÊÐÛÊÙ¼ ²Ø»Þ ÕÙ Ú¨ ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¦ÝÆÏâ¼ ÓØÏØ ¸Ø¶Ø ÐØ¨ Õë ²ØÒã¬Ø ¤¼ã Ú¨Óã ÒÛ ÕØÐ¼ Ú¥Ó ÚÒó° ¨ë¥Û ÓëÄ ÅÕÛ× ¨Û¼Û ²Ø Ó¨ã¬Û¢ Ìè× ÇØ¥ÛÅÐ ÓÉÚÌ¶ ¨ÏÅ Ð¥Û ÓÚÕÌ¼ ÕÙ¢
+            </div>
+        </form>
+    </fieldset>
+}
+<div id="loading1"></div>
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12" style="text-align:right;font-weight :bold"><h3>Last Date : @Convert.ToDateTime(ViewBag.FinalSubmitLastDate).ToString("dd/MM/yyyy")</h3></div>
+    <br /><div class="clearfix"></div>
+</div>
+<div class="clearfix"></div>
+<div class="row" id="divMain1">
+    <div class="col-md-4">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="col-md-8 text-right">
+        @if (ViewBag.TotalPen > 0)
+        {
+            <h3 class="rqf"> Final Submission Status : Pending (@ViewBag.TotalPen)</h3>
+        }
+        else if (ViewBag.TotalPen == 0 && ViewBag.IsFinal == -1)
+        {
+            <h3 class="rqf">No Students Found</h3>
+        }
+        else if (ViewBag.TotalCount > 0 && ViewBag.TotalPen == 0)
+        {
+            <h3 class="rqf"> Final Status : Submitted</h3>
+        }
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="5%">S.No.</th>
+                    <th width="5%">ID</th>
+                    <th width="10%">ROLL</th>
+                    <th width="5%">Form</th>
+                    <th width="5%">Reg.No.</th>
+                    <th width="26%">Name/Father's Name/Mother's Name</th>
+                    <th width="5%">DOB</th>
+                    <th width="5%">Gender</th>
+                    <th width="7%">Is NSQF</th>
+
+                    <th width="13%">Action</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                            var ROLL = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+                            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                            var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                            var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                            var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                            var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                            var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                            var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["REGFEE"].ToString();
+                            var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                            var NSQF_flag = Model.StoreAllData.Tables[0].Rows[i]["NSQF_flag"].ToString().ToUpper() == "1" ? "YES" : "NO";
+                            var IsMarksGradingDone = Model.StoreAllData.Tables[0].Rows[i]["IsMarksGrading"].ToString();
+                            DateTime finalSubmitLastDate = Convert.ToDateTime(ViewBag.FinalSubmitLastDate);
+
+                            Count = Count + 1;
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @stdid
+                                </td>
+                                <td>
+                                    @ROLL
+                                </td>
+                                <td>
+                                    @FormName
+                                </td>
+                                <td>
+                                    @RegNo
+                                </td>
+                                <td>
+                                    @FullName
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @Gender
+                                </td>
+                                <td>
+                                    @NSQF_flag
+                                </td>
+                                <td>
+
+                                    @if (IsMarksGradingDone == "1")
+                                    {<button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View</button>}
+                                    else if (IsMarksGradingDone == "3" || IsMarksGradingDone == "2")
+                                    {
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button> }
+                                    else if (DateTime.Now.Date <= Convert.ToDateTime(ViewBag.FinalSubmitLastDate).Date)
+                                    {
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button> }
+
+                                    else if (ViewBag.IsAllow == "1" && ViewBag.IsActive == "1" && DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                                    {
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
+                                    }
+                                    else
+                                    { <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>}
+
+
+                                </td>
+                            </tr>
+
+                            if (d == ViewBag.TotalCount)
+                            {
+                                <tr>
+                                    <td colspan="11">
+                                        Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                        @if (ViewBag.pagesize == 1)
+                                        {@:<<
+                                            @Html.Raw("&nbsp;");
+                                            @:< Prev
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp = ViewBag.pagesize + 1;
+                                                <a href="~/School/Grading?id=@ViewBag.cid&page=@dp">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/School/Grading?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var dp = ViewBag.pagesize - 1;
+                                            <a href="~/School/Grading?id=@ViewBag.cid&page=1"><<</a>
+                                            @Html.Raw("&nbsp;");
+                                            <a href="~/School/Grading?id=@ViewBag.cid&page=@dp">< Prev</a>
+                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                            if (ViewBag.pn > ViewBag.pagesize)
+                                            {
+                                                var dp1 = ViewBag.pagesize + 1;
+                                                <a href="~/School/Grading?id=@ViewBag.cid&page=@dp1">Next ></a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/School/Grading?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (Model != null)
+{
+    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+    {
+        var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+        var rollNo = Model.StoreAllData.Tables[0].Rows[i]["ROLL"].ToString();
+        var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+        var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+        var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+        var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+        var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+        var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+        var IsMarksGrading = Model.StoreAllData.Tables[0].Rows[i]["IsMarksGrading"].ToString();
+        var Prev = "0";
+        var Next = "0";
+        if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count == 1)
+        {
+            Prev = "0";
+            Next = "0";
+        }
+        else if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count > 1)
+        {
+            Prev = "0";
+            Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+        }
+        else if (i > 0 && i < Model.StoreAllData.Tables[0].Rows.Count - 1)
+        {
+            Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+            Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+        }
+        else if (i > 0 && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
+        {
+            Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+            Next = "0";
+        }
+        int k = i + 1;
+        <div class="container">
+            <div class="modal fade" id="myModal1-@stdid" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                            @*<h4 class="modal-title">Student Details Of Unique Id : @stdid</h4>*@
+                            <h4 class="modal-title">Student Details Of Roll No : @rollNo</h4>
+                        </div>
+                        <div class="modal-body">
+                            @Html.Raw("Student Id: ")@stdid@Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")    @Html.Raw("Reg No.: ")@RegNo@Html.Raw("</br>")
+                            @Html.Raw("Name/F.Name/M.Name: ")@FullName@Html.Raw("</br>")
+                            <div>
+                                @* Subject Details*@
+                                <table width="100%" id="subjects-@stdid">
+                                    <tr class="active-tr">
+                                        <th width="15%">SUB</th>
+                                        <th width="35%">SUB NAME</th>
+                                        <th width="20%">MARKS</th>
+                                        <th width="30%">MINMARKS / MAXMARK</th>
+                                    </tr>
+                                    @{
+                                        for (int s = 0; s < Model.StoreAllData.Tables[2].Rows.Count; s++)
+                                        {
+                                            var sID = Model.StoreAllData.Tables[2].Rows[s]["ID"].ToString();
+                                            var candid = Model.StoreAllData.Tables[2].Rows[s]["candid"].ToString();
+                                            var SUB = Model.StoreAllData.Tables[2].Rows[s]["SUB"].ToString();
+                                            var SUBNM = Model.StoreAllData.Tables[2].Rows[s]["SUBNM"].ToString();
+                                            var SUBABBR = Model.StoreAllData.Tables[2].Rows[s]["SUBABBR"].ToString();
+                                            var OBTMARKS = Model.StoreAllData.Tables[2].Rows[s]["OBTMARKS"].ToString();
+                                            var thmin = Model.StoreAllData.Tables[2].Rows[s]["thmin"].ToString();
+                                            var thmax = Model.StoreAllData.Tables[2].Rows[s]["thmax"].ToString();
+                                            int mm = Convert.ToInt32(Model.StoreAllData.Tables[2].Rows[s]["thmax"].ToString());
+                                            if (stdid == candid)
+                                            {
+                                                <tr id="trs-@candid-@SUB">
+                                                    <td>
+                                                        @SUB
+                                                        <input type="hidden" id="cb^@candid^@SUB" class="chksub" value="@SUB" />
+                                                    </td>
+                                                    <td>
+                                                        @SUBNM
+                                                    </td>
+                                                    <td>
+                                                        @if (IsMarksGrading == "1")
+                                                        {@OBTMARKS}
+
+                                                    else if (DateTime.Now.Date <= Convert.ToDateTime(ViewBag.FinalSubmitLastDate).Date)
+                                                    {
+                                                        if (ViewBag.cid == "M")
+                                                        { <span class="">
+                                                                <input type="text" id="@candid^@SUB" class="chkclass" maxlength="2" onblur="CheckMarks(this,@candid,@mm)" value="@OBTMARKS" />
+                                                            </span>
+                                                        }
+                                                        else if (ViewBag.cid == "S")
+                                                        { <span class="">
+                                                                <input type="text" id="@candid^@SUB" class="chkclass" maxlength="2" onblur="CheckMarks(this,@candid,@mm)" value="@OBTMARKS" />
+                                                            </span>
+                                                        }
+                                                    }
+
+
+                                                    else if ((ViewBag.IsAllow == "1" || ViewBag.IsAllow == "3") && ViewBag.IsActive == "1")
+                                                    {
+                                                        if (DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                                                        {
+                                                            if (ViewBag.cid == "M")
+                                                            { <span class="">
+                                                                    <input type="text" id="@candid^@SUB" class="chkclass" maxlength="2" onblur="CheckMarks(this,@candid,@mm)" value="@OBTMARKS" />
+                                                                </span>
+                                                            }
+                                                            else if (ViewBag.cid == "S")
+                                                            { <span class="">
+                                                                    <input type="text" id="@candid^@SUB" class="chkclass" maxlength="2" onblur="CheckMarks(this,@candid,@mm)" value="@OBTMARKS" />
+                                                                </span>
+                                                            }
+                                                        }
+                                                        else
+                                                        {@OBTMARKS}
+                                                }
+                                                else if (IsMarksGrading == "3" || IsMarksGrading == "2")
+                                                {
+                                                    if (ViewBag.cid == "M")
+                                                    { <span class="">
+                                                            <input type="text" id="@candid^@SUB" class="chkclass" maxlength="2" onblur="CheckMarks(this,@candid,@mm)" value="@OBTMARKS" />
+                                                        </span>
+                                                    }
+                                                    else if (ViewBag.cid == "S")
+                                                    { <span class="">
+                                                            <input type="text" id="@candid^@SUB" class="chkclass" maxlength="2" onblur="CheckMarks(this,@candid,@mm)" value="@OBTMARKS" />
+                                                        </span>
+                                                    }
+                                                }
+
+
+
+                                                else
+                                                {
+
+                                                    if (ViewBag.cid == "M")
+                                                    { <span class="">
+                                                            <input type="text" id="@candid^@SUB" class="chkclass" maxlength="2" onblur="CheckMarks(this,@candid,@mm)" value="@OBTMARKS" />
+                                                        </span>
+                                                    }
+                                                    else if (ViewBag.cid == "S")
+                                                    { <span class="">
+                                                            <input type="text" id="@candid^@SUB" class="chkclass" maxlength="2" onblur="CheckMarks(this,@candid,@mm)" value="@OBTMARKS" />
+                                                        </span>
+                                                    }
+
+                                                }
+
+
+                                                    </td>
+                                                    <td>
+                                                        @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") @thmin/@thmax
+
+                                                        <input type="hidden" id="mi^@candid^@SUB" class="chkmin" value="@thmin" />
+                                                        <input type="hidden" id="ma^@candid^@SUB" class="chkmax" value="@thmax" />
+                                                    </td>
+                                                </tr>
+
+                                            }
+                                        }
+                                    }
+                                </table>
+                            </div>
+                            @if (IsMarksGrading == "1") { }
+                            else if (DateTime.Now.Date <= Convert.ToDateTime(ViewBag.FinalSubmitLastDate).Date)
+                            {
+
+                                if (ViewBag.cid == "M")
+                                {<p style="text-align:center"><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev)" /></p>}
+                                else if (ViewBag.cid == "S")
+                                {<p style="text-align:center"><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev)" /></p>}
+
+                            }
+                            else if (IsMarksGrading == "3" || IsMarksGrading == "2")
+                            {
+                                if ((ViewBag.IsAllow == "1" || ViewBag.IsAllow == "3") && ViewBag.IsActive == "1")
+                                {
+                                    if (DateTime.Now.Date <= Convert.ToDateTime(ViewBag.LastDate).Date)
+                                    {
+
+                                        if (ViewBag.cid == "M")
+                                        {<p style="text-align:center"><input type="button" class="btn" value="Save & Final Submit" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev)" /></p>}
+                                        else if (ViewBag.cid == "S")
+                                        {<p style="text-align:center"><input type="button" class="btn" value="Save & Final Submit" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev)" /></p>}
+
+                                    }
+                                }
+
+                            }
+
+                            else
+                            {
+
+                                if (ViewBag.cid == "M")
+                                { <p style="text-align:center" class="hideintm"><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev)" /></p>}
+                                else if (ViewBag.cid == "S")
+                                { <p style="text-align:center" class="hideintm"><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev)" /></p>}
+
+                            }
+                            @*<p><span class="rqf">Instructions:<br />1.Please Enter GRADE's as per Grading Instructions !!<br />2. Z:Absent, X:Cancel </span></p>*@
+                            <p><span class="rqf">Instructions:<br />1.Please Enter OBT Marks less than equal to Max Marks and Greater than Zero !!<br />2. A:Absent, C:Cancel , H:Answer Sheet Submitted to Board</span></p>
+                            <div id="loading1-@stdid"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <span class="lft">
+                                <button type="button" class="" data-toggle="modal" data-target="#myModal1-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                            </span>
+                            <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                            @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    }
+}
+
+
+
+
+<script type="text/javascript">
+    function SubMarks(k, nxt, prv) {
+        var tblname = '#subjects-' + k;
+        var tblnxt = '#subjects-' + nxt;
+        // alert(tblname);
+        //  alert(tblnxt);
+        var TableData;
+        TableData = JSON.stringify(storeTblValues());
+        // console.log("JsonString  = " + TableData + "\n");
+        // alert(TableData);
+        //post
+        if (TableData == "false") {
+            alert("Please Fill Theory Marks's as per Instructions");
+        }
+        else if (TableData != "false") {
+            // alert('Now Start:' + TableData);
+            $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/JqGrading", { "stdid": k, "CandSubject": TableData },
+                function (data) {
+                    //console.log('1');
+                    //   console.log('data' + data.status);
+                    $('#loading1-' + k).empty();
+                    //  alert('data.status  = ' + data.status);
+                    if (data.status == "0" || data.status == "-1") {
+                        alert("Theory Marks Alloted Failure, Please Try Again");
+                    }
+                    else if (data.status == "-2") {
+                        alert("Invalid Marks, Please Enter Theory Marks's as per Instructions !!");
+                    }
+                    else {
+                        alert("Theory Marks Alloted Successfully of Student : " + k);
+                        nxtDiv(nxt, k, prv);
+                    }
+                });
+        }
+
+        function storeTblValues() {
+            // alert('3');
+            var TableData = new Array();
+            $('' + tblname + ' tr').each(function (row, tr) {
+                TableData[row] = {
+                    //"SUB": $(tr).find('td:eq(0)').text()
+                    "SUB": $(tr).find('.chksub').val()
+                    , "OBTMARKS": $(tr).find('.chkclass').val()
+                    , "MINMARKS": $(tr).find('.chkmin').val()
+                    , "MAXMARKS": $(tr).find('.chkmax').val()
+                }
+            });
+            TableData.shift();  // first row will be empty - so remove
+            //alert(TableData);
+            return TableData;
+
+        }
+    }
+
+    function nxtDiv(nxt, crnt, prv) {
+        // var cid = '#myModal1-' + crnt
+        $('#myModal1-' + crnt).modal('hide');
+        if (nxt == "0" && prv == "0") { }
+        else if (nxt == "0" && prv != "0") {
+            $('#myModal1-' + prv).modal('show');
+        }
+        else if (prv == "0" && nxt != "0") {
+            $('#myModal1-' + nxt).modal('show');
+        }
+        else if (prv != "0" && nxt != "0") {
+            $('#myModal1-' + nxt).modal('show');
+        }
+    }
+
+
+</script>
+<script type="text/javascript">
+
+    function CheckMarks(obj, k, marks) {
+        if (obj.value == 'A' || obj.value == 'C' || obj.value == 'a' || obj.value == 'c' || obj.value == 'h' || obj.value == 'H' || obj.value == '') {
+            if (obj.value == 'A' || obj.value == 'a') {
+                obj.value = 'ABS';
+            }
+            else if (obj.value == 'C' || obj.value == 'c') {
+                obj.value = 'CAN';
+            } else if (obj.value == 'H' || obj.value == 'h') {
+                obj.value = 'HHH';
+            }
+            else if (obj.value == '') {
+                obj.value = '000';
+                alert("Please Enter OBT Marks less than equal to Max Marks !!");
+                return false;
+            }
+            return true;
+        }
+        else if (obj.value > marks) {
+            obj.value = '';
+            alert("Invalid Marks, Please Enter OBT Marks less than equal to Max Marks !!");
+            return false;
+        }
+        else {
+            // alert("call pad");
+            pad(obj, 3);
+            return true;
+        }
+    }
+
+    function pad(obj, length) {
+        // alert("pad:- " + obj)
+        var text = obj.value;
+        // alert("pad v:- " + text)
+        var str = '' + text;
+        // alert("pad str:- " + str)
+        while (str.length < length) {
+            str = '0' + str;
+        }
+        if (obj.value == 'A' || obj.value == 'C' || obj.value == 'a' || obj.value == 'c' || obj.value == 'H' || obj.value == 'h') { }
+        else {
+            obj.value = str;
+        }
+    }
+
+    //function CheckMarks(obj,k,marks) {
+    //  // alert(marks);
+    // // alert("obj value : " + obj.value);
+    //    if(obj.value == 'Z' || obj.value == 'X' || obj.value == 'z' || obj.value == 'z' || obj.value == '')
+    //    {
+    //        return true;
+    //    }
+    //    else if (obj.value == 'a+' || obj.value == 'a' || obj.value == 'b' || obj.value == 'c' || obj.value == 'd' || obj.value == 'e') {
+    //         return true;
+    //    }
+    //    else if (obj.value == 'A+' || obj.value == 'A' || obj.value == 'B' || obj.value == 'C' || obj.value == 'D' || obj.value == 'E') {
+    //        return true;
+    //    }
+    //    else
+    //    {
+    //        obj.value='';
+    //        alert("Invalid Grads, Please Enter GRADE's as per Grading Instructions !!");
+    //        return false;
+    //    }
+    //    //else{
+    //    //   // alert("call pad");
+    //    //    //pad(obj, 3);
+    //    //    return true;
+    //    //}
+    //}
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(".chkclass").off('keypress');
+
+        $(".chkclass").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if ((charCode >= 48 && charCode <= 57) || (charCode == 72) || (charCode == 104) || (charCode == 9) || (charCode == 8) || (charCode == 65) || (charCode == 67) || (charCode == 97) || (charCode == 99)) {
+                return true;
+            }
+            else {
+                alert("Invalid character, Enter Numeric Value or 'A' or 'C' or 'H' !!");
+                return false;
+            }
+        });
+
+
+        var value = document.getElementById('SelFilter').value;
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0'
+                //maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+    var form = $("#searchform").serialize();
+    $("#btnNext").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Next',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+            suGradingss: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#btnPrevious").click(function () {
+        $.ajax({
+            url: 'RegistrationPortal/Previous',
+            data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+            suGradingss: function (response) {
+                $("body").html(response);
+            }
+        });
+    });
+
+    $("#SelFilter").change(function () {
+        var value = document.getElementById('SelFilter').value;
+        $('#SearchString').val('');
+        if (value == 6) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '0'
+                //maxDate: '-10Y',
+
+            });
+
+        }
+        else if (value == 3 || value == 4 || value == 5) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+
+    });
+
+</script>
+
+
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+    /*input:required {
+         background-color: #FF9494 !important;
+        border:1px solid #999;
+    }*/
+</style>

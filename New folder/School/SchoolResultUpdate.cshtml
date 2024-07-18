@@ -1,0 +1,266 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "ResultUpdate";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+@*@using (Html.BeginForm("Admin_Result_Update", "School", FormMethod.Post, new { id = "Update_Result", enctype = "multipart/form-data" }))*@
+    @using (Html.BeginForm("SchoolResultUpdate", "School", FormMethod.Post, new { id = "searchform" }))
+    {
+    <h1>Student Result Update</h1>
+    <div style="color:green">@TempData["msg"]</div>
+    <div class="clearfix"></div>
+    <div class="row">
+        
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <div id="UpdateResult">
+                    <table style="width:50%">
+                        <tr>
+                            <td colspan="2">
+                                <p><b>@ViewBag.Message</b></p>
+                                @Html.HiddenFor(a => a.ID)
+                                @Html.HiddenFor(a => a.SearchResult)
+                                <input type="text" id="year" name="year" value=@ViewBag.year style="display:none;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="15%">FORM NAME</td>
+                           <td width="35%">
+                                <label>@Html.DisplayFor(a => a.FormName)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>STUDENT ID</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.SdtID)</label>
+                            </td>
+                        </tr>                        
+                        <tr>
+                            <td>CANDIDATE NAME</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.Candi_Name)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>FATHER'S NAME</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.Father_Name)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>MOTHER'S NAME</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.Mother_Name)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DOB</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.DOB)</label>
+                            </td>
+                        </tr>                        
+                    
+
+                        <tr>
+                            <td>GENDER</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.Gender)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Stream</td>
+                            <td>
+                                @Html.DropDownList("exam", new SelectList(ViewBag.MyEXM, "Value", "Text", ViewBag.SelectedExam))
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>RESULT</td>
+                            <td>
+                                @*@Html.TextBoxFor(a => a.Result, new { id = "Result", @maxlength = "6", })*@
+
+                                @{
+
+                                    var result = Model.StoreAllData.Tables[0].Rows[0]["RESULT"].ToString();
+
+                                    List<SelectListItem> resultlist = new List<SelectListItem>();
+                                    if (@result.ToString().Length > 0)
+                                    {
+                                        if (@result.ToString() == "PASS")
+                                        {
+                                            resultlist.Add(new SelectListItem { Text = "PASS", Value = "PASS" });
+                                            resultlist.Add(new SelectListItem { Text = "FAIL", Value = "FAIL" });
+                                            resultlist.Add(new SelectListItem { Text = "COMPARTMENT", Value = "COMPARTMENT" });
+                                            resultlist.Add(new SelectListItem { Text = "RLA", Value = "RLA" });
+                                            resultlist.Add(new SelectListItem { Text = "CANCEL", Value = "CANCEL" });
+                                            resultlist.Add(new SelectListItem { Text = "ABSENT", Value = "ABSENT" });
+                                        }
+                                        else if (@result.ToString() == "FAIL")
+                                        {
+                                            resultlist.Add(new SelectListItem { Text = "FAIL", Value = "FAIL" });
+                                            resultlist.Add(new SelectListItem { Text = "PASS", Value = "PASS" });
+                                            resultlist.Add(new SelectListItem { Text = "COMPARTMENT", Value = "COMPARTMENT" });
+                                            resultlist.Add(new SelectListItem { Text = "RLA", Value = "RLA" });
+                                            resultlist.Add(new SelectListItem { Text = "CANCEL", Value = "CANCEL" });
+                                            resultlist.Add(new SelectListItem { Text = "ABSENT", Value = "ABSENT" });
+                                        }
+                                        else if (@result.ToString() == "COMPARTMENT")
+                                        {
+                                            resultlist.Add(new SelectListItem { Text = "COMPARTMENT", Value = "COMPARTMENT" });
+                                            resultlist.Add(new SelectListItem { Text = "PASS", Value = "PASS" });
+                                            resultlist.Add(new SelectListItem { Text = "FAIL", Value = "FAIL" });
+                                            resultlist.Add(new SelectListItem { Text = "RLA", Value = "RLA" });
+                                            resultlist.Add(new SelectListItem { Text = "CANCEL", Value = "CANCEL" });
+                                            resultlist.Add(new SelectListItem { Text = "ABSENT", Value = "ABSENT" });
+                                        }
+                                        else if (@result.ToString() == "RLA")
+                                        {
+                                            resultlist.Add(new SelectListItem { Text = "RLA", Value = "RLA" });
+                                            resultlist.Add(new SelectListItem { Text = "PASS", Value = "PASS" });
+                                            resultlist.Add(new SelectListItem { Text = "FAIL", Value = "FAIL" });
+                                            resultlist.Add(new SelectListItem { Text = "COMPARTMENT", Value = "COMPARTMENT" });
+                                            resultlist.Add(new SelectListItem { Text = "CANCEL", Value = "CANCEL" });
+                                            resultlist.Add(new SelectListItem { Text = "ABSENT", Value = "ABSENT" });
+                                        }
+                                        else if (@result.ToString() == "CANCEL")
+                                        {
+                                            resultlist.Add(new SelectListItem { Text = "CANCEL", Value = "CANCEL" });
+                                            resultlist.Add(new SelectListItem { Text = "PASS", Value = "PASS" });
+                                            resultlist.Add(new SelectListItem { Text = "FAIL", Value = "FAIL" });
+                                            resultlist.Add(new SelectListItem { Text = "COMPARTMENT", Value = "COMPARTMENT" });
+                                            resultlist.Add(new SelectListItem { Text = "RLA", Value = "RLA" });
+                                            resultlist.Add(new SelectListItem { Text = "ABSENT", Value = "ABSENT" });
+                                        }
+                                        else if (@result.ToString() == "ABSENT")
+                                        {
+                                            resultlist.Add(new SelectListItem { Text = "ABSENT", Value = "ABSENT" });
+                                            resultlist.Add(new SelectListItem { Text = "PASS", Value = "PASS" });
+                                            resultlist.Add(new SelectListItem { Text = "FAIL", Value = "FAIL" });
+                                            resultlist.Add(new SelectListItem { Text = "COMPARTMENT", Value = "COMPARTMENT" });
+                                            resultlist.Add(new SelectListItem { Text = "RLA", Value = "RLA" });
+                                            resultlist.Add(new SelectListItem { Text = "CANCEL", Value = "CANCEL" });
+
+                                        }
+                                        else
+                                        {
+                                            resultlist.Add(new SelectListItem { Text = "RESULT", Value = "" });
+                                            resultlist.Add(new SelectListItem { Text = "PASS", Value = "PASS" });
+                                            resultlist.Add(new SelectListItem { Text = "FAIL", Value = "FAIL" });
+                                            resultlist.Add(new SelectListItem { Text = "COMPARTMENT", Value = "COMPARTMENT" });
+                                            resultlist.Add(new SelectListItem { Text = "RLA", Value = "RLA" });
+                                            resultlist.Add(new SelectListItem { Text = "CANCEL", Value = "CANCEL" });
+                                            resultlist.Add(new SelectListItem { Text = "ABSENT", Value = "ABSENT" });
+                                        }
+                                    }
+                                    if (@result.ToString().Length <= 0)
+                                    {
+                                        resultlist.Add(new SelectListItem { Text = "RESULT", Value = "" });
+                                        resultlist.Add(new SelectListItem { Text = "PASS", Value = "PASS" });
+                                        resultlist.Add(new SelectListItem { Text = "FAIL", Value = "FAIL" });
+                                        resultlist.Add(new SelectListItem { Text = "COMPARTMENT", Value = "COMPARTMENT" });
+                                        resultlist.Add(new SelectListItem { Text = "RLA", Value = "RLA" });
+                                        resultlist.Add(new SelectListItem { Text = "CANCEL", Value = "CANCEL" });
+                                        resultlist.Add(new SelectListItem { Text = "ABSENT", Value = "ABSENT" });
+
+                                    }
+                                    @Html.DropDownList("resultlist", resultlist, new { @class = "", id = "resultlist" })
+
+                                }
+                            </td>
+                        </tr>
+                       
+                       
+                        <tr>
+                            <td>TOTAL MARKS</td>
+                            <td>
+                                @Html.TextBoxFor(a => a.TotalMarks, new { id = "TotalMarks", @maxlength = "6", onkeypress = "return isNumberKey(event);", onpaste = "return false" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>OBTAINED MARKS</td>
+                            <td>
+                                @Html.TextBoxFor(a => a.ObtainedMarks, new { id = "ObtainedMarks", @maxlength = "6", onkeypress = "return isNumberKey(event);", onpaste = "return false" })
+                            </td>
+                        </tr>
+                        @*<tr>
+                            <td>Reclock</td>
+                            <td>
+                                @{
+                                    var reclock = Model.StoreAllData.Tables[0].Rows[0]["reclock"].ToString();
+
+                                    List<SelectListItem> reclocklist = new List<SelectListItem>();
+                                    if (@reclock.ToString() == "1")
+                                    {
+                                        resultlist.Add(new SelectListItem { Text = "LOCK", Value = "LOCK" });
+                                        resultlist.Add(new SelectListItem { Text = "UNLOCK", Value = "UNLOCK" });
+                                    }
+                                    else
+                                    {
+                                        resultlist.Add(new SelectListItem { Text = "UNLOCK", Value = "UNLOCK" });
+                                        resultlist.Add(new SelectListItem { Text = "LOCK", Value = "LOCK" });
+                                    }
+                                    @Html.DropDownList("reclocklist", reclocklist, new { @class = "", id = "reclocklist" })
+                                }
+                                                                
+                            </td>
+
+                        </tr>*@
+                        <tr>
+<td></td>
+                            <td>
+                                @*<input type="submit" name="Update Result" value="Update Result" formaction="Update_Result" formmethod="post" />*@
+                                <input type="submit" id="Update_Result" value="UPDATE RESULT" onclick="return formVal();" />
+                            
+                                @*<input type="submit" id="btncancel" formaction="adminresultpage" value="Cancel" />*@
+                                <input type="button" value="CANCEL" onclick="javascript:document.location.href='@Url.Action("Schoolresultpage", "school")'" /><br />&nbsp;<br />
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function formVal() {
+        
+        if (document.getElementById("exam").value == '' || document.getElementById("exam").value == null) {
+            alert('Select Stream');
+            document.getElementById("exam").focus();
+            return false;
+        }
+        if (document.getElementById("resultlist").value == '' || document.getElementById("resultlist").value == null) {
+            alert('Select result list');
+            document.getElementById("resultlist").focus();
+            return false;
+        }
+        if (document.getElementById("TotalMarks").value == '' || document.getElementById("TotalMarks").value == null) {
+            alert('Enter Total Marks.');
+            document.getElementById("TotalMarks").focus();
+            return false;
+        }
+        if (document.getElementById("ObtainedMarks").value == '' || document.getElementById("ObtainedMarks").value == null) {
+            alert('Enter Obtained Marks.');
+            document.getElementById("ObtainedMarks").focus();
+            return false;
+        }
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function OpenDialog() {
+        window.open("some url", "DialogName", "height=200,width=200,modal=yes,alwaysRaised=yes");
+    }
+
+</script>

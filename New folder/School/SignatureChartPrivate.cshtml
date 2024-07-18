@@ -1,0 +1,280 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "Signature Chart Private";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<link rel="stylesheet" href="~/barcode.css" type="text/css" charset="utf-8" />
+@*<style type="text/css">
+    body {
+        font-size: 11px;
+    }
+    td {
+        line-height: 16px;
+    }
+
+    .algtop {
+        text-align: center;
+        vertical-align: top;
+    }
+    .brack {
+        page-break-before: always;
+    }
+
+    .footer {
+        position: fixed;
+        bottom: 0;
+        vertical-align: bottom;
+        text-align: right;
+        width: 100%;
+        display: block;
+    }
+</style>*@
+@using (Html.BeginForm("SignatureChartPrivate", "School", FormMethod.Post, new { id = "searchform" }))
+{
+    @Html.Hidden("cid", (string)ViewBag.cid)
+    <div class="row noprint">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-5">
+                    Select Exam Centre Block
+                    @Html.DropDownList("ExamCent", new SelectList(ViewBag.MySchCode, "Value", "Text"), "---Select Exam Centre Block--", new { @class = "ddlCentcode" })
+                </div>
+                <div class="col-md-2">
+                    Select Set
+                    @Html.DropDownList("SelSet", new SelectList(ViewBag.MySelSet, "Value", "Text"), "---Select Set--", new { @class = "", @required = "required" })
+                </div>
+                <div class="col-md-2">
+                    Select Subject
+                    @Html.DropDownList("ExamSub", new SelectList(ViewBag.MyExamSub, "Value", "Text"), "---Select Subject--", new { @class = "", @required = "required" })
+                </div>
+                <div class="col-md-2">
+                    Roll Number
+                    @Html.TextBoxFor(m => m.ExamRoll, new { id = "ExamRoll", @maxlength = "10", onkeypress = "return isNumberKey(event);", placeholder = "Roll No." })
+                </div>
+                <div class="col-md-1">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm();" title="Search Record" /></div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        <input type="button" value="Print" dowload class="btn" onclick="window.print()" />
+                        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                    </td>
+                </tr>
+            </table>
+            </div>
+        </div>
+            <div class="clearfix"></div>
+            <div class="row">
+			<div class="col-md-12">
+			 <table width="100%" border="1">
+             
+                  @{
+                      if (ViewBag.TotalCount > 0)
+                      {
+                          var dist = Model.StoreAllData.Tables[0].Rows[0]["dist"].ToString();
+                          var distnmp = Model.StoreAllData.Tables[0].Rows[0]["distnmp"].ToString();
+                          var cent = Model.StoreAllData.Tables[0].Rows[0]["cent"].ToString();
+                          var centP = Model.StoreAllData.Tables[0].Rows[0]["centP"].ToString();
+                          var pDate = Model.StoreAllData.Tables[0].Rows[0]["PrintDate"].ToString();
+                          var sub = Model.StoreAllData.Tables[0].Rows[0]["sub"].ToString();
+                          var subnm = Model.StoreAllData.Tables[0].Rows[0]["subnm"].ToString();
+                          var ExamDatePvt = Model.StoreAllData.Tables[0].Rows[0]["ExamDatePvt"].ToString();
+                          var set = Model.StoreAllData.Tables[0].Rows[0]["set"].ToString();
+
+                          <thead>
+                              <tr>
+                                  <td width="10%"><img src="~/Images/Printlogo.jpg" alt="PSEB" /></td>
+                                  <td style="font-size:24px;text-align:center;line-height:25px;vertical-align:top" class="kdsfont" colspan="4">
+                                      <span style="font-size:32px"> Æâ²ØÉ Ó¨ÞÐ ÚÓóÚª¤Ø ÉëÏ¸</span> <br />
+                                      ÌèÚ¶ñ¨ (ÂÓÒÜ Óñã»Û) ÆñÛÚª¤Ø ÌØÏ°, 2018<br />
+                                      ÕÓ¼ØªÏ-°ØÏ¶ (ÚÐª¼Û)
+                                  </td>
+                                  
+                                  <td style="text-align:right" width="10%">Don't fold & stapled<br /><span class="kdsfont">Ú²ÐðØ ¨ë¸ ¤¼ã ÅÙ</span><br /><span class="kdsfont">@dist @distnmp</span></td>
+                              </tr>
+                              <tr>
+                                  <td class="kdsfont">¨ã×ÂÏ ¨ë¸ ¤¼ã ÅÙ</td>
+                                  <td colspan="4" class="kdsfont">@cent - <span class="kdsfont">@centP</span></td>
+                                  <td>&nbsp;</td>
+                              </tr>
+                              <tr>
+                                  <td class="kdsfont">ÚÌ¼Û / ÚÒÓÖã</td>
+                                  <td colspan="4">@ExamDatePvt (@sub) @subnm</td>
+                                  <td class="kdsfont" style="text-align:right">Óèó¶  : @set</td>
+                              </tr>
+                              <tr>
+                                  <td rowspan="5" class="kdsfont">Çë¶ë</td>
+                                  <td class="kdsfont">ÏëÐ ÅâÉÏ</td>
+                                  <td class="kdsfont">Ó¶Þ¸è×¶ ¤Ø¥Û. ¸Û.</td>
+                                  <td rowspan="5" class="kdsfont" width="10%">Çë¶ë</td>
+                                  <td class="kdsfont">ÏëÐ ÅâÉÏ</td>
+                                  <td class="kdsfont">Ó¶Þ¸è×¶ ¤Ø¥Û. ¸Û.</td>
+                              </tr>
+                              <tr>
+                                  <td colspan="2" class="kdsfont">ÅØÌ/ÚÆ¼Ø ÂØ ÅÙ/ÌØ¼Ø ÂØ ÅÙ</td>
+                                  <td colspan="2" class="kdsfont">ÅØÌ/ÚÆ¼Ø ÂØ ÅÙ/ÌØ¼Ø ÂØ ÅÙ</td>
+                              </tr>
+                              <tr>
+                                  <td class="kdsfont">¦Ýó¼Ï Æó¼ÏÛ ÅâÉÏ</td>
+                                  <td class="kdsfont">ÆñÓÖÅ Æó¼Ï ¨ë¸</td>
+                                  <td class="kdsfont">¦Ýó¼Ï Æó¼ÏÛ ÅâÉÏ</td>
+                                  <td class="kdsfont">ÆñÓÖÅ Æó¼Ï ¨ë¸</td>
+                              </tr>
+                              <tr>
+                                  <td class="kdsfont">¤ÆÐë¸ ¨Û¼ã ÕÓ¼ØªÏ</td>
+                                  <td class="kdsfont">ÕÓ¼ØªÏ</td>
+                                  <td class="kdsfont">¤ÆÐë¸ ¨Û¼ã ÕÓ¼ØªÏ</td>
+                                  <td class="kdsfont">ÕÓ¼ØªÏ</td>
+                              </tr>
+                          </thead>
+                      }
+
+                  }
+             
+            </table>
+			</div>
+			
+			
+                <div class="col-md-12" style="vertical-align:top">
+                    @{
+                        int columns = 1;
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int pageCnt = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                //var SrNo = Model.StoreAllData.Tables[0].Rows[i]["SrNo"].ToString();
+                                var dist = Model.StoreAllData.Tables[0].Rows[i]["dist"].ToString();
+                                var distnmp = Model.StoreAllData.Tables[0].Rows[i]["distnmp"].ToString();
+                                var set = Model.StoreAllData.Tables[0].Rows[i]["set"].ToString();
+                                var cent = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                                var centP = Model.StoreAllData.Tables[0].Rows[i]["centP"].ToString();
+                                var pDate = Model.StoreAllData.Tables[0].Rows[i]["PrintDate"].ToString();
+                                var sub = Model.StoreAllData.Tables[0].Rows[i]["sub"].ToString();
+                                var subnm = Model.StoreAllData.Tables[0].Rows[i]["subnm"].ToString();
+                                var ExamDatePvt = Model.StoreAllData.Tables[0].Rows[i]["ExamDatePvt"].ToString();
+                                //var BarCodeValue = Model.StoreAllData.Tables[0].Rows[i]["BarCodeValue"].ToString();
+                                pageCnt = pageCnt + 1;
+                                <div>
+                                    @for (int k = 0; k < Model.StoreAllData.Tables[1].Rows.Count; k++)
+                                    {
+                                        var cnm2 = Model.StoreAllData.Tables[1].Rows[k]["cnm"].ToString();
+                                        var fnm2 = Model.StoreAllData.Tables[1].Rows[k]["fnm"].ToString();
+                                        var mnm2 = Model.StoreAllData.Tables[1].Rows[k]["mnm"].ToString();
+                                        var roll2 = Model.StoreAllData.Tables[1].Rows[k]["roll"].ToString();
+                                        var pht2 = Model.StoreAllData.Tables[1].Rows[k]["pht"].ToString();
+                                        var sig2 = Model.StoreAllData.Tables[1].Rows[k]["sig"].ToString();
+                                        var sub2 = Model.StoreAllData.Tables[1].Rows[k]["sub"].ToString();
+                                        var subnm2 = Model.StoreAllData.Tables[1].Rows[k]["subnm"].ToString();
+                                        var ExamDatePvt2 = Model.StoreAllData.Tables[1].Rows[k]["ExamDatePvt"].ToString();
+                                        var type2 = Model.StoreAllData.Tables[1].Rows[k]["type"].ToString();
+                                        //var BarCodeValue = Model.StoreAllData.Tables[1].Rows[k]["BarCodeValue"].ToString();
+
+                                        var OldRoll = Model.StoreAllData.Tables[1].Rows[k]["OLDROLL"].ToString();
+
+                                        if (pht2.Contains("Correction") || type2 == "1" || type2 == "3")
+                                        {
+                                            pht2 = "https://registration2022.pseb.ac.in/upload/" + pht2;
+                                        }
+                                        if (sig2.Contains("Correction") || type2 == "1" || type2 == "3")
+                                        {
+                                            sig2 = "https://registration2022.pseb.ac.in/upload/" + sig2;
+                                        }
+                                        if (pht2.Contains("https://s3-ap-southeast-1.amazonaws.com/pseb/"))
+                                        {
+                                            pht2 = (pht2).Replace("https://s3-ap-southeast-1.amazonaws.com/pseb/", "https://registration2022.pseb.ac.in/");
+                                        }
+                                        if (sig2.Contains("https://s3-ap-southeast-1.amazonaws.com/pseb/"))
+                                        {
+                                            sig2 = (sig2).Replace("https://s3-ap-southeast-1.amazonaws.com/pseb/", "https://registration2022.pseb.ac.in/");
+                                        }
+                                        if (pht2.Contains("/open2016/"))
+                                        {
+                                            pht2 = (pht2).Replace("upload/", "");
+                                        }
+                                        if (sig2.Contains("/open2016/"))
+                                        {
+                                            sig2 = (sig2).Replace("upload/", "");
+                                        }
+                                        //if (@BarCodeValue == Model.StoreAllData.Tables[1].Rows[k]["BarCodeValue"].ToString())
+                                        if (@sub == Model.StoreAllData.Tables[1].Rows[k]["sub"].ToString())
+                                        {
+
+                                            int col = k % columns;
+
+                                            if (true)
+                                            {
+                                                // left
+                                                <div style="width:50%;float:left;">
+                                                    <table border="1" width="100%">
+													<tr>
+<td rowspan="5" width="20%"><img src="@pht2" class="" style="height:74px;width:74px" alt="Photo" id="Photo" /></td>
+</tr>
+<tr>
+<td><span style="font-size:18px">@roll2</span></td>
+<td>@OldRoll</td>
+</tr>
+<tr>
+<td colspan="2"><span class="kdsfont">@cnm2 / @fnm2 / @mnm2</span></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td></td>
+</tr>
+<tr>
+<td><img src="@sig2" style="height:30px;width:150px" alt="Sign" id="Sign" /></td>
+<td></td>
+</tr>
+													
+													
+													
+													
+                                                      
+                                                    </table>
+                                                </div>
+                                            }
+
+                                        }
+
+                                    }
+                                </div>
+                            }
+
+                        }
+                        else
+                        {
+
+                            <p>@ViewBag.Message</p>
+
+                        }
+                    }
+
+                </div>
+            </div>
+            @*<footer class="footer">
+                <span style="float:right">Room No.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span class="kdsfont" style="float:left">¨ã×ÂÏ ÓÝÆÏ¸â¶ Âã ÆÞÏã ÕÓ¼ØªÏ</span>
+            </footer>*@
+            }
+            <script type="text/javascript">
+                function valForm() {
+                    var schoolcode = document.getElementById("ExamCent").value;
+                    if (schoolcode == "" || document.getElementById("ExamCent").value == null) {
+                        alert("Select Block");
+                        document.getElementById("ExamCent").focus();
+                        return false;
+                    }
+                }
+            </script>
+
+
+
+
+

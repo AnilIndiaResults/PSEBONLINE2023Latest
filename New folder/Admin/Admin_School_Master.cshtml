@@ -1,0 +1,484 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+
+@{
+    ViewBag.Title = "Show Database value in DataTable";
+}
+
+@if (Session["UserName"] != null && Session["RoleType"].ToString() == "Admin") { }
+else { Response.Redirect("~/Admin"); }
+
+<div class="container">
+    <h1>School Details</h1>
+    <div class="row">
+        @using (Html.BeginForm("Admin_School_Master", "School", FormMethod.Post, new { id = "searchform" }))
+        {
+            if (ViewBag.MyDist != null)
+            {
+                @*required = "required"*@
+                <div class="col-md-2">@Html.DropDownList("SchoolType", new SelectList(ViewBag.MySchoolType, "Value", "Text", ViewBag.SelectedSchoolType), "--All School Type---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("ClassType", new SelectList(ViewBag.MyClassType, "Value", "Text", ViewBag.SelectedClassType), "--All Class ---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District---", new { @class = "" })</div>
+                <div class="col-md-2">@Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" /></div>
+                <div class="col-md-2">
+                    <input type="submit" value="Search" /> <input type="submit" name="Reset" value="Reset" formaction="CancelForm" formmethod="post" />
+                </div>
+            }
+        }
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">Total School:  @ViewBag.TotalCount1</div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>SCHL</th>
+                        <th>UDISE Code</th>
+                        <th>ID NO.</th>
+                        <th>School Name</th>
+                        <th>District</th>
+                        <th>Status</th>
+                        <th>Verify</th>
+                        <th>Approve</th>
+                        <th>Action</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 30 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var schid = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                                var udisecode = Model.StoreAllData.Tables[0].Rows[i]["udisecode"].ToString();
+                                var IDNO = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                                var SCHLE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                                var StationE = Model.StoreAllData.Tables[0].Rows[i]["STATIONE"].ToString();
+                                var DISTE = Model.StoreAllData.Tables[0].Rows[i]["DISTE"].ToString();
+                                var status = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                                var vfalg = Model.StoreAllData.Tables[0].Rows[i]["vflag"].ToString();
+                                var Approved = Model.StoreAllData.Tables[0].Rows[i]["Approved"].ToString();
+
+                                var PASSWORD = Model.StoreAllData.Tables[0].Rows[i]["PASSWORD"].ToString();
+                                var EMAILID = Model.StoreAllData.Tables[0].Rows[i]["email"].ToString();
+
+                                var SeniorCCE = Model.StoreAllData.Tables[0].Rows[i]["SeniorCCE"].ToString();
+                                var MatricCCE = Model.StoreAllData.Tables[0].Rows[i]["MatricCCE"].ToString();
+                                Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        @SCHL
+                                        <div class="container">
+
+                                            @* View/Send Password*@
+                                            <div class="modal fade" id="myModal2-@SCHL" role="dialog">
+                                                <div class="modal-dialog" style="width:50%">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>View Details of Schl : @SCHL </h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                <tr>
+                                                                    <td style="text-align:center">Password :@PASSWORD </td>
+                                                                    <td style="text-align:center"></td>
+                                                                    <td style="text-align:center"><input type="button" class="btn" value="Send Password" id="btnSendPassword" onclick="SendPassword('@SCHL','')" /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="text-align:center">Email Id : @EMAILID </td>
+                                                                    <td style="text-align:center"></td>
+                                                                    <td style="text-align:center"><input type="button" class="btn" value="Send Email" id="btnSendEmail" onclick="SendEmail('@SCHL','')" /></td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div id="loading1"></div>
+                                                </div>
+                                            </div>
+
+                                            @* Unlock CCE*@
+
+                                            <div class="modal fade" id="myModal3-@SCHL" role="dialog">
+                                                <div class="modal-dialog" style="width:50%">
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h3>View Details of Schl : @SCHL </h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                <tr>
+                                                                    <td colspan="3"><span class="rqf">Note: Full School has been unlocked of selected CCE after click on unlock CCE</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="text-align:left">
+                                                                        @{
+                                                                            List<SelectListItem> cce = new List<SelectListItem>();
+                                                                            if (SeniorCCE == "1")
+                                                                            {
+                                                                                cce.Add(new SelectListItem { Text = "Senior CCE", Value = "12CCE" });
+                                                                            }
+                                                                            if (MatricCCE == "1")
+                                                                            {
+                                                                                cce.Add(new SelectListItem { Text = "Matric CCE", Value = "10CCE" });
+                                                                            }
+
+                                                                        }
+                                                                        @Html.DropDownList(string.Format("selcce_{0}", SCHL), cce, "--Select--", new { @class = "cce" })
+                                                                    </td>
+                                                                    <td style="text-align:center"></td>
+                                                                    <td style="text-align:right"><input type="button" class="btn" value="Unlock CCE" id="btnUnlockCCE" onclick="UnlockCCE('@SCHL')" /></td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div id="loading2"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @udisecode
+                                    </td>
+                                    <td>
+                                        @IDNO
+                                    </td>
+                                    <td>
+                                        @SCHLE,@StationE
+                                    </td>
+                                    <td>
+                                        @DISTE
+                                    </td>
+                                    <td>
+                                        @status
+                                    </td>
+                                    <td>
+                                        @vfalg
+                                    </td>
+                                    <td>
+                                        @Approved
+                                    </td>
+                                    <td>
+                                        <div class="cart">
+                                            Choose Action <span class="caret"></span>
+                                            <div id="sidebar">
+                                                <ul>
+                                                    <li style="@(ViewBag.IsModiFy == 1 ? " display:block" : "display:none" )">
+                                                        @Html.ActionLink("Modify", "School_Modification_Form", new { id = SCHL })
+                                                    </li>
+                                                    <li style="@(ViewBag.IsModiFyOpen == 1 && status=="DONE" ? "display:block" : "display:none" )">
+                                                        @Html.ActionLink("Modify Open", "Open_School_Modification_Form", new { id = SCHL })
+                                                    </li>
+                                                    <li style="@(ViewBag.IsView == 1 ? " display:block" : "display:none" )">
+                                                        @Html.ActionLink("View", "School_View_Form", new { id = SCHL })
+                                                    </li>
+
+                                                    <li style="@(ViewBag.IsView == 1 ? " display:block" : "display:none" )">
+                                                        <a href="" data-toggle="modal" data-target="#myModal2-@SCHL">View/Send Password and Email</a>
+                                                    </li>
+                                                    @*
+                                        <li style="@(ViewBag.IsView == 1 ? " display:block" : "display:none" )">
+                                            @Html.ActionLink("History", "School_History", new { id = SCHL })
+                                        </li>*@
+
+                                                    <li style="@(ViewBag.IsPrint == 1 && status=="DONE" ? "display:block" : "display:none" )">
+                                                        @Html.ActionLink("Print Certificate", "AffiliationCertificate", "Admin", new { id = SCHL }, null)
+                                                    </li>
+                                                    <li style="@(ViewBag.IsLink == 1 ? " display:block" : "display:none" )">
+                                                        @Html.ActionLink("Link other School", "LinkOtherSchool", new { id = SCHL })
+                                                    </li>
+                                                    @if (SeniorCCE == "1" || MatricCCE == "1")
+                                                    {
+                                                        <li>
+                                                            <a data-toggle="modal" data-target="#myModal3-@SCHL">Unlock CCE</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="8">
+
+                                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                                            &nbsp;
+
+                                            @if (ViewBag.pagesize == 1)
+
+                                            {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "Admin_School_Master", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "Admin_School_Master", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                                }
+                                            }
+                                            else
+                                            {
+
+                                                @Html.ActionLink("<<", "Admin_School_Master", new { page = 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink("< Prev", "Admin_School_Master", new { page = ViewBag.pagesize - 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "Admin_School_Master", new { page = ViewBag.pagesize + 1, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "Admin_School_Master", new { page = ViewBag.pn, SelList = ViewBag.SelectedItem, SearchString = ViewBag.Searchstring })
+                                                }
+
+                                            }
+
+
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+
+
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+
+
+            </div>
+        </div>
+    </div>
+    @*<a href="javascript:void(0);" onclick="history.go(-1);" style="-moz-user-select: none;background-image: none;border: 1px solid transparent;border-radius: 4px;
+        cursor: pointer;    display: inline-block;    font-size: 14px;    font-weight: 400;    line-height: 1.42857;    margin-bottom: 0;    padding: 6px 12px;    text-align: center;
+        vertical-align: middle;    white-space: nowrap;    background-color: #fb9709;    border-color: #f08f06;    color: #fff;cursor:pointer">Back</a>*@
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<script type="text/javascript">
+
+
+
+    //UnlockCCE
+    function UnlockCCE(k) {        
+        var flag = 0;       
+        var selcce = [];
+        $.each($(".cce option:selected"), function () {
+            selcce.push($(this).val());
+        });
+        //alert("You have selected the cce - " + selcce.join(", "));
+      
+        var selcceValue = selcce.join(", ");       
+        if (selcceValue == "") {            
+            flag = 1;
+        }       
+        if (flag == 1) {
+            alert("Select CCE");
+            return false;
+        }
+        else {
+            $('#loading2').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/UnlockCCE", { "Schl": k, "Type": selcceValue }, // 11 for Add Remarks
+                function (data) {
+                    $('#loading2').empty();
+                    if (data.status == "1") {                        
+                        alert("Unlocked Successfully");
+                        $('#myModal3-' + k).modal('hide');
+                    }
+                    else if (data.status == "2") {
+                        alert("Data Not Found");
+                        $('#myModal3-' + k).modal('hide');
+                    }                   
+                    else if (data.status == "-1") {
+                        $('#myModal3-' + k).modal('hide');
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Unlocked Failure");
+                    }
+                });
+        }
+    }
+
+
+    //SendPassword
+    function SendPassword(Id, k) {
+
+        var flag = 0;
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/JqSendPasswordEmail", { "Schl": Id, "Type": 1, "SentTo": k }, // 11 for Add Remarks
+                function (data) {
+                    $('#loading1').empty();
+                    if (data.status == "1") {
+                        //  window.location.href = '/Admin/ViewDuplicateCertificate';
+                        alert("Password Send Successfully");
+                        $('#myModal2-' + Id).modal('hide');
+                    }
+                    else {
+                        alert("Failure, Please Try Again.");
+                    }
+                });
+        }
+    }
+
+    function SendEmail(Id, k) {
+        var flag = 0;
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/JqSendPasswordEmail", { "Schl": Id, "Type": 2, "SentTo": k }, // 11 for Add Remarks
+                function (data) {
+                    $('#loading1').empty();
+                    if (data.status == "1") {
+                        alert("Email Send Successfully");
+                        $('#myModal2-' + Id).modal('hide');
+                    }
+                    else {
+                        alert("Failure, Please Try Again.");
+                    }
+                });
+        }
+    }
+</script>
+
+
+<script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'School/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'School/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            if (value == 1 || value == 3 || value == 5) {
+                $("#searchform").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        // alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    };
+                });
+            } else {
+                $("#searchform").off('keypress');
+            }
+
+        });
+    });
+</script>
+
+@*<script type='text/javascript'>
+    var isCtrl = false;
+    document.onkeyup = function (e) {
+        if (e.which == 17)
+            isCtrl = false;
+    }
+    document.onkeydown = function (e) {
+        if (e.which == 17)
+            isCtrl = true;
+    }
+    var isNS = (navigator.appName == "Netscape") ? 1 : 0;
+    if (navigator.appName == "Netscape") document.captureEvents(Event.MOUSEDOWN || Event.MOUSEUP);
+    function mischandler() {
+        return false;
+    }
+    function mousehandler(e) {
+        var myevent = (isNS) ? e : event;
+        var eventbutton = (isNS) ? myevent.which : myevent.button;
+        if ((eventbutton == 2) || (eventbutton == 3)) return false;
+    }
+    document.oncontextmenu = mischandler;
+    document.onmousedown = mousehandler;
+    document.onmouseup = mousehandler;
+</script>*@

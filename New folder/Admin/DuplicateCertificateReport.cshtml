@@ -1,0 +1,274 @@
+﻿@model PSEBONLINE.Models.DuplicateCertificate
+@{
+    ViewBag.Title = "Duplicate Certificate Report";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<script type="text/javascript">
+    $("#btnPrint").live("click", function () {
+        var divContents = $("#dvContainer").html();
+        var printWindow = window.open('', '', 'height=800,width=1000px');
+        printWindow.document.write('<html><head><title>Duplicate Certificate Report</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    });
+    $("#btnPrintStatus").live("click", function () {
+        var divContents = $("#tblStatus").html();
+        var printWindow = window.open('', '', 'height=800,width=1000px');
+        printWindow.document.write('<html><head><title>Duplicate Certificate Report Status</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    });
+</script>
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>Duplicate Certificate Report</h1>
+<div class="row" id="divMain1"  >
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("DuplicateCertificateReport", "Admin", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-2">Select Branch @Html.DropDownList("Branch", new SelectList(ViewBag.MyBranch, "Value", "Text", ViewBag.SelectedBranch), "--All Branch--", new { @class = "" })</div>
+                <div class="col-md-2">Select District @Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District--", new { @class = "" })</div>
+
+                <div class="col-md-2">
+                    From Date <input type="text" onkeypress="return false" id="FromDate" name="FromDate" placeholder="dd/mm/yyyy" class="date" value="@Request["FromDate"]" />
+                </div>
+                <div class="col-md-2">
+                    To Date <input type="text" onkeypress="return false" id="ToDate" name="ToDate" placeholder="dd/mm/yyyy" class="date" value="@Request["ToDate"]" />
+                </div>
+                <div class="col-md-2">
+                    Status @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <input type="submit" value="Go" />
+                    <input type="submit" name="submit" value="Reset" />
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 rqf">Note : Kindly click search button to view report.</div>
+            }
+        </fieldset>
+        </div>
+    <div class="clearfix"></div>
+        <div class="col-md-12 text-right">
+            @if (ViewBag.TotalCount > 0)
+            {
+                <input type="button" class="btn" value="Print Status" id="btnPrintStatus" />
+            }
+        </div>
+    <div class="clearfix"></div>
+        <div class="col-md-12" id="tblStatus">
+            <div class="table-responsive">
+                <table width="100%" border="1" style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px">
+                    <thead>
+                        <tr>
+                            <td colspan="2" style="border-right:0 !important"><div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div></td>
+                            <td colspan="6" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                                <span style="font-size:28px">Punjab School Education Board</span><br />
+                                <span>Duplicate Certificate Status</span>
+                            <td align="right" style="border-left:0 !important">Print Date : @DateTime.Now.ToString("dd/MM/yyyy hh:mm") &nbsp;</td>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <th style="color:darkslateblue;text-align:left;font-size:13px" width="10%">Branch</th>
+                        <th style="color:black;text-align:center;font-size:13px" width="10%">Total</th>
+                        <th style="color:red;text-align:center;font-size:13px" width="10%">Pending</th>
+                        <th style="color:darkorange;text-align:center;font-size:13px" width="10%">In Process</th>
+                        <th style="color:darkmagenta;text-align:center;font-size:13px" width="10%">Printing</th>
+                        <th style="color:dodgerblue;text-align:center;font-size:13px" width="10%">Dealing Set</th>
+                        <th style="color:darkred;text-align:center;font-size:13px" width="10%">Objection</th>
+                        <th style="color:darkviolet;text-align:center;font-size:13px" width="20%">Certificate Printed</th>
+                        <th style="color:darkgreen;text-align:center;font-size:13px" width="20%">Dispatched</th>
+                    </tr>               
+                    
+                        @if (Model.StoreAllData.Tables[2].Rows.Count > 0)
+                        {
+                            for (int p = 0; p < Model.StoreAllData.Tables[2].Rows.Count; p++)
+                            {
+                                var Br = Model.StoreAllData.Tables[2].Rows[p]["Br"].ToString();
+                                var tot = Model.StoreAllData.Tables[2].Rows[p]["tot"].ToString();
+                                var pend = Model.StoreAllData.Tables[2].Rows[p]["pend"].ToString();
+                                var Prc = Model.StoreAllData.Tables[2].Rows[p]["Prc"].ToString();
+                                var Prnt = Model.StoreAllData.Tables[2].Rows[p]["Prnt"].ToString();
+                                var dset = Model.StoreAllData.Tables[2].Rows[p]["dset"].ToString();
+                                var desp = Model.StoreAllData.Tables[2].Rows[p]["desp"].ToString();
+                                var crt = Model.StoreAllData.Tables[2].Rows[p]["crt"].ToString();
+                                var dspch = Model.StoreAllData.Tables[2].Rows[p]["dspch"].ToString();
+                                <tr>
+                                    <td style="color:darkslateblue;text-align:left;font-size:13px">&nbsp;@Br</td>
+                                    <td style="color:black;text-align:center;font-size:13px">@tot</td>
+                                    <td style="color:red;text-align:center;font-size:13px"> @pend</td>
+                                    <td style="color:darkorange;text-align:center;font-size:13px"> @Prc</td>
+                                    <td style="color:darkmagenta;text-align:center;font-size:13px"> @Prnt</td>
+                                    <td style="color:dodgerblue;text-align:center;font-size:13px"> @dset</td>
+                                    <td style="color:darkred;text-align:center;font-size:13px"> @desp</td>
+                                    <td style="color:darkviolet;text-align:center;font-size:13px"> @crt</td>
+                                    <td style="color:darkgreen;text-align:center;font-size:13px"> @dspch</td>
+                                </tr>
+                            }                       
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+            <div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 text-right">
+        @if (ViewBag.TotalCount > 0)
+        {
+            <input type="button" class="btn" value="Print Report" id="btnPrint" />
+        }
+    </div>
+
+            <div class="clearfix"></div>
+            <div class="col-md-12" id="dvContainer">
+                <div class="table-responsive">
+                    <table width="100%" border="1" style="border-collapse:collapse;width:100%;font-family:Arial, Helvetica, sans-serif;font-size:12px">
+                        <thead>
+                            <tr>
+                                <td colspan="3" style="border-right:0 !important">
+                                    <div style="padding:2px"><img src="~/Images/Printlogo.jpg" width="60px" height="60px" alt="PSEB" /></div>
+                                </td>
+                                <td colspan="5" style="font-size:16px;text-align:center;line-height:24px;vertical-align:top;border-left:0 !important;border-right:0 !important;padding-top:8px">
+                                    <span style="font-size:28px">Punjab School Education Board</span><br />
+                                    <span style="@(Session["AdminType"].ToString().ToUpper() == "DM" ? "display:block" : "display:none")">District Sub Officer : @ViewBag.UserDistNM.ToString()<br /></span>
+                                    
+                                    <span>Duplicate Certificate List</span>
+                                <td align="right" colspan="2" style="border-left:0 !important">Print Date : @DateTime.Now.ToString("dd/MM/yyyy") &nbsp;</td>
+                            </tr>
+                            @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                    <tr>
+                             <td style="font-size:13px" colspan="3">&nbsp;From Date: @ViewBag.FromDate</td>
+                             <td style="font-size:13px" colspan="2">&nbsp;To Date: @ViewBag.ToDate</td>
+                             <td style="font-size:13px" colspan="2">&nbsp;Status: @ViewBag.SelectedName</td>
+                             <td style="font-size:13px" colspan="3">&nbsp;Branch: @ViewBag.SelectedBranchName</td>
+                    </tr>                 
+                        }
+                            }
+                            <tr class="active-tr">
+                                <th width="5%">S.No</th>
+                                <th width="5%">Set</th>
+                                <th width="15%">District</th>
+                                <th width="9%">Dairy No.</th>
+                                <th width="10%">Dairy Date</th>
+                                <th width="15%">Roll/Year/Session/Class</th>
+                                <th width="15%">Candidate Details</th>
+                                <th width="13%">As Per Record/Corrections</th>
+                                <th width="13%">Fee (Receipt/Date/Amount)</th>
+                                <th width="10%">Status</th>
+                            </tr>
+                        </thead>
+                        @{
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 20 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    d = d + 1;
+                                    var Id = Model.StoreAllData.Tables[0].Rows[i]["Id"].ToString();
+                                    var DairyNo = Model.StoreAllData.Tables[0].Rows[i]["DairyNo"].ToString();
+                                    var DairyDate = Model.StoreAllData.Tables[0].Rows[i]["DairyDate"].ToString();
+                                    var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                    var Session1 = Model.StoreAllData.Tables[0].Rows[i]["Session"].ToString();
+                                    var Roll = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                                    var DIST = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();
+                                    var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                                    var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                                    var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                                    var DispNo = Model.StoreAllData.Tables[0].Rows[i]["DispNo"].ToString();
+                                    var DispDate = Model.StoreAllData.Tables[0].Rows[i]["DispDate"].ToString();
+                                    var CertNo = Model.StoreAllData.Tables[0].Rows[i]["CertNo"].ToString();
+                                    var CertDate = Model.StoreAllData.Tables[0].Rows[i]["CertDate"].ToString();
+                                    var ReceivedName = Model.StoreAllData.Tables[0].Rows[i]["username"].ToString();
+                                    var Address = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+                                    var Year = Model.StoreAllData.Tables[0].Rows[i]["Year"].ToString();
+                                    var IsSameAsRecord = Model.StoreAllData.Tables[0].Rows[i]["IsSameAsRecord"].ToString();
+                                    var FNAME = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                                    var MNAME = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                                    var ReceiptNo = Model.StoreAllData.Tables[0].Rows[i]["ReceiptNo"].ToString();
+                                    var ReceiptDate = Model.StoreAllData.Tables[0].Rows[i]["ReceiptDate"].ToString();
+                                    var FeeAmount = Model.StoreAllData.Tables[0].Rows[i]["FeeAmount"].ToString();
+                                    var ScanFile = Model.StoreAllData.Tables[0].Rows[i]["ScanFile"].ToString();
+                                    var IsForward = Model.StoreAllData.Tables[0].Rows[i]["IsForward"].ToString();
+                                    var ObjectionLetter = Model.StoreAllData.Tables[0].Rows[i]["ObjectionLetter"].ToString();
+                                    var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                    var ReceiptDateDD = Model.StoreAllData.Tables[0].Rows[i]["ReceiptDateDD"].ToString();
+                                    var DairyDateDD = Model.StoreAllData.Tables[0].Rows[i]["DairyDateDD"].ToString();
+                                    var DiscrepancyValue = Model.StoreAllData.Tables[0].Rows[i]["DiscrepancyValue"].ToString();
+                                    var BranchName = Model.StoreAllData.Tables[0].Rows[i]["BranchName"].ToString();
+                                    var DupSet = Model.StoreAllData.Tables[0].Rows[i]["DupSetNew"].ToString();
+                <tr>
+                    <td>@d</td>
+                    <td>@DupSet</td>
+                    <td>@DISTNM</td>
+                    <td>@DairyNo  </td>
+                    <td>@DairyDateDD</td>
+                    <td>@Roll/@Year/@Session1/@Class</td>
+                    <td>@Name/@FNAME/@MNAME</td>
+                    <td>@if (IsSameAsRecord == "NO")
+                                    { @DiscrepancyValue }
+                                    else
+                                    { <span>Same As Record</span> }
+                    </td>
+                    <td>@ReceiptNo/@ReceiptDateDD/@FeeAmount</td>
+                    @*<td>@Html.Raw("R.No:")@Html.Raw(" [")@ReceiptNo@Html.Raw("] ")@Html.Raw("(")@ReceiptDateDD @Html.Raw(")") @Html.Raw("Fee: ")@FeeAmount@Html.Raw("<Br />")</td>*@
+                    <td>@Status</td>
+                </tr>
+                        }
+                    }
+                    else
+                    {
+                <tr><td colspan="11"><span class="rqf">Record Not Found</span></td></tr>
+                    }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            $(function () {
+                $(".date").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: new Date(),
+                    yearRange: "2017:2020",
+
+                });
+            });
+
+        </script>

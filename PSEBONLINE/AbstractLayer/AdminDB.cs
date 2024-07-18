@@ -2161,7 +2161,7 @@ namespace PSEBONLINE.AbstractLayer
                     DataSet ds1 = GetDataByIdandTypeRN(ds.Tables[0].Rows[i][1].ToString(), "P", ds.Tables[0].Rows[i][2].ToString());// Regular
                     if (ds1.Tables.Count > 0 && ds1.Tables[0].Rows.Count > 0)
                     {
-                        if (ds1.Tables[0].Rows[0]["roll"].ToString() != ds.Tables[0].Rows[i][0].ToString())
+                        if (ds1.Tables[0].Rows[0]["refno"].ToString() != ds.Tables[0].Rows[i]["refno"].ToString())
                         {
                             int RowNo = i + 2;
                             string schl = ds.Tables[0].Rows[i][1].ToString();
@@ -2193,12 +2193,12 @@ namespace PSEBONLINE.AbstractLayer
                                 }
                             }
 
-                            if (ds.Tables[0].Rows[i][3].ToString().Length != 5 || ds.Tables[0].Rows[i][3].ToString() == "")
+                            if (ds.Tables[0].Rows[i]["Cent"].ToString().Length >7 || ds.Tables[0].Rows[i]["Cent"].ToString().Length < 6 || ds.Tables[0].Rows[i]["Cent"].ToString() == "")
                             {
                                 int RowNo = i + 2;
                                 string cent = ds.Tables[0].Rows[i][3].ToString();
-                                Result += "Please check CENT " + cent + " (Must be 5 Digits) in row " + RowNo + ",  ";
-                                dt.Rows[i]["Status"] = "Please check CENT " + cent + " (Must be 5 Digits) in row " + RowNo + ",  ";
+                                Result += "Please check CENT " + cent + " (Must be 6 Digits) in row " + RowNo + ",  ";
+                                dt.Rows[i]["Status"] = "Please check CENT " + cent + " (Must be 6 Digits) in row " + RowNo + ",  ";
                             }
 
                             if (ds1.Tables[0].Rows[0]["Examchallanverify"].ToString().ToLower() != "true")
@@ -2220,7 +2220,7 @@ namespace PSEBONLINE.AbstractLayer
                     }
 
 
-                    if (ds.Tables[0].Rows[i][4].ToString() == "")
+                    if (ds.Tables[0].Rows[i]["Refno"].ToString() == "")
                     {
                         int RowNo = i + 2;
                         string REFNO = ds.Tables[0].Rows[i][1].ToString();
@@ -5303,27 +5303,29 @@ namespace PSEBONLINE.AbstractLayer
                         string filelocation = "";
                         if (str != "")
                         {
-                            if (str.ToString().ToUpper().Contains("PvtPhoto"))
-                            {
-                                filelocation = Path.Combine(DwonSp + "/Upload2023/", str);
-                            }
-                            else if (str.ToString().ToUpper().Contains("ImageCorrection"))
-                            {
-                                filelocation = Path.Combine(DwonSp + "/Upload2023/", str);
-                            }
-                            else if (str.ToString().ToUpper().Contains("PVT")
-                                || str.ToString().ToUpper().Contains("OPEN") 
-                                || str.ToString().ToUpper().Contains("OPEN2019") || str.ToString().ToUpper().Contains("OPEN2018"))
-                            {
-                                filelocation = Path.Combine(DwonSp + "/", str);
-                            }
-                            else
-                            {
-                                filelocation = Path.Combine("X:/", str);
-                            }
+							//if (str.ToString().ToUpper().Contains("PvtPhoto"))
+							//{
+							//    filelocation = Path.Combine(DwonSp + "/Upload2023/", str);
+							//}
+							//else if (str.ToString().ToUpper().Contains("ImageCorrection"))
+							//{
+							//    filelocation = Path.Combine(DwonSp + "/Upload2023/", str);
+							//}
+							//else if (str.ToString().ToUpper().Contains("PVT")
+							//    || str.ToString().ToUpper().Contains("OPEN") 
+							//    || str.ToString().ToUpper().Contains("OPEN2019") || str.ToString().ToUpper().Contains("OPEN2018"))
+							//{
+							//    filelocation = Path.Combine(DwonSp + "/", str);
+							//}
+							//else
+							//{
+							//    filelocation = Path.Combine("X:/", str);
+							//}
 
-                            //// check File Exists
-                            if (File.Exists(filelocation) == true)
+							filelocation = Path.Combine("X:/", str);
+
+							//// check File Exists
+							if (File.Exists(filelocation) == true)
                             {
                                 zip.AddFile(filelocation, "PhotoandSign");
                             }

@@ -24,6 +24,8 @@ using Amazon.S3;
 using Amazon;
 using Amazon.S3.IO;
 using PSEBONLINE.AbstractLayer;
+using System.Web.Http.Results;
+using ClosedXML.Excel;
 
 namespace PSEBONLINE.Controllers
 {
@@ -35,7 +37,7 @@ namespace PSEBONLINE.Controllers
         public static Byte[] QRCoder(string qr)
         {
             QRCodeGenerator _qrCode = new QRCodeGenerator();
-            QRCodeData _qrCodeData = _qrCode.CreateQrCode("https://registration2022.pseb.ac.in/PrivateCandidate/AdmitCardPrivate/Senior?refno=" + QueryStringModule.Encrypt(qr), QRCodeGenerator.ECCLevel.Q);
+            QRCodeData _qrCodeData = _qrCode.CreateQrCode("https://registration2023.pseb.ac.in/PrivateCandidate/AdmitCardPrivate/Senior?refno=" + QueryStringModule.Encrypt(qr), QRCodeGenerator.ECCLevel.Q);
             //QRCodeData _qrCodeData = _qrCode.CreateQrCode("https://test2022.psebonline.in/AdmitCard/Index/" + QueryStringModule.Encrypt(qr), QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(_qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
@@ -528,7 +530,7 @@ namespace PSEBONLINE.Controllers
             AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
             PrivateCandidateModels MS = new PrivateCandidateModels();
             List<SelectListItem> yearlist1 = new List<SelectListItem>();
-            if (SelBatch == "1" && SelBatchYear == "2022")
+            if (SelBatch == "7" && SelBatchYear == "2024" && (SelCat=="R"))
             {
                 //if (SelCat == "SD" && SelRP == "R")
                 if (SelCat == "SD")
@@ -541,24 +543,24 @@ namespace PSEBONLINE.Controllers
                 // else if (SelCat == "R" && SelClass == "10" && SelRP == "O")
                 else if (SelCat == "R" && SelRP == "O")
                 {
-                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 2019 && Convert.ToInt32(s.Value) <= 2021).ToList();
+                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 2022 && Convert.ToInt32(s.Value) <= 2024).ToList();
                     yearlist.Reverse();
                     ViewBag.MyYear = yearlist;
                     return Json(yearlist);
                 }
                 else if (SelCat == "R" && SelRP == "R")
                 {
-                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 2021 && Convert.ToInt32(s.Value) <= 2021).ToList();
+                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 2024 && Convert.ToInt32(s.Value) <= 2024).ToList();
                     yearlist.Reverse();
                     ViewBag.MyYear = yearlist;
                     return Json(yearlist);
                 }
             }
-            else if (SelBatch == "11" && SelBatchYear == "2021") // OCT
+            else if (SelBatch == "7" && SelBatchYear == "2024" && SelCat == "A") // OCT
             {
                 if (SelCat == "A")
                 {
-                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 1950 && Convert.ToInt32(s.Value) <= 2021).ToList();
+                    List<SelectListItem> yearlist = objDB.GetSessionYear1().Where(s => Convert.ToInt32(s.Value) >= 1969 && Convert.ToInt32(s.Value) <= 2024).ToList();
 
                     ViewBag.MyYear = yearlist;
                     return Json(yearlist);
@@ -1281,6 +1283,7 @@ namespace PSEBONLINE.Controllers
 
         }
         public ActionResult PrivateCandidateConfirmation(string refno, PrivateCandidateModels MS)
+        
         {
             ViewBag.YesNoList = new AbstractLayer.DBClass().GetYesNoText();
             AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
@@ -1702,25 +1705,17 @@ namespace PSEBONLINE.Controllers
                             ViewBag.Sub1Twelve = new SelectList(DMitems1, "Value", "Text");
                         }
 
-                        MS.imgPhoto = MS.StoreAllData.Tables[0].Rows[0]["Photo_url"].ToString() != "" ? MS.StoreAllData.Tables[0].Rows[0]["Photo_url"].
-                            ToString().Replace("UPLOAD2021", "").Replace("UPLOAD2023/", "").Replace("//", "/").Replace("Upload2024/", "").Replace("Upload2023/", "").Replace("Upload2021/", "")
-                            .Replace("UPLOAD2022", "Upload2022").Replace("Upload2021", "").Replace("UPLOAD2022/ ", "").Replace("Upload2024/ ", "").
-                            Replace("OPEN2021", "Open2021").Replace("OPEN2022", "Open2022").Replace("PHOTO", "Photo").Replace("JPG", "jpg").
-                            Replace("upload//", "") : "";
+                        MS.imgPhoto = MS.StoreAllData.Tables[0].Rows[0]["Photo_url"].ToString();
 
-                        MS.imgSign = MS.StoreAllData.Tables[0].Rows[0]["Sign_url"].ToString() != "" ? MS.StoreAllData.Tables[0].Rows[0]["Sign_url"].ToString().
-                            Replace("UPLOAD2021", "")
-                            .Replace("//", "/").Replace("Upload2024/", "").Replace("UPLOAD2023/", "").Replace("Upload2021/", "").Replace("UPLOAD2022", "Upload2022").Replace("Upload2021", "")
-                            .Replace("Upload2021", "").Replace("UPLOAD2021/", "").Replace("Upload2023/", "").Replace("UPLOAD2021/", "").Replace("UPLOAD2022/", "").Replace("Upload2024/", "").
-                            Replace("OPEN2021", "Open2021").Replace("OPEN2022", "Open2022").Replace("SIGN", "Sign").Replace("JPG", "jpg").Replace("upload//", "") : "";
+                        MS.imgSign = MS.StoreAllData.Tables[0].Rows[0]["Sign_url"].ToString();
 
                         ViewBag.PhotoExist = "0";
                         ViewBag.signExist = "0";
-                        if (MS.imgPhoto != "")
+                        if (MS.imgPhoto != "" && MS.imgPhoto != null)
                         {
                             ViewBag.PhotoExist = "1";
                         }
-                        if (MS.imgSign != "")
+                        if (MS.imgSign != "" && MS.imgSign !=null)
                         {
                             ViewBag.signExist = "1";
                         }
@@ -1747,7 +1742,7 @@ namespace PSEBONLINE.Controllers
 
                             if (phtURL != "" && (!phtURL.Contains("allfiles") || !phtURL.Contains("Upload")))
                             {
-                                MS.imgPhoto = MS.imgPhoto.Replace("allfiles/", "");
+                                MS.imgPhoto = MS.imgPhoto.Replace("UPLOAD/", "allfiles/Upload");
                                 MS.imgSign = MS.imgSign.Replace("allfiles/", "");
                                 string Photo = "";
                                 string sign = "";
@@ -1788,8 +1783,8 @@ namespace PSEBONLINE.Controllers
                                 }
                                 else
                                 {
-                                    Photo = "allfiles/" + "Upload2023/" + Convert.ToString(MS.imgPhoto);
-                                    sign = "allfiles/" + "Upload2023/" + Convert.ToString(MS.imgSign);
+                                    Photo = "allfiles/" + "Upload2024/" + Convert.ToString(MS.imgPhoto);
+                                    sign = "allfiles/" + "Upload2024/" + Convert.ToString(MS.imgSign);
                                 }
 
                                 if (!MS.imgPhoto.Contains("allfiles"))
@@ -2466,7 +2461,7 @@ namespace PSEBONLINE.Controllers
 
 
 
-                MS.IsHardCopyCertificate = "YES";
+                MS.IsHardCopyCertificate = MS.Class=="10" || MS.Class == "12" ?"YES": frm["IsHardCopyCertificate"].ToString();
                 if (string.IsNullOrEmpty(MS.IsHardCopyCertificate))
                 {
                     MS.category = frm["category"].ToString();
@@ -5355,7 +5350,27 @@ namespace PSEBONLINE.Controllers
                         MS.sub6 = MS.StoreAllData.Tables[0].Rows[0]["rsub6code"].ToString();
                         MS.sub7 = MS.StoreAllData.Tables[0].Rows[0]["rsub7code"].ToString();
                         MS.sub8 = MS.StoreAllData.Tables[0].Rows[0]["rsub8code"].ToString();
-                        if (MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "R" || MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "D" || MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "A")
+						if (MS.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "5")
+						{
+							List<SelectListItem> sitems = new List<SelectListItem>();
+							foreach (System.Data.DataRow dr in MS.StoreAllData.Tables[3].Rows)
+							{
+								sitems.Add(new SelectListItem { Text = @dr["name_eng"].ToString(), Value = @dr["sub"].ToString() });
+							}
+							ViewBag.SubFifth = new SelectList(sitems, "Value", "Text");
+						}
+
+						if (MS.StoreAllData.Tables[0].Rows[0]["class"].ToString() == "8")
+						{
+							List<SelectListItem> sitems = new List<SelectListItem>();
+							foreach (System.Data.DataRow dr in MS.StoreAllData.Tables[4].Rows)
+							{
+								sitems.Add(new SelectListItem { Text = @dr["name_eng"].ToString(), Value = @dr["sub"].ToString() });
+							}
+							ViewBag.SubEight = new SelectList(sitems, "Value", "Text");
+						}
+
+						if (MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "R" || MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "D" || MS.StoreAllData.Tables[0].Rows[0]["cat"].ToString() == "A")
                         {
                             //MS.sub1 = MS.StoreAllData.Tables[0].Rows[0]["rsub1"].ToString();
                             //MS.sub2 = MS.StoreAllData.Tables[0].Rows[0]["rsub2"].ToString();
@@ -5455,8 +5470,9 @@ namespace PSEBONLINE.Controllers
 
 
                         MS.FormStatus = MS.StoreAllData.Tables[0].Rows[0]["FormStatus"].ToString();
+						MS.SearchString = MS.StoreAllData.Tables[0].Rows[0]["Remarks"].ToString();
 
-                        return View(MS);
+						return View(MS);
                         //return Private_Candidate_Examination_Form();
                         //return Pre_Private_Candidate_Introduction_Form(frm);
                     }
@@ -5542,26 +5558,60 @@ namespace PSEBONLINE.Controllers
                 MS.SelYear = frm["SelYear"].ToString();
                 MS.Result = frm["result"].ToString();
                 MS.Class = frm["Class"].ToString();
-                if (MS.Class.ToLower() == "Matriculation".ToLower())
+
+                if (MS.Class.ToLower() == "10" || MS.Class.ToLower() == "Matriculation".ToLower())
                 {
                     MS.Class = "10";
-                    MS.DOB = frm["DOB"].ToString();
+                    try
+                    {
+						MS.DOB = string.IsNullOrEmpty(frm["DOB"].ToString()) ? "" : frm["DOB"].ToString();
+					}
+                    catch
+                    {
+                        MS.DOB = "";
+
+					}
+                   
                 }
-                else if (MS.Class.ToLower() == "Senior Secondary".ToLower())
+                else if (MS.Class.ToLower() == "12" ||  MS.Class.ToLower() == "Senior Secondary".ToLower())
                 {
                     MS.Class = "12";
-                    MS.DOB = "";
-                }
-                else if (MS.Class.ToLower() == "Primary".ToLower())
+					try
+					{
+						MS.DOB = string.IsNullOrEmpty(frm["DOB"].ToString()) ? "" : frm["DOB"].ToString();
+					}
+					catch
+					{
+						MS.DOB = "";
+
+					}
+				}
+                else if (MS.Class.ToLower() == "5" ||  MS.Class.ToLower() == "Primary".ToLower())
                 {
                     MS.Class = "5";
-                    MS.DOB = frm["DOB"].ToString();
-                }
-                else if (MS.Class.ToLower() == "Middle".ToLower())
+					try
+					{
+						MS.DOB = string.IsNullOrEmpty(frm["DOB"].ToString()) ? "" : frm["DOB"].ToString();
+					}
+					catch
+					{
+						MS.DOB = "";
+
+					}
+				}
+                else if (MS.Class.ToLower() == "8" ||  MS.Class.ToLower() == "Middle".ToLower())
                 {
                     MS.Class = "8";
-                    MS.DOB = frm["DOB"].ToString();
-                }
+					try
+					{
+						MS.DOB = string.IsNullOrEmpty(frm["DOB"].ToString()) ? "" : frm["DOB"].ToString();
+					}
+					catch
+					{
+						MS.DOB = "";
+
+					}
+				}
 
 
                 MS.Candi_Name = frm["Candi_Name"].ToString();
@@ -6225,11 +6275,150 @@ namespace PSEBONLINE.Controllers
         }
 
 
+        public ActionResult CollectionCentReport(ReportModel report) {
+			AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
+
+			DataSet result = objDB.SelectDist(); // passing Value to DBClass from model
+			ViewBag.MyDist = result.Tables[0];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> items = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MyDist.Rows)
+			{
+				items.Add(new SelectListItem { Text = @dr["DISTNM"].ToString(), Value = @dr["DIST"].ToString() });
+			}
+
+			ViewBag.MyDist = items;
+			ViewBag.MySub = new SelectList(items, "Value", "Text");
+
+			DataSet mysub = objDB.getCollecetionReport("1", "", "", "","", "",""); // passing Value to DBClass from model
+			ViewBag.MySub = mysub.Tables[0];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> mysubList = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MySub.Rows)
+			{
+				mysubList.Add(new SelectListItem { Text = @dr["Subnm"].ToString(), Value = @dr["Sub"].ToString() });
+			}
+            ViewBag.MySub = mysubList;
+            ViewBag.MySubList = "0";
+
+			
+			ViewBag.MySub1 = mysub.Tables[1];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> mysubList1 = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MySub1.Rows)
+			{
+				mysubList1.Add(new SelectListItem { Text = @dr["Subnm"].ToString(), Value = @dr["Sub"].ToString() });
+			}
+			ViewBag.MySub1 = mysubList1;
+			ViewBag.MySubList1 = "0";
+			return View(report); }
+
+        [HttpPost]
+		public ActionResult CollectionCentReport(FormCollection frm) {
+            ReportModel report = new ReportModel();
+			AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
+
+			DataSet result = objDB.SelectDist(); // passing Value to DBClass from model
+			ViewBag.MyDist = result.Tables[0];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> items = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MyDist.Rows)
+			{
+				items.Add(new SelectListItem { Text = @dr["DISTNM"].ToString(), Value = @dr["DIST"].ToString() });
+			}
+
+			ViewBag.MyDist = items;
+			ViewBag.MySub = new SelectList(items, "Value", "Text");
+
+			DataSet mysub = objDB.getCollecetionReport("1", "", "", "", "", "",""); // passing Value to DBClass from model
+			ViewBag.MySub = mysub.Tables[0];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> mysubList = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MySub.Rows)
+			{
+				mysubList.Add(new SelectListItem { Text = @dr["Subnm"].ToString(), Value = @dr["Sub"].ToString() });
+			}
+
+			ViewBag.MySub = mysubList;
+			ViewBag.MySubList = "0";
+
+			ViewBag.MySub1 = mysub.Tables[1];// ViewData["result"] = result; // for dislaying message after saving storing output.
+			List<SelectListItem> mysubList1 = new List<SelectListItem>();
+			foreach (System.Data.DataRow dr in ViewBag.MySub1.Rows)
+			{
+				mysubList1.Add(new SelectListItem { Text = @dr["Subnm"].ToString(), Value = @dr["Sub"].ToString() });
+			}
+			ViewBag.MySub1 = mysubList1;
+			ViewBag.MySubList1 = "0";
+
+			string cls = frm["classType"].ToString();
+            string cat = frm["CatType"].ToString();
+            string dist = frm["Dist"].ToString();
+            string cent = frm["Cent"].ToString();
+            string sub = frm["sub"].ToString();
+			string ExamDate = frm["ExamDate"].ToString();
+			string isexPort = frm["cmd"].ToString();
+
+
+			report.StoreAllData = objDB.getCollecetionReport("2", ExamDate, sub,cent, cat, cls, dist);
+
+            if (isexPort == "Export")
+            {
+				ExportDataFromDataTable(report.StoreAllData.Tables[0], "Centre_Wise_Report");
+
+			}
+
+			return View(report);
+        
+        }
 
 
 
 
-    }
+		public ActionResult ExportDataFromDataTable(DataTable dt, string filename)
+		{
+			try
+			{
+				if (dt.Rows.Count == 0)
+				{
+					return RedirectToAction("CollectionCentReport", "Private");
+				}
+				else
+				{
+					if (dt.Rows.Count > 0)
+					{
+						//string fileName1 = "ERRORPVT_" + firm + "_" + DateTime.Now.ToString("ddMMyyyyHHmm") + ".xls";  //103_230820162209_347
+						string fileName1 = filename + "_" + DateTime.Now.ToString("ddMMyyyyHHmm") + ".xlsx";  //103_230820162209_347
+						using (XLWorkbook wb = new XLWorkbook())
+						{
+							wb.Worksheets.Add(dt);
+							wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+							wb.Style.Font.Bold = true;
+							Response.Clear();
+							Response.Buffer = true;
+							Response.Charset = "";
+							Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+							Response.AddHeader("content-disposition", "attachment;filename=" + fileName1 + "");
+							//Response.AddHeader("content-disposition", "attachment;filename= DownloadChallanReport.xlsx");
+
+							using (MemoryStream MyMemoryStream = new MemoryStream())
+							{
+								wb.SaveAs(MyMemoryStream);
+								MyMemoryStream.WriteTo(Response.OutputStream);
+								Response.Flush();
+								Response.End();
+							}
+						}
+
+					}
+				}
+
+				return RedirectToAction("CollectionCentReport", "Private");
+			}
+			catch (Exception ex)
+			{
+				return RedirectToAction("CollectionCentReport", "Private");
+			}
+
+		}
+
+
+	}
 }
 
 

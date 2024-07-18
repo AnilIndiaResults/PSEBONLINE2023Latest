@@ -1,0 +1,652 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "FirmSchoolCorrection";
+    //Layout = "~/Views/Shared/_HeaderCorr.cshtml";  By Rohit
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 225px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+    }
+    .checkbox {
+        display: inline-block
+    }
+     .checkboxY {display:inline-block}
+    .checkboxN {
+        display: inline-block
+    }
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+    }
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modal");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+    $('form').live("submit", function () {
+        ShowProgress();
+    });
+</script>
+<h1>Firm Correction Performa</h1>
+@*<p class="rqf">
+    <strong>Note :</strong> It Is Highly Recommended That Make Multiple Lot Of Correction and do not Verify Correction More Than 150 for per Lot.
+</p>*@
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <div class="row">
+@using (Html.BeginForm("FirmSchoolCorrection", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total Count &nbsp;
+                    <label>@ViewBag.TotalCount</label>
+                </div>       
+                <div class="col-md-3">
+                    Select Class &nbsp;
+                    @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--Select Class---", new { @class = "", @required= "required" })
+                </div>
+                <div class="col-md-3">
+                    Select Correction Type &nbsp;
+                    @Html.DropDownList("CorrectionType1", new SelectList(ViewBag.CorrectionType, "Value", "Text", ViewBag.SelectedItemcode), "--Select Correction Type---")
+                </div>
+                <div class="col-md-3">
+                    Enter Correction Lot &nbsp;
+                    @Html.TextBoxFor(m => m.CorrectionLot, new { id = "CorrectionLot", @maxlength = "20" })
+                </div>
+                <div class="col-md-2">&nbsp;<br /><input type="submit" value="Search" name="cmd" onclick="return valForm();" title="Search Record" /></div>
+            </fieldset>
+                </div>
+}
+            <div class="clearfix"></div>
+        <div class="col-lg-12">
+            <div class="col-lg-4 text-left"><input type="button" value="Home" formaction="FirmCorrectionHome" title="Go for Home Page" /></div>
+            <div class="col-lg-4 text-center"><input type="button" value="View Added Records & Final Submission" onclick="javascript:document.location.href='@Url.Action("FirmSchoolCorrectionUpdated", "Admin")'" />
+</div>
+            <div class="col-lg-4 text-right"><input type="submit" value="Add to Verify" id="btnsave" name="cmd" /></div>
+                
+            </div>        
+        
+    </div>
+    <div class="clearfix"></div>
+    <div class="row" id="divMain1">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th width="4%">S.No.</th>
+                        <th width="7%">Schl</th>
+                        <th width="10%">Class</th>
+                        <th width="8%">StudentID</th>
+                        <th width="11%">Correction Type</th>
+                        <th width="11%">Correction Lot</th>
+                        <th width="12%">Old Value</th>
+                        <th width="12%">New Value</th>
+                        <th width="5%">Status</th>
+                        <th width="10%"><input type="checkbox" id="selectallY" />All Accept</th>
+                        <th width="10%"><input type="checkbox" id="selectallN" />All Reject</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            if (ViewBag.pagesize == 1)
+                            {
+                                Count = 0;
+                            }
+                            else
+                            {
+                                Count = 30 * (ViewBag.pagesize - 1);
+                            }
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var CorrectioId = Model.StoreAllData.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                var Schl = Model.StoreAllData.Tables[0].Rows[i]["Schl"].ToString();
+                                var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                var Std_id = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                var CorrectionType = Model.StoreAllData.Tables[0].Rows[i]["CorrectionType"].ToString();
+                                var CorrectionLot = Model.StoreAllData.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                                var OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                var NewValue = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                if (CorrectionType == "Sign" || CorrectionType == "Photo")
+                                {
+                                    if (Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString().Contains("OPEN2017"))
+                                    {
+                                        OldValue = "https://psebdata.s3.ap-south-1.amazonaws.com/" + Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                    }
+                                    else { OldValue = "https://psebdata.s3.ap-south-1.amazonaws.com/" + Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString(); }
+
+                                    NewValue = "https://psebdata.s3.ap-south-1.amazonaws.com/" + Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                }
+                                else
+                                {
+                                    OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                    NewValue = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                }
+
+                                var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                var StatusUpdatedBy = Model.StoreAllData.Tables[0].Rows[i]["StatusUpdatedBy"].ToString();
+                                var FirmCorrectionLot = Model.StoreAllData.Tables[0].Rows[i]["FirmCorrectionLot"].ToString();
+                                var Remark = Model.StoreAllData.Tables[0].Rows[i]["Remark"].ToString();
+                                var StatusOn = Model.StoreAllData.Tables[0].Rows[i]["StatusOn"].ToString().Split(' ')[0];
+                                Count = Count + 1;
+
+                    <tr class="@(CorrectionType == "PARTICULAR" ? "success" : "info")">
+                        <td>
+                            @Count
+                        </td>
+                        <td>
+                            @Schl
+                        </td>
+                        <td>
+                            @Class
+                        </td>
+                        <td>
+                            @Std_id
+                        </td>
+                        <td>
+                            @CorrectionType
+                        </td>
+                        <td>
+                            @CorrectionLot
+                        </td>
+                        @if (@CorrectionType == "Sign" || @CorrectionType == "Photo")
+                        {
+                            <td>
+                                <img src="@OldValue" class="" style="max-width:30%" alt="Photo" id="OldValuePS" />
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="kdsfont">
+                                @OldValue
+                            </td>
+                        }
+                        @if (@CorrectionType == "Sign" || @CorrectionType == "Photo")
+                        {
+                            <td>
+                                <img src="@NewValue" class="" style="max-width:30%" alt="Photo" id="NewValuePS" />
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="kdsfont">
+                                @NewValue
+                            </td>
+                        }
+                    <td>
+                        @if (@Status == "")
+                        {
+                            <img src="../../Images/Pending.png" alt="Status is Pending For Verification" title="Status is Pending For Verification" />
+                        }
+                        else if (@Status == "Y")
+                        {
+                            <img src="../../Images/Apply.png" alt="Correction Verified." title="Correction Verified." />
+                            <br />@StatusUpdatedBy
+                        }
+                        else
+                        {
+                            <img src="../../Images/Delete.png" alt="Correction Rejected." title="Correction Rejected." /><br />@Remark
+                            <br />@StatusUpdatedBy
+                        }
+
+                    </td>
+
+                        @{
+
+                            if (FirmCorrectionLot == "")
+                            {
+                                <td>
+                                    <input type="checkbox" id="cb-@CorrectioId" class="checkboxY" name="AllChkId" value="@CorrectioId" /><span>Accept</span>
+                                    @*<input type="checkbox" id="AllChkId-@CorrectioId" value="@CorrectioId" name="AllChkId" class="checkbox" onchange="myFunction(@CorrectioId,'YES');" />Accept*@
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="cbn-@CorrectioId" class="checkboxN" name="AllChkIdN" value="@CorrectioId" /><span>Reject</span>
+                                    <input type="text" id="txtremarks-@CorrectioId" maxlength="100" placeholder="Enter Remarks" style="display:none;" /><br />
+                                    @*<input type="checkbox" id="NAllChkId-@CorrectioId" value="@CorrectioId" name="NAllChkId" class="checkbox" onchange="myFunction(@CorrectioId,'NO');" />Reject*@
+                                </td>
+                            }
+                            else
+                            {
+                                if (FirmCorrectionLot == "R" && Status == "N")
+                                {
+                                    <td colspan="2" style="color:red"><b>Final Submitted  On @StatusOn</b></td>
+                                }
+                                else if (FirmCorrectionLot != "")
+                                {
+                                    <td  colspan="2" style="color:forestgreen"><b>Final Submitted  On @StatusOn</b></td>
+                                }
+                            }
+
+                        }
+
+
+                    </tr>
+                                            //.... Pagin start
+                                            if (d == ViewBag.TotalCountP)
+                                            {                                                
+                                                <tr>
+                                                    <td colspan="12">
+
+                                                        Page @ViewBag.pagesize of @ViewBag.pn
+
+                                                        &nbsp;
+
+                                                        @if (ViewBag.pagesize == 1)
+
+                                                        {
+                                                            @:<<
+
+                                                            @Html.Raw("&nbsp;");
+
+                                                            @:< Prev
+                                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                            if (ViewBag.pn > ViewBag.pagesize)
+                                                            {
+                                                                @Html.ActionLink("Next >", "FirmSchoolCorrection", new { page = ViewBag.pagesize + 1 })
+
+                                                                @Html.Raw("&nbsp;");
+
+                                                                @Html.ActionLink(">>", "FirmSchoolCorrection", new { page = ViewBag.pn })
+                                                            }
+                                                        }
+                                                        else
+                                                        {                                                           
+                                                            @Html.ActionLink("<<", "FirmSchoolCorrection", new { page = 1 })
+
+                                                            @Html.Raw("&nbsp;");
+
+                                                            @Html.ActionLink("< Prev", "FirmSchoolCorrection", new { page = ViewBag.pagesize - 1 })
+                                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                            if (ViewBag.pn > ViewBag.pagesize)
+                                                            {
+                                                                @Html.ActionLink("Next >", "FirmSchoolCorrection", new { page = ViewBag.pagesize + 1 })
+
+                                                                @Html.Raw("&nbsp;");
+
+                                                                @Html.ActionLink(">>", "FirmSchoolCorrection", new { page = ViewBag.pn })
+                                                            }
+
+                                                        }
+
+
+                                                    </td>
+                                                </tr>
+                                           }
+
+            //... Paging end
+
+
+        }
+    }
+    else
+    {
+                                                <tr>
+                                                    <td colspan="11">
+                                                        <p class="rqf">Record Not Found</p>
+                                                    </td>
+                                                </tr>
+                                            }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+<div id="loading1"></div>
+    <div class="clearfix"></div>
+    <div class="row">
+        @*<div class="col-md-12">
+            <div class="table-responsive text-center">                
+                <input type="button" value="View All Pending Record" onclick="javascript:document.location.href='@Url.Action("FirmSchoolCorrectionUpdated", "Admin")'" />
+                <input type="button" value="Home" formaction="FirmCorrectionHome" title="Go for Home Page" />
+            </div>
+        </div>*@
+        <div class="loading" align="center">
+            Working... Please wait.<br />
+            <br />
+            <img src="../../images/loadingAnim.gif" />
+        </div>
+        </div>
+        
+        @{
+            if (ViewData["FeeUpdate"] != null)
+            {
+                var result = ViewData["FeeUpdate"].ToString();
+                if (result == "1")
+                {
+                    <script type="text/javascript" language="javascript">
+                        alert("Fee Detail Inserted Successfully");
+                    </script>
+                }
+                if (result == "2")
+                {
+                    <script type="text/javascript" language="javascript">
+                        alert("Fee Detail Updated Successfully");
+                    </script>
+                }
+            }
+        }
+
+<script type="text/javascript">                     
+                        $(document).ready(function () {
+                            // alert("ready");
+                            // Accept
+                            $('.checkboxY').change(function () { //".checkbox" change                              
+                                if (this.checked == false) { //if this item is unchecked
+                                    $("#selectallY")[0].checked = false; //change "select all" checked status to false
+
+                                } else {
+                                    $("#cbn-" + this.value)[0].checked = false;
+                                    $("#selectallN")[0].checked = false;                                   
+                                    $('#txtremarks-' + this.value).slideUp("slow");   
+                                    $('#txtremarks-' + this.value).prop('required', false);
+                                }
+                            });
+                            // Reject
+                            $('.checkboxN').change(function () { //".checkbox" change                             
+                                var ischk = this.checked;  
+                                if (this.checked == false) { //if this item is unchecked
+                                    $("#selectallN")[0].checked = false; //change "select all" checked status to false
+                                    $('#txtremarks-' + this.value).slideUp("slow");
+                                    $('#txtremarks-' + this.value).prop('required', false);
+                                } else {
+                                    $("#cb-" + this.value)[0].checked = false;
+                                    $("#selectallY")[0].checked = false;                                    //remarks
+                                   
+                                    $('#txtremarks-' + this.value).slideDown("slow");                                   
+                                    $('#txtremarks-' + this.value).prop('required', true);
+                                }
+                            });
+
+                            // Accept
+                            $("#selectallY").change(function () {
+                                var status = this.checked; // "select all" checked status
+                                var j = 0
+                                //alert("2");
+                                $('.checkboxY').each(function () {
+                                    $("input[name='AllChkId']")[j].checked = status;
+                                    j++;
+
+                                });
+                                var status = false;
+                                $("#selectallN")[0].checked = status;
+                                var i = 0
+                                $('.checkboxN').each(function () {
+                                    var id = this.id;
+                                    var val = this.value;
+                                    $("input[name='AllChkIdN']")[i].checked = status;
+                                    $('#txtremarks-' + this.value).slideUp("slow");
+                                    $('#txtremarks-' + this.value).prop('required', false);
+                                    i++;
+
+                                });
+
+                            });
+
+                            // Reject
+                            $("#selectallN").change(function () {
+                                var status = this.checked; // "select all" checked status
+                                var j = 0
+                                //alert("2");
+                                $('.checkboxN').each(function () {
+                                    var id = this.id;                                 
+                                    var val = this.value;
+                                    $("input[name='AllChkIdN']")[j].checked = status;
+                                    if (status == true) {
+                                        $('#txtremarks-' + this.value).slideDown("slow");
+                                        $('#txtremarks-' + this.value).prop('required', true);
+                                    }
+                                    else {
+                                        $('#txtremarks-' + this.value).slideUp("slow");
+                                        $('#txtremarks-' + this.value).prop('required', false); }
+                                    j++;
+
+                                });
+                                var status = false;
+                                $("#selectallY")[0].checked = status;
+                                var i = 0
+                                $('.checkboxY').each(function () {
+                                    $("input[name='AllChkId']")[i].checked = status;
+                                    i++;
+
+                                });
+
+                            });
+                          
+                            // End select all
+                                                    
+
+
+                            //Start Save Data
+                            $("#btnsave").click(function () {
+                              // alert("Start Save Data");
+
+                               // var isvalid = valForm();
+                               //  alert(isvalid);
+                               var isvalid = true;
+                                if (isvalid == true) {
+                                    var chkdee = "";
+                                    var storeid = "";
+                                    var pageid = "";
+                                    var pageid = "";
+                                    var storeid1 = "";
+                                    var storechkid = "";
+                                    var storescid = "";
+                                    var chkRemarks = "";
+                                    var remarksid = "";
+                                    $('.checkboxY').each(function () {
+                                        var id = this.id;
+                                       // alert("acpt id= " + id);
+                                        var val = this.value;
+                                       // alert("acpt value= " + aval);
+                                        var arr = [];
+                                        arr = id;
+                                        var arrid = "";
+                                        var arrcast = "";
+                                        var j = 0;
+                                        if (this.checked) {
+                                            storeid += val + ",";
+                                        }
+                                    });
+
+                                    $('.checkboxN').each(function () {
+                                        var id = this.id;
+                                       // alert("Page= " + id);
+                                        var val = this.value;
+                                        //alert("Page value= " + rval);
+                                        var arr = [];
+                                        arr = id;
+                                        var arrid = "";
+                                        var arrcast = "";
+                                        var j = 0;                                      
+                                      
+                                        if (this.checked) {                                                                                 
+                                            var value1 = $('#txtremarks-' + val).val();                                         
+                                            if (value1 == "") {                                              
+                                                chkRemarks = "Enter Remarks";
+                                            }
+                                            else {                                               
+                                                pageid += val + ",";
+                                                remarksid += val + "(" + value1 + ")" + ",";
+                                            } 
+
+                                        }                                       
+                                    });
+
+                                    var corLot = document.getElementById("CorrectionLot");
+                                    var corType = document.getElementById("CorrectionType1");
+                                    if (corLot.value == "" || corLot.value == "0") {
+                                        alert("Enter Correction Lot");
+                                        corLot.focus();
+                                        return false;
+                                    }
+                                    else if (corType.value == "" || corType.value == "0") {
+                                        alert("Select Correction Type");
+                                        corType.focus();
+                                        return false;
+                                    }
+                                    //else if (storeid == "") {
+                                    //    alert("Please Select Accept .");
+                                    //}
+                                    //else if (pageid == "") {
+                                    //    alert("Please Select Reject .");
+                                    //}
+                                    else if (storeid == "" && pageid == "") {
+                                        if (chkRemarks != "") {
+                                            alert("Please Enter Remarks in All Reject Corrections .");
+                                            return;
+                                        }
+                                        else {
+                                            alert("Please Select Atleast 1 Accept or Reject .");
+                                            return;
+                                        }
+                                    }  
+                                    else {                                      
+                                       // alert('Now Save Accept :' + storeid);
+                                      // alert('Now Save Reject :' + pageid);
+                                        $('#divMain1').hide();
+                                        $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                                        $.post("/Admin/CorrLotAcceptReject", { "correctionType": corType.value, "correctionLot": corLot.value, "acceptid": storeid.slice(0, -1), "rejectid": pageid.slice(0, -1), "removeid": "", "remarksid": remarksid.slice(0, -1)  },
+                                            function (data) {
+                                                $('#loading1').empty();
+                                                // alert('data.status  = ' + data.status);
+                                                if (data.status == "1") {                                                    
+                                                    alert("Added Successfully");
+                                                    window.location.href = '/Admin/FirmSchoolCorrectionUpdated';
+                                                }
+                                                else {
+                                                    alert("Failure, Please Try Again.");
+                                                }
+                                            });
+                                    }
+                                }// if true close
+                            });
+
+                            //End  Save Data
+
+                        });
+
+</script>
+       
+ <script>
+            $(document).ready(function () {
+                $("#CorrectionRecieptDate").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: '0',
+                    //maxDate: '10/08/2016',
+                    yearRange: "2014:2019"
+
+                });               
+            });
+           
+        
+     function valForm() {
+
+         var SelList = document.getElementById("SelList");
+         if (SelList.value == "" || SelList.value == "0") {
+             alert("Select Class");
+             SelList.focus();
+             return false;
+         }
+                var SchlList = document.getElementById("CorrectionType1");
+                if (SchlList.value == "" || SchlList.value == "0") {
+                    alert("Select Correction Type");
+                    SchlList.focus();
+                    return false;
+                }
+                var Schlcode = document.getElementById("CorrectionLot");
+                if (Schlcode.value == "" || Schlcode.value == "0") {
+                    alert("Enter Correction Lot");
+                    Schlcode.focus();
+                    return false;
+                }
+            }
+            function isNumberKey(evt) {
+                var charCode = (evt.which) ? evt.which : event.keyCode
+                if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+                    return true;
+                }
+                else {
+                    alert("Invalid character...Enter Only Number!!");
+                    return false;
+                }
+            }
+        </script>
+
+
+
+

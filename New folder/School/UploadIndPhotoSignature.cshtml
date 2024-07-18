@@ -1,0 +1,275 @@
+﻿@model PSEBONLINE.Models.UploadImgndSignature
+@{
+    ViewBag.Title = "UploadIndPhotoSignature";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+<h1>Update Photo & Signature</h1>
+<div id="loading"></div>
+<div id="updatephotosignature" style="padding-bottom:150px">
+    <div class="row">
+        <div class="col-md-12" style="padding-bottom:50px">
+            @using (Html.BeginForm("UploadIndPhotoSignature", "School", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+            {
+                <input type="text" id="distcode" name="distcode" style="display:none;"/>
+                <input type="text" id="foname" name="foname" style="display:none;" />
+                <div class="row">
+                    <div class="col-md-2">
+                        Select Form<br />
+                        @Html.DropDownList("FormNameList", new SelectList(ViewBag.MyForm, "Value", "Text", ViewBag.SelectedItem), "--Select Form---", new { })
+                    </div>
+                    <div class="col-md-2">
+                        Unique ID<br />
+                        <input type="text" id="uniqueid" name="uniqueid" onkeypress="return isNumberKey(event);" />                        
+                    </div>
+                    <div class="col-md-2">  &nbsp;<br />
+                          <input type="button" onclick="displayPhotoandSignature()" name="btnSubmit" value="Search " id="btnShow" />
+
+                    </div>
+                    </div>
+                     <div class="clearfix"></div>
+                 <div class="row" id="sb" style="display:none;">
+                    <div class="col-md-6">
+                        <div class="row">
+                             <fieldset>
+                                <legend>Upload Photo</legend>
+                             <div class="col-md-8" id="ph" style="display:none;">
+                        Upload Photo @Html.TextBoxFor(m => m.std_Photo, new { id = "Photo", type = "file", onchange = "findSizeAndPreview(this)" })<span class="rqf">*Photo Size 5 to 50 KB</span>
+                    </div>
+                             <div class="col-md-4">
+                        @if (ViewBag.ImageURL1 != null)
+                        {
+                            <img src=@ViewBag.ImageURL1 class="img-responsive"  alt="Photo" id="imgPhoto" />
+                        }
+                        else
+                        {
+                            <img src="https://registration2022.pseb.ac.in/Images/NOPhoto.jpg" class="img-responsive" style="height:80px" alt="Photo" id="imgPhoto" />
+                        }
+
+                    </div>
+                                 </fieldset>
+                            </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <fieldset>
+                                <legend>Upload Signature</legend>
+
+                           
+                            <div class="col-md-8" id="sn" style="display:none;">
+                        Upload Signature @Html.TextBoxFor(m => m.std_Sign, new { id = "Sign", type = "file", onchange = "findSizeAndPreviewSign(this)" }) <span class="rqf">*Signature Size 1 to 50 KB</span>
+                    </div>
+                    <div class="col-md-4"><br />
+                        @if (ViewBag.ImageURL2 != null)
+                        {
+                            <img src=@ViewBag.ImageURL2 class="img-responsive" alt="Signature" id="imgSign" />
+                        }
+                        else
+                        {
+                            <img src="https://registration2022.pseb.ac.in/Images/NOSignature.jpg" class="img-responsive"  alt="Signature" id="imgSign" />
+                        }
+                    
+                    </div> </fieldset>
+                            </div>
+
+                    </div>  
+                      <div class="clearfix"></div>
+                     <div class="col-md-12 text-center" style="padding-top:15px">              
+                        <input type="submit" onclick="return valForm();" name="btnSubmit" value="Update Photo & Signature" id="btnSubmit" />
+                    </div>                      
+                     </div>
+                  
+                    
+                
+            }
+             </div>
+            @*<form action="~/School/Photo_Upload" id="form2" method="post" enctype="multipart/form-data">
+
+                    <div class="row">
+                        <div>
+                            @Html.DropDownList("FormNameList2", new SelectList(ViewBag.MyForm2, "Value", "Text", ViewBag.SelectedItem2), "--Select Form---", new { })
+                        </div>
+
+                        <div>
+                            <input type="file" name="FileUploadBulk2" id="FileUploadBulk2" multiple="multiple" />
+                        </div>
+                        <div>
+                            <input type="submit" onclick="return valForm();" name="btnSubmit2" value="Sign Upload" id="btnSubmit2" />
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </form>*@
+        </div>
+        <div class="clearfix"></div>
+
+    </div>
+
+<script>
+    function displayPhotoandSignature()
+    {
+        
+        var id = $("#uniqueid").val();
+        var form_Name = $("#FormNameList").val();
+        var selform = $("#FormNameList option:selected").text();
+       // alert(form_Name);
+        if (id == "")
+        {
+            alert("Enter Unique ID");
+            id.focus();
+
+        }
+        else if (form_Name == "" || form_Name == "0") {
+            alert("select Form Name");
+            form_Name.focus();
+        }
+        else
+
+        {
+            $('#foname').val(form_Name);
+            $('#updatephotosignature').hide();
+            $('div#loading').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/School/Jqfindimageandsignature", { "uniqueid": id, "form_Name": selform },
+            function (data) {
+                // alert(data.status);
+                if (data.status == "1") {
+
+                    $('#imgPhoto').attr('src', "https://registration2022.pseb.ac.in/Upload/" + data.photo);
+                    $('#imgSign').attr('src', "https://registration2022.pseb.ac.in/Upload/" + data.signature);
+                    $("#sb").fadeIn("slow");
+                    $("#sn").fadeIn("slow");
+                    $("#ph").fadeIn("slow");
+                    $("#distcode").val(data.District);
+                    $('#uniqueid').attr('readonly', 'true');
+                    //$('#FormNameList').attr('readonly', 'true');
+                    $('#FormNameList').attr("disabled", true);
+                }
+                else if (data.status == "-1") {
+                    alert("Something Went Wrong.");
+                    //return false;
+
+                }
+                else if (data.status == "0") {
+                    alert("Sorry This ID is not applicable for further processing.");
+                    $("#sb").fadeOut("slow");
+                    $("#sn").fadeOut("slow");
+                    $("#ph").fadeOut("slow");
+                    //return false;
+
+                }
+
+
+            });
+
+            $('#updatephotosignature').show();
+            $('div#loading').empty();
+        }
+        
+    }
+    function valForm() {
+
+        var formList = document.getElementById("FormNameList");
+        if (formList.value == "" || formList.value == "0") {
+            alert("Select Form");
+            formList.focus();
+            return false;
+        }
+        var uniqueid = document.getElementById("uniqueid");
+        if (uniqueid.value == "") {
+            alert("Enter Unique ID");
+            uniqueid.focus();
+            return false;
+        }
+        var fileupload = document.getElementById("Photo");
+        var fileupload2 = document.getElementById("Sign");
+        if (fileupload.value == "" && fileupload2.value == "") {
+            alert("Select Photo or Signature or Both");
+            fileupload.focus();
+            return false;
+        }
+        else 
+        {
+            return true;
+        }
+
+        
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function findSizeAndPreview(input) {
+        if (typeof ($("#Photo")[0].files) != "undefined") {
+
+            var size = parseFloat($("#Photo")[0].files[0].size / 1024).toFixed(2);
+            if (parseInt(size) >= 5 && parseInt(size) <= 50) {
+                $('#btnShow').hide();
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#imgPhoto').attr('src', e.target.result);
+
+                }
+                filerdr.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                $('#btnShow').show();
+                if (parseInt(size) <= 5) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#Photo').val('');
+                    ('#imgPhoto').hide();
+                }
+
+
+            }
+        }
+
+    }
+
+    function findSizeAndPreviewSign(input) {
+        if (typeof ($("#Sign")[0].files) != "undefined") {
+
+            var size = parseFloat($("#Sign")[0].files[0].size / 1024).toFixed(2);
+            // alert(size);
+            if (parseInt(size) >= 1 && parseInt(size) <= 50) {
+                $('#btnShow').hide();
+                var filerdrS = new FileReader();
+                filerdrS.onload = function (e) {
+                    $('#imgSign').attr('src', e.target.result);
+
+                }
+                filerdrS.readAsDataURL(input.files[0]);
+                $("#errmsg").hide();
+
+            }
+            else {
+                $('#btnShow').show();
+                if (parseInt(size) <= 1) {
+                    alert("Your file size is too Small that is " + size + " KB.");
+                    $('#Sign').val('');
+                    ('#imgSign').hide();
+                }
+                if (parseInt(size) > 50) {
+                    alert("Your file size is too large that is " + size + " KB.");
+                    $('#Sign').val('');
+                    ('#imgSign').hide();
+                }
+
+            }
+        }
+
+    }
+</script>
+

@@ -255,5 +255,6 @@ namespace PSEBONLINE.Models
 		public string rp { get; set; }
 		public string attendance { get; set; }
 		public string memonumber { get; set; }
+		public string attendancename { get; set; }
 	}
 }

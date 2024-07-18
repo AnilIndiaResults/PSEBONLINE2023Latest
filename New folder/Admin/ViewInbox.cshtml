@@ -1,0 +1,467 @@
+﻿@model PSEBONLINE.Models.InboxModel
+@{
+    ViewBag.Title = "ViewInbox";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .unread {
+        background-color: #808080 !important;
+        border: solid 1px white !important;
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .adminreply {
+        background-color: #009589 !important;
+        border: solid 1px white !important;
+        color: #fff;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .userreply {
+        background-color: #fff !important;
+        border: solid 1px #009589 !important;
+        color: #009589;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+
+    select[multiple] {
+        height: 240px
+    }
+
+    textarea {
+        resize: none;
+        height: 130px
+    }
+
+    .bvc li {
+        padding-right: 1px;
+    }
+
+    .bvc .checkboxP {
+        padding-left: 1px;
+    }
+
+    .newList li {
+        padding: 0 15px !important;
+    }
+
+        .newList li .checkboxP {
+            margin-right: 2px;
+        }
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<h1>View All </h1>
+<div class="row"  style="@(ViewBag.TotalCount2 > 0 ? "display:none" : "display:block")">
+    @using (Html.BeginForm("ViewInbox", "Admin", FormMethod.Post, new { id = "searchform" }))
+    {
+        @*<div class="col-md-6"><input type="text" id="SearchSubject" name="SearchSubject" placeholder="Enter Subject" value="@Request["SearchSubject"]" /></div>*@
+        <div class="col-md-3">Search By: @Html.DropDownList("MyType", new SelectList(ViewBag.MyType, "Value", "Text", ViewBag.SelectedType), "--All--", new { @class = "" })</div>
+        <div class="col-md-7">
+            &nbsp;<br />
+            <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+        </div>
+        <div class="col-md-2"><br /><input type="submit"  name="search"  value="Search" />&nbsp;<input type="submit" name="submit" value="Reset" /></div>
+    }
+</div>
+<div id="loading1"></div>
+<div class="clearfix"></div>
+<div class="row" id="divMain1" style="@(ViewBag.TotalCount > 0 ? "display:block" : "display:none")">
+    <div class="col-md-12">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th width="5%">S.No</th>
+                    @*<th width="5%">Mail</th>*@
+                    <th width="10%">Mail ID</th>
+                    <th width="10%">Sender</th>
+                    <th width="50%">Subject</th>
+                    <th width="10%">Sent On</th>
+                    <th width="10%">View</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var id = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                            var Subject = Model.StoreAllData.Tables[0].Rows[i]["Subject"].ToString();
+                            var Body = Model.StoreAllData.Tables[0].Rows[i]["Body"].ToString();
+                            var SentOn = Model.StoreAllData.Tables[0].Rows[i]["SentOn"].ToString();
+                            var Attachment = Model.StoreAllData.Tables[0].Rows[i]["Attachment"].ToString();
+                            Model.CommaStringToList = Model.StoreAllData.Tables[0].Rows[i]["Attachment"].ToString().Split(',').ToList();
+                            var SentFrom = Model.StoreAllData.Tables[0].Rows[i]["SentFrom"].ToString();
+                            var SentTo = Model.StoreAllData.Tables[0].Rows[i]["SentTo"].ToString();
+                            bool IsRead = Convert.ToBoolean(Model.StoreAllData.Tables[0].Rows[i]["IsRead"].ToString());
+                            var UserName = Model.StoreAllData.Tables[0].Rows[i]["user"].ToString();
+                            var Designation = Model.StoreAllData.Tables[0].Rows[i]["Designation"].ToString();
+                            var Branch = Model.StoreAllData.Tables[0].Rows[i]["Branch"].ToString();
+                            var BranchUser = "";
+                            if (Branch.ToLower() == "admin")
+                            { BranchUser = Branch; }
+                            else
+                            { BranchUser = Branch + " (" + UserName + ")"; }
+
+                            var Sender = SentFrom + " , " + UserName + " , " + Designation + "   (" + SentOn + ") ";
+                            var MailType = Model.StoreAllData.Tables[0].Rows[i]["MailType"].ToString();
+                            var TotalReply = Model.StoreAllData.Tables[0].Rows[i]["TotalReply"].ToString();
+                            var TotalReplyUnread = Model.StoreAllData.Tables[0].Rows[i]["TotalReplyUnread"].ToString();
+                            Count = Count + 1;
+                            <tr class="@(TotalReplyUnread == "0" ? "" : "unread" )">
+                                <td>
+                                    @Count
+                                </td>
+                                @*<td class="@(MailType.ToLower() == "inbox" ? "text-success" : "" )">
+                                        @MailType
+                                    </td>*@
+                                <td>
+                                    @id
+                                </td>
+                                <td>
+                                    @BranchUser
+                                </td>
+                                <td>
+                                    @Subject
+                                    @if (TotalReplyUnread != "0")
+                                    {<span class="">(@TotalReplyUnread)</span>}
+                                </td>
+                                <td>
+                                    @SentOn
+                                </td>
+
+                                <td>
+                                    @*<a href="" data-toggle="modal" data-target="#myModal1-@id" class="btn" onclick="ReceiveDisp(@id)"> View </a>*@
+                                    <a href="/Admin/ViewInbox/@encrypt.QueryStringModule.Encrypt(id)" class="btn" onclick="ReceiveDisp(@id)">View</a>
+                                </td>
+                            </tr>
+                            if (d == ViewBag.TotalCount)
+                            {
+                                                                                    <tr>
+                                                                                        <td colspan="11">
+                                                                                            Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                                                                            @if (ViewBag.pagesize == 1)
+                                                                                            {   @:<<
+                                                                                                @Html.Raw("&nbsp;");
+                                                                                                @:< Prev
+                                                                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                                                                {
+                                                                                                    var dp = ViewBag.pagesize + 1;
+                                                                                                    <a href="~/Admin/ViewInbox?id=@ViewBag.cid&page=@dp">Next ></a>
+                                                                                                    @Html.Raw("&nbsp;");
+                                                                                                    <a href="~/Admin/ViewInbox?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                                                                                }
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                var dp = ViewBag.pagesize - 1;
+                                                                                                <a href="~/Admin/ViewInbox?id=@ViewBag.cid&page=1"><<</a>
+                                                                                                @Html.Raw("&nbsp;");
+                                                                                                <a href="~/Admin/ViewInbox?id=@ViewBag.cid&page=@dp">< Prev</a>
+                                                                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                                                                {
+                                                                                                    var dp1 = ViewBag.pagesize + 1;
+                                                                                                    <a href="~/Admin/ViewInbox?id=@ViewBag.cid&page=@dp1">Next ></a>
+                                                                                                    @Html.Raw("&nbsp;");
+                                                                                                    <a href="~/Admin/ViewInbox?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                                                                                }
+                                                                                            }
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                    <tr>
+                                                                                        <td colspan="8">
+                                                                                            @ViewBag.Message
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                                            }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row" id="divMain2" style="@(ViewBag.TotalCount2 > 0 ? "display:block" : "display:none")">
+    <div class="col-md-12">
+        <div class="table-responsive">
+
+            @{
+                if (ViewBag.TotalCount2 > 0)
+                {
+                    int d = 0;
+                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                    {
+                        d = d + 1;
+                        var id = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                        var Subject = Model.StoreAllData.Tables[0].Rows[i]["Subject"].ToString();
+                        var Body = Model.StoreAllData.Tables[0].Rows[i]["Body"].ToString();
+                        var SentOn = Model.StoreAllData.Tables[0].Rows[i]["SentOn"].ToString();
+                        var Attachment = Model.StoreAllData.Tables[0].Rows[i]["Attachment"].ToString();
+                        Model.CommaStringToList = Model.StoreAllData.Tables[0].Rows[i]["Attachment"].ToString().Split(',').ToList();
+                        var SentFrom = Model.StoreAllData.Tables[0].Rows[i]["SentFrom"].ToString();
+                        var SentTo = Model.StoreAllData.Tables[0].Rows[i]["SentTo"].ToString();
+                        bool IsRead = Convert.ToBoolean(Model.StoreAllData.Tables[0].Rows[i]["IsRead"].ToString());
+                        var UserName = Model.StoreAllData.Tables[0].Rows[i]["user"].ToString();
+                        var Designation = Model.StoreAllData.Tables[0].Rows[i]["Designation"].ToString();
+                        var Branch = Model.StoreAllData.Tables[0].Rows[i]["Branch"].ToString();
+                        var BranchUser = "";
+                        if (Branch.ToLower() == "admin")
+                        {
+                            BranchUser = Branch;
+                        }
+                        else
+                        {
+                            BranchUser = Branch + " (" + UserName + ")";
+                        }
+
+                        var Sender = SentFrom + " , " + UserName + " , " + Designation + "   (" + SentOn + ") ";
+                        var MailType = Model.StoreAllData.Tables[0].Rows[i]["MailType"].ToString();
+                     
+
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td colspan="2" align="left">
+                                    <a href="/Admin/ViewInbox" class="btn"> Back</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="20%">Sender</td>
+                                <td><input type="text" id="Sender-@id" name="Sender" value="@Sender" class="form-control" readonly /></td>
+                            </tr>
+                            <tr>
+                                <td>Subject</td>
+                                <td><input type="text" id="Subject-@id" name="Subject" value="@Subject" class="form-control" readonly /></td>
+                            </tr>
+                            <tr>
+                                <td>Message</td>
+                                <td>
+                                    <textarea rows="5" id="Message-@id" class="form-control" readonly style="resize:none;overflow-y:scroll;overflow-x:scroll">@Body</textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Attachments </td>
+                                <td>
+                                    @if (Attachment != "")
+                                            {
+                                            <ul class="attachment">
+                                                @{
+                                                        int m = 1;
+                                                        foreach (var item in Model.CommaStringToList)
+                                                        {
+                                                    <li>
+
+                                                        <a class="title" href="@("/Upload/" + item)" download>ATTACHMENT (@m)</a>
+                                                    </li>
+                                                            m++;
+                                                        }
+                                                }
+                                            </ul>
+                                                        }
+                                                        else
+                                                        { <span class="rqf">No Attachment</span>}
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">                                    
+                                    <fieldset style="margin-bottom:15px">
+                                        <legend></legend>
+                                        @using (Html.BeginForm("MailReplyMaster", "Admin", FormMethod.Post, new { id = "sendForm", enctype = "multipart/form-data" }))
+                                                {
+                                                @Html.Hidden("MId", @id)
+                                                @Html.Hidden("Subject", @Subject)
+                                                @Html.Hidden("SentFrom", @SentFrom)                                            
+                                                <div class="row">
+                                                    <div class="col-md-3" style="@(Session["AdminType"].ToString().ToLower().Contains("admin") ? "display:block" : "display:none")">
+                                                        Select User <span class="rqf"> (Multiple)</span>
+                                                        @Html.DropDownList("SelectedAdmin", (MultiSelectList)ViewBag.MyAdminList, new { multiple = "multiple", id = "SelectedAdmin" })
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <textarea rows="3" id="Reply" name="Reply" class="form-control" placeholder="Click here to Reply" style="resize:none;overflow-x:scroll;overflow-y:scroll"></textarea>
+
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                Upload File @Html.TextBoxFor(a => a.Replyfiles, "", new { id = "ReplyFile", @class = "FileUpload", @type = "file"})
+                                                            </div>                                                           
+                                                        </div>
+                                                    </div>                                                   
+                                                    <div class="clearfix"></div>
+                                                    <div class="col-md-12 text-center pdntb">
+                                                        <input type="submit" value="Send" id="btnReply" onclick="return valForm();" />
+                                                    </div>
+                                                </div>
+                                                }
+                                    </fieldset>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+                                <td colspan="4">
+                                    <fieldset style="margin-bottom:15px">
+                                        <legend>Conversation</legend>
+                                        <table width="100%" id="view-@id">
+                                            @{
+                                                for (int s = 0; s < Model.StoreAllData.Tables[2].Rows.Count; s++)
+                                                {
+                                                    var Mlot = Model.StoreAllData.Tables[2].Rows[s]["Mlot"].ToString();
+                                                    var MId = Model.StoreAllData.Tables[2].Rows[s]["MId"].ToString();
+                                                    var Reply = Model.StoreAllData.Tables[2].Rows[s]["Reply"].ToString();
+                                                    var ReplyFile = Model.StoreAllData.Tables[2].Rows[s]["ReplyFile"].ToString();
+                                                    var ReplyOn = Model.StoreAllData.Tables[2].Rows[s]["ReplyOn"].ToString();
+                                                    var ReplyBy = Model.StoreAllData.Tables[2].Rows[s]["ReplyBy"].ToString();
+                                                    var ReplyTo = Model.StoreAllData.Tables[2].Rows[s]["ReplyTo"].ToString();
+                                                    Model.ReplyfilesToList = Model.StoreAllData.Tables[2].Rows[s]["ReplyFile"].ToString().Split(',').ToList();
+                                                    if (id == MId)
+                                                    {
+                                                        <tr id="trs-@Mlot-@MId">
+                                                            <td colspan="4">
+                                                                <h4 id="h4-@Mlot-@MId" onclick="javascript:toggleDiv('content_-@Mlot-@MId');" class="@(ReplyBy.ToLower().Contains("admin") ? "adminreply" : "userreply" )">@ReplyBy : @ReplyOn</h4>
+                                                                <div id="content_-@Mlot-@MId">
+                                                                    <h5 style="text-align:right">
+                                                                        <span style="@(Session["AdminType"].ToString().ToLower().Contains("admin")
+                                                            && ReplyBy.ToLower().Contains("admin")? "display:block" : "display:none")">@ReplyTo</span>
+                                                        </h5>
+                                                        @Reply <br />
+                                                        @if (ReplyFile != "")
+                                                        {
+                                                            <ul class="attachment">
+                                                                @{
+                                                                    int m = 1;
+                                                                    foreach (var item in Model.ReplyfilesToList)
+                                                                    {
+                                                                        <li>
+                                                                            <a class="title" href="@("/Upload/" + item)" download><img src="~/Images/attachmenticon.png" width="50px" height="50px" /></a>
+                                                                        </li>
+                                                                        m++;
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                                    }
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+
+                                                                        }
+                                                                    }
+
+                                            }
+                                        </table>
+
+
+
+                                    </fieldset>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+
+                                                                                        }
+                                                                                    }
+
+            }
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    function toggleDiv(divId) {
+        $("#" + divId).toggle();
+    }
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $('[id^="content_"]').hide();
+    });
+</script>
+
+        <script type="text/javascript">
+            function ReceiveDisp(Id) {               
+                var flag = 0;
+                if (flag == 1) {
+                    return false;
+                }
+                else {
+                    $.post("/Admin/JqReadInbox", { "Id": Id, "Type": 1 },
+                        function (data) {
+                            // alert('data.status  = ' + data.status);
+                        });
+                }
+            }
+
+            $('#ReplyFile').change(function () {
+                alert(1);
+                var files = $(this)[0].files;
+                if (files.length > 2) {
+                    alert("Please select only 2 images..!!!");
+                    return false;
+                }
+                else if (files.length <= 0 {
+                    alert("Please select atleat 1 image..!!!");
+                    return false;
+                }
+            });
+        </script>
+
+<script type="text/javascript">
+            function valForm() {
+                var txtName = document.getElementById("Reply");
+                if (txtName.value == "") {
+                    alert("Please Enter Reply");
+                    txtName.focus();
+                    return false;
+                }
+
+
+               if ('@Session["AdminType"].ToString().ToLower().Contains("admin")')
+                {
+				    var chkAdmin ='@Session["AdminType"].ToString().ToLower()';                 
+                    var ddlUser = document.getElementById("SelectedAdmin");
+                    if (ddlUser.value == "0" || ddlUser.value == "") {
+					if(chkAdmin == "admin"){
+                        alert("Select Atleast One User");
+                        ddlUser.focus();
+                        return false;}
+                    }
+                }
+                return true;
+            }
+</script>

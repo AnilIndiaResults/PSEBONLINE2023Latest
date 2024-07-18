@@ -1,0 +1,103 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Firm Download Student Record";
+    //Layout = "~/Views/Shared/_HeaderCorr.cshtml";  By Rohit
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 225px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+    }
+</style>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modal");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+    $('form').live("submit", function () {
+        ShowProgress();
+    });
+</script>
+
+<h1>Firm Download Student Record</h1>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+@using (Html.BeginForm("FirmDownloadStudentRecord", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-1"></div>
+            <div class="col-md-10">
+                @Html.TextAreaFor(a => a.SdtID, new { id = "SdtID", cols = "10", rows = "2", @class = "form-control", pattern = "[0-9,]+", title = "Please enter comma seperated StudentID.", placeholder = "Enter comma seperated Student ID", onkeypress = "return isNumberKey(event);", onleave="" })
+            </div>
+        <div class="col-md-1"></div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center" style="padding-top:10px">
+                <input type="submit" value="Download record" onclick="return valForm();" title="Download all records of given stuednt Id." />
+                <input type="submit" value="Home" formaction="FirmCorrectionHome" title="Go for Home Page" />
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center">
+                <p class="rqf">Note: Enter Comma Seperated Student ID</p>
+            </div>
+        </div>
+    <div class="loading" align="center">
+        Downloading... Please wait.<br />
+        <br />
+        <img src="../../images/loadingAnim.gif" />
+    </div>
+}
+
+<script>
+    function valForm() {
+        var SdtID = document.getElementById("SdtID");
+        if (SdtID.value == "" || SdtID.value == "0") {
+            alert("Enter Required Student Id");
+            SdtID.focus();
+            return false;
+        }
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 44)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }   
+</script>
+

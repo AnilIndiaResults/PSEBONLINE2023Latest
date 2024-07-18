@@ -1,0 +1,143 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "DownloadCompartmentData";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h2>Download Compartment Data</h2>
+@using (Html.BeginForm("DownloadCompartmentData", "Admin", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+{
+    @Html.Hidden("Filevalue", "REGNO")
+    <div class="row" style="padding-bottom:100px">
+        <div class="col-md-3">
+            Upload Compartment Ref No. Mis File @Html.TextBoxFor(m => m.file, new { id = "REGNOMIS", type = "file", required = "required" })
+        <span class="rqf">(For Particular Reference Number)</span>
+        </div>
+        <div class="col-md-4">
+            <br />
+            <input type="submit" value="Download Data" onclick="return valForm();" />
+            <input type="submit" value="downloadimage" name="cmd" />
+        </div>
+        <div class="col-md-5 text-right">
+            <br />
+            <a download="" href="~/PDF/CompartmentRefNoSample.xls" class="btn">Click Here to Download Compartment Ref No. Sample File</a>
+            <input type="button" value="Back" onclick="javascript:document.location.href='@Url.Action("FirmCorrectionHome", "Admin", new { File = "Back" })    '" />
+        </div>
+    </div>
+    <div class="col-lg-2">
+        @{
+            List<SelectListItem> ID = new List<SelectListItem>();
+            //batch.Add(new SelectListItem { Text = "---Batch--- ", Value = "" });
+            //ID.Add(new SelectListItem { Text = "June", Value = "6" });
+            //ID.Add(new SelectListItem { Text = "August", Value = "8" });
+            //ID.Add(new SelectListItem { Text = "October", Value = "10" });            
+            ID.Add(new SelectListItem { Text = "March", Value = "3" });
+    }
+    Batch: @Html.DropDownList("ID", ID, new { id = "ID", @ReadOnly = "ReadOnly" })
+</div>
+        }
+<div class="clearfix"></div>
+
+<div>
+    @if (ViewBag.TotalCount > 0)
+    {
+        var tcountPenind = Model.StoreAllData.Tables[0].Rows[0]["tcountpending"].ToString();
+        if (Convert.ToInt16(Model.StoreAllData.Tables[0].Rows[0]["tcountpending"]) > 0)
+        {
+            <span>
+                <label style="width:5%"><b> @tcountPenind </b></label>&nbsp;
+                <input type="button" value="Download Pending Compartment Data" onclick="javascript:document.location.href='@Url.Action("DownloadCompartmentDataPendingFile", "Admin", new { File = "P" })'" />
+            </span>
+            <input type="button" value="Download Compartment Photo & Sign" onclick="javascript:document.location.href='@Url.Action("NewDownloadZIPFilePSPvt", "Admin")'" />
+        }
+
+    }
+
+    @*<input type="button" value="." style="color:gainsboro;background-color:transparent;border:none" onclick="javascript:document.location.href='@Url.Action("NewDownloadZIPFilePSPvt", "Admin")'" />*@
+    </div>
+@*<div>@Html.ActionLink("Download Photo Sign", "DownloadZIPFilePSpvt", "Admin", null, null)    </div>*@
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="15%">Total Student</th>
+                    <th width="15%">Download Lot</th>
+                    <th width="30%">Download Date</th>
+                    <th width="40%">Download File</th>
+                </tr>
+                @{
+                    @Html.HiddenFor(mode=>Model.ID)
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var tcount = Model.StoreAllData.Tables[0].Rows[i]["tcount"].ToString();
+                            var DOWNLOT = Model.StoreAllData.Tables[0].Rows[i]["DOWNLOT"].ToString();
+                            var DOWNDATE = Model.StoreAllData.Tables[0].Rows[i]["DOWNDATE"].ToString();
+                            int Count = i + 1;
+                            <tr>
+                                <td>
+                                    @tcount
+                                </td>
+                                <td>
+                                    @DOWNLOT
+                                </td>
+                                <td>
+                                    @DOWNDATE
+                                </td>
+                                <td><input type="button" value="Download File of LOT @DOWNLOT" onclick="javascript:document.location.href='@Url.Action("DownloadCompartmentDataFile", "Admin", new { File = @DOWNLOT })'" /></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+@{
+    if (ViewData["Result"] != null)
+    {
+        if (ViewData["Result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+               // window.location.href = 'Url.Action("Welcome", "Bank")';
+            </script>}
+        else
+        {
+            <script type="text/javascript" language="javascript">
+               alert('@ViewBag.Message');
+            </script>}
+
+    }
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase();
+            var regex = new RegExp("(.*?)\.(xlsx|xls)$");
+            if (!(regex.test(val))) {
+                $(this).val('');
+                alert('Please select only .xls file format');
+            }
+        });
+    });
+
+</script>
+
+
+
+

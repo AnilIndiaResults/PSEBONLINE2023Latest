@@ -1,0 +1,325 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "adminresultpage";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>Admin Result Page</h1>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+@using (Html.BeginForm("adminresultpage", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-2">
+                    Total Count <br /><label>@ViewBag.TotalCount</label>                  
+                    </div>
+                <div class="col-md-2">
+                    Select Year   @Html.DropDownList("Year", new SelectList(ViewBag.MyYear, "Value", "Text", ViewBag.SelectedYear), "--All---", new  { required = "required" })
+                </div>  
+                <div class="clearfix"></div>               
+                    <div class="col-md-2">
+                     Select School Code
+                    @Html.DropDownList("totalcountlist", new SelectList(ViewBag.MySchcode, "Value", "Text", ViewBag.SelectedItemcode), "--Select---")
+                </div>
+                <div class="col-md-2">
+                    Enter School Code<br />
+                    @*<input type="text" id="TotalSearchString" name="TotalSearchString" onkeypress="return isNumberKey(event);" maxlength="7" value="@Request["TotalSearchString"]" />*@
+                    @Html.TextBoxFor(m => m.TotalSearchString, new { id = "TotalSearchString", onkeypress = "return isNumberKey(event);", @maxlength = "7", required="required" })
+                    @*<input type="text" id="TotalSearchString" name="TotalSearchString" onkeypress="return isNumberKey(event);" maxlength="7" value="@Request["TotalSearchString"]" />*@
+                </div>
+                @*<form id="myForm">*@
+                <div class="col-md-2">
+                     Select Form   @Html.DropDownList("SelForm", new SelectList(ViewBag.MyForm, "Value", "Text", ViewBag.SelectedForm), "--All---")
+                </div>
+                    <div class="col-md-2">
+                         Search By   @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---")
+                    </div>
+                    <div class="col-md-3">
+                        &nbsp;<br />
+                        <input type="text" id="SearchByString" name="SearchByString"  value="@Request["SearchByString"]" />
+                    </div>
+                <div class="col-md-1">&nbsp;<br /><input type="submit" value="Search" /></div>
+                <div class="clearfix"></div>
+                  <div class="col-md-10">
+                            @{
+
+                            @*if (TempData["notice"] != null)
+                            {
+                               @TempData["notice"]
+                            }*@
+                                <div class="rqf" style="padding:12px 0;font-size:18px;font-weight:normal">NOTE : 9TH AND 11TH CLASS RESULT CAN BE FINAL SUBMITTED AND CHALLAN SHOULD BE VERIFIED.</div>
+                            }
+                    </div>
+                        <div class="col-md-2 text-right" style="@(ViewBag.IsFinalSubmit == 1 ? "display:block" : "display:none")">   
+                            
+                                <input type="submit" onclick="return valForm();" formmethod="post" formaction="FinalsubmitResult" value="Final submit Result" />
+</div>                     
+
+                    
+                @*</form>*@
+            </fieldset>
+        </div>
+    </div>
+                            }
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="5%">Sl.<br />No.</th>
+                    <th width="5%">School<br/>Code</th>
+                    <th width="5%">Student<br />ID</th>
+                    <th  width="25%">Candidate/ Father/ Mother Name</th>
+                    @*<th>Father Name</th>
+                    <th>Mother Name</th>*@
+                    <th width="10%">DOB</th>
+                    <th  width="5%">FORM</th>
+                    <th width="10%">Total <br />Marks</th>
+                    <th width="10%">Obtained<br /> Marks</th>
+                    <th width="5%">Stream</th>
+                    <th width="10%">Result</th>
+                    <th width="15%">Update</th>
+
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var schCode = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                            //var stdid = Model.StoreAllData.Tables[0].Rows[i]["IDNO"].ToString();
+                            var canName = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                            var Fname = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var Mname = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var FormName = Model.StoreAllData.Tables[0].Rows[i]["FORM"].ToString();
+                            var totMark = Model.StoreAllData.Tables[0].Rows[i]["TOTMARKS"].ToString();
+                            var obtMark = Model.StoreAllData.Tables[0].Rows[i]["OBTMARKS"].ToString();
+                            var result = Model.StoreAllData.Tables[0].Rows[i]["RESULT"].ToString();
+                            var reclock = Model.StoreAllData.Tables[0].Rows[i]["reclock"].ToString();
+                            var stream = Model.StoreAllData.Tables[0].Rows[i]["EXAM"].ToString();
+                            var yearme = Model.StoreAllData.Tables[0].Rows[i]["yearme"].ToString();
+                            var detailName = canName + "/ " + Fname + "/ " + Mname;
+                            int Count = i + 1;
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @schCode
+                                </td>
+                                <td>
+                                    @stdid
+                                </td>
+                                <td>
+                                    @detailName
+                                </td>
+                                @*<td>
+                                    @Fname
+                                </td>*@
+                                @*<td>
+                                    @Mname
+                                </td>*@
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @FormName
+                                </td>
+                                <td>
+                                    @totMark
+                                    @*<input type="text" id="totMark" name="totMark" value="@totMark" />*@
+                                </td>
+                                <td>
+                                    @obtMark
+                                    @*<input type="text" id="obtMark" name="obtMark" value="@obtMark" />*@
+                                </td>
+                                <td>@stream</td>
+                                <td>
+                                    @result
+
+                                </td>
+                                <td style="@(ViewBag.IsEdit == 1 ? "display:block" : "display:none")">
+
+                                        @{
+                                            if (@reclock.ToString() == "1")
+                                            {
+                                                <label>@Html.ActionLink("Edit", "Admin_Result_Update", new { id = encrypt.QueryStringModule.Encrypt(stdid), year = encrypt.QueryStringModule.Encrypt(yearme) }) | LOCKED</label>
+                                                @*<label>LOCKED</label>*@
+                                            }
+                                            else
+                                            {
+                                                <label> @Html.ActionLink("Edit", "Admin_Result_Update", new { id = encrypt.QueryStringModule.Encrypt(stdid), year = encrypt.QueryStringModule.Encrypt(yearme) }) | UNLOCK</label> 
+                                            }
+
+                                        }
+                                        @*@reclock*@
+                                    
+                                </td>
+
+                            </tr>
+
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="11">
+                                                        @ViewBag.Message
+                                                    </td>
+                                                </tr>
+                                            }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+
+
+<script>
+
+
+    $(document).ready(function () {
+
+        var Value = document.getElementById('SelectItem').value;
+        if (Value == 6) {
+            $("#SearchByString").datepicker("enable");
+            $("#SearchByString").off('keypress');
+            $("#SearchByString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchByString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (Value == 5 || Value == 3 || Value == 4) {
+            $("#SearchByString").datepicker("disable");
+            document.getElementById('SearchByString').disabled = false;
+            $("#SearchByString").off('keypress');
+            $("#SearchByString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchByString").datepicker("disable");
+            document.getElementById('SearchByString').disabled = false;
+            $("#SearchByString").off('keypress');
+        }
+    });
+
+
+    $("#SelList").change(function () {
+        var value = document.getElementById('SelList').value;
+        $('#SearchByString').val('');
+        if (value == 6) {
+            $("#SearchByString").datepicker("enable");
+            $("#SearchByString").off('keypress');
+            $("#SearchByString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchByString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (Value == 3 || Value == 4 || Value == 5) {
+            $("#SearchByString").datepicker("disable");
+            document.getElementById('SearchByString').disabled = false;
+            $("#SearchByString").off('keypress');
+            $("#SearchByString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchByString").datepicker("disable");
+            document.getElementById('SearchByString').disabled = false;
+            $("#SearchByString").off('keypress');
+        }
+
+
+        if (Value == 1 || Value == 2 || Value == 3 || Value == 4 || Value == 5 || Value == 6) {
+            document.getElementById("SearchByString").disabled = false;
+        }
+        else {
+            document.getElementById("SearchByString").disabled = true;
+        }
+    });
+
+    $("#totalcountlist").change(function () {
+        var Value = document.getElementById('totalcountlist').value;
+        if (Value == "1") {
+            document.getElementById('TotalSearchString').disabled = false;
+        }
+        else {
+            document.getElementById('TotalSearchString').disabled = true;
+        }
+        
+    });
+      
+    
+    function valForm() {       
+        var SchlList = document.getElementById("totalcountlist"); 
+        if (SchlList.value == "" || SchlList.value == "0") {
+            alert("Select School");
+            SchlList.focus();
+            return false;
+        }
+
+        var Schlcode = document.getElementById("TotalSearchString");  
+        if (Schlcode.value == "" || Schlcode.value == "0") {
+            alert("Enter School Code");
+            Schlcode.focus();
+            return false;
+        }
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+

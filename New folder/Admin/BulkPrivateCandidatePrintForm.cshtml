@@ -1,0 +1,692 @@
+﻿@model PSEBONLINE.Models.PrivateCandidateModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/prvprint.css" />
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+
+@using (Html.BeginForm("BulkPrivateCandidatePrintForm", "Admin", FormMethod.Post, new { id = "Oroll", enctype = "multipart/form-data" }))
+{
+    @*var refnoH = Session["refno"].ToString().Substring(3, 2);
+    var yearH = "20" + Session["refno"].ToString().Substring(5, 2);
+    var feecatH = Session["form"].ToString();
+    if (feecatH == "SrSec_Reap_SciComm")
+    {
+        refnoH = "June";
+        <h1 class="noprint">Sr. Secondary Supplementary Exam (Compartment Science/Commerce), @refnoH -@yearH</h1> }
+    else if (refnoH == "03")
+    {
+        refnoH = "March";
+        <h1 class="noprint">Matric/Sr.Secondary Supplementary Exam(Reap/Compartment/DIC), @refnoH -@yearH</h1>
+    }
+    else if (refnoH == "07")
+    {
+        refnoH = "July";
+        <h1 class="noprint">Matric/Sr.Secondary Supplementary Exam(Reap/Compartment/Additional), @refnoH-@yearH</h1>
+    }
+    else if (refnoH == "08")
+    {
+        refnoH = "August";
+        <h1 class="noprint">Matric/Sr.Secondary Supplementary Exam(Reap/Compartment/Additional), @refnoH-@yearH</h1>
+    }
+    else if (refnoH == "09")
+    {
+        refnoH = "September";
+        <h1 class="noprint">Matric/Sr. Secondary Supplementary Golden Chance Exam (Reap/Improvement/Additional), @refnoH -@yearH</h1> }
+    else if (refnoH == "10")
+    {
+        refnoH = "October";
+        <h1 class="noprint">Matric/Sr.Secondary Supplementary Exam(Reap/Compartment), @refnoH -@yearH</h1>
+    }*@
+
+    <table style="width:100%;" border="0">
+        <tr>
+            <td>
+                <table style="width:100%;" border="0" class="noprint">
+                    <tr>
+                        <td style="text-align:right;padding-bottom:3px">
+                            <input type="button" value="Print" class="btn" onclick="window.print()" />
+                            <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                            @*<input value="Back" type="button" onclick="javascript:document.location.href='@Url.Action("PrivateCandidateConfirmation", "PrivateCandidate")'" />*@
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int Count = 0;
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+
+                            var refnoH = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString().Substring(3, 2);
+                            var yearH = "20" + Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString().Substring(5, 2);
+                            //
+                            var centrCode = Model.StoreAllData.Tables[0].Rows[i]["cent"].ToString();
+                            var setNo = Model.StoreAllData.Tables[0].Rows[i]["set"].ToString();
+                            var OsetNo = Model.StoreAllData.Tables[0].Rows[i]["Oset"].ToString();
+                            var SelExamDist = Model.StoreAllData.Tables[0].Rows[i]["ExamDist"].ToString();
+                            var distName = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                            var Exam_Type = Model.StoreAllData.Tables[0].Rows[i]["utype"].ToString();
+                            var category = Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString();
+                            var Stream = Model.StoreAllData.Tables[0].Rows[i]["stream"].ToString();
+                            if (category == "R")
+                            {
+                                category = "Reappear/Compartment";
+                            }
+                            else if (category == "D")
+                            {
+                                category = "Division improvement";
+                            }
+                            else if (category == "A")
+                            {
+                                category = "Additional subject";
+                            }
+                            var phyChal = Model.StoreAllData.Tables[0].Rows[i]["phy_chal"].ToString();
+
+                            var Choice1 = Model.StoreAllData.Tables[0].Rows[i]["Choice1"].ToString();
+                            var Choice2 = Model.StoreAllData.Tables[0].Rows[i]["Choice2"].ToString();
+                            var Photo = Model.StoreAllData.Tables[0].Rows[i]["photo_url"].ToString();
+                            var sign = Model.StoreAllData.Tables[0].Rows[i]["sign_url"].ToString();
+
+                            var SelYear = Model.StoreAllData.Tables[0].Rows[i]["year"].ToString();
+                            var SelMonth = Model.StoreAllData.Tables[0].Rows[i]["session"].ToString();
+                            var Session = SelMonth + '/' + SelYear;
+                            var OROLL = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                            var emailID = Model.StoreAllData.Tables[0].Rows[i]["emailid"].ToString();
+
+                            var Fee = Model.StoreAllData.Tables[0].Rows[i]["FEE"].ToString();
+                            var challanNo = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                            var BANK = Model.StoreAllData.Tables[0].Rows[i]["BANK"].ToString();
+                            //
+
+                            var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                            var Bank = Model.StoreAllData.Tables[0].Rows[i]["Bank"].ToString();
+                            var BRANCH = Model.StoreAllData.Tables[0].Rows[i]["BRANCH"].ToString();
+                            var DEPOSITDT = Model.StoreAllData.Tables[0].Rows[i]["DEPOSITDT"].ToString();
+                            var J_REF_NO = Model.StoreAllData.Tables[0].Rows[i]["J_REF_NO"].ToString();
+                            var ExpireVDate = Model.StoreAllData.Tables[0].Rows[i]["challanvdateN"].ToString();
+                            var totalfee = Model.StoreAllData.Tables[0].Rows[i]["totfee"].ToString();
+                            var feeCat = Model.StoreAllData.Tables[0].Rows[i]["feeCat"].ToString();
+                            //
+
+
+                            var refNo = Model.StoreAllData.Tables[0].Rows[i]["refno"].ToString();
+                            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                            var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                            var Pname = Model.StoreAllData.Tables[0].Rows[i]["PNAME"].ToString();
+                            var PFname = Model.StoreAllData.Tables[0].Rows[i]["PFNAME"].ToString();
+                            var PMname = Model.StoreAllData.Tables[0].Rows[i]["PMNAME"].ToString();
+                            var EPname = Candi_Name + '/' + Pname;
+                            var EPFname = Father_Name + '/' + PFname;
+                            var EPMname = Mother_Name + '/' + PMname;
+
+                            var Gender = Model.StoreAllData.Tables[0].Rows[i]["sex"].ToString();
+                            var CastList = Model.StoreAllData.Tables[0].Rows[i]["caste"].ToString();
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["regno"].ToString();
+                            var Result = Model.StoreAllData.Tables[0].Rows[i]["result"].ToString();
+                            var SearchResult = Model.StoreAllData.Tables[0].Rows[i]["resultdtl"].ToString();
+
+                            var mobileNo = Model.StoreAllData.Tables[0].Rows[i]["mobile"].ToString();
+                            var Relist = Model.StoreAllData.Tables[0].Rows[i]["religion"].ToString();
+                            if (Relist == "H")
+                            {
+                                Relist = "Hindu";
+                            }
+                            else if (Relist == "M")
+                            {
+                                Relist = "Muslim";
+                            }
+                            else if (Relist == "S")
+                            {
+                                Relist = "Sikh";
+                            }
+                            else if (Relist == "C")
+                            {
+                                Relist = "Christian";
+                            }
+                            else if (Relist == "O")
+                            {
+                                Relist = "Others";
+                            }
+
+                            var sub1 = Model.StoreAllData.Tables[0].Rows[i]["rsub1"].ToString();
+                            var sub2 = Model.StoreAllData.Tables[0].Rows[i]["rsub2"].ToString();
+                            var sub3 = Model.StoreAllData.Tables[0].Rows[i]["rsub3"].ToString();
+                            var sub4 = Model.StoreAllData.Tables[0].Rows[i]["rsub4"].ToString();
+                            var sub5 = Model.StoreAllData.Tables[0].Rows[i]["rsub5"].ToString();
+                            var sub6 = Model.StoreAllData.Tables[0].Rows[i]["rsub6"].ToString();
+
+                            var sub1code = Model.StoreAllData.Tables[0].Rows[i]["rsub1code"].ToString();
+                            var sub2code = Model.StoreAllData.Tables[0].Rows[i]["rsub2code"].ToString();
+                            var sub3code = Model.StoreAllData.Tables[0].Rows[i]["rsub3code"].ToString();
+                            var sub4code = Model.StoreAllData.Tables[0].Rows[i]["rsub4code"].ToString();
+                            var sub5code = Model.StoreAllData.Tables[0].Rows[i]["rsub5code"].ToString();
+                            var sub6code = Model.StoreAllData.Tables[0].Rows[i]["rsub6code"].ToString();
+
+                            var address = Model.StoreAllData.Tables[0].Rows[i]["homeadd"].ToString();
+                            var block = Model.StoreAllData.Tables[0].Rows[i]["block"].ToString();
+                            var tehsil = Model.StoreAllData.Tables[0].Rows[i]["TEHSILENM"].ToString();
+                            var pinCode = Model.StoreAllData.Tables[0].Rows[i]["pinCode"].ToString();
+
+                            var addressfull = (address + ',' + block + ',' + distName + ',' + tehsil + ',' + pinCode);
+                            //
+                            var rsub1code = Model.StoreAllData.Tables[0].Rows[i]["rsub1code"].ToString();
+                            var rsub2code = Model.StoreAllData.Tables[0].Rows[i]["rsub2code"].ToString();
+                            var rsub3code = Model.StoreAllData.Tables[0].Rows[i]["rsub3code"].ToString();
+                            var rsub4code = Model.StoreAllData.Tables[0].Rows[i]["rsub4code"].ToString();
+                            var rsub5code = Model.StoreAllData.Tables[0].Rows[i]["rsub5code"].ToString();
+                            var rsub6code = Model.StoreAllData.Tables[0].Rows[i]["rsub6code"].ToString();
+
+                            <table style="width:100%;border:4px solid #000;">
+                                <tr>
+                                    <td align="center" style="padding-top:15px">
+                                        <table border="0" style="width:96%;">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <table width="100%">
+                                                            <tr>
+                                                                <td width="5%"><img src="~/Images/Slogo.jpg" /></td>
+                                                                <td width="95%" style="font-size:22px;text-align:center;line-height:28px;">
+                                                                    Punjab School Education Board<br />
+                                                                    @{
+                                                                        if (Model.StoreAllData.Tables[0].Rows[i]["class"].ToString() == "10" || Model.StoreAllData.Tables[0].Rows[i]["class"].ToString() == "12")
+                                                                        {
+                                                                            var classNM = Model.StoreAllData.Tables[0].Rows[i]["class"].ToString();
+                                                                            if (classNM == "10") { classNM = "Matriculation"; }
+                                                                            if (classNM == "12") { classNM = "Senior Secondary"; }
+                                                                            var CATEGORY = Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString();
+                                                                            if (CATEGORY == "R") { CATEGORY = "Reappear/Compartment"; }
+                                                                            if (CATEGORY == "D") { CATEGORY = "Division improvement"; }
+                                                                            if (CATEGORY == "A") { CATEGORY = "Additional subject"; }
+                                                                            var EXAMTYPE = Model.StoreAllData.Tables[0].Rows[i]["rp"].ToString();
+                                                                            if (EXAMTYPE == "R") { EXAMTYPE = "Regular"; }
+                                                                            if (EXAMTYPE == "O") { EXAMTYPE = "Open"; }
+                                                                            if (EXAMTYPE == "P") { EXAMTYPE = "Private"; }
+                                                                            if (EXAMTYPE == "SR") { EXAMTYPE = "Golden Chance Re-Appear"; }
+                                                                            if (EXAMTYPE == "SD") { EXAMTYPE = "Golden Chance DIC"; }
+                                                                            if (EXAMTYPE == "SA") { EXAMTYPE = "Golden Chance Additional"; }
+                                                                            <span style="font-size:16px;">@classNM Examination Form For @Exam_Type) (@EXAMTYPE) , @refnoH-@yearH</span>
+                                                                        }
+
+                                                                    }
+
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="text-align:left;padding-top:4px">
+                                                        <table width="100%">
+                                                            <tr>
+                                                                <td style="font-size:14px" width="24%">
+                                                                    <div class="border" style="text-align:center;border-radius:4px">
+                                                                        Reference No. :<br />@refNo)
+                                                                    </div>
+                                                                </td>
+                                                                <td width="1%"></td>
+                                                                <td width="65%">
+                                                                    <div class="border" style="text-align:left;border-radius:4px">
+                                                                        &nbsp;<i>For Office Use Only</i> :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Old Set :&nbsp;@OsetNo) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dealing Set :&nbsp;..................................<br />
+                                                                        &nbsp;Sheet No.:&nbsp;...............................&nbsp;&nbsp;&nbsp;&nbsp;Roll No.:&nbsp;...............................&nbsp;&nbsp;&nbsp;&nbsp;Centre Code:&nbsp;...............................
+                                                                    </div>
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="3" style="height:5px"></td>
+
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="text-align:left">
+                                                        <table border="1" width="100%">
+                                                            <tr>
+                                                                <td width="18%">&nbsp;District Code/Name</td>
+                                                                <td width="30%">&nbsp;@SelExamDist.ToString().ToUpper()</td>
+                                                                <td width="15%">&nbsp;Category</td>
+                                                                <td colspan="2">&nbsp;@Exam_Type</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="15%">&nbsp;Exam Type</td>
+                                                                <td>
+                                                                    &nbsp;@{
+                                                                        var EXAMTYPE1 = Model.StoreAllData.Tables[0].Rows[i]["rp"].ToString();
+                                                                        if (EXAMTYPE1 == "R") { EXAMTYPE1 = "REGULAR"; }
+                                                                        if (EXAMTYPE1 == "O") { EXAMTYPE1 = "OPEN"; }
+                                                                        if (EXAMTYPE1 == "P") { EXAMTYPE1 = "PRIVATE"; }
+                                                                    }@EXAMTYPE1
+                                                                </td>
+                                                                <td style="text-align:left;font-size:11px" colspan="2">
+                                                                    &nbsp;@{
+                                                                        var CATEGORY1 = Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString();
+                                                                        if (CATEGORY1 == "R" || CATEGORY1 == "SR" || CATEGORY1 == "SD" || CATEGORY1 == "SA") { CATEGORY1 = "Want to Appear In Practical Exam"; }
+                                                                        if (CATEGORY1 == "D") { CATEGORY1 = ""; }
+                                                                        if (CATEGORY1 == "A") { CATEGORY1 = ""; }
+                                                                    }@CATEGORY1
+                                                                </td>
+                                                                <td width="5%">
+                                                                    @{
+                                                                        var Practical = Model.StoreAllData.Tables[0].Rows[i]["prac"].ToString();
+                                                                        if (Practical == "True" && (Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString() == "R" || Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString() == "SR" || Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString() == "SD" || Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString() == "SA")) { Practical = "Yes"; }
+                                                                        else if (Practical == "False" && (Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString() == "R" || Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString() == "SR" || Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString() == "SD" || Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString() == "SA")) { Practical = "No"; }
+                                                                        else { Practical = ""; }
+                                                                    } &nbsp;@Practical
+                                                                </td>
+                                                            </tr>
+
+                                                            <tr>
+                                                                <td>&nbsp;Differentaly  abled</td>
+                                                                <td>&nbsp;@phyChal.ToString().ToUpper()</td>
+                                                                <td style="text-align:left;font-size:11px" colspan="2">&nbsp;Do you want Writer (Scribe) (Attach Certificate</td>
+                                                                <td width="5%">
+                                                                    @{
+                                                                        var writer = Model.StoreAllData.Tables[0].Rows[i]["writer"].ToString();
+                                                                        if (writer == "True") { writer = "Yes"; }
+                                                                        else { writer = "No"; }
+                                                                    } &nbsp;@writer
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>&nbsp;Desired Exam Centres</td>
+                                                                <td>&nbsp;1.&nbsp;@Choice1.ToString().ToUpper()</td>
+                                                                <td colspan="3">&nbsp;2.&nbsp;@Choice2.ToString().ToUpper()</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:left">&nbsp;Personal Information</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <table width="100%" border="1">
+                                                            <tr>
+
+
+                                                                <td colspan="2" width="18%">&nbsp;Ref. No.</td>
+                                                                <td>&nbsp;@refNo</td>
+                                                                @{
+                                                                    if (Model.StoreAllData.Tables[0].Rows[i]["cat"].ToString() == "A")
+                                                                    {
+                                                                        <td colspan="2"></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>&nbsp;Registration No.</td>
+                                                                        <td>&nbsp;@RegNo</td>
+                                                                    }
+                                                                }
+
+                                                                @{
+                                                                    var strP = Convert.ToString(Photo);
+                                                                    if (strP.Contains("Batch0319"))
+                                                                    {
+                                                                        Photo = "https://registration2022.pseb.ac.in/upload/upload2018/" + Convert.ToString(Photo);
+                                                                        sign = "https://registration2022.pseb.ac.in/upload/upload2018/" + Convert.ToString(sign);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Photo = "https://registration2022.pseb.ac.in/upload/upload2019/" + Convert.ToString(Photo);
+                                                                        sign = "https://registration2022.pseb.ac.in/upload/upload2019/" + Convert.ToString(sign);
+                                                                    }
+                                                                }
+                                                                <td rowspan="7" style="text-align:center"><img src="@Photo" style="height:140px;width:140px;border:1px solid #000;padding:1px" alt="Photograph" id="imgPhoto" /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2" style="vertical-align:top">
+                                                                    &nbsp;Candidate Name<br />@*&nbsp;(In English / Punjabi)*@
+                                                                </td>
+                                                                <td colspan="3" style="vertical-align:top">
+                                                                    &nbsp;@Candi_Name) / <span class="kdsfont">@Pname)</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2" style="vertical-align:top">
+                                                                    &nbsp;Father&#39;s Name<br />@*&nbsp;(In English / Punjabi)*@
+                                                                </td>
+                                                                <td colspan="3" style="vertical-align:top">
+                                                                    &nbsp;@Father_Name) / <span class="kdsfont">@PFname)</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2" style="vertical-align:top">
+                                                                    &nbsp;Mother&#39;s Name<br />@*&nbsp;(In English / Punjabi)*@
+                                                                </td>
+                                                                <td colspan="3" style="vertical-align:top">
+                                                                    &nbsp;@Mother_Name) / <span class="kdsfont">@PMname)</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2">&nbsp;Caste</td>
+                                                                <td>&nbsp;@CastList.ToString().ToUpper()</td>
+                                                                @{
+                                                                    if (Model.StoreAllData.Tables[0].Rows[i]["class"].ToString() == "12")
+                                                                    {
+                                                                        <td colspan="2"></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>&nbsp;Date of Birth</td>
+                                                                        <td>&nbsp;@DOB</td>
+                                                                    }
+                                                                }
+
+
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2">&nbsp;Gender</td>
+                                                                <td width="23%">&nbsp;@Gender.ToString().ToUpper()</td>
+                                                                <td width="15%">&nbsp;Religion</td>
+                                                                <td width="23%">&nbsp;@Relist.ToString().ToUpper()</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2">&nbsp;Mobile No.</td>
+                                                                <td>&nbsp;@mobileNo</td>
+                                                                <td width="15%">&nbsp;Stream/Group</td>
+                                                                <td width="23%">&nbsp;@Stream.ToString().ToUpper()</td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2">&nbsp;Email ID</td>
+                                                                <td colspan="3">&nbsp;@emailID.ToString().ToUpper()</td>
+                                                                <td rowspan="2" style="text-align:center"><img src="@sign" style="height:55px;width:140px;border:1px solid #000;padding:1px" alt="Signature" id="img1" /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2" style="vertical-align:top">&nbsp;Address</td>
+                                                                <td colspan="3" style="height:40px;vertical-align:top">&nbsp;@addressfull.ToString().ToUpper()</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <table width="100%" border="1">
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="100%" border="1">
+                                                                        <tr>
+                                                                            <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:left">&nbsp;Previous Class Details</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td width="18%">&nbsp;Old Roll No.</td>
+                                                                            <td>&nbsp;@OROLL</td>
+                                                                            <td width="15%">&nbsp;Session / Year</td>
+                                                                            <td>&nbsp;@SelMonth) / @SelYear</td>
+                                                                            <td width="15%">&nbsp;Result Details </td>
+                                                                            <td>&nbsp;@SearchResult</td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <table width="100%" border="1">
+                                                            <tr>
+                                                                <td>
+                                                                    @{
+                                                                        if (@ViewBag.TotalCount > 0)
+                                                                        {
+
+                                                                            <table width="100%" border="1">
+                                                                                <tr>
+                                                                                    <td colspan="6" style="color:#fff !important;background-color:#000 !important;text-align:center">Fee Details</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td width="15%">&nbsp;Challan No.</td>
+                                                                                    <td width="15%">&nbsp;@challanid</td>
+                                                                                    <td width="15%">&nbsp;Challan Amount</td>
+                                                                                    <td width="15%">&nbsp;@totalfee</td>
+                                                                                    <td width="15%">&nbsp;Challan Valid Date</td>
+                                                                                    <td width="25%">&nbsp;@ExpireVDate</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>&nbsp;Bank/Branch</td>
+                                                                                    <td colspan="5">&nbsp;@Bank / @BRANCH</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>&nbsp;Bank Ref No.</td>
+                                                                                    <td>&nbsp;@J_REF_NO</td>
+                                                                                    <td>&nbsp;Deposit Date</td>
+                                                                                    <td>&nbsp;@DEPOSITDT</td>
+                                                                                    <td colspan="2"></td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        }
+                                                                    }
+                                                                </td>
+
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:left">&nbsp;Subjects Details</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <table width="100%" border="1">
+                                                            <tr>
+                                                                <td width="5%">&nbsp;Sr.</td>
+                                                                <td width="5%">&nbsp;Code</td>
+                                                                <td width="45%">&nbsp;Subject Name</td>
+                                                                <td width="5%">&nbsp;Sr.</td>
+                                                                <td width="5%">&nbsp;Code</td>
+                                                                <td width="45%">&nbsp;Subject Name</td>
+                                                            </tr>
+                                                            @{
+                                                                if (@ViewBag.TotalCount > 0)
+                                                                {
+                                                               
+                                                                    var k = 0;
+                                                                    <tr>
+                                                                        @if (rsub1code != "")
+                                                                        {
+                                                                            k = k + 1;
+                                                                            <td>&nbsp;@k</td>
+                                                                            <td>&nbsp;@sub1code</td>
+                                                                            <td>&nbsp;@sub1</td>
+                                                                        }
+                                                                        @if (rsub2code != "")
+                                                                        {
+                                                                            k = k + 1;
+                                                                            <td>&nbsp;@k</td>
+                                                                            <td>&nbsp;@sub2code</td>
+                                                                            <td>&nbsp;@sub2</td>
+                                                                        }
+                                                                    </tr>
+                                                                    <tr>
+                                                                        @if (rsub3code != "")
+                                                                        {
+                                                                            k = k + 1;
+                                                                            <td>&nbsp;@k</td>
+                                                                            <td>&nbsp;@sub3code</td>
+                                                                            <td>&nbsp;@sub3</td>
+                                                                        }
+                                                                        @if (rsub4code != "")
+                                                                        {
+                                                                            k = k + 1;
+                                                                            <td>&nbsp;@k</td>
+                                                                            <td>&nbsp;@sub4code</td>
+                                                                            <td>&nbsp;@sub4</td>
+                                                                        }
+                                                                    </tr>
+                                                                    <tr>
+                                                                        @if (rsub5code != "")
+                                                                        {
+                                                                            k = k + 1;
+                                                                            <td>&nbsp;@k</td>
+                                                                            <td>&nbsp;@sub5code</td>
+                                                                            <td>&nbsp;@sub5</td>
+                                                                        }
+                                                                        @if (rsub6code != "")
+                                                                        {
+                                                                            k = k + 1;
+                                                                            <td>&nbsp;@k</td>
+                                                                            <td>&nbsp;@sub6code</td>
+                                                                            <td>&nbsp;@sub6</td>
+                                                                        }
+                                                                    </tr>
+                                                                }
+
+                                                            }
+
+                                                        </table>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:center">Declaration</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <table width="100%" border="1">
+                                                            <tr>
+                                                                <td>
+                                                                    <div style="font-size:10px;line-height:12px;padding:0 4px" class="kdsfont">
+                                                                        ¦ÝÌÛÂÒØÏ ÂØ ÚÉ¤ØÅ :-<br />(¦) Ìè ÚÉ¤ØÅ ¨ÏÂØ / ¨ÏÂÛ ÕÙ Ú¨ ÌãÏã ÂÝ¤ØÏØ ÇØÏÌ ÚÒó° ÊÏã ¬¥ã ÓØÏã ÒãÏÒã ÓÕÛ ÕÅ ¢ Ìè Ðë¾ÛÂã ÂÓ¼ØÒã² ÅóÁÛ ¨Ï ÚÏÕØ/ÏÕÛ ÕÙ ¢ ÇØÏÌ ÚÒó° ¨Û¼Û Ú¨Óã ÒÛ ¬Ð¼ ÚÉ¤ØÅÛ Ð¥Û Ìè ÆÞÏÛ ¼ÏðÙ Ú²âÌãÒØÏ ÕëÒÙ¬Ø/ÕëÒÙ¬Û¢ Ìè ÉëÏ¸ ÂÝ¤ØÏØ ÌØÅ¼Ø ÆñØÆ¼ Ú¨Óã ÓâÓÁØ ÂÝ¤ØÏØ ÚÅ¨ØÐØ-ÆñØÆ¼ ¨óºã ¬¥ã Õë» Âã ¨ØÏ» ÆÏÛÚª¤Ø ÚÒó° Éè•» ¼ë ÒÏÚ²¼ ÅÕÛ ²Ù ÉëÏ¸ ÒóÐë ÌèÅÞâ Ú¨Óã ÆÏÛÚª¤Ø ¼ë ¤Íë¬ ¨ÏØÏ ÅÕÛ ÚÂó¼Ø Ú¬¤Ø¢ Ìè Ú¥Ó ÚÒóÚÂ¤¨ ÓØÐ ÚÒó° Ú¨Óã ÒÛ ÓÏ¨ØÏÛ/ÌØÅ¼Ø ÆñØÆ¼ Ó¨ÞÐ ÚÒó° ÅÕÜ Æ¾ ÚÏÕØ/ÏÕÛ ÕÙ¢ Ìè Ú¥Ó ÆÏÛÚª¤Ø ÇØÏÌ ¼ë Ú¥ÐØÒØ Ú¥Ó ÆÏÛÚª¤Ø Ð¥Û ÕëÏ ¨ë¥Û ÆÏÛÚª¤Ø ÇØÏÌ ÅÕÛ ÊÚÏ¤Ø¢
+                                                                        (¤) ÌãÏã ÒÐë Ú¨Óã ÒÛ Ú¨ÓÌ Âã ´¬¾ã ÂÛ ÓÞÏ¼ ÚÒó° ¨ØÅÝâÅÛ ¨ØÏÒØ¥Û ¨ãÒÐ ¤²Û¼¬¾ð ÓÚÄ¼ ¤ÂØÐ¼ ÚÒó° ÕÛ ¨Û¼Û ²ØÒã¬Ûã¢
+
+                                                                        <br />ÚÌ¼Û......................................................................<span style="font-family:Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>ÓÁØÅ......................................................................<span style="font-family:Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>¦ÝÌÛÂÒØÏ Âã ÕÓ¼ØªÏ......................................................................
+                                                                        <br />
+                                                                        ¼ÓÂÛ¨ :-<br /><span style="font-family:Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>        Ìè ¼ÓÂÛ¨ ¨ÏÂØ/¨ÏÂÛ ÕÙ Ú¨ ¦ÝÌÛÂÒØÏ ...................................................................... ÓÆÝó¼Ï/ÓÆÝó¼ÏÛ ÓñÛ ...................................................................... ÓñÛÌ¼Û ...................................................................... Åã ........ ÓÖñã»Û ÂÛ ÆÏÛÚª¤Ø ÏëÐ Åâ ............................................ÓèÓÅ/ÓØÐ ..................ÉëÏ¸ ............................¼ë ÚÂó¼Û ÓÛ, Ú²ÓÂØ Å¼Û²Ø ..................... Õè, ÆÏÛÚª¤Ø ÇØÏÌ ÚÒó° ÊÏã ÒãÏÒã ÓÕÛ ÕÅ, ¦ÝÌÛÂÒØÏ Åã ÕÓ¼ØªÏ ÌãÏÛ ÕØ²ÏÛ ÚÒó° ¨Û¼ã ÕÅ ¤¼ã Ú¥Õ ¦ÝÌÛÂÒØÏ Ú¥Ó ÆÏÛÚª¤Ø Ð¥Û Íë¬ Õè¢
+                                                                        ...........................................................(ÆÝÏØ ÅÙ)
+                                                                        <br />
+
+                                                                        ...........................................................(ÆÝÏØ ÅÙ)<br />
+                                                                        ¤ÕÝÂØ .....................................................................<br />
+                                                                        ÌëÉØ¥ÛÐ Åâ /¶èÐÛÇëÅ ÅâÉÏ ¨ë¸ ÓÌã¼ ...........................                 <span style="float:right;padding-right:5px">¼ÓÂÛ¨ ¨ÏÅ ÒØÐã ¤ÚÄ¨ØÏÛ Âã ÕÓ¼ØªÏ ¤¼ã ÌëÕÏ</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td width="22%" style="vertical-align:top;text-align:center">
+                                                                    <div class="border" style="height:160px;text-align:center;margin:4px">
+                                                                        <br />Paste Recent<br />Attested<br />
+                                                                        Passport size<br />Colored<br />
+                                                                        Photograph.<br /><br />
+                                                                        DO  NOT STAPLE
+                                                                    </div>
+
+
+                                                                </td>
+                                                            </tr>
+
+                                                        </table>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="2" style="color:#fff !important;background-color:#000 !important;text-align:center">Permanent Address of Candidate</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="padding-bottom:15px">
+                                                        <table width="100%" border="0">
+                                                            <tr>
+                                                                <td style="padding:4px 0" colspan="2"><div style="border-bottom:1px dashed #000"></div></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="50%">
+                                                                    <table width="100%" border="1">
+                                                                        <tr>
+                                                                            <td width="26%">&nbsp;Roll Number</td>
+                                                                            <td>&nbsp;</td>
+                                                                            <td>&nbsp;Ref. No.</td>
+                                                                            <td>&nbsp;@refNo</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td width="26%">&nbsp;Name</td>
+                                                                            <td colspan="3">&nbsp;@Candi_Name.ToString().ToUpper()</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>&nbsp;Father's Name</td>
+                                                                            <td colspan="3">&nbsp;@Father_Name.ToString().ToUpper()</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style="vertical-align:top">&nbsp;Address</td>
+                                                                            <td colspan="3" style="height:40px;vertical-align:top">&nbsp;@address.ToString().ToUpper()</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>&nbsp;District </td>
+                                                                            <td>&nbsp;@distName.ToString().ToUpper()</td>
+                                                                            <td width="20%">&nbsp;Pin Code</td>
+                                                                            <td>&nbsp;@pinCode</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>&nbsp;Mobile</td>
+                                                                            <td colspan="3">&nbsp;@mobileNo</td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                                <td width="50%">
+                                                                    <table width="100%" border="1">
+                                                                        <tr>
+                                                                            <td width="26%">&nbsp;Roll Number</td>
+                                                                            <td>&nbsp;</td>
+                                                                            <td>&nbsp;Ref. No.</td>
+                                                                            <td>&nbsp;@refNo</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td width="26%">&nbsp;Name</td>
+                                                                            <td colspan="3">&nbsp;@Candi_Name.ToString().ToUpper()</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>&nbsp;Father's Name</td>
+                                                                            <td colspan="3">&nbsp;@Father_Name.ToString().ToUpper()</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style="vertical-align:top">&nbsp;Address</td>
+                                                                            <td colspan="3" style="height:40px;vertical-align:top">&nbsp;@address.ToString().ToUpper()</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>&nbsp;District </td>
+                                                                            <td>&nbsp;@distName.ToString().ToUpper()</td>
+                                                                            <td width="20%">&nbsp;Pin Code</td>
+                                                                            <td>&nbsp;@pinCode</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>&nbsp;Mobile</td>
+                                                                            <td colspan="3">&nbsp;@mobileNo</td>
+                                                                        </tr>
+                                                                    </table>
+
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        }
+                    }
+                }
+
+
+
+
+
+            </td>
+        </tr>
+    </table>
+
+}

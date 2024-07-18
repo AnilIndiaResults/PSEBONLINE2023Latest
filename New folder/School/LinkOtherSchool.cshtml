@@ -1,0 +1,200 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    ViewBag.Title = "LinkOtherSchool";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>Link other school to allow import data from that school , Session @Session["Session"].ToString()</h1>
+
+@using (Html.BeginForm("LinkOtherSchool", "School", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    <div class="row">
+        <div class="col-md-3">
+            School Code <span class="rqf">*</span>
+            <label>@Html.DisplayFor(model => model.SCHL)</label>
+            @Html.HiddenFor(model => model.SCHL)
+        </div>
+        <div class="col-md-9">
+            School Name <span class="rqf">*</span>
+            <label>@Html.DisplayFor(model => model.SCHLE)</label>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="row">
+                <fieldset style="margin-bottom:15px">
+                    <legend class="rqf">Link School</legend>
+                    <div class="col-md-3">
+                        Enter School Code <span class="rqf">*</span> @Html.TextBoxFor(model => model.LinkSchool, new { @maxlength = "7", @required = "required", @onkeypress = "return validateNumber1(event)" })
+                        @*<input type="text" id="schl" value="@ViewBag.Schl" name="schl" required onkeypress="return validateNumber1(event)" onchange="SchoolCodeAvailability()" placeholder="Enter School Code" />*@
+                        <span id="lblStatus"></span>
+                    </div>
+                    <div class="col-md-3"><br />
+                        <input type="button" value="Search" name="cmd" onclick="return SchoolCodeAvailability();" />
+
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12" id="tr1" style="display:none">
+                        School Name <span class="rqf">*</span>
+                        <input type="text" id="schlname" name="schoolname" readonly />
+                        <input type="submit" value="Link School" name="cmd" onclick="return formVal();" />
+                    </div>                             
+                </fieldset>
+            </div>
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="row" >
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th>Sr No.</th>
+                        <th>School Code</th>
+                        <th>School Name</th>
+                        <th>Action</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int Count = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[5].Rows.Count; i++)
+                            {
+                                var SCHL = Model.StoreAllData.Tables[5].Rows[i]["Schl"].ToString();
+                                var SCHLNME = Model.StoreAllData.Tables[5].Rows[i]["SCHLNME"].ToString();
+                                Count = Count + 1;
+                                <tr>
+                                    <td>@Count</td>
+                                    <td>@SCHL</td>
+                                    <td>@SCHLNME</td>
+                                    <td>
+                                        @if (SCHL != ViewBag.Schl)
+                                        {
+                                        @Html.ActionLink("Remove", "RemoveLinkOtherSchool", new { id = SCHL, Schl = ViewBag.Schl })
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@{
+    if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                      alert("Link SuccessFully");
+                    window.location.href = '@Url.Action("LinkOtherSchool", "School",new { id= ViewBag.Schl })';
+                </script>}
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Link Failure, Please Try Again");
+                </script>
+            }
+        }
+    }
+}
+
+<script src="Scripts/jquery-1.7.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+<script type="text/javascript">
+    function SchoolCodeAvailability() { //This function call on text change.       
+       // alert('LinkSchool : ' + $("#LinkSchool").val());     
+        $.ajax({
+            type: "POST",
+            url: "/School/CheckSchoolCode", // this for calling the web method function in cs code.
+            data: '{schoolcode: "' + $("#LinkSchool").val() + '" }',// user name or email value
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccess,
+            failure: function (response) {
+                // alert(response);
+            }
+        });
+    }
+
+    // function OnSuccess
+    function OnSuccess(response) {
+        var msg = $('#lblStatus');
+        switch (response.oid) {
+            case "0":
+                msg.css("slidedown", "slow");
+                msg.css("color", "red");
+                msg.text("School Code is Wrong.");
+                $("#tr1").hide();
+                break;
+            case "1":
+                msg.css("slidedown", "slow");
+                msg.css("color", "green");
+                msg.text("School Code is Correct and Able for Link.");
+                $("#schlname").val(response.sn);
+                $("#tr1").show();
+                break;
+        }
+    }
+
+
+
+</script>
+
+
+
+<script type="text/javascript">
+
+
+    function validateNumber1(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $("#LinkSchool").val();
+        if (event.keyCode === 8 || event.keyCode === 46
+            || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c.length > 6) {
+            return false;
+        }
+
+        else return true;
+
+
+    }
+
+    function formVal() {
+        //    alert('check formVal');
+        var LinkSchool = document.getElementById('LinkSchool').value;
+        if (LinkSchool == '') {
+            alert("Enter School Code.");
+            $("#tr1").hide();
+            document.getElementById('LinkSchool').focus();
+            return false;
+        }
+        else {
+           // alert('Check School Availability ');
+            SchoolCodeAvailability();
+
+            return true;
+        }
+    }
+</script>

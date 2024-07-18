@@ -1,0 +1,462 @@
+﻿@model PSEBONLINE.Models.RegistrationModels
+@{
+    ViewBag.Title = "Print Admit Card";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+@*<link rel="stylesheet" href="/Content/cardprint.css" />*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 11px;
+        line-height: 16px
+    }
+
+    td {
+        padding: 5px
+    }
+
+    .widthe {
+        width: 25px;
+        height: 25px;
+        display: inline-block;
+    }
+
+    @@media print {
+        body {
+            font-size: 9px;
+            line-height: 14px
+        }
+
+        .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+            float: left;
+        }
+
+        .col-md-12 {
+            width: 100%;
+        }
+
+        .col-md-11 {
+            width: 91.66666667%;
+        }
+
+        .col-md-10 {
+            width: 83.33333333%;
+        }
+
+        .col-md-9 {
+            width: 75%;
+        }
+
+        .col-md-8 {
+            width: 66.66666667%;
+        }
+
+        .col-md-7 {
+            width: 58.33333333%;
+        }
+
+        .col-md-6 {
+            width: 50%;
+        }
+
+        .col-md-5 {
+            width: 41.66666667%;
+        }
+
+        .col-md-4 {
+            width: 33.33333333%;
+        }
+
+        .col-md-3 {
+            width: 25%;
+        }
+
+        .col-md-2 {
+            width: 16.66666667%;
+        }
+
+        .col-md-1 {
+            width: 8.33333333%;
+        }
+
+        h4 {
+            background-color: #dedede !important;
+            font-size: 11px;
+            font-weight: bold
+        }
+    }
+</style>
+
+<style type="text/css">
+    .page-break {
+        page-break-before: always;
+    }
+
+    body {
+        font-weight: bold !important;
+        line-height: 18px;
+        font-family: Arial;
+    }
+
+    table tr td {
+        padding: 0px;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    /*   .tbltd:not(:first-child) {
+            width: 35px;
+            height: 35px;
+        }*/
+</style>
+
+<body style="font-family: Arial; font-size: 12px; font-weight: bold">
+
+    @using (Html.BeginForm("schoolOfamnence", "School", FormMethod.Post, new { id = "searchform" }))
+    {
+
+        <div class="row noprint no-print" style="margin-top:20px;">
+           
+                <fieldset>
+                    <legend>Filter By:</legend>
+                    <div class="col-md-4">
+                        Center @Html.DropDownList("SelCenter", new SelectList(ViewBag.myCenter, "Value", "Text", ViewBag.SelectedCenter), "--Select--", new { @class = "" })
+                    </div>
+                    <div class="col-md-2" style="margin-top:16px">
+                        <input type="submit" class="btn" name="cmd" value="Search" />
+                    </div>
+
+                    <div style="margin-top:16px" class="col-md-2"><input type="button" value="Print" class="btn" onclick="window.print()" /></div>
+
+                    <div class="col-md-2">
+                        @Html.Hidden("cid", (string)ViewBag.cid)
+                    </div>
+
+                </fieldset>
+            
+        </div>
+
+
+
+
+        if (Model.StoreAllData.Tables[0].Rows.Count > 0)
+        {
+            //string zon = Model.StoreAllData.Tables[0].Rows[0]["dist"].ToString();
+            //string fifset = Model.StoreAllData.Tables[0].Rows[0]["fifset"].ToString();
+
+            string zon = Model.StoreAllData.Tables[0].Rows[0]["edist"].ToString();
+            string vcencode = "";
+            string vccent = "";
+
+
+
+            int totcopy = 0, i = 0, j = 1;
+
+            //foreach (System.Data.DataRow dr in Model.StoreAllData.Tables[0].Rows)
+            {
+
+                <div style="page-break-after: always; margin-left: 10PX; margin-right: 10PX; margin-top:15px;">
+                    <table width="100%">
+                        <tr>
+                            <td width="50px" height="1px">
+                                <img style="display:none;" src="~/Images/sigchartlogo.png" width="50px" height="200px" />
+                            </td>
+                            <td style="text-align: center; font-size: 14px;width:600px;margin-right:25px;margin-bottom:15px;">
+                                DEPARTMENT OF SCHOOL EDUCATION PUNJAB, JOINT ENTRANCE TEST
+                                FOR ADMISSION IN SCHOOL OF EMINENCE / MERITORIOUS SCHOOLS
+                                FOR CLASS @Model.StoreAllData.Tables[0].Rows[0]["Class"].ToString() SESSION 2024-25   <br /> <br />
+                                <span style="font-size: 16px;">SIGNATURE CHART </span>
+                            </td>
+                            <td width="80px"></td>
+                        </tr>
+                        <tr>
+                            <td width="250px">Exam Date  :&nbsp;30-03-2024</td>
+                            <td style="text-align: center">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @*LOT : <% Response.Write(dr["lot"]); %>*@
+                            </td>
+                            <td style="text-align: right">&nbsp;<strong> @*<%= GetCurrentPageNumber() %>*@</strong></td>
+
+
+                        </tr>
+                        <tr>
+                            <td colspan="2" width="400px">District Code & Name :&nbsp;@Model.StoreAllData.Tables[0].Rows[0]["edist"]   &nbsp; @Model.StoreAllData.Tables[0].Rows[0]["distnm"] </td>
+
+                            @*<td style="text-align: right">Date :&nbsp; <%= DateTime.Now.ToString("dd/MM/yyyy") %></td>*@
+                        </tr>
+                        <tr>
+                            <td colspan="2" width="400px">Centre Code & Name :&nbsp;@Model.StoreAllData.Tables[0].Rows[0]["cent"]  /  @Model.StoreAllData.Tables[0].Rows[0]["schoole"] </td>
+
+
+
+                        </tr>
+
+
+                        @foreach (System.Data.DataRow dr1 in Model.StoreAllData.Tables[0].Rows)
+                        {
+                            if (i % 10 == 0 && i > 0)
+                            {
+                                j = 1;
+                                <tr>
+                                    <td style="text-align: center;  font-size: 10px; border:1px solid black" colspan="3">Note : In Case Of ABSENT (Please mark the absentee in RED ink)</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;  font-size: 10px; border:1px solid black" colspan="3">
+                                        <table width="100%" border="1" cellspacing="0px" cellpading="0px">
+                                            <tr>
+                                                <td style="text-align: left; width: 48%; font-size: 10px; padding-left: 10px;" rowspan="7">
+                                                    Signature & Seal of Centre Supdt.
+                                                    <br />
+                                                    Name :      ______________________________________
+                                                    <br />
+                                                    Address :   ____________________________________
+                                                    <br />
+                                                    Phone :   ______________________________________
+                                                    <br />
+                                                </td>
+                                                <td style="text-align: left; font-size: 10px; padding-left: 10px;" rowspan="7">
+                                                    <br />
+                                                    Signature of Invigilator
+                                                    <br />
+                                                    Name :      ______________________________________
+                                                    <br />
+                                                    Address :   ____________________________________
+                                                    <br />
+                                                    Phone :   ______________________________________
+
+
+                                                </td>
+
+
+                                            </tr>
+
+
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr style="page-break-before: always; ">
+                                    <td width="80px" height="130px">
+                                        <img style="display:none;" src="~/Images/sigchartlogo.png" width="80px" height="200px" />
+                                    </td>
+                                    <td style="text-align: center; font-size: 14px;width:600px;">
+                                        DEPARTMENT OF SCHOOL EDUCATION PUNJAB, JOINT ENTRANCE TEST
+                                        FOR ADMISSION IN SCHOOL OF EMINENCE / MERITORIOUS SCHOOLS
+                                        FOR CLASS @Model.StoreAllData.Tables[0].Rows[0]["Class"].ToString() SESSION 2024-25   <br /> <br />
+                                        <span style="font-size: 16px;">SIGNATURE CHART </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="250px">Exam Date  :&nbsp;30-03-2024</td>
+                                    <td style="text-align: center">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @*LOT : <% Response.Write(dr["lot"]); %>*@
+                                    </td>
+                                    <td style="text-align: right">&nbsp;<strong> @*<%= GetCurrentPageNumber() %>*@</strong></td>
+
+
+                                </tr>
+                                <tr>
+                                    <td colspan="2" width="400px">District Code & Name :&nbsp;@Model.StoreAllData.Tables[0].Rows[0]["edist"]   &nbsp; @Model.StoreAllData.Tables[0].Rows[0]["distnm"] </td>
+
+                                    @*<td style="text-align: right">Date :&nbsp; <%= DateTime.Now.ToString("dd/MM/yyyy") %></td>*@
+                                </tr>
+                                <tr>
+                                    <td colspan="2" width="400px">Centre Code & Name :&nbsp;@Model.StoreAllData.Tables[0].Rows[0]["cent"]  /  @Model.StoreAllData.Tables[0].Rows[0]["schoole"] </td>
+
+
+
+                                </tr>
+
+                            }
+
+
+                            var appno = dr1["appno"].ToString();
+                            var cent = dr1["cent"].ToString();
+                            var edist = dr1["edist"].ToString();
+                            var distnm = dr1["distnm"].ToString();
+                            var centname = dr1["centname"].ToString();
+                            var roll = dr1["roll"].ToString();
+                            var roll_num = dr1["roll_num"].ToString();
+                            var cname = dr1["name"].ToString();
+                            var fname = dr1["fname"].ToString();
+                            var mname = dr1["mname"].ToString();
+                            var schlnme = dr1["schlnme"].ToString();
+                            var schl = dr1["schl"].ToString();
+                            var Edist = dr1["Edist"].ToString();
+                            var Hdist = dr1["Hdist"].ToString();
+                            var Mobile = dr1["Mobile"].ToString();
+                            var Photopath = dr1["Photopath"].ToString();
+                            var signPath = dr1["signPath"].ToString();
+                            <tr>
+                                <td colspan="3">
+                                    <table width="100%" border="1" cellspacing="0px" cellpading="5px">
+
+                                        @if (j == 1)
+                                        {
+
+
+                                            <tr>
+                                                <td style="text-align: center; width:45%;">
+                                                    Candidates Particulars
+                                                </td>
+                                                <td style="text-align: center" colspan="15">
+                                                    <span style="float:left;margin-left:30px">Question Paper Set</span> <span style="float:right;margin-right:30px;">OMR Sheet No.</span>
+                                                </td>
+                                                <td style="text-align: center; width:95px">
+                                                    PHOTO
+                                                </td>
+
+
+                                            </tr>
+
+                                        }
+
+                                        <tr style="border: none; border-top-color:none;">
+                                            <td style="text-align:center; border: none;width:45%;"></td>
+                                            <td style="text-align: center" colspan="15"></td>
+                                            <td style="text-align: center;border: none;width:95px"></td>
+
+
+                                        </tr>
+
+
+
+
+
+
+
+                                        <tr>
+
+                                            <td width="480px" style="text-align: left;padding-left:5px" rowspan="4">
+                                                AppNo : @appno
+                                                @*<br />
+                                Matriculation Board Roll No : <% Response.Write(dr["roll_num"]); %>*@
+                                                <br />
+                                                Roll Number : @roll @*<% Response.Write(dr["roll"]); %>*@
+                                                <br />
+                                                Name / FName :@cname /@fname @*<% Response.Write(dr["name"]); %> / <% Response.Write(dr["fname"]); %>*@
+                                            </td>
+
+
+
+                                            <td class="tbltd" style="border: none; width: 30px"></td>
+                                            <td class="tbltd" style="border: 1px solid black; width: 20px; height: 20px; border-radius: 0px; margin: 3px; text-align: center"></td>
+                                            <td class="tbltd" style="border: none; width: 30px"></td>
+                                            <td class="tbltd" style="border: none; width: 30px"></td>
+
+
+                                            <td class="tbltd" style="border: none; width: 20px"></td>
+                                            <td class="tbltd" style="border: none; width: 20px"></td>
+                                            <td class="tbltd" style="border: none; width: 20px"></td>
+                                            <td class="tbltd" style="border: 1px solid black; width: 20px; height: 20px; border-radius: 0px; margin: 3px; text-align: center"></td>
+                                            <td class="tbltd" style="border: 1px solid black; width: 20px; height: 20px; border-radius: 0px; margin: 3px; text-align: center"></td>
+                                            <td class="tbltd" style="border: 1px solid black; width: 20px; height: 20px; border-radius: 0px; margin: 3px; text-align: center"></td>
+                                            <td class="tbltd" style="border: 1px solid black; width: 20px; height: 20px; border-radius: 0px; margin: 3px; text-align: center"></td>
+                                            <td class="tbltd" style="border: 1px solid black; width: 20px; height: 20px; border-radius: 0px; margin: 3px; text-align: center"></td>
+
+                                            <td class="tbltd" style="border: 1px solid black; width: 20px; height: 20px; border-radius: 0px; margin: 3px; text-align: center"></td>
+
+                                            <td class="tbltd" style="border: 1px solid black; width: 20px; height: 20px; border-radius: 0px; margin: 3px; text-align: center"></td>
+                                            <td class="tbltd" style="border: none; width: 20px"></td>
+
+
+                                            <td style="text-align: center" rowspan="4">
+                                                <img src="@Photopath" style="height: 55px; width: 80px; border: 0px solid black; border-radius: 0px" /><br />
+                                                <img src="@signPath" style="height: 20px; width: 80px;  border-radius: 0px" />
+                                            </td>
+
+                                        </tr>
+
+                                        <tr>
+                                            <td style="text-align: center; border-top: none;" colspan="15;">
+                                                Candidate's Signature
+                                            </td>
+
+
+
+                                        </tr>
+
+                                        <tr>
+                                            <td style="height: 30px;text-align:center" rowspan="4" colspan="15">
+                                                @*<img src="<% Response.Write(dr[" SignPath1"]); %>" style="height: 30px; width: 120px;  border-radius: 0px" />*@
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                </td>
+                            </tr>
+
+                            vcencode = dr1["edist"].ToString();
+                            vccent = dr1["cent"].ToString();
+                            i++; j++;
+
+
+
+                        }
+
+                        <tr>
+                            <td style="text-align: center;  font-size: 10px; border:1px solid black" colspan="3">Note : In Case Of ABSENT (Please mark the absentee in RED ink)</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;  font-size: 10px; border:1px solid black" colspan="3">
+                                <table width="100%" border="1" cellspacing="0px" cellpading="0px">
+                                    <tr>
+                                        <td style="text-align: left; width: 48%; font-size: 10px; padding-left: 10px;" rowspan="7">
+                                            Signature & Seal of Centre Supdt.
+                                            <br />
+                                            Name :      ______________________________________
+                                            <br />
+                                            Address :   ____________________________________
+                                            <br />
+                                            Phone :   ______________________________________
+                                            <br />
+                                        </td>
+                                        <td style="text-align: left; font-size: 10px; padding-left: 10px;" rowspan="7">
+                                            <br />
+                                            Signature of Invigilator
+                                            <br />
+                                            Name :      ______________________________________
+                                            <br />
+                                            Address :   ____________________________________
+                                            <br />
+                                            Phone :   ______________________________________
+
+
+                                        </td>
+
+
+                                    </tr>
+
+
+                                </table>
+
+
+
+
+                                @*</td>
+                </tr>
+
+                </table>
+
+
+
+                </div>*@
+
+
+
+
+
+
+
+                    </table>
+                </div>
+
+            }
+
+        }
+
+    }
+</body>

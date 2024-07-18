@@ -24,6 +24,7 @@ using Amazon.S3;
 using Amazon;
 using PSEBONLINE.AbstractLayer;
 using iTextSharp.text.pdf;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace PSEBONLINE.Controllers
 {
@@ -9128,7 +9129,9 @@ namespace PSEBONLINE.Controllers
                 string res = null;
                 //string UserType = "Admin";               
                 //float fee = 0;              
-                //DateTime date;              
+                //DateTime date;
+                //
+                UPTREMARKS = UPTREMARKS.Replace("'", "");
                 DataSet result = objDB.UpdNinthResult(ResultList, totmarks, obtmarks, stdid, schl, "SCHL", UPTREMARKS);
                 res = result.Tables[0].Rows.Count.ToString();
                 if (result.Tables[0].Rows.Count.ToString() != "0")
@@ -9289,8 +9292,10 @@ namespace PSEBONLINE.Controllers
                 ViewBag.MyAction = itemAction.ToList();
                 ViewBag.SelectedAction = "0";
 
-                var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Compartment" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
+                var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Re-appear" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
                     new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
+                //var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Compartment" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
+                //new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
                 ViewBag.rslist = resultList.ToList();
 
 
@@ -9406,8 +9411,9 @@ namespace PSEBONLINE.Controllers
                 ViewBag.MyAction = itemAction.ToList();
                 ViewBag.SelectedAction = "0";
 
-                var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Compartment" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
-                    new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
+                var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Re-appear" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
+                    new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);                //var resultList = new SelectList(new[] { new { ID = "1", Name = "Pass" }, new { ID = "2", Name = "Fail" }, new { ID = "3", Name = "Compartment" }, new { ID = "4", Name = "RL" }, new { ID = "5", Name = "Cancel" },
+                                                                                           //new { ID = "6", Name = "Absent" }, }, "ID", "Name", 1);
                 ViewBag.rslist = resultList.ToList();
 
 
@@ -9764,7 +9770,7 @@ namespace PSEBONLINE.Controllers
             }
             if (result.Tables[0].Rows.Count > 0)
             {
-                if (result.Tables[0].Rows.Count == 2)
+                if (result.Tables[0].Rows.Count == 2 || result.Tables[0].Rows.Count == 3)
                 {
                     ViewBag.Matric = result.Tables[0].Rows[0]["MRP"].ToString();
                     ViewBag.OMatric = result.Tables[0].Rows[1]["MRP"].ToString();
@@ -9785,7 +9791,7 @@ namespace PSEBONLINE.Controllers
             }
             if (result.Tables[1].Rows.Count > 0)
             {
-                if (result.Tables[1].Rows.Count == 2)
+                if (result.Tables[1].Rows.Count == 2 || result.Tables[1].Rows.Count == 3)
                 {
                     ViewBag.Senior = result.Tables[1].Rows[0]["SRP"].ToString();
                     ViewBag.OSenior = result.Tables[1].Rows[1]["SRP"].ToString();
@@ -9808,7 +9814,7 @@ namespace PSEBONLINE.Controllers
         public ActionResult ResultDeclareSchoolWise(string Rtype)
         {
             string SCHL = "";
-            var itemFilter = new SelectList(new[] { new { ID = "1", Name = "By RollNo" }, new { ID = "2", Name = "By UniqueID" }, new { ID = "3", Name = "By REGNO" },
+            var itemFilter = new SelectList(new[] {new { ID = "0", Name = "ALL" }, new { ID = "1", Name = "By RollNo" }, new { ID = "2", Name = "By UniqueID" }, new { ID = "3", Name = "By REGNO" },
                  new { ID = "4", Name = "Candidate Name" }, }, "ID", "Name", 1);
             ViewBag.MyFilter = itemFilter.ToList();
             ViewBag.SelectedFilter = "0";
@@ -9892,7 +9898,7 @@ namespace PSEBONLINE.Controllers
         {
 
             string SCHL = "";
-            var itemFilter = new SelectList(new[] { new { ID = "1", Name = "By RollNo" }, new { ID = "2", Name = "By UniqueID" }, new { ID = "3", Name = "By REGNO" },
+            var itemFilter = new SelectList(new[] {new { ID = "0", Name = "ALL" }, new { ID = "1", Name = "By RollNo" }, new { ID = "2", Name = "By UniqueID" }, new { ID = "3", Name = "By REGNO" },
                  new { ID = "4", Name = "Candidate Name" }, }, "ID", "Name", 1);
             ViewBag.MyFilter = itemFilter.ToList();
             ViewBag.SelectedFilter = "0";
@@ -9949,6 +9955,7 @@ namespace PSEBONLINE.Controllers
                 int SelValueSch = Convert.ToInt32(frm["SelFilter"].ToString());
                 if (frm["SelFilter"] != "" && frm["SearchString"].ToString() != "")
                 {
+
                     if (SelValueSch == 1)
                     { Search += "a.roll='" + frm["SearchString"].ToString() + "'"; }
                     if (SelValueSch == 2)
@@ -12429,7 +12436,8 @@ namespace PSEBONLINE.Controllers
 
                 //var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 //  var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, }, "ID", "Name", 1);
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
 
                 //Subject Code, Subject Name,Pending
@@ -12438,7 +12446,8 @@ namespace PSEBONLINE.Controllers
                 ViewBag.SelectedAction = "0";
 
 
-                var itemClass = new SelectList(new[] { new { ID = "4", Name = "SrSec" }, new { ID = "2", Name = "Matric" }, }, "ID", "Name", 1);
+                var itemClass = new SelectList(new[] { new { ID = "4", Name = "SrSec" },
+                    new { ID = "2", Name = "Matric" }, }, "ID", "Name", 1);
                 ViewBag.MyClass = itemClass.ToList();
                 ViewBag.SelectedClass = "0";
 
@@ -12537,7 +12546,8 @@ namespace PSEBONLINE.Controllers
                 string SCHL = Session["SCHL"].ToString();
                 ViewBag.schlCode = SCHL;
 
-                var itemClass = new SelectList(new[] { new { ID = "4", Name = "SrSec" }, new { ID = "2", Name = "Matric" }, }, "ID", "Name", 1);
+                var itemClass = new SelectList(new[] { new { ID = "4", Name = "SrSec" },
+                    new { ID = "2", Name = "Matric" }, }, "ID", "Name", 1);
                 ViewBag.MyClass = itemClass.ToList();
                 ViewBag.SelectedClass = "0";
 
@@ -12978,7 +12988,7 @@ namespace PSEBONLINE.Controllers
                     pageIndex = page.HasValue ? Convert.ToInt32(page) : 1;
                     ViewBag.pagesize = pageIndex;
 
-                    string Search = "Reg.schl like '%%'  and PracFlg is null ";
+                    string Search = "Reg.schl like '%%'  and PracFlg is  null ";
                     string SelectedAction = "0";
                     if (TempData["PracExamEnterMarksSearch"] != null)
                     {
@@ -13270,7 +13280,7 @@ namespace PSEBONLINE.Controllers
             {
 
 
-                if (dr1["OBTMARKSP"].ToString() == "" || dr1["OBTMARKSP"].ToString() == "HHH" || dr1["OBTMARKSP"].ToString() == "ABS" || dr1["OBTMARKSP"].ToString() == "CAN" || dr1["OBTMARKSP"].ToString() == "UMC")
+                if (dr1["OBTMARKSP"].ToString() == "" || dr1["OBTMARKSP"].ToString() == "HHH" || dr1["OBTMARKSP"].ToString() == "DA" || dr1["OBTMARKSP"].ToString() == "ABS" || dr1["OBTMARKSP"].ToString() == "CAN" || dr1["OBTMARKSP"].ToString() == "UMC" || dr1["OBTMARKSP"].ToString() == "DA ")
                 { }
                 else if (dr1["OBTMARKSP"].ToString() == "0" || dr1["OBTMARKSP"].ToString().ToUpper().Contains("A") || dr1["OBTMARKSP"].ToString().ToUpper().Contains("C") || dr1["OBTMARKSP"].ToString().ToUpper().Contains("U"))
                 {
@@ -22755,5 +22765,322 @@ namespace PSEBONLINE.Controllers
             return Json(newDs.Tables[0].Rows[0]["Status"]);
         }
         #endregion
+
+        #region Signature Chart and Confidential List Primary Middle Both
+        [SessionCheckFilter]
+        public ActionResult SignatureChart(string id, SchoolModels sm)
+        {
+            LoginSession loginSession = (LoginSession)Session["LoginSession"];
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("SignatureChart", "School");
+            }
+
+            ViewBag.cid = id;
+            sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
+            ViewBag.Cls = sm.CLASS;
+
+            string Schl = loginSession.SCHL.ToString();
+            string Cent = "";
+            try
+            {
+                if (Schl != "")
+                {
+                    DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
+                    List<SelectListItem> schllist = new List<SelectListItem>();
+                    List<SelectListItem> Sublist = new List<SelectListItem>();
+
+                    if (Dresult.Tables[0].Rows.Count > 0)
+                    {
+                        Cent = Dresult.Tables[0].Rows[0]["cent"].ToString();
+                        sm.ExamCent = Cent;
+                        foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+                        {
+                            schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
+                        }
+
+                    }
+
+                    if (Dresult.Tables[1].Rows.Count > 0)
+                    {
+                        foreach (System.Data.DataRow dr in Dresult.Tables[1].Rows)
+                        {
+                            Sublist.Add(new SelectListItem { Text = @dr["subnm"].ToString(), Value = @dr["sub"].ToString() });
+                        }
+
+                    }
+
+                    ViewBag.MySchCode = schllist;
+                    ViewBag.MyExamSub = Sublist;
+
+                    sm.ExamCent = Cent;
+                    sm.ExamRoll = sm.ExamSub = "";
+
+                    return View();
+                }
+                else
+                {
+                    ViewBag.TotalCount = 0;
+                    ViewBag.msg = "Data Not Found";
+                }
+                return View();
+
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Logout", "Login");
+            }
+
+        }
+
+        [SessionCheckFilter]
+        [HttpPost]
+        public ActionResult SignatureChart(string id, SchoolModels sm, FormCollection frc)
+        {
+            LoginSession loginSession = (LoginSession)Session["LoginSession"];
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("SignatureChart", "School");
+            }
+
+            ViewBag.cid = id;
+            sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
+            ViewBag.Cls = sm.CLASS;
+
+            try
+            {
+
+                string Schl = loginSession.SCHL.ToString();
+                string Cent = frc["ExamCent"].ToString();
+                string roll = frc["ExamRoll"].ToString();
+                if (Cent != "")
+                {
+
+                    sm.ExamCent = Cent;
+                    sm.ExamSub = frc["ExamSub"].ToString();
+                    sm.ExamRoll = frc["ExamRoll"].ToString();
+
+                    DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
+                    List<SelectListItem> schllist = new List<SelectListItem>();
+                    foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+                    {
+                        schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
+                    }
+
+                    ViewBag.MySchCode = schllist;
+                    List<SelectListItem> Sublist = new List<SelectListItem>();
+                    foreach (System.Data.DataRow dr in Dresult.Tables[1].Rows)
+                    {
+                        Sublist.Add(new SelectListItem { Text = @dr["subnm"].ToString(), Value = @dr["sub"].ToString() });
+                    }
+
+                    ViewBag.MyExamSub = Sublist;
+
+                    sm.StoreAllData = _schoolRepository.GetSignatureChart(sm);
+                    sm.ExamCent = Cent;
+                    ViewBag.TotalCount = sm.StoreAllData.Tables[0].Rows.Count;
+                    if (ViewBag.SearchMsg == 0)
+                    {
+                        ViewBag.Message = "No Record Found";
+                    }
+                    return View(sm);
+                }
+                else
+                {
+                    ViewBag.TotalCount = 0;
+                    ViewBag.msg = "Data Not Found";
+                }
+                return View();
+
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Logout", "Login");
+            }
+
+        }
+
+        [SessionCheckFilter]
+        public ActionResult ConfidentialList(string id, SchoolModels sm)
+        {
+            LoginSession loginSession = (LoginSession)Session["LoginSession"];
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("SignatureChart", "School");
+            }
+
+            ViewBag.cid = id;
+            sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
+            ViewBag.Cls = sm.CLASS;
+
+            try
+            {
+
+                string Schl = loginSession.SCHL.ToString();
+                string Cent = "";
+                if (Schl != "")
+                {
+
+                    DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
+                    List<SelectListItem> schllist = new List<SelectListItem>();
+
+                    if (Dresult.Tables[0].Rows.Count > 0)
+                    {
+                        Cent = Dresult.Tables[0].Rows[0]["cent"].ToString();
+                        sm.ExamCent = Cent;
+                        foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+                        {
+                            schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
+                        }
+
+                    }
+                    ViewBag.MySchCode = schllist;
+                    return View();
+                }
+                else
+                {
+                    ViewBag.TotalCount = 0;
+                    ViewBag.msg = "Data Not Found";
+                }
+                return View();
+
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Logout", "Login");
+            }
+
+        }
+
+        [SessionCheckFilter]
+        [HttpPost]
+        public ActionResult ConfidentialList(string id, SchoolModels sm, FormCollection frc)
+        {
+            LoginSession loginSession = (LoginSession)Session["LoginSession"];
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("SignatureChart", "School");
+            }
+
+            ViewBag.cid = id;
+            sm.CLASS = id.ToString().ToLower().Trim() == "primary" ? "5" : id.ToString().ToLower().Trim() == "middle" ? "8" : "";
+            ViewBag.Cls = sm.CLASS;
+            try
+            {
+
+                string Schl = loginSession.SCHL.ToString();
+                string Cent = frc["ExamCent"].ToString();
+                if (Cent != "")
+                {
+
+                    sm.ExamCent = Cent;
+                    DataSet Dresult = _schoolRepository.SignatureChart(1, sm.CLASS, Schl, Cent);
+                    List<SelectListItem> schllist = new List<SelectListItem>();
+                    foreach (System.Data.DataRow dr in Dresult.Tables[0].Rows)
+                    {
+                        schllist.Add(new SelectListItem { Text = @dr["block"].ToString(), Value = @dr["cent"].ToString() });
+                    }
+
+                    ViewBag.MySchCode = schllist;
+                    if (frc["ExamCent"].ToString() != "")
+                    {
+                        sm.ExamCent = frc["ExamCent"].ToString();
+                    }
+
+                    sm.StoreAllData = _schoolRepository.GetConfidentialList(sm);
+                    ViewBag.TotalCount = sm.StoreAllData.Tables[0].Rows.Count;
+                    return View(sm);
+                }
+                else
+                {
+                    ViewBag.TotalCount = 0;
+                    ViewBag.msg = "Data Not Found";
+                }
+                return View();
+
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Logout", "Login");
+            }
+
+        }
+        #endregion  Signature Chart and Confidential List Matric
+
+
+        public ActionResult schoolOfamnence(string id)
+        {
+            RegistrationModels model = new RegistrationModels();
+            try
+            {
+                if (Session["SCHL"] == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                model.StoreAllData = AbstractLayer.SchoolDB.SchoolOfAmnence(Session["SCHL"].ToString(), "", id, "1");
+                ViewBag.myCenter = GetListFromDatatable(model.StoreAllData.Tables[1]);
+                ViewBag.SelectedCenter = "";
+                ViewBag.cid = id;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return View(model);
+
+            }
+
+
+        }
+        [HttpPost]
+        public ActionResult schoolOfamnence(FormCollection frm)
+        {
+            RegistrationModels model = new RegistrationModels();
+            try
+            {
+
+                string SelCenter = frm["SelCenter"].ToString();
+                string cid = frm["cid"].ToString();
+                ViewBag.cid = frm["cid"].ToString();
+
+
+                if (Session["SCHL"] == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                model.StoreAllData = AbstractLayer.SchoolDB.SchoolOfAmnence(Session["SCHL"].ToString(), SelCenter, cid, "1");
+                ViewBag.myCenter = GetListFromDatatable(model.StoreAllData.Tables[1]);
+
+
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return View(model);
+
+            }
+
+
+        }
+
+
+        public SelectList GetListFromDatatable(DataTable dt)
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new SelectListItem()
+                {
+                    Text = row["Text"].ToString(),
+                    Value = row["Value"].ToString()
+                });
+            }
+
+            return new SelectList(list, "Value", "Text");
+
+        }
+
     }
 }

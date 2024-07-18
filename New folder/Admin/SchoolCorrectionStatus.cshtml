@@ -1,0 +1,208 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "SchoolCorrectionStatus";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<h1 class="noprint">School Correction Status</h1>
+
+<div class="row">
+    <div class="col-md-12 noprint">
+        @using (Html.BeginForm("SchoolCorrectionStatus", "Admin", FormMethod.Post, new { id = "searchform" }))
+        {
+            if (Model != null)
+            {
+                <fieldset style="margin-bottom:15px">
+                    <legend>Search</legend>
+                    <div class="col-md-2">@Html.DropDownList("Sch1", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                    <div class="col-md-2"><input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" required /></div>
+                    <div class="col-md-2"><input type="submit" value="Search" class="btn" /></div>
+                </fieldset>
+            }
+        }
+    </div>
+
+</div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="clearfix"></div>
+            @*<div class="clearfix"></div>
+                <h4>Correction Details</h4>*@
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="">
+                            <tr class="active-tr">
+                                <th>Serial No.</th>
+                                <th>Schl</th>
+                                <th>Class</th>
+                                <th>Correction Id</th>
+                                <th>Student Id</th>
+                                <th>Correction Field</th>
+                                <th>Old Value</th>
+                                <th>New Value</th>
+                                <th>Lot</th>
+                                <th>Receipt Details</th>
+                                <th>Status</th>
+
+                            </tr>
+                            @{
+                                if (ViewBag.TotalCountadded > 0)
+                                {
+                                    int d = 0;
+                                    int Count = 0;
+                                    for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                    {
+                                        d = d + 1;
+                                        var CorrectionId = Model.StoreAllData.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                        var Schl = Model.StoreAllData.Tables[0].Rows[i]["Schl"].ToString();
+                                        var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                        var stdid = Model.StoreAllData.Tables[0].Rows[i]["std_id"].ToString();
+                                        var CorrectionType = Model.StoreAllData.Tables[0].Rows[i]["cortype"].ToString();
+                                        var OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                        var NewValue = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                        var Lot = Model.StoreAllData.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                                        if (CorrectionType == "Sign" || CorrectionType == "Photo")
+                                        {
+                                            if (OldValue.Contains("https") || OldValue.Contains("OPEN"))
+                                            {
+                                                OldValue = "https://psebdata.s3.ap-south-1.amazonaws.com/" + OldValue;
+                                            }
+                                            else if (!OldValue.Contains("https"))
+                                            {
+                                                OldValue = "https://psebdata.s3.ap-south-1.amazonaws.com/" + OldValue;
+                                            }
+
+                                            if (!NewValue.Contains("https"))
+                                            {
+                                                NewValue = "https://psebdata.s3.ap-south-1.amazonaws.com/" + NewValue;
+                                            }
+
+
+
+                                        }
+                                        var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                        var FirmCorrectionLot = Model.StoreAllData.Tables[0].Rows[i]["FirmCorrectionLot"].ToString();
+                                        var FirmUser = Model.StoreAllData.Tables[0].Rows[i]["FirmUser"].ToString();
+                                        var FirmCorrectionLotDT = Model.StoreAllData.Tables[0].Rows[i]["FirmCorrectionLotDT"].ToString();
+                                        var StatusUpdatedBy = Model.StoreAllData.Tables[0].Rows[i]["StatusUpdatedBy"].ToString();
+ var Remark = Model.StoreAllData.Tables[0].Rows[i]["Remark"].ToString();
+ var ReceiptDetails = Model.StoreAllData.Tables[0].Rows[i]["ReceiptDetails"].ToString();
+ var EmpDetails = Model.StoreAllData.Tables[0].Rows[i]["EmpDetails"].ToString();
+
+                                        Count = Count + 1;
+                                                        <tr>
+                                                            <td>
+                                                                @Count
+                                                            </td>
+                                                            <td>@Schl</td>
+                                                            <td>
+                                                                @Class
+                                                            </td>
+                                                            <td>
+                                                                @CorrectionId
+                                                            </td>
+                                                            <td>
+                                                                @stdid
+                                                            </td>
+                                                            <td>
+                                                                @CorrectionType
+                                                            </td>
+                                                            @if (@CorrectionType == "Photo")
+                                                            {
+                                                                <td>
+                                                                    <img src="@OldValue" class="" style="max-width:30%" alt="Photo Not Found" id="OldValuePS" />
+                                                                </td>
+                                                                <td>
+                                                                    <img src="@NewValue" class="" style="max-width:30%" alt="Photo Not Found" id="NewValuePS" />
+                                                                </td>
+                                                            }
+                                                            else if (@CorrectionType == "Sign")
+                                                            {
+                                                                <td>
+                                                                    <img src="@OldValue" class="" style="max-width:30%" alt="Sign Not Found" id="OldValuePS" />
+                                                                </td>
+                                                                <td>
+                                                                    <img src="@NewValue" class="" style="max-width:30%" alt="Sign Not Found" id="NewValuePS" />
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="kdsfont">
+                                                                    @OldValue
+                                                                </td>
+                                                                <td class="kdsfont">
+                                                                    @NewValue
+                                                                </td>
+                                                            }
+                                                            <td>
+                                                                @Lot
+                                                            </td>
+                                                            <td>
+                                                                @ReceiptDetails
+                                                            </td>
+                                                            <td>
+                                                                <div class="cart">
+                                                                    @{
+                                                                        if (FirmCorrectionLot == "" && @Status == "" && FirmUser == "")
+                                                                        {
+                                                                            <div style="color:#001838" title="School Correction is pending"><b>Pending</b></div>
+                                                                        }
+                                                                        else if (FirmCorrectionLot == "" && @Status == "" && FirmUser != "")
+                                                                        {
+                                                                            <div style="color:#001838" title="Correction is In Process"><b>In Process By :<span class="rqf"> @StatusUpdatedBy</span></b></div>
+                                                                        }
+                                                                        else if (FirmCorrectionLot == "" && @Status == "Y")
+                                                                        {
+                                                                            <div style="color:forestgreen" title="Correction successfully Updated But Not Submitted"><b>Not Submitted By :<span class="rqf"> @StatusUpdatedBy</span></b></div>
+                                                                        }
+                                                                        else if (FirmCorrectionLot == "" && @Status == "N")
+                                                                        {
+                                                                            <div style="color:forestgreen" title="Correction successfully Rejected But Not Submitted"><b>Not Submitted By :<span class="rqf"> @StatusUpdatedBy</span></b></div>
+                                                                        }
+                                                                        else if (FirmCorrectionLot != "" && @Status == "Y")
+                                                                        {
+                                                                            <div style="color:forestgreen" title="Correction successfully updated"><b>Updated By :<span class="rqf"> @StatusUpdatedBy On @FirmCorrectionLotDT</span> <br><span style="color:indigo"> @Remark</span></b></div>
+                                                                        }
+                                                                        else if (FirmCorrectionLot != "" && @Status == "N")
+                                                                        {
+                                                                            <div style="color:red" title="Correction is Rejected after verification"><b>Rejected By :<span class="rqf"> @StatusUpdatedBy</span></b></div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div style="color:indigo" title="Due to some verification Correction is under process "><b>In Process</b></div>
+                                                                        }
+                                                                    }
+
+                                                                    <br /><span class="text-purple">@EmpDetails</span>
+                                                                </div>
+                                                            </td>
+
+                                                        </tr>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="8">
+                                                                    @ViewBag.Message2
+                                                                </td>
+                                                            </tr>
+                                                        }
+                            }
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-12 text-center">
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                <input type="submit" value="Exit" formaction="ExitCorrection" />
+
+            </div>
+
+        </div>
+    </div>
+

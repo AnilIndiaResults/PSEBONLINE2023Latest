@@ -1,0 +1,283 @@
+﻿@model PSEBONLINE.Models.MigrateSchoolModels
+@{
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<h1>School Migration List</h1>
+<link href="https://registration2022.pseb.ac.in/content/print.css" rel="stylesheet" />
+@using (Html.BeginForm("ViewAllStudentSchoolMigration", "Admin", FormMethod.Post, new { id = "Migrate", enctype = "multipart/form-data" }))
+{
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend class="text-center">
+                    Migration List (Session <b>@Session["Session"].ToString()</b>)
+                </legend>
+                <div class="col-md-1">
+                    Total <label>@ViewBag.TotalCount</label>
+                </div>
+                <form id="myForm">
+                    <div class="col-md-2">
+                        Select District:  @Html.DropDownList("SelDist", new SelectList(ViewBag.MyDist, "Value", "Text"), "--All Dist---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-2">
+                        Search By:  @Html.DropDownList("SelFilter", new SelectList(ViewBag.MySch, "Value", "Text"), "--All---", new { @class = "" })
+
+                    </div>
+                    <div class="col-md-4">
+                        &nbsp;<br />
+                        <input type="text" id="SearchString" maxlength="30" name="SearchString" value="@Request["SearchString"]" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <input type="submit" value="Search" onclick="return formVal();" />                        
+                        <a href="javascript:void(0);" class="btn" onclick="history.go(-1);">Back</a>
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+
+}
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th>Mig Id</th>
+                    <th>Student Id</th>
+                    <th>Form Name</th>
+                    <th>Reg.No.</th>
+                    <th>Name/Father's Name/Mother's Name</th>
+                    <th>DOB</th>
+                    <th>Stream/Group</th>
+                    <th>Apply By</th>
+                    <th>Migration From</th>
+					<th>AppliedOn</th>
+                    <th>Status</th>
+                    <th>ACTIONS</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var MigrationId = Model.StoreAllData.Tables[0].Rows[i]["MigrationId"].ToString();
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["Stdid"].ToString();
+                            var cls = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                            var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                            var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                            var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                            var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+                            var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+
+                            var NewSchlDetails = Model.StoreAllData.Tables[0].Rows[i]["NewSchlDetails"].ToString();
+                            var OldSchlDetails = Model.StoreAllData.Tables[0].Rows[i]["OldSchlDetails"].ToString();
+
+                            var OldStream = Model.StoreAllData.Tables[0].Rows[i]["OldStream"].ToString();
+                            var NewStream = Model.StoreAllData.Tables[0].Rows[i]["NewStream"].ToString();
+
+                            var CurrentMigrationStatusCode = Model.StoreAllData.Tables[0].Rows[i]["CurrentMigrationStatusCode"].ToString();
+                            var CurrentMigrationStatus = Model.StoreAllData.Tables[0].Rows[i]["CurrentMigrationStatus"].ToString();
+                            var CurrentMigrationStatusABBR = Model.StoreAllData.Tables[0].Rows[i]["CurrentMigrationStatusABBR"].ToString();
+                            //
+                            var LastDate = Model.StoreAllData.Tables[0].Rows[i]["LastDate"].ToString();
+                            var AppLevelByLastDate = Model.StoreAllData.Tables[0].Rows[i]["AppLevelByLastDate"].ToString();
+
+ var AppliedOn = Model.StoreAllData.Tables[0].Rows[i]["AppliedOn"].ToString();
+
+                            var ChallanId = Model.StoreAllData.Tables[0].Rows[i]["ChallanId"].ToString();
+                            var Challanverify = Model.StoreAllData.Tables[0].Rows[i]["Challanverify"].ToString();
+
+
+                                <tr>
+                                    <td>
+                                        @MigrationId
+                                    </td>
+                                    <td>
+                                        @stdid
+                                        <div class="container"></div>
+                                        <div class="modal" id="myModalCancel-@MigrationId" role="dialog">
+                                            <div class="modal-dialog">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Student Details for Cancel Application : @stdid</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table width="100%">
+                                                            <tr>
+                                                                <td>Cancel Remarks </td>
+                                                                <td><input id="eCANREMARKS-@MigrationId" value="" type="text" /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2">
+                                                                    <input type="button" class="btn" value="Cancel Application" id="btnCancelApplication" onclick="cancelStudentSchoolMigration(@stdid,@MigrationId)" />
+
+                                                                    <div id="loading1"></div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@FormName</td>
+                                    <td>
+                                        @RegNo
+                                    </td>
+                                    <td>
+                                        @FullName
+                                    </td>
+                                    <td>
+                                        @DOB
+                                    </td>
+                                    <td>
+                                        @NewStream
+                                    </td>
+                                    <td>
+                                        @NewSchlDetails
+                                    </td>
+                                    <td>
+                                        @OldSchlDetails
+                                    </td>
+									<td>
+                        @AppliedOn
+                    </td>
+                                    <td>
+                                        <span class="rqf">@CurrentMigrationStatus</span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="cart">
+                                            Choose Action <span class="caret"></span>
+                                            <div id="sidebar">
+                                                <ul>
+                                                    <li>
+                                                        <a href="/School/StudentMigrationView/@MigrationId" target="_blank" class="btn">View</a>
+                                                        @*@if (CurrentMigrationStatusCode == "1")
+                            {
+                                <a href="" data-toggle="modal" data-target="#myModalCancel-@MigrationId">Cancel Application</a>
+                            }*@
+                                                        @*else if (CurrentMigrationStatusCode == "3" || CurrentMigrationStatusCode == "6")
+                            {
+                                <a href="/School/StudentMigrationPayFee/@MigrationId" target="_blank" class="btn">Pay Fee</a>
+                            }*@
+                                                        @if (CurrentMigrationStatusCode == "7")
+                                                        {
+                                                            <a href="/School/StudentMigrationPrintCertificate/@MigrationId" target="_blank" class="btn">Print Certificate</a>
+                                                        }
+
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                </tr>
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                @ViewBag.Message
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+
+@{
+
+    if (ViewData["MigrateStatus"] != null)
+    {
+        if (ViewData["MigrateStatus"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Migrate Successfully Done. click ok to view Migrate Record");
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Migrate Not Done.");
+            </script>
+        }
+    }
+
+
+    if (ViewData["MigrateDeleteStatus"] != null)
+    {
+        if (ViewData["MigrateDeleteStatus"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Record Successfully Deleted");
+            </script>
+        }
+    }
+}
+
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function formVal() {
+        var AdminType = '@Session["AdminType"]';
+         //alert(AdminType);
+        var result = document.getElementById('SelDist').value;
+        if (result == '' && AdminType != "ADMIN") {
+            alert("Select District");
+            document.getElementById('SelDist').focus();
+            return false;
+        }
+        var schlList = document.getElementById('SelFilter').value;
+        if (schlList != '') {
+            var SchlCode = document.getElementById("SearchString");
+            if (SchlCode.value == "" || SchlCode.value == "0") {
+                alert("Enter School Code");
+                document.getElementById("SearchString").focus();
+                return false;
+            }
+        }
+        else {
+            document.getElementById("SearchString").value = "";
+        }
+
+      
+
+    }
+
+
+
+</script>
+
+

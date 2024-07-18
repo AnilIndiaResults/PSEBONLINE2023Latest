@@ -1,0 +1,226 @@
+﻿@model PSEBONLINE.Models.ReportModel
+@{
+    ViewBag.Title = "Final Print Private Matric Admit Card Search";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="/Content/cardprint.css" />
+<style type="text/css">
+    body {
+        font-size: 11px
+    }
+</style>
+<link rel="stylesheet" href="/Content/print-4PS.css" />
+<script src="/Scripts/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<div id="HPL">
+
+    @using (Html.BeginForm("CollectionCentReport", "PrivateCandidate", FormMethod.Post, new { id = "searchform" }))
+    {
+
+        <fieldset style="margin-top:20px;">
+            <legend>Search By:</legend>
+            <form id="myForm">
+                <div class="clearefix"></div>
+                <div class="row noprint">
+                    @{
+
+                        List<SelectListItem>
+                            Cat_items = new List<SelectListItem>
+                                ();
+
+                        // Add manually created items
+                        Cat_items.Add(new SelectListItem { Text = "MAIN" });
+                        Cat_items.Add(new SelectListItem { Text = "DA(A)" });
+                        Cat_items.Add(new SelectListItem { Text = "DA(G)" });
+                        Cat_items.Add(new SelectListItem { Text = "RE" });
+
+
+                        // Create the SelectList
+                        SelectList selectList = new SelectList(Cat_items, "Text", "Text");
+                    }
+
+                    <div class="col-md-2">
+                        Select Cateogry:  @Html.DropDownList("CatType", selectList, "--Cateogry---", new { @class = "" })
+                    </div>
+
+                    @{
+
+                        List<SelectListItem>
+                            Class_items = new List<SelectListItem>
+                                ();
+
+                        // Add manually created items
+                        Class_items.Add(new SelectListItem { Text = "Primary", Value = "5" });
+                        Class_items.Add(new SelectListItem { Text = "Middle", Value = "8" });
+                        Class_items.Add(new SelectListItem { Text = "Matric", Value = "2" });
+                        Class_items.Add(new SelectListItem { Text = "Senior", Value = "4" });
+
+
+
+                        // Create the SelectList
+                        SelectList selectListClass = new SelectList(Class_items, "Value", "Text");
+                    }
+
+                    <div class="col-md-2">
+                        Select Class:  @Html.DropDownList("ClassType", selectListClass, "--Class---", new { @class = "" })
+                    </div>
+                    <div class="col-md-2">Select ExamDate:  @Html.TextBox("ExamDate", null, new { @required = "required", @class = "date" })</div>
+                    <div class="col-md-2">Select District:  @Html.DropDownList("Dist", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District---", new { @class = "" })</div>
+                    <div id="divsub" class="col-md-2">Select Matric Subject:  @Html.DropDownList("Sub", new SelectList(ViewBag.MySub, "Value", "Text", ViewBag.MySubList), "--All Subjects---", new { @class = "" })</div>
+                    <div id="divsub1" class="col-md-2">Select Senior Subject:  @Html.DropDownList("Sub", new SelectList(ViewBag.MySub1, "Value", "Text", ViewBag.MySubList1), "--All Subjects---", new { @class = "" })</div>
+
+                    <div class="col-md-2">Select Centre:  @Html.TextBox("Cent", null, new { @class = "" })</div>
+                </div>
+                 <div class="row noprint">
+                    <div class="col-md-1" style="margin-top:20px;"><input name="cmd" type="submit" value="submit" class="btn btn-primary" /></div>
+                    <div class="col-md-1" style="margin-top:20px;"><input value="Export" name="cmd" type="submit" class="btn btn-primary" /></div>
+                    <div class="col-md-1" style="margin-top:20px;">
+                        <input type="button" value="Print" dowload class="btn" onclick="window.print()" />
+                    </div>
+
+
+
+
+                </div>
+            </form>
+        </fieldset>
+
+        <div class="clearfix"></div>
+        <div class="" style="margin-top:20px;">
+            <div class="=table-responsive">
+                <table class="table table-bordered" width="100%">
+                    <tr class="active-tr">
+                        <th>S No.</th>
+                        <th>Category</th>
+                        <th>ExamDate</th>
+                        <th>Centre Code</th>
+                        <th>Centre School Code</th>
+                        <th>Centre Name (Building)</th>
+                        <th>Dist</th>
+                        <th>Location</th>
+                        <th>Contact No</th>
+                        <th>Subject</th>
+                        <th>NOC</th>
+                    </tr>
+
+                    @{
+                        if (Model.StoreAllData != null)
+                        {
+                            int Count = 0;
+                            int totalCount = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                Count = Count + 1;
+                                var Category = Model.StoreAllData.Tables[0].Rows[i]["Category"].ToString();
+                                var examdate = Model.StoreAllData.Tables[0].Rows[i]["examdate"].ToString();
+                                var CENT = Model.StoreAllData.Tables[0].Rows[i]["CENT"].ToString();
+                                var Subnm = Model.StoreAllData.Tables[0].Rows[i]["Subnm"].ToString();
+                                var Noc = Model.StoreAllData.Tables[0].Rows[i]["Noc"].ToString();
+                                var cent_name = Model.StoreAllData.Tables[0].Rows[i]["cent_name"].ToString();
+                                var CenterSchool = Model.StoreAllData.Tables[0].Rows[i]["CenterSchool"].ToString();
+                                var distnm = Model.StoreAllData.Tables[0].Rows[i]["distnm"].ToString();
+                                var location = Model.StoreAllData.Tables[0].Rows[i]["location"].ToString();
+                                var contact = Model.StoreAllData.Tables[0].Rows[i]["contact"].ToString();
+
+
+                                totalCount += int.Parse(Noc);
+
+
+
+
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@Category</td>
+                                            <td>@examdate</td>
+                                            <td>@CENT</td>
+                                            <td>@CenterSchool </td>
+                                            <td>@cent_name </td>
+                                            <td>@distnm </td>
+                                            <td>
+                                                <iframe src="https://maps.google.com/maps?q= @location&hl=es;z=14&amp;output=embed" width="400" height="100"
+                                                        style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                                                </iframe>
+                                            </td>
+                                            <td>@contact </td>
+
+                                            <td>
+                                                @Subnm
+                                            </td>
+                                            <td>
+                                                @Noc
+                                            </td>
+
+                                        </tr>
+                            }
+                            if (Model.StoreAllData != null)
+                            {
+                                <tr>
+                                    <td colspan="8">Total Noc: @totalCount, Count of CENT: @Model.StoreAllData.Tables[0].Rows.Count</td>
+                                </tr>
+                            }
+
+
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+
+
+    }
+
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<script>
+    $(document).ready(function () {
+        $("#divsub").hide();
+        $("#divsub1").hide();
+    });
+
+
+    $(document).ready(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            showButtonPanel: false,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2023:2024',
+
+            inline: true
+        });
+        // $(".date").datepicker().datepicker("setDate", new Date());
+    });
+
+
+
+    $("#ClassType").change(function () {
+
+        var sub = $("#ClassType").val();
+        console.log("sub", sub);
+
+
+
+        if (sub == "2") {
+            $("#divsub1").hide();
+
+            $("#divsub").show();
+            console.log("divsub", sub);
+
+        }
+        else if (sub == "4") {
+            $("#divsub1").show();
+            $("#divsub").hide();
+
+        }
+        else {
+            $("#divsub").hide();
+            $("#divsub1").hide();
+        }
+
+
+    });
+
+</script>

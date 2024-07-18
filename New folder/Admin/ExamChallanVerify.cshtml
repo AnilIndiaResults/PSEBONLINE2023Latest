@@ -1,0 +1,216 @@
+﻿@model PSEBONLINE.Models.ChallanMasterModel
+@{
+    ViewBag.Title = "ExamChallanVerify";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<h1>Examination Challan Verification</h1>
+@using (Html.BeginForm("ExamChallanVerify", "Admin", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+
+    <div class="row">
+        <div class="col-md-2">School Code</div>
+        <div class="col-md-3"><input type="text" id="txtschl" name="txtschl" maxlength="7" value="@ViewBag.schl" /></div>
+        <div class="col-md-2"><input type="submit" value="Search" onclick="return chkvalid()" /></div>
+    </div>
+}
+<div class="clear"></div>
+<div id="loading"></div>
+
+<div id="divMain">
+    <div class="row" id="divall">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th>S.No</th>
+                        <th>LOTNO</th>
+                        <th>Name Of Bank</th>
+                        <th>Challan No</th>
+                        <th>Challan Date</th>
+                        <th>CHALLAN VALID TIL DATE</th>
+                        <th>CHALLAN VERIFIED ON</th>
+                        <th>STATUS</th>
+                        <th>Action</th>
+                    </tr>
+                    @{
+
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            for (int i = 0; i < Model.ChallanMasterData.Tables[0].Rows.Count; i++)
+                            {
+                                var Lotno = Model.ChallanMasterData.Tables[0].Rows[i]["LOT"].ToString();
+                                var Bank = Model.ChallanMasterData.Tables[0].Rows[i]["Bank"].ToString();
+                                var ChallanNo = Model.ChallanMasterData.Tables[0].Rows[i]["ChallanId"].ToString();
+                                var ChallanDate = Model.ChallanMasterData.Tables[0].Rows[i]["ChallanDate"].ToString();
+                                var ChallanVDate = Model.ChallanMasterData.Tables[0].Rows[i]["CHLNVDATE"].ToString();
+                                var ChallanVerifiedOn = Model.ChallanMasterData.Tables[0].Rows[i]["ChallanVerifiedOn"].ToString();
+                                var Status = Model.ChallanMasterData.Tables[0].Rows[i]["Status"].ToString();
+
+                                int Count = i + 1;
+                                <tr>
+                                    <td align="center">@Count</td>
+                                    <td align="center">@Lotno</td>
+                                    <td align="center">@Bank</td>
+                                    <td align="center">@ChallanNo</td>
+                                    <td align="center">@ChallanDate</td>
+                                    <td align="center">@ChallanVDate</td>
+                                    <td align="center"><div id="cvd-@Count">@ChallanVerifiedOn</div></td>
+                                    <td align="center"><div id="st-@Count">@Status</div></td>
+                                    <td>
+                                        <a href="#" data-toggle="modal" data-target="#myModal-@Count" id="cv-@Count">@(Status == "Challan Verified" ? "" : "Verify ")</a>
+
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    @if (ViewBag.TotalCount > 0)
+    {
+        for (int i = 0; i < Model.ChallanMasterData.Tables[0].Rows.Count; i++)
+        {
+            int k = i + 1;
+            var ChallanNo = Model.ChallanMasterData.Tables[0].Rows[i]["ChallanId"].ToString();
+            var ChallanDate = Model.ChallanMasterData.Tables[0].Rows[i]["ChallanDate"].ToString();
+            var refno = Model.ChallanMasterData.Tables[0].Rows[i]["J_REF_No"].ToString();
+            var TOTFEE = Model.ChallanMasterData.Tables[0].Rows[i]["TOTFEE"].ToString();
+            var FEE = Model.ChallanMasterData.Tables[0].Rows[i]["FEE"].ToString();
+            var DEPOSITDT = Model.ChallanMasterData.Tables[0].Rows[i]["DEPOSITDT"].ToString();
+
+            <div class="container">
+                <!-- Trigger the modal with a button -->
+                <!-- Modal -->
+
+
+                <div class="modal fade" id="myModal-@k" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title"> Verify Challan Details</h4>
+                            </div>
+                            <div class="modal-body">
+                                Board Receiving Number: <input type="text" maxlength="10" id="refnumber-@k" onchange="validateForm(@k)" /><br />
+                                Date:<input type="text" maxlength="10" id="txtverifydate-@k" class="dater" value="@DateTime.Now.ToString("dd/MM/yyyy")" onpaste="return false;" oncopy="return false;" oncut="return false;" />
+                                <br />
+                                Amount: @FEE<br /><br />
+                                <input type="submit" id="sub-@k" onclick="verifyme(@k,@ChallanNo,@TOTFEE)" /> @*class="btn btn-default" data-dismiss="modal"*@
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        }
+    }
+</div>
+<script>
+
+        function verifyme(id,challanno,totfee,DEPOSITDT)
+        {
+            //alert(DEPOSITDT);
+            // alert($("#refnumber-"+id).val());
+            if($("#refnumber-"+id).val().length<10 || $("#refnumber-"+id).val().length>10)
+            {
+                $("#refnumber-" + id).addClass("input-validation-error");
+                alert(("#txtverifydate-"+id).val());
+                //$("#sub-" + id).removeClass("btn btn-default");
+                return false;
+            }
+            else
+            {
+                var date=$("#txtverifydate-"+id).val()
+                //alert(date);
+                $("#sub-" + id).addClass("btn btn-default");
+                $('#divMain').hide();
+                $('div#loading').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                $.post("/Admin/ExamJqverify", { "challanno": challanno,"totfee":totfee,"refno":$("#refnumber-"+id).val(),"DEPOSITDT":DEPOSITDT,"vdate":date},
+                    function (data) {
+                       // alert(data.status);
+                        if (data.status == "0" || data.status == "-1")
+                        {
+                            $("#cv-" + id).html("Verified");
+
+                        }
+                        else
+                        {
+                            window.location.href = "/Admin/ExamChallanVerify/" + $("#txtschl").val();
+                            $("#cv-" + id).html("");
+                            $("#st-" + id).html("CHALLAN VERIFIED");
+                            $("#cvd-" + id).html(data.vdate);
+                        }
+                        $('#divMain').show();
+                        $('div#loading').empty();
+                    });
+            }
+        }
+
+        function validateForm(id)
+        {
+            var nameLenght = $("#refnumber-"+id).val().length;
+            if(nameLenght<10 || nameLenght>10)
+            {
+                alert("Length must be 10");
+                $("#refnumber-"+id).addClass( "input-validation-error" );
+            }
+            else
+                $("#refnumber-"+id).removeClass( "input-validation-error" );
+        }
+
+        function chkvalid()
+        {
+            if ($("#txtschl").val() == "") {
+                $("#txtschl").addClass( "input-validation-error" );
+                return false;
+            }
+            else
+            {
+                $("#txtschl").removeClass( "input-validation-error" );
+                return true;
+            }
+
+
+        }
+        $(document).ready(function () {
+            var deedate1 = @ViewBag.date;
+
+            $(".dater").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: deedate1,
+                yearRange: "1969:2018",
+                defaultDate: deedate1
+
+            });
+
+
+        });
+
+</script>
+
+<style type="text/css">
+    .input-validation-error {
+        background-color: #FBE3E4 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+

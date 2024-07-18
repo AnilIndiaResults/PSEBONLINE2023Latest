@@ -1,0 +1,188 @@
+﻿@model PSEBONLINE.Models.SchoolModelsTC
+@{
+    ViewBag.Title = "TCRequestDone";
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+@using (Html.BeginForm("Update_Result", "School", FormMethod.Post, new { id = "Update_Result", enctype = "multipart/form-data" }))
+{
+    <h2>TC Request Done</h2>
+    <div style="color:green">@TempData["msg"]</div>
+    <div class="clearfix"></div>
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <div id="UpdateResult">
+                    <table>
+                        <tr>
+                            <td>
+                                <p><b>@ViewBag.Message</b></p>
+                                @Html.HiddenFor(a => a.ID)
+                                @*@Html.HiddenFor(a => a.SearchResult)*@
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>FORM NAME</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.FormName)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>STUDENT ID</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.SdtID)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CANDIDATE NAME</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.Candi_Name)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>FATHER'S NAME</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.Father_Name)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>MOTHER'S NAME</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.Mother_Name)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DOB</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.DOB)</label>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td>REG.No.</td>
+                            <td>
+                                <label>@Html.DisplayFor(a => a.regno)</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Dispatch No.<span class="rqf">*</span></td>
+                            <td>
+                                
+                                @Html.TextBoxFor(a => a.dispatchNo, new { id = "dispatchNo", @maxlength = "10", onkeypress = "return isNumberKey(event);", onpaste = "return false" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Attendance (Total)<span class="rqf">*</span></td>
+                            <td>
+
+                                @Html.TextBoxFor(a => a.attendanceTot, new { id = "attendanceTot", @maxlength = "10", onkeypress = "return isNumberKey(event);", onpaste = "return false" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Attendance (Present)<span class="rqf">*</span></td>
+                            <td>
+
+                                @Html.TextBoxFor(a => a.attendancePresnt, new { id = "attendancePresnt", @maxlength = "10", onkeypress = "return isNumberKey(event);", onpaste = "return false" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Struck Off Date<span class="rqf">*</span></td>
+                            <td>
+                                <div>
+                                    @Html.TextBoxFor(a => a.struckOff, "{0:dd/MM/yyyy}", new
+                           {
+                               id = "txtstruckOff",
+                               @readonly = "readonly",
+                               @maxlength = "10",
+                               //onkeypress = "javascript: return false;",
+                               onpaste = "return false;",
+                               oncopy = "return false;",
+                               oncut = "return false;",
+
+                           })
+                                    @*@Html.TextBoxFor(a => a.struckOff, new { id = "struckOff", @maxlength = "15" })*@
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Reason Of Leaving</td>
+                            <td>
+
+                                @Html.TextBoxFor(a => a.reasonFrSchoolLeav, new { id = "reasonFrSchoolLeav", @maxlength = "250" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @*<input type="submit" name="Update Result" value="Update Result" formaction="Update_Result" formmethod="post" />*@
+                                <input type="submit" id="Update_Result" onclick="return formVal();" value="UPDATE RESULT" />
+                            </td>
+                            <td>
+
+                                @*<input type="submit" id="btncancel" formaction="adminresultpage" value="Cancel" />*@
+                                <input type="button" value="CANCEL" onclick="javascript:document.location.href='@Url.Action("TCRequest", "School")'" />
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+                                    }
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#txtstruckOff").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: '08/09/2016',
+            yearRange: "1969:2016"
+        });
+    });
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    function formVal()
+    {
+        var dispatchNo = document.getElementById('dispatchNo').value;
+        if (dispatchNo == "") {
+            alert("Enter dispatch no.");
+            document.getElementById('dispatchNo').focus();
+            return false;
+        }
+        var attendanceTot = document.getElementById('attendanceTot').value;
+        if (attendanceTot == "") {
+            alert("Enter attendance Total.");
+            document.getElementById('attendanceTot').focus();
+            return false;
+        }
+        var attendancePresnt = document.getElementById('attendancePresnt').value;
+        if (attendancePresnt == "") {
+            alert("Enter attendance Total.");
+            document.getElementById('attendancePresnt').focus();
+            return false;
+        }
+        var txtstruckOff = document.getElementById("txtstruckOff");
+        if (txtstruckOff.value == "") {
+            alert("Enter Struck Off Date");
+            document.getElementById("txtstruckOff").focus();
+            return false;
+        }
+    }   
+</script>

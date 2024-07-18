@@ -1,0 +1,376 @@
+﻿@model PSEBONLINE.Models.PrivatePaymentformViewModel
+@{
+    ViewBag.Title = "CommonCalculateFeeAdmin";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<h1>Calculate Fee</h1>
+@using (Html.BeginForm("CommonCalculateFeeAdmin", "Admin", FormMethod.Post, new { id = "searchform", enctype = "multipart/form-data" }))
+{
+    <form id="myForm">
+        <div class="row">
+            <div class="col-md-4">
+                Select Fee Category <span class="rqf">*</span><br />
+                @Html.DropDownListFor(m => m.FeeCode, new SelectList(ViewBag.FeeCodeList, "Value", "Text"), "--Select Fee Category--", new { id = "FeeCode", @class = "", required = "required" })
+            </div>
+            <div class="col-md-4">
+                Enter Ref No. <span class="rqf">*</span><br />
+                @Html.TextBoxFor(model => model.RefNo, new { id = "RefNo", @maxlength = "20", required = "required" })
+            </div>
+            <div class="col-md-2">
+                <br />
+                <input type="submit" value="Calculate Fee" id="btnsubmit" name="cmd" />
+            </div>
+        </div>
+    </form>
+    <div class="clearfix"></div>
+}
+
+
+<div class="row" id="divall">
+    <div class="col-md-12">
+        @using (Html.BeginForm("CommonCalculateFeeAdmin", "Admin"))
+        {
+            if (ViewData["FeeStatus"] != null)
+            {
+                if (ViewData["FeeStatus"].ToString() == "1")
+                {
+                    if (ViewBag.FeeCode == "53" || ViewBag.FeeCode == "54")
+                    {
+                        <table class="table table-bordered" id="t01">
+                            <tr>
+                                <td>Fee Category</td>
+                                <td> @Html.DisplayFor(m => m.FeeCategory)</td>
+                            </tr>
+                            <tr>
+                                <td>Name</td>
+                                <td>@Html.DisplayFor(m => m.Name)</td>
+                            </tr>
+                            <tr>
+                                <td>District Code/Name</td>
+                                <td>@Html.DisplayFor(m => m.Dist) / @Html.DisplayFor(m => m.District)</td>
+                            </tr>
+                            <tr class="rqf">
+                                <td>App No/Ref No/School Code</td>
+                                <td>@Html.DisplayFor(m => m.RefNo)</td>
+                            </tr>
+                            <tr>
+                                <td>Fee</td>
+                                <td>₹@Html.DisplayFor(m => m.TotalFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Late Fee</td>
+                                <td>₹@Html.DisplayFor(m => m.TotalLateFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Total Fee</td>
+                                <td>₹@Html.DisplayFor(m => m.TotalFinalFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Total(In Words)</td>
+                                <td>@Html.DisplayFor(m => m.TotalFeesInWords)</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                            </tr>
+                            <tr>
+                                <td>LumsumFine</td>
+                                <td><input type="text" id="lumsumfine" name="lumsumfine" maxlength="7" onkeypress="return isNumberKey(event)" /></td>
+                            </tr>
+                            <tr>
+                                <td>LumsumRemarks</td>
+                                <td><textarea id="lumsumremarks" name="lumsumremarks"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td>Challan Valid Upto </td>
+                                <td><input type="text" id="ValidDate" name="ValidDate" class="date1" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => m.FeeCode)
+                                    @Html.HiddenFor(m => m.RefNo)
+                                </td>
+
+
+                                <td>
+                                    @{
+                                        if (ViewBag.FormStatus == "2")
+                                        {
+
+                                            <input type="submit" name="cmd" id="btndee" value="Proceed to Final Submit & Generate Challan" OnClick="return confirm('Are You Sure to Generate Challan?');" />
+                                        }
+                                        else if (ViewBag.FormStatus == "0")
+                                        { <span class="rqf" style="font-size:20px"> Final Submission Pending</span> }
+                                        else if (ViewBag.FormStatus == "1")
+                                        { <span class="rqf" style="font-size:20px"> Challan Generated, But Not Verified</span> }
+                                        else if (ViewBag.FormStatus == "3")
+                                        { <span class="rqf" style="font-size:20px"> Fee has already Submitted</span> }
+                                        else
+                                        { <span class="rqf" style="font-size:20px"> Final Submission Pending</span> }
+                                    }
+
+
+                                </td>
+                            </tr>
+                        </table>
+
+
+                    }
+                    else if (ViewBag.FeeCode == "45" || ViewBag.FeeCode == "59" || ViewBag.FeeCode == "65" || ViewBag.FeeCode == "66" || ViewBag.FeeCode == "70")
+                    {
+                        <table class="table table-bordered" id="t01">
+                            <tr>
+                                <td>Fee Category</td>
+                                <td> @Html.DisplayFor(m => m.FeeCategory)</td>
+                            </tr>
+                            <tr>
+                                <td>Name</td>
+                                <td>@Html.DisplayFor(m => m.Name)</td>
+                            </tr>
+                            <tr>
+                                <td>District Code/Name</td>
+                                <td>@Html.DisplayFor(m => m.Dist) / @Html.DisplayFor(m => m.District)</td>
+                            </tr>
+                            <tr class="rqf">
+                                <td>App No/Ref No/School Code</td>
+                                <td>@Html.DisplayFor(m => m.RefNo)</td>
+                            </tr>
+                            <tr>
+                                <td>Fee</td>
+                                <td>₹@Html.DisplayFor(m => m.TotalFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Late Fee</td>
+                                <td>₹@Html.DisplayFor(m => m.TotalLateFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Total Fee</td>
+                                <td>₹@Html.DisplayFor(m => m.TotalFinalFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Total(In Words)</td>
+                                <td>@Html.DisplayFor(m => m.TotalFeesInWords)</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                            </tr>
+                            <tr>
+                                <td>LumsumFine</td>
+                                <td><input type="text" id="lumsumfine" name="lumsumfine" maxlength="7" onkeypress="return isNumberKey(event)" /></td>
+                            </tr>
+                            <tr>
+                                <td>LumsumRemarks</td>
+                                <td><textarea id="lumsumremarks" name="lumsumremarks"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td>Challan Valid Upto </td>
+                                <td><input type="text" id="ValidDate" name="ValidDate" class="date1" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => m.FeeCode)
+                                    @Html.HiddenFor(m => m.RefNo)
+                                </td>
+
+
+                                <td>
+                                    @{
+                                        if (ViewBag.FormStatus == "2")
+                                        {
+
+                                            <input type="submit" name="cmd" id="btndee" value="Proceed to Final Submit & Generate Challan" OnClick="return confirm('Are You Sure to Generate Challan?');" />
+                                        }
+                                        else if (ViewBag.FormStatus == "0")
+                                        { <span class="rqf" style="font-size:20px"> Final Submission Pending</span> }
+                                        else if (ViewBag.FormStatus == "1")
+                                        { <span class="rqf" style="font-size:20px"> Challan Generated, But Not Verified</span> }
+                                        else if (ViewBag.FormStatus == "3")
+                                        { <span class="rqf" style="font-size:20px"> Fee has already Submitted</span> }
+                                        else
+                                        { <span class="rqf" style="font-size:20px"> Final Submission Pending</span> }
+                                    }
+
+
+                                </td>
+                            </tr>
+                        </table>
+
+
+                    }
+                    else
+                    {
+                        <table class="table table-bordered" id="t01">
+                            <tr>
+                                <td>Class/ Exam Type/ Category</td>
+                                <td> @Html.DisplayFor(m => m.Class)/ @Html.DisplayFor(m => m.ExamType)/ @Html.DisplayFor(m => m.category)</td>
+                            </tr>
+                            <tr>
+                                <td>Candidate Name</td>
+                                <td>@Html.DisplayFor(m => m.Name)</td>
+                            </tr>
+                            <tr>
+                                <td>District Code/Name</td>
+                                <td>@Html.DisplayFor(m => m.Dist) / @Html.DisplayFor(m => m.District)</td>
+                            </tr>
+                            <tr class="rqf">
+                                <td>Ref No</td>
+                                <td>@Html.DisplayFor(m => m.RefNo)</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Old Roll No/School Code
+                                    <!-- Old Roll No -->
+                                </td>
+                                <td>@Html.DisplayFor(m => m.roll)</td>
+                            </tr>
+                            <tr>
+                                <td>Fee</td>
+                                <td>₹@Html.DisplayFor(m => m.TotalFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Late Fee</td>
+                                <td>₹@Html.DisplayFor(m => m.TotalLateFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Total Fee</td>
+                                <td>₹@Html.DisplayFor(m => m.TotalFinalFees)</td>
+                            </tr>
+                            <tr>
+                                <td>Total(In Words)</td>
+                                <td>@Html.DisplayFor(m => m.TotalFeesInWords)</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                            </tr>
+                            <tr>
+                                <td>Lumsum Fine</td>
+                                <td><input type="text" id="lumsumfine" name="lumsumfine" maxlength="7" onkeypress="return isNumberKey(event)" /></td>
+                            </tr>
+                            <tr>
+                                <td>Lumsum Remarks</td>
+                                <td><textarea id="lumsumremarks" name="lumsumremarks"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td>Challan Valid Upto </td>
+                                <td><input type="text" id="ValidDate" name="ValidDate" class="date1" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => m.FeeCode)
+                                    @Html.HiddenFor(m => m.RefNo)
+                                </td>
+
+
+                                <td>
+                                    @{
+                                        if (ViewBag.FormStatus == "2")
+                                        {
+
+                                            <input type="submit" name="cmd" id="btndee" value="Proceed to Final Submit & Generate Challan" OnClick="return confirm('Are You Sure to Generate Challan?');" />
+                                        }
+                                        else if (ViewBag.FormStatus == "0")
+                                        { <span class="rqf" style="font-size:20px"> Final Submission Pending</span> }
+                                        else if (ViewBag.FormStatus == "3")
+                                        { <span class="rqf" style="font-size:20px"> Fee has already Submitted</span> }
+                                    }
+
+
+                                </td>
+                            </tr>
+                        </table>
+
+
+                    }
+                }
+            }
+        }
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12 text-center">
+
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+
+<script src="Scripts/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+    function isNumberKey(evt) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+    function valForm() {
+        alert("Will be Available Soon..");
+        return false;
+    }
+</script>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#btndee").click(function () {
+            var flag = 0;
+            var c = $("#lumsumfine").val();
+            if (c == "") {
+                $("#lumsumfine").addClass("input-validation-error");
+                flag = 1;
+                //return false;
+            }
+            if (c != "") {
+                $("#lumsumfine").removeClass("input-validation-error");
+            }
+            var d = $("#lumsumremarks").val();
+
+            if (d == "") {
+                $("#lumsumremarks").addClass("input-validation-error");
+                flag = 1;
+                //return false;
+            }
+            if (d != "") {
+                $("#lumsumremarks").removeClass("input-validation-error");
+            }
+
+            var v = $("#ValidDate").val();
+
+            if (v == "") {
+                $("#ValidDate").addClass("input-validation-error");
+                flag = 1;
+            }
+            if (v != "") {
+                $("#ValidDate").removeClass("input-validation-error");
+            }
+            if (flag == 1) {
+                return false;
+            }
+
+        });
+        $(".date1").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2019:' + (new Date().getFullYear())
+
+        });
+
+    });
+</script>
+
+
+

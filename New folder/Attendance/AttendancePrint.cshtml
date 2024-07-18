@@ -1,0 +1,201 @@
+﻿@model PSEBONLINE.Models.vmAttendanceModel
+@{
+    ViewBag.Title = "Attendance Print";
+    Layout = "~/Views/Shared/_Print_Header.cshtml";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="/Content/Print-4P.css" />
+<style type="text/css">
+    body {
+        font-size: 11px
+    }
+
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+<table style="width:100%;" border="0" class="bgimg">
+    <tr>
+        <td>
+            <table style="width:100%;" border="0" class="noprint">
+                <tr>
+                    <td style="text-align:right;padding-bottom:3px">
+                        <input type="button" value="Print" class="btn" onclick="window.print()" />
+                        <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table border="1" style="width:98%;" align="center" class="brack">
+                <thead>
+                    <tr>
+                        <td width="25%"><img src="~/Images/Printlogo.jpg" alt="PSEB" /></td>
+                        <td width="50%" colspan="3" style="font-size:16px;text-align:center;line-height:24px;">
+                            <span style="font-size:22px;">Punjab School Education Board</span><br />Attendance Report of Students  (Memo)
+                        </td>
+                        <td width="25%" align="right" colspan="2">
+                            <span>Print Date &amp; Time: @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")<br /></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td> Exam Batch</td>
+                        <td>@Model.attendanceMemoDetail.examBatch </td>
+                        <td> Category</td>
+                        <td>@Model.attendanceMemoDetail.RPname </td>
+                        <td> Memo No </td>
+                        <td>@Model.attendanceMemoDetail.memoNumber </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="rqf">Note : Online memo information should matched with your mannual memo copy. Kindly preserve this final print signed copy in school record for future reference. </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-bold left">Summary </td>
+                        <td>Status </td>
+                        <td>
+                            @if (Model.attendanceMemoDetail.status == "0")
+                            {
+                                <span>Rough Print</span>
+                            }
+                            else  if(Model.attendanceMemoDetail.finalsubmiton != null)
+                            {
+                               <span> Final Submitted (@Model.attendanceMemoDetail.FinalSubmitOnPrint)</span>
+                            } 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>School Code & Name</td>
+                        <td colspan="5"> (@Model.attendanceMemoDetail.schl - @Model.attendanceMemoDetail.schlnme)</td>
+                        </tr>
+                    <tr>
+                        <td>Centre Code & Name</td>
+                        <td colspan="5">  (@Model.attendanceMemoDetail.centrecode - @Model.attendanceMemoDetail.centernm)</td>
+
+                    </tr>
+                    <tr>
+                        <td>Class</td>
+                        <td>@Model.attendanceMemoDetail.clsName </td>
+                        <td>Date of Exam</td>
+                        <td>@Model.attendanceMemoDetail.examDate </td>
+                        <td>Subject Code & Name </td>
+                        <td>(@Model.attendanceMemoDetail.subCode)  @Model.attendanceMemoDetail.SubNM </td>
+                    </tr>
+                    <tr>
+                        <td>Total </td>
+                        <td>@ViewBag.Total </td>
+                        <td>Present</td>
+                        <td>@ViewBag.Present </td>
+                        <td>Absent </td>
+                        <td>@ViewBag.Absent</td>
+                    </tr>
+                    <tr>
+                        <td>Cancel </td>
+                        <td>@ViewBag.Cancel</td>
+                        <td>UMC</td>
+                        <td>@ViewBag.UMC</td>
+                        <td>Pending</td>
+                        <td>
+                        @(
+                            ViewBag.Total - (ViewBag.UMC + ViewBag.Cancel + ViewBag.Present + ViewBag.Absent)
+                        )
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*<tr>
+                        <td colspan="6">
+                            <h1> Details of Present Students (Only Roll No's)</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model.attendanceListPresent)
+                                {
+                                    <span>@item.rollNo,</span>
+                                }
+                            }
+                        </td>
+                    </tr>*@
+                    <tr>
+                        <td colspan="6">
+                            <h1>Details of Absent/ Cancel/ UMC Students</h1>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <p>Absent Student List</p>
+                        </td>
+                        <td colspan="2">
+                            <p>Cancel Student List</p>
+                        </td>
+                        <td colspan="2">
+                            <p>UMC Student List</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="33%" colspan="2">
+                            @if (Model != null)
+                            {
+                                <div style="float:left; width:20%;"><b>Roll No.</b></div> <div style="float:left;width:70%;"><b>Name/ Father Name</b></div>
+                                <div style="clear:both;"></div>
+                                foreach (var item in Model.attendanceListAbsent)
+                                {                                    
+                                        <div style="float:left; width:20%;">@item.rollNo </div> <div style="float:left;width:70%;">@item.candidateName/@item.fatherName</div>
+                                        <div style="clear:both;"></div>                                   
+                                }
+                            }
+                        </td>
+                        <td width="34%" colspan="2">
+                            @if (Model != null)
+                            {
+                                <div style="float:left; width:20%;"><b>Roll No.</b></div> <div style="float:left;width:70%;"><b>Name/ Father Name</b></div>
+                                <div style="clear:both;"></div>
+                                foreach (var item in Model.attendanceListCancel)
+                                { 
+                                    <div style="float:left; width:20%;">@item.rollNo </div> <div style="float:left;width:70%;">@item.candidateName/@item.fatherName</div>
+                                        <div style="clear:both;"></div>
+                                   
+                                }
+                            }
+
+                        </td>
+                        <td width="33%" colspan="2">
+                            @if (Model != null)
+                            {
+                                <div style="float:left; width:20%;"><b>Roll No.</b></div> <div style="float:left;width:70%;"><b>Name/ Father Name</b></div>
+                                <div style="clear:both;"></div>
+                                foreach (var item in Model.attendanceListUMC)
+                                {
+                                    
+                                        <div style="float:left; width:20%;">@item.rollNo </div> <div style="float:left;width:70%;">@item.candidateName/@item.fatherName</div>
+                                        <div style="clear:both;"></div>
+                                   
+                                }
+                            }
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </td>
+    </tr>
+
+
+</table>

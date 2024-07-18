@@ -798,7 +798,8 @@ namespace PSEBONLINE.AbstractLayer
             itemSession.Add(new SelectListItem { Text = "2021", Value = "2021" });
             itemSession.Add(new SelectListItem { Text = "2022", Value = "2022" });
             itemSession.Add(new SelectListItem { Text = "2023", Value = "2023" });
-            return itemSession;
+			itemSession.Add(new SelectListItem { Text = "2024", Value = "2024" });
+			return itemSession;
         }
         public DataTable SessionMaster()
         {
@@ -1937,5 +1938,46 @@ namespace PSEBONLINE.AbstractLayer
             }
         }
 
-    }
+		public DataSet getCollecetionReport(string Action,string examdate,string subject,string cent,string cat ,string cls,string dist)
+		{
+
+			// SqlConnection con = null;
+
+			DataSet result = new DataSet();
+			SqlDataAdapter ad = new SqlDataAdapter();
+
+			try
+			{
+
+				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+				{
+					//con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());//
+					//SqlCommand cmd = new SqlCommand("GetAdminSchoolMaster", con);
+					SqlCommand cmd = new SqlCommand("getCllectionReport", con);
+					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.Parameters.AddWithValue("@Action", Action);
+					cmd.Parameters.AddWithValue("@examDate", examdate);
+					cmd.Parameters.AddWithValue("@Class", cls);
+					cmd.Parameters.AddWithValue("@cent", cent);
+                    cmd.Parameters.AddWithValue("@sub", subject.Replace(",", ""));
+					cmd.Parameters.AddWithValue("@dist", dist);
+					cmd.Parameters.AddWithValue("@cat", cat);
+
+
+
+					ad.SelectCommand = cmd;
+					ad.Fill(result);
+					con.Open();
+					return result;
+				}
+
+
+
+			}
+			catch (Exception ex)
+			{
+				return result = null;
+			}
+		}
+	}
 }

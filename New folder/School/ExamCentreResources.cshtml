@@ -1,0 +1,162 @@
+﻿@model PSEBONLINE.Models.ExamCentreResources
+@{
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+<script type="text/javascript">
+    $("#btnPrintStatus").live("click", function () {
+        var divContents = $("#tblStatus").html();
+        var printWindow = window.open('', '', 'height=800,width=1000px');
+        printWindow.document.write('<html><head><title>Attendance of Students</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    });
+</script>
+
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4L.css" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<div id="loading1"></div>
+
+
+
+
+<div class="container KDBG">
+    @using (Html.BeginForm("ExamCentreResources", "School", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+    {
+
+        <div class="row" id="tblStatus">
+            <div class="col-md-12"><h1>Exam Centre Resources 2023</h1></div>
+            <div class="col-md-3">School Code</div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.schl, new { @ReadOnly = "ReadOnly" })
+                @Html.HiddenFor(m => m.schl)
+                @Html.HiddenFor(m => m.id)
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Working Internet Availability?</div>
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.internetAvailability, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "@required" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Printer Availability?</div>
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.printerAvailability, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "@required" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">How many pages you can print from available working Printers/Photostate Machine in 1 Minute?</div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(model => model.perMinutePrintingSpeed, new { @required = "@required", onkeypress = "return validateNumber(event)", @maxlength = "6" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3">Power Backup?</div>
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.powerBackup, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "@required" })
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-3"> Availability of Photo State Machine?</div>
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.photostateAvailability, new SelectList(ViewBag.YesNoList, "Value", "Text"), "--Select ---", new { @required = "@required" })
+            </div>
+
+            <div class="clearfix"></div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-3">
+                @if (Model.id == 0)
+                {
+                    <input id="btnSubmit" type="submit" name="cmd" value="Save" class="btn noprint" />
+                }
+                else
+                {
+                    <input id="btnSubmit" type="submit" name="cmd" value="Update" class="btn noprint" />
+                }
+
+                <input type="button" class="btn noprint" value="Print" id="btnPrintStatus" />
+
+            </div>
+        </div>
+
+    }
+</div>
+
+
+
+@{
+    if (ViewData["resultIns"] != null)
+    {
+        if (ViewData["resultIns"].ToString() == "F")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Final Submit Successfully</span>
+            </div>
+        }
+        else if (ViewData["resultIns"].ToString() == "S")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Submit Successfully</span>
+            </div>
+        }
+        else if (ViewData["resultIns"].ToString() == "M")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Updated Successfully</span>
+            </div>
+        }
+        else if (ViewData["resultIns"].ToString() == "0")
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">Failure to Submit</span>
+            </div>
+        }
+        else if (ViewData["resultIns"].ToString().ToLower().Contains("error"))
+        {
+            <div id="dPending" style="font-size:24px;display: none;padding:30px 10px" align="center" class="kdsfont">
+                <span class="rqf">@ViewData["resultIns"]</span>
+            </div>
+        }
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#dPending").dialog({
+            modal: true,
+            title: "Exam Centre Resources",
+            width: 400,
+            height: 250,
+            buttons: {
+                "OK": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+
+    function validateNumber(event) {
+        var key = window.event ? event.keyCode : event.which;
+        var c = $(".num").val();
+        if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        if (key < 48 || key > 57) {
+            return false;
+        }
+        if (c.length > 9) {
+            return false;
+        }
+        else return true;
+    }
+
+</script>

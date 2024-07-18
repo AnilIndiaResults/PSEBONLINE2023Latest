@@ -1,0 +1,137 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "Print Letter";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2019.pseb.ac.in/Content/Print-4P.css" />
+<style type="text/css">
+    .kds-td td {
+        padding: 5px;
+    }
+</style>
+@using (Html.BeginForm("LateAdmHistory", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <h1>
+        HISTORY OF REQUEST      
+    </h1>
+    <table style="width:100%;" border="0" class="noprint">
+        <tr>
+            <td style="text-align:right;padding-bottom:3px">
+                <input type="button" value="Print" class="btn" onclick="window.print()" />
+                <input type="button" value="Back" class="btn" onclick="history.go(-1);" />
+            </td>
+        </tr>
+    </table>
+
+    <div class="clearfix"></div>
+    <div class="col-md-14" style="font-size:11px;">
+        <table style="width:100%;" class="table table-bordered">
+            <tr class="active-tr">
+                <th>REQUEST ID</th>
+                @*<th>SCHL</th>
+                <th>CLASS</th>
+                <th>FORM</th>
+                <th>REGNO</th>
+                <th>CANDIDATE/ FATHER'S/ MOTHER'S NAME</th>
+                <th>DOB</th>
+                <th>MOBILE NO</th>*@
+                <th>APPLY DATE</th>
+                <th>STATUS</th>               
+                <th>APPROVAL DATE</th>
+                <th>APPROVAL UPTO</th>
+                <th>DISPATCHNO</th>
+                <th>REMARKS</th>
+                @*<th>Action</th>*@
+                <th>ActionDT</th>
+                <th>UpdatedBy</th>
+               
+            </tr>
+            @if (ViewBag.TotalCount > 0)
+            {
+                int Count = 0;
+                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                {
+                    var RequestID = Model.StoreAllData.Tables[0].Rows[i]["RequestID"].ToString();
+                    var SCHl = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                    var SCHlE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                    var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                    var Form = Model.StoreAllData.Tables[0].Rows[i]["Form"].ToString();
+                    var RegNo = Model.StoreAllData.Tables[0].Rows[i]["RegNo"].ToString();
+                    var Cname = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                    var Fname = Model.StoreAllData.Tables[0].Rows[i]["FName"].ToString();
+                    var Mname = Model.StoreAllData.Tables[0].Rows[i]["MName"].ToString();
+                    var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                    var mobileno = Model.StoreAllData.Tables[0].Rows[i]["mobileno"].ToString();
+                    var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                    var FSDate = Model.StoreAllData.Tables[0].Rows[i]["FSDate"].ToString();
+                    var ApprovalDate = Model.StoreAllData.Tables[0].Rows[i]["ApprovalDate"].ToString();
+                    var ApprovalUpto = Model.StoreAllData.Tables[0].Rows[i]["ApprovalUpto"].ToString();
+                    var UPTREMARKS = Model.StoreAllData.Tables[0].Rows[i]["UPTREMARKS"].ToString();
+                    var UpdUserNM = Model.StoreAllData.Tables[0].Rows[i]["myIP"].ToString();
+                    var SCHLE = Model.StoreAllData.Tables[0].Rows[i]["SCHLE"].ToString();
+                    var schlnme = Model.StoreAllData.Tables[0].Rows[i]["schlnme"].ToString();
+                    var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                    var STATIONE = Model.StoreAllData.Tables[0].Rows[i]["STATIONE"].ToString();
+                    var Tehsile = Model.StoreAllData.Tables[0].Rows[i]["Tehsile"].ToString();
+                    var dpatchno = Model.StoreAllData.Tables[0].Rows[i]["dpatchno"].ToString();
+
+                    var Action = Model.StoreAllData.Tables[0].Rows[i]["Action"].ToString();
+                    var ActionDT = Model.StoreAllData.Tables[0].Rows[i]["ActionDT"].ToString();
+                    var UpdatedBy = Model.StoreAllData.Tables[0].Rows[i]["UpdatedBy"].ToString();
+                    var updDate = Model.StoreAllData.Tables[0].Rows[i]["updDate"].ToString();
+                    var EmpUserId = Model.StoreAllData.Tables[0].Rows[i]["EmpUserId"].ToString();
+                    var APPROVALREMARKSNEW = Model.StoreAllData.Tables[0].Rows[i]["APPROVALREMARKSNEW"].ToString();
+                    
+
+                    var printdt = Model.StoreAllData.Tables[0].Rows[i]["printdt"].ToString();
+                    var FilePath = Model.StoreAllData.Tables[0].Rows[i]["FilePath"].ToString();
+                    if (FilePath.ToString() != "") { FilePath = "https://registration2019.pseb.ac.in/upload/LateAdmission/" + FilePath; }
+                    var Statusmsg = "";
+                    if (Status == "0" && updDate == "") { Statusmsg = "Created"; }
+					else if (Status == "0" && updDate != "") { Statusmsg = "Modified"; }
+                    else if (Status == "1") { Statusmsg = "Submitted"; }
+                    else if (Status == "2") { Statusmsg = "Approved"; }
+                    else if (Status == "3") { Statusmsg = "Rejected"; }
+                    else if (Status == "4") { Statusmsg = "Inserted In Registration"; }
+                    Count = i + 1;
+
+
+                <tr>
+                    <td>@RequestID</td>
+                    @*<td>@SCHl</td>
+                    <td>@Class</td>
+                    <td>@Form</td>
+                    <td>@RegNo</td>
+                    <td>@Cname /@Fname /@Mname</td>
+                    <td>@DOB</td>
+                    <td>@mobileno</td>*@
+                    <td>@FSDate</td>
+                    <td>@Statusmsg</td>
+                    <td>@ApprovalDate</td>
+                    <td>@ApprovalUpto</td>
+                    <td>@dpatchno</td>
+                    <td>@APPROVALREMARKSNEW</td>
+                    @*<td>@Action</td>*@
+                    <td>@ActionDT</td>
+                    <td>@UpdatedBy 
+					@if(EmpUserId !="")
+					{<span class="rqf">[@EmpUserId]</span>}
+					
+					</td>                    
+                </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="12">
+                        @ViewBag.Message
+                    </td>
+                </tr>
+            }
+            
+
+        </table>
+
+    </div>
+}

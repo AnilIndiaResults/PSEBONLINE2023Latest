@@ -1,0 +1,268 @@
+﻿@model PSEBONLINE.Models.AdminModels
+@{
+    ViewBag.Title = "FirmSchoolCorrectionPendingCorrectionRecord";
+    //Layout = "~/Views/Shared/_HeaderCorr.cshtml";  By Rohit
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 225px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+    }
+</style>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modal");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+    $('form').live("submit", function () {
+        ShowProgress();
+    });
+</script>
+
+<h1>Firm School Correction Pending Correction Records</h1>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+@using (Html.BeginForm("FirmSchoolCorrectionPendingCorrectionRecord", "Admin", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="t01">
+                    <tr class="active-tr">
+                        <th width="7%">Sl. No.</th>
+                        <th width="10%">School Code</th>
+                        <th width="10%">Class</th>
+                        <th width="10%">Student ID</th>
+                        <th width="14%">Correction Type</th>
+                        <th width="14%">Correction Lot</th>
+                        <th width="10%">Old Value</th>
+                        <th width="10%">New Value</th>
+                        <th width="5%">Status</th>
+                        <th width="10%">Action</th>
+
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var CorrectioId = Model.StoreAllData.Tables[0].Rows[i]["CorrectionId"].ToString();
+                                var Schl = Model.StoreAllData.Tables[0].Rows[i]["Schl"].ToString();
+                                var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                                var Std_id = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                var CorrectionType = Model.StoreAllData.Tables[0].Rows[i]["CorrectionType"].ToString();
+                                var CorrectionLot = Model.StoreAllData.Tables[0].Rows[i]["CorrectionLot"].ToString();
+                                var OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                var NewValue = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                if (CorrectionType == "Sign" || CorrectionType == "Photo")
+                                {
+                                    if (Class == "Sr.Secondary Open" || Class == "Matriculation Open")
+                                    {
+                                        OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                        NewValue = "https://registration2022.pseb.ac.in" + Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                    }
+                                    else
+                                    {
+                                        OldValue = "https://registration2022.pseb.ac.in/upload/" + Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                        NewValue = "https://registration2022.pseb.ac.in" + Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                    }
+
+                                }
+                                else
+                                {
+                                    OldValue = Model.StoreAllData.Tables[0].Rows[i]["OldValue"].ToString();
+                                    NewValue = Model.StoreAllData.Tables[0].Rows[i]["NewValue"].ToString();
+                                }
+                                var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                                var FirmCorrectionLot = Model.StoreAllData.Tables[0].Rows[i]["FirmCorrectionLot"].ToString();
+                                int Count = i + 1;
+                                <tr class="info">
+                                    <td>
+                                        @Count
+                                    </td>
+                                    <td>
+                                        @Schl
+                                    </td>
+                                    <td>
+                                        @Class
+                                    </td>
+                                    <td>
+                                        @Std_id
+                                    </td>
+                                    <td>
+                                        @CorrectionType
+                                    </td>
+                                    <td>
+                                        @CorrectionLot
+                                    </td>
+                                    @if (@CorrectionType == "Sign" || @CorrectionType == "Photo")
+                                    {
+                                        <td>
+                                            <img src="@OldValue" class="" style="max-width:30%" alt="Photo" id="OldValuePS" />
+                                        </td>
+                                        <td>
+                                            <img src="@NewValue" class="" style="max-width:30%" alt="Photo" id="NewValuePS" />
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="kdsfont">
+                                            @OldValue
+                                        </td>
+                                        <td class="kdsfont">
+                                            @NewValue
+                                        </td>
+                                    }
+
+                                    
+                                    <td>
+                                        @if (@Status == "")
+                                        {
+                                            <img src="../../Images/Pending.png" alt="Status is Pending For Verification" title="Status is Pending For Verification" />
+                                        }
+                                        else if (@Status == "Y")
+                                        {
+                                            <img src="../../Images/Apply.png" alt="Correction Verified." title="Correction Verified." />
+                                        }
+                                        else
+                                        {
+                                            <img src="../../Images/Delete.png" alt="Correction Rejected." title="Correction Rejected." />
+                                        }
+
+                                    </td>
+                                    <td>
+                                        <div style="color:forestgreen"><b>Pending for Final Submit</b></div>
+                                    </td>
+
+                                </tr>
+
+                                //.... Pagin start
+                                if (d == ViewBag.TotalCountp)
+                                {
+                                    <tr>
+                                        <td colspan="12">
+
+                                            Page @ViewBag.pagesize of @ViewBag.pn
+
+                                            &nbsp;
+
+                                            @if (ViewBag.pagesize == 1)
+
+                                            {
+                                                @:<<
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "FirmSchoolCorrection", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "FirmSchoolCorrection", new { page = ViewBag.pn })
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (TempData["CenterListSelDist"] != null)
+                                                {
+                                                    string str1 = TempData.Peek("CenterListSelDist").ToString();
+                                                    string str2 = TempData.Peek("CenterListSelectList").ToString();
+                                                    string str3 = TempData.Peek("CenterListSearchString").ToString();
+                                                    //string str4 = TempData.Peek("ImportData10thClassSession").ToString();
+                                                    TempData["CenterListSelDist"] = str1;
+                                                    TempData["CenterListSelectList"] = str2;
+                                                    TempData["CenterListSearchString"] = str3;
+                                                    // TempData["ImportData10thClassSession"] = str4;
+                                                }
+                                                @Html.ActionLink("<<", "FirmSchoolCorrection", new { page = 1 })
+
+                                                @Html.Raw("&nbsp;");
+
+                                                @Html.ActionLink("< Prev", "FirmSchoolCorrection", new { page = ViewBag.pagesize - 1 })
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    @Html.ActionLink("Next >", "FirmSchoolCorrection", new { page = ViewBag.pagesize + 1 })
+
+                                                    @Html.Raw("&nbsp;");
+
+                                                    @Html.ActionLink(">>", "FirmSchoolCorrection", new { page = ViewBag.pn })
+                                                }
+
+                                            }
+
+
+                                        </td>
+                                    </tr>
+            }
+
+            //... Paging end
+
+        }
+    }
+    else
+    {
+                            <tr>
+                                <td colspan="11">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive text-center">
+            <input type="submit" value="Back" formaction="goforfinal" title="Firm Correction Final Submit" />
+            <input type="submit" value="Home" formaction="FirmCorrectionHome" title="Go for Home Page" />
+            @*<input type="submit" value="View All Correction Record" name="cmd" />
+            <input type="submit" value="Final Submit" formaction="goforfinal" />
+            <input type="submit" value="View All Correction Pending Record" name="cmd" />*@
+        </div>
+    </div>
+    <div class="loading" align="center">
+        Working... Please wait.<br />
+        <br />
+        <img src="../../images/loadingAnim.gif" />
+    </div>
+                        }

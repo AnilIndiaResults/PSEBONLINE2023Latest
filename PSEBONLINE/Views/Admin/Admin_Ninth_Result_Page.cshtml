@@ -23,12 +23,29 @@
     }
 </style>
 
+<script type="text/javascript">
+
+    //$(document).ready(function () {
+
+    $(function () {
+        $(".kdsddl").change(function () {
+            if ($(this).val() == "1") {
+                $(".dvPassport").show();
+                //$(".dvPassporta").hide();
+            } else {
+                $(".dvPassport").hide();
+                //$(".dvPassporta").show();
+            }
+        });
+    });
+
+</script>
 
 <script type="text/javascript">
     window.setInterval(function () {
         var current = new Date();
         //var expiry = new Date("Oct 31, 2022 23:59:59")
-		var expiry = new Date("July 30, 2023 23:59:59")
+        var expiry = new Date("July 30, 2024 23:59:59")
         if (current.getTime() > expiry.getTime()) {
             $('.hideint').hide();
         } else if (current.getTime() < expiry.getTime()) {
@@ -38,6 +55,7 @@
 
 
 </script>
+
 
 
 @*<script type="text/javascript">
@@ -70,6 +88,7 @@
             <div class="clearefix"></div>
             <div class="row">
                 <div class="col-md-2">
+                    @Html.Hidden("hdselectedItems", null, new { id = "hdselectedItems" })
                     Select Distric @Html.DropDownList("dist", new SelectList(ViewBag.DistUser, "Value", "Text"), "--All---", new { @class = "" })
                     <span id="reqDist" style="color:red;display:none;">Select Dist</span>
                 </div>
@@ -113,7 +132,7 @@
                     {
                         <a href="/Admin/Admin_Ninth_Result_Page_Report?id=FP" class="btn">Print Final Report</a>
                     }
-                    @*<input type="submit" class="btn" name="cmd" value="Click here to Final Submit" onclick="return confirm('Are Sure To Final Submit Your Ninth Result?');return dee();" />*@
+                    <input type="submit" class="btn" name="cmd" value="Challan Detail" />
                 </div>
             </div>
 
@@ -127,12 +146,16 @@
     <div class="clearfix"></div>
     <div class="row" id="divMain1">
         <div class="col-md-2">Grid Total:  @ViewBag.TotalCount1</div>
-	   <div class="col-md-10 text-right">
-		  <h3>Last Date : 10/05/2023 </h3>
+        <div class="col-md-10 text-right">
+            @*<h3>Last Date : 10/05/2023 </h3>*@
             @if (ViewBag.TotalCount > 0 && ViewBag.MarksPending == 0 && ViewBag.FinalPending > 0)
             {
                 <span class="rqf"> Final Submission Pending</span>
-                <a href="" class="btn" data-toggle="modal" data-target="#myModal2">Click here to Final Submit</a>
+            }
+            <a href="" class="btn" data-toggle="modal" data-target="#myModal2">Click here to Final Submit</a>
+            @*@if (ViewBag.TotalCount > 0 && ViewBag.MarksPending == 0 && ViewBag.FinalPending > 0)*@
+            @if (ViewBag.TotalCount >0)
+            {
                 <div class="modal fade" id="myModal2" role="dialog">
                     <div class="modal-dialog">
                         <!-- Modal content-->
@@ -195,29 +218,440 @@
             }
         </div>
         <div class="clearfix"></div>
+        @if (@ViewBag.challandetail == 0 || @ViewBag.challandetail == null)
+        {
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="t01">
+                        <tr class="active-tr">
+                            <th width="5%">S.No.</th>
+                            <th width="5%">ID</th>
+                            <th width="3%">Section</th>
+                            <th width="10%">ROLL</th>
+                            <th width="5%">Form</th>
+                            <th width="5%">Reg.No.</th>
+                            <th width="26%">Name/Father's Name/Mother's Name</th>
+                            <th width="5%">DOB</th>
+                            <th width="5%">Gender</th>
+                            <th width="5%">Total marks</th>
+                            <th width="5%">Obt Matrks</th>
+                            <th width="5%">Result</th>
+
+                            @*<th width="7%">Adm Date</th>
+                                <th width="7%">Fee</th>
+                                <th width="4%">Lot</th>*@
+                            <th width="13%">Action</th>
+                            <th width="13%">Select <input type="checkbox" id="selectall" value="" /> </th>
+                        </tr>
+                        @{
+                            var noCount = 0;
+                            var noCountval = "";
+                            if (ViewBag.TotalCount > 0)
+                            {
+                                int d = 0;
+                                int Count = 0;
+                                if (ViewBag.pagesize == 1)
+                                {
+                                    Count = 0;
+                                }
+                                else
+                                {
+                                    Count = 20 * (ViewBag.pagesize - 1);
+                                }
+                                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                                {
+                                    noCount++;
+                                    noCountval = "selectedItems" + noCount;
+                                    d = d + 1;
+                                    var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                                    var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                                    var ROLL = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                                    var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                                    var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                                    var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                                    var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                                    var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                                    var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+                                    var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                                    var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
+                                    var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
+                                    var Fee = Model.StoreAllData.Tables[0].Rows[i]["REGFEE"].ToString();
+                                    var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
+                                    var totmarks = Model.StoreAllData.Tables[0].Rows[i]["totmarks"].ToString();
+                                    var obtmarks = Model.StoreAllData.Tables[0].Rows[i]["obtmarks"].ToString();
+                                    var Result = Model.StoreAllData.Tables[0].Rows[i]["Result"].ToString();
+                                    var FS = Model.StoreAllData.Tables[0].Rows[i]["reclock"].ToString();
+                                    var UPTREMARKS = Model.StoreAllData.Tables[0].Rows[i]["UPTREMARKS"].ToString();
+                                    //totmarks,obtmarks,Result
+
+                                    Count = Count + 1;
+                                    <tr>
+                                        <td>
+                                            @Count
+                                        </td>
+                                        <td>
+                                            @stdid
+                                        </td>
+                                        <td>
+                                            @sec
+                                        </td>
+                                        <td>
+                                            @ROLL
+                                        </td>
+                                        <td>
+                                            @FormName
+                                        </td>
+                                        <td>
+                                            @RegNo
+                                        </td>
+                                        <td>
+                                            @FullName
+                                        </td>
+                                        <td>
+                                            @DOB
+                                        </td>
+                                        <td>
+                                            @Gender
+                                        </td>
+                                        <td>
+                                            @totmarks
+                                        </td>
+                                        <td>
+                                            @obtmarks
+                                        </td>
+                                        <td>
+                                            @Result
+                                        </td>
+
+
+
+
+
+                                        @*<td>
+                                                @AdmDate
+                                            </td>
+                                            <td>
+                                                @Fee
+                                            </td>
+                                            <td>
+                                                @Lot
+                                            </td>*@
+
+                                    <td>
+                                        @if (FS == "1")
+                                        {
+                                            <button type="button" class="">LOCKED</button>
+                                        }
+                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
+                                        @*<span class="hideint">
+            <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
+        </span>*@
+                                    </td>
+                                        @*@if (FS != "1")
+                                        {*@
+                                            <td align="center">
+                                                <input type="checkbox" id='@noCountval' onchange="calculateSum(this.id)" name="selectedItems" value="@stdid" class="checkbox" />
+                                            </td>
+                                        @*}*@
+                                    </tr>
+
+                                    if (d == ViewBag.TotalCount)
+                                    {
+                                        <tr>
+                                            <td colspan="11">
+                                                Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                                @if (ViewBag.pagesize == 1)
+                                                {@:<<
+                                                    @Html.Raw("&nbsp;");
+                                                    @:< Prev
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        var dp = ViewBag.pagesize + 1;
+                                                        @*<a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@dp">Next ></a>*@
+                                                        @Html.Raw("&nbsp;");
+                                                        @*<a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@ViewBag.pn">>></a>*@
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    var dp = ViewBag.pagesize - 1;
+                                                    @*<a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=1"><<</a>*@
+                                                    @Html.Raw("&nbsp;");
+                                                    @*<a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@dp">< Prev</a>*@
+                                                    @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                    if (ViewBag.pn > ViewBag.pagesize)
+                                                    {
+                                                        var dp1 = ViewBag.pagesize + 1;
+                                                        @*<a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@dp1">Next ></a>*@
+                                                        @Html.Raw("&nbsp;");
+                                                        @*<a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@ViewBag.pn">>></a>*@
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8">
+                                        @ViewBag.Message
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+
+
+            if (Model != null)
+            {
+                for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                {
+                    var schl = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
+                    var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
+                    var rollNo = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
+                    var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
+                    var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
+                    var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
+                    var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
+                    var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
+                    var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
+                    var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
+
+                    var totmarks = Model.StoreAllData.Tables[0].Rows[i]["totmarks"].ToString();
+                    var obtmarks = Model.StoreAllData.Tables[0].Rows[i]["obtmarks"].ToString();
+                    var Result = Model.StoreAllData.Tables[0].Rows[i]["Result"].ToString();
+                    var UPTREMARKS = Model.StoreAllData.Tables[0].Rows[i]["UPTREMARKS"].ToString();
+                    if (Result.ToUpper() == "PASS")
+                    {
+                        Result = "1";
+                    }
+                    if (Result.ToUpper() == "FAIL")
+                    {
+                        Result = "2";
+                    }
+                    if (Result.ToUpper() == "RE-APPEAR")
+                    {
+                        Result = "3";
+                    }
+                    if (Result.ToUpper() == "RL")
+                    {
+                        Result = "4";
+                    }
+                    if (Result.ToUpper() == "CANCEL")
+                    {
+                        Result = "5";
+                    }
+                    if (Result.ToUpper() == "ABSENT")
+                    {
+                        Result = "6";
+                    }
+                    // ViewBag.rslist = "1";
+                    //totmarks,obtmarks,Result
+                    //var IsMarksFilled = Model.StoreAllData.Tables[0].Rows[i]["IsMarksFilled"].ToString();
+                    var Prev = "0";
+                    var Next = "0";
+                    if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count == 1)
+                    {
+                        Prev = "0";
+                        Next = "0";
+                    }
+                    else if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count > 1)
+                    {
+                        Prev = "0";
+                        Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+                    }
+                    else if (i > 0 && i < Model.StoreAllData.Tables[0].Rows.Count - 1)
+                    {
+                        Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+                        Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
+                    }
+                    else if (i > 0 && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
+                    {
+                        Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
+                        Next = "0";
+                    }
+                    int k = i + 1;
+                    <div class="container">
+                        <div class="modal fade" id="myModal1-@stdid" role="dialog">
+                            <div class="modal-dialog">
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
+                                        @*<h4 class="modal-title">Student Details Of Unique Id : @stdid</h4>*@
+                                        <h4 class="modal-title">Student Details Of @Html.Raw("&nbsp;&nbsp;") Section : @sec @Html.Raw("") @Html.Raw("&nbsp;&nbsp;")& @Html.Raw("&nbsp;&nbsp;") Roll No : @rollNo & @Html.Raw("&nbsp;&nbsp;") Form : @FormName</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table width="100%">
+                                            <tr>
+                                                <td width="28%">Student ID</td>
+                                                <td>@Html.Raw("")@stdid@Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Reg No.</td>
+                                                <td>@Html.Raw("")@RegNo@Html.Raw("")</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Name/F.Name/M.Name</td>
+                                                <td>@Html.Raw("")@FullName@Html.Raw("")</td>
+                                            </tr>
+
+
+                                            @if ((Result == "3") || (Result == "4"))
+                                            {
+                                                <tr>
+                                                    <td>Result</td>
+                                                    <td>@Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target kdsddl", id = "ResultList-" + stdid })</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total Mark</td>
+                                                    <td>
+                                                        @Html.Raw("")
+                                                        <input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="650" readonly="readonly" />
+                                                        @*<input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="@totmarks" />*@
+                                                        <br />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    @if (Result == "1")
+                                                    {
+                                                        <td class="dvPassport">Obtain Mark</td>
+                                                        <td class="dvPassport">@Html.Raw("")<input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /><br /></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td style="display:none" class="dvPassport">Obtain Mark</td>
+                                                        <td style="display:none" class="dvPassport"><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" onfocusout="CalculatePercentFunction(@stdid)" /></td>
+                                                    }
+                                                </tr>
+                                                <tr>
+                                                    <td class="dvPassporta">Reason/Remarks  </td>
+                                                    <td class="dvPassporta"><input type="Text" id="UPTREMARKS-@stdid" name="UPTREMARKS" class="" value="@UPTREMARKS" /></td>
+                                                    @*<td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /></td>*@
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev,@schl)" /></td>
+                                                </tr>
+
+                                            }
+                                            else
+                                            {
+                                                //if (ViewBag.reclock == "0")
+                                                {
+                                                    <tr>
+                                                        <td>Result</td>
+                                                        <td>
+                                                            @Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target  kdsddl", id = "ResultList-" + stdid })
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Total Mark</td>
+                                                        <td>
+                                                            <input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="650" readonly="readonly" />
+                                                            @*<input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="@totmarks" />*@
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        @if (Result == "1")
+                                                        {
+                                                            <td class="dvPassport">Obtain Mark</td>
+                                                            <td class="dvPassport">@Html.Raw("")<input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /><br /></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="display:none" class="dvPassport">Obtain Mark</td>
+                                                            <td style="display:none" class="dvPassport"><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" onfocusout="CalculatePercentFunction(@stdid)" /></td>
+                                                        }
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="dvPassporta">Reason/Remarks  </td>
+                                                        <td class="dvPassporta"><input type="Text" id="UPTREMARKS-@stdid" name="UPTREMARKS" class="" value="@UPTREMARKS" /></td>
+                                                        @*<td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /></td>*@
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td></td>
+                                                        <td><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev,@schl)" /></td>
+                                                    </tr>
+                                                }
+                                                @*else
+                                                    {
+                                                        <tr>
+                                                            <td>Result</td>
+                                                            <td> @Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target", @disabled = "disabled", id = "ResultList-" + stdid })</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Total Mark</td>
+                                                            <td><input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="650" readonly="readonly" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Obtain Mark</td>
+                                                            <td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" readonly="readonly" /></td>
+                                                        </tr>
+                                                    }*@
+                                            }
+                                            <tr>
+                                                <td colspan="2">
+                                                    <span class="rqf">
+                                                        Instructions:<br />1. Please Enter OBT Marks less than equal to Max Marks and Greater than Zero !!<br />
+                                                        2. Result Pass Mark Should Be Greater Or Equals To 33 % of Total marks
+                                                    </span><br />
+                                                    <div id="loading1-@stdid"></div>
+                                                </td>
+                                            </tr>
+
+
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <span class="lft">
+                                            <button type="button" class="" data-toggle="modal" data-target="#myModal1-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
+                                        </span>
+                                        <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
+
+                                        @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            }
+
+        }
+
+
+    </div>
+
+
+
+    if (@ViewBag.challandetail == 1)
+    {
         <div class="col-md-12">
             <div class="table-responsive">
                 <table class="table table-bordered" id="t01">
                     <tr class="active-tr">
-                        <th width="5%">S.No.</th>
-                        <th width="5%">ID</th>
-                        <th width="3%">Section</th>
-                        <th width="10%">ROLL</th>
-                        <th width="5%">Form</th>
-                        <th width="5%">Reg.No.</th>
-                        <th width="26%">Name/Father's Name/Mother's Name</th>
-                        <th width="5%">DOB</th>
-                        <th width="5%">Gender</th>
-                        <th width="5%">Total marks</th>
-                        <th width="5%">Obt Matrks</th>
-                        <th width="5%">Result</th>
+                        <th width="5%">School Code</th>
+                        <th width="15%">School Name</th>
+                        <th width="5%">Challanid</th>
+                        <th width="10%">Student List</th>
+                        <th width="3%">Reciept Amount</th>
+                        <th width="5%">Reciept No.</th>
+                        <th width="5%">Action</th>
 
-                        @*<th width="7%">Adm Date</th>
-                            <th width="7%">Fee</th>
-                            <th width="4%">Lot</th>*@
-                        <th width="13%">Action</th>
+
                     </tr>
                     @{
+
                         if (ViewBag.TotalCount > 0)
                         {
                             int d = 0;
@@ -232,126 +666,47 @@
                             }
                             for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
                             {
+
                                 d = d + 1;
-                                var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
-                                var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
-                                var ROLL = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
-                                var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
-                                var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
-                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
-                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
-                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
-                                var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
-                                var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
-                                var Gender = Model.StoreAllData.Tables[0].Rows[i]["Gender"].ToString();
-                                var AdmDate = Model.StoreAllData.Tables[0].Rows[i]["Admission_Date"].ToString();
-                                var Fee = Model.StoreAllData.Tables[0].Rows[i]["REGFEE"].ToString();
-                                var Lot = Model.StoreAllData.Tables[0].Rows[i]["LOT"].ToString();
-                                var totmarks = Model.StoreAllData.Tables[0].Rows[i]["totmarks"].ToString();
-                                var obtmarks = Model.StoreAllData.Tables[0].Rows[i]["obtmarks"].ToString();
-                                var Result = Model.StoreAllData.Tables[0].Rows[i]["Result"].ToString();
-                                var FS = Model.StoreAllData.Tables[0].Rows[i]["reclock"].ToString();
-                                var UPTREMARKS = Model.StoreAllData.Tables[0].Rows[i]["UPTREMARKS"].ToString();
-                                //totmarks,obtmarks,Result
+                                var schl = Model.StoreAllData.Tables[0].Rows[i]["schlregid"].ToString();
+                                var schlnme = Model.StoreAllData.Tables[0].Rows[i]["schlnme"].ToString();
+                                var challanid = Model.StoreAllData.Tables[0].Rows[i]["challanid"].ToString();
+                                var appno = Model.StoreAllData.Tables[0].Rows[i]["studentlist"].ToString();
+                                var totfee = Model.StoreAllData.Tables[0].Rows[i]["totfee"].ToString();
+                                var remark = Model.StoreAllData.Tables[0].Rows[i]["LSFRemarks"].ToString();
+
+
 
                                 Count = Count + 1;
                                 <tr>
-                                    <td>
-                                        @Count
-                                    </td>
-                                    <td>
-                                        @stdid
-                                    </td>
-                                    <td>
-                                        @sec
-                                    </td>
-                                    <td>
-                                        @ROLL
-                                    </td>
-                                    <td>
-                                        @FormName
-                                    </td>
-                                    <td>
-                                        @RegNo
-                                    </td>
-                                    <td>
-                                        @FullName
-                                    </td>
-                                    <td>
-                                        @DOB
-                                    </td>
-                                    <td>
-                                        @Gender
-                                    </td>
-                                    <td>
-                                        @totmarks
-                                    </td>
-                                    <td>
-                                        @obtmarks
-                                    </td>
-                                    <td>
-                                        @Result
-                                    </td>
 
 
-                                    @*<td>
-                                            @AdmDate
-                                        </td>
-                                        <td>
-                                            @Fee
-                                        </td>
-                                        <td>
-                                            @Lot
-                                        </td>*@
-                                    
                                     <td>
-                                        @if (FS == "1")
-                                        {
-                                            <button type="button" class="">LOCKED</button>
-                                        }
-										
-			<span class="hideint">
-                                        <button type="button" class="" data-toggle="modal" data-target="#myModal1-@stdid">View and Enter Marks</button>
-									</span>
+                                        @schl
+                                    </td>
+                                    <td>
+                                        @schlnme
+                                    </td>
+                                    <td>
+                                        @challanid
+                                    </td>
+                                    <td>
+                                        @appno
+                                    </td>
+                                    <td>
+                                        @totfee
+                                    </td>
+                                    <td>
+                                        @remark
+                                    </td>
+
+                                    <td>
+                                        <a class="btn btn-primary"    
+                                           href="@Url.Action("GenerateChallaan", "Home", new { ChallanId = @challanid }, Request.Url.Scheme)">View Challan</a>
                                     </td>
                                 </tr>
 
-                                if (d == ViewBag.TotalCount)
-                                {
-                                    <tr>
-                                        <td colspan="11">
-                                            Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
-                                            @if (ViewBag.pagesize == 1)
-                                            {@:<<
-                                                @Html.Raw("&nbsp;");
-                                                @:< Prev
-                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
-                                                if (ViewBag.pn > ViewBag.pagesize)
-                                                {
-                                                    var dp = ViewBag.pagesize + 1;
-                                                    <a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@dp">Next ></a>
-                                                    @Html.Raw("&nbsp;");
-                                                    <a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                var dp = ViewBag.pagesize - 1;
-                                                <a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=1"><<</a>
-                                                @Html.Raw("&nbsp;");
-                                                <a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@dp">< Prev</a>
-                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
-                                                if (ViewBag.pn > ViewBag.pagesize)
-                                                {
-                                                    var dp1 = ViewBag.pagesize + 1;
-                                                    <a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@dp1">Next ></a>
-                                                    @Html.Raw("&nbsp;");
-                                                    <a href="~/Admin/Admin_Ninth_Result_Page?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
-                                                }
-                                            }
-                                        </td>
-                                    </tr>
-                                }
+
 
                             }
                         }
@@ -367,210 +722,7 @@
                 </table>
             </div>
         </div>
-    </div>
 
-                        if (Model != null)
-                        {
-                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
-                            {
-                                var schl = Model.StoreAllData.Tables[0].Rows[i]["schl"].ToString();
-                                var stdid = Model.StoreAllData.Tables[0].Rows[i]["Std_id"].ToString();
-                                var rollNo = Model.StoreAllData.Tables[0].Rows[i]["Class_Roll_Num_Section"].ToString();
-                                var sec = Model.StoreAllData.Tables[0].Rows[i]["Section"].ToString();
-                                var RegNo = Model.StoreAllData.Tables[0].Rows[i]["Registration_num"].ToString();
-                                var FormName = Model.StoreAllData.Tables[0].Rows[i]["form_Name"].ToString();
-                                var Candi_Name = Model.StoreAllData.Tables[0].Rows[i]["Candi_Name"].ToString();
-                                var Father_Name = Model.StoreAllData.Tables[0].Rows[i]["Father_Name"].ToString();
-                                var Mother_Name = Model.StoreAllData.Tables[0].Rows[i]["Mother_Name"].ToString();
-                                var FullName = Candi_Name + "/ " + Father_Name + "/ " + Mother_Name;
-
-                                var totmarks = Model.StoreAllData.Tables[0].Rows[i]["totmarks"].ToString();
-                                var obtmarks = Model.StoreAllData.Tables[0].Rows[i]["obtmarks"].ToString();
-                                var Result = Model.StoreAllData.Tables[0].Rows[i]["Result"].ToString();
-                                var UPTREMARKS = Model.StoreAllData.Tables[0].Rows[i]["UPTREMARKS"].ToString();
-                                if (Result.ToUpper() == "PASS")
-                                {
-                                    Result = "1";
-                                }
-                                if (Result.ToUpper() == "FAIL")
-                                {
-                                    Result = "2";
-                                }
-                                if (Result.ToUpper() == "RE-APPEAR")
-                                {
-                                    Result = "3";
-                                }
-                                if (Result.ToUpper() == "RL")
-                                {
-                                    Result = "4";
-                                }
-                                if (Result.ToUpper() == "CANCEL")
-                                {
-                                    Result = "5";
-                                }
-                                if (Result.ToUpper() == "ABSENT")
-                                {
-                                    Result = "6";
-                                }
-                                // ViewBag.rslist = "1";
-                                //totmarks,obtmarks,Result
-                                //var IsMarksFilled = Model.StoreAllData.Tables[0].Rows[i]["IsMarksFilled"].ToString();
-                                var Prev = "0";
-                                var Next = "0";
-                                if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count == 1)
-                                {
-                                    Prev = "0";
-                                    Next = "0";
-                                }
-                                else if (i == 0 && Model.StoreAllData.Tables[0].Rows.Count > 1)
-                                {
-                                    Prev = "0";
-                                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
-                                }
-                                else if (i > 0 && i < Model.StoreAllData.Tables[0].Rows.Count - 1)
-                                {
-                                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
-                                    Next = Model.StoreAllData.Tables[0].Rows[i + 1]["Std_id"].ToString();
-                                }
-                                else if (i > 0 && i == Model.StoreAllData.Tables[0].Rows.Count - 1)
-                                {
-                                    Prev = Model.StoreAllData.Tables[0].Rows[i - 1]["Std_id"].ToString();
-                                    Next = "0";
-                                }
-                                int k = i + 1;
-            <div class="container">
-                <div class="modal fade" id="myModal1-@stdid" role="dialog">
-                    <div class="modal-dialog">
-                        <!-- Modal content-->
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" style="color:#fb9709" data-dismiss="modal">&times;</button>
-                                @*<h4 class="modal-title">Student Details Of Unique Id : @stdid</h4>*@
-                                <h4 class="modal-title">Student Details Of @Html.Raw("&nbsp;&nbsp;") Section : @sec @Html.Raw("") @Html.Raw("&nbsp;&nbsp;")& @Html.Raw("&nbsp;&nbsp;") Roll No : @rollNo & @Html.Raw("&nbsp;&nbsp;") Form : @FormName</h4>
-                            </div>
-                            <div class="modal-body">
-                                <table width="100%">
-                                    <tr>
-                                        <td width="28%">Student ID</td>
-                                        <td>@Html.Raw("")@stdid@Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Reg No.</td>
-                                        <td>@Html.Raw("")@RegNo@Html.Raw("")</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Name/F.Name/M.Name</td>
-                                        <td>@Html.Raw("")@FullName@Html.Raw("")</td>
-                                    </tr>
-
-
-                                    @if ((Result == "3") || (Result == "4"))
-                                    {
-                                        <tr>
-                                            <td>Result</td>
-                                            <td>@Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target", id = "ResultList-" + stdid })</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total Mark</td>
-                                            <td>
-                                                @Html.Raw("")
-                                                <input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="650" readonly="readonly" />
-                                                @*<input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="@totmarks" />*@
-                                                <br />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Obtain Mark</td>
-                                            <td>@Html.Raw("")<input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /><br /></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="dvPassporta">Reason/Remarks  </td>
-                                            <td class="dvPassporta"><input type="Text" id="UPTREMARKS-@stdid" name="UPTREMARKS" class="" value="@UPTREMARKS" /></td>
-                                            @*<td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /></td>*@
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev,@schl)" /></td>
-                                        </tr>
-
-                                    }
-                                    else
-                                    {
-                                        //if (ViewBag.reclock == "0")
-                                        {
-                                            <tr>
-                                                <td>Result</td>
-                                                <td>
-                                                    @Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target", id = "ResultList-" + stdid })
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Total Mark</td>
-                                                <td>
-                                                    <input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="650" readonly="readonly" />
-                                                    @*<input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="@totmarks" />*@
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Obtain Mark</td>
-                                                <td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" onfocusout="CalculatePercentFunction(@stdid)" /></td>
-                                                @*<td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /></td>*@
-                                            </tr>
-                                            <tr>
-                                                <td class="dvPassporta">Reason/Remarks  </td>
-                                                <td class="dvPassporta"><input type="Text" id="UPTREMARKS-@stdid" name="UPTREMARKS" class="" value="@UPTREMARKS" /></td>
-                                                @*<td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" /></td>*@
-                                            </tr>
-
-                                            <tr>
-                                                <td></td>
-                                                <td><input type="button" class="btn" value="Save & Next" id="btnSave" onclick="SubMarks(@stdid,@Next,@Prev,@schl)" /></td>
-                                            </tr>
-                                        }
-                                        @*else
-            {
-                <tr>
-                    <td>Result</td>
-                    <td> @Html.DropDownList("ResultList", new SelectList(ViewBag.rslist, "Value", "Text", selectedValue: Result), "--Select Result ---", new { @class = "target", @disabled = "disabled", id = "ResultList-" + stdid })</td>
-                </tr>
-                <tr>
-                    <td>Total Mark</td>
-                    <td><input type="Text" id="totMarks-@stdid" name="totMarks" maxlength="3" class="tot" value="650" readonly="readonly" /></td>
-                </tr>
-                <tr>
-                    <td>Obtain Mark</td>
-                    <td><input type="Text" id="obtainMarks-@stdid" name="obtainMarks" maxlength="3" class="obt" value="@obtmarks" readonly="readonly" /></td>
-                </tr>
-            }*@
-                                    }
-                                    <tr>
-                                        <td colspan="2">
-                                            <span class="rqf">
-                                                Instructions:<br />1. Please Enter OBT Marks less than equal to Max Marks and Greater than Zero !!<br />
-                                                2. Result Pass Mark Should Be Greater Or Equals To 33 % of Total marks
-                                            </span><br />
-                                            <div id="loading1-@stdid"></div>
-                                        </td>
-                                    </tr>
-
-
-                                </table>
-                            </div>
-                            <div class="modal-footer">
-                                <span class="lft">
-                                    <button type="button" class="" data-toggle="modal" data-target="#myModal1-@Prev" data-dismiss="modal" style="@(Prev != "0" ? "display:block" : "display:none")">Prev Details</button>
-                                </span>
-                                <span class="rft"><button type="button" class="" data-toggle="modal" data-target="#myModal1-@Next" data-dismiss="modal" style="@(Next != "0" ? "display:block" : "display:none")">Next Details</button></span>
-
-                                @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-        }
     }
 }
 @{
@@ -583,7 +735,8 @@
                 //alert(impcn);
                 alert("Sorry, unable to Final Submit Data Cause,  "+impcn+" Records are pending");
                 window.location.href = '@Url.Action("Admin_Ninth_Result_Page", "Admin")';
-            </script>}
+            </script>
+        }
         else if (TempData["result"].ToString() == "0")
         {
             <script type="text/javascript" language="javascript">
@@ -620,12 +773,16 @@
 <script type="text/javascript">
 
     $(function () {
+
+        var currentDate = new Date();
+        var firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1); // Get the first day of the current month
         $(".receivedate").datepicker({
             dateFormat: "dd/mm/yy",
             changeMonth: true,
             changeYear: true,
-            yearRange: '2020:' + (new Date().getFullYear()),
-            maxDate: 0
+            yearRange: '2024:' + (new Date().getFullYear()),
+            minDate: firstDayOfMonth, // Set the minimum date as the first day of the current month
+            maxDate: currentDate, 
             // defaultDate: "+1w",
             //setDate: new Date()
 
@@ -647,10 +804,26 @@
     $("#feemode").change(function () {
         var feemode = $("#feemode").val();
         if (feemode == "2") { $("#tblfee").hide(); }
-        else { $("#tblfee").show();}
+        else { $("#tblfee").show(); }
     });
 
     function ReceiveFinalSubmit(schl) {
+        var opt = {
+            autoOpen: false,
+            modal: true,
+            width: 550,
+            height: 650,
+            title: 'Details'
+        };
+        var theDialog = $("#myModal2").dialog(opt);
+        theDialog.dialog("close");
+
+        var selectedValues = [];
+        $('input[type="checkbox"]:checked').each(function () {
+            selectedValues.push($(this).val());
+        });
+        var commaSeparatedValues = selectedValues.join(',');
+       
         var flag = 0;
         if ($("#feemode").val() == "") {
             $("#feemode").addClass("input-validation-error");
@@ -684,22 +857,32 @@
         if (flag == 1) {
             return false;
         }
+        if (commaSeparatedValues.length <5) {
+            alert("Please Select At Least One Record")
+            return false;
+        }
         else {
+
             //alert("receiveno :" + $("#receiveno").val());
             $.ajax({
                 type: "POST",
                 url: "../Admin/jq9th11thFinalSubmit", // this for calling the web method function in cs code.
-                data: '{cls:"9",feemode:"' + $("#feemode").val() + '",receiveno:"' + $("#receiveno").val() + '",receivedate:"' + $("#receivedate").val() + '",remarks:"' + $("#remarks").val() + '",receivefee:"' + $("#receivefee").val() + '",schl:"' + schl + '"}',// user name or email value
+                data: '{cls:"9",feemode:"' + $("#feemode").val() + '",receiveno:"' + $("#receiveno").val() + '",receivedate:"' + $("#receivedate").val() + '",remarks:"' + $("#remarks").val() + '",receivefee:"' + $("#receivefee").val() + '",hdselectedItems:"' + commaSeparatedValues + '",schl:"' + schl + '"  }',// user name or email value
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
                     // alert(response.sn);
                     if (response.sn == "Yes") {
-                        alert("Final Submit Successfully");
+                        var chid = response.chid;
+                        alert("Final Submit Successfully And Your Challan No is" + ", " + chid);
+                       
                         window.location.reload(true);
+
                     }
                     else {
+                        
                         alert("Failure.. Please Try Again.");
+                        window.location.reload(true);
                     }
                 },
                 failure: function (response) {
@@ -867,11 +1050,11 @@
                 totMarks.focus();
                 return false;
             }
-            if (obtMarks == "" || obtMarks == null) {
-                alert("Please Fill Obtained marks");
-                obtMarks.focus();
-                return false;
-            }
+            //if (obtMarks == "" || obtMarks == null) {
+            //    alert("Please Fill Obtained marks");
+            //    obtMarks.focus();
+            //    return false;
+            //}
 
         }
 
@@ -919,7 +1102,7 @@
                           }
                           else {
                               //window.location.href = '@Url.Action("Admin_Ninth_Result_Page", "Admin")';
-                              alert("Subject Marks Alloted Successfully of Student : " + k);
+                              alert("Subject Marks Alloted Successfully of Student : " + k + " After updating the result, select the updated entry/ entries and then final submit it");
                               nxtDiv(nxt, k, prv);
                           }
                       });
@@ -1147,6 +1330,108 @@
 
 </script>
 
+<script>
+
+    var totalFee = 0;
+    var ExamTotalFee = 0;
+    var lastpaidFee = 0;
+    var sum = 0;
+    var totalCount = 0;
+    var roll = 0;
+    function calculateSum(id) {
+
+        var selId = "#" + id
+        /* if ($("input[name='selectedItems']:checked"))*/
+
+        if ($(selId).is(':checked')) {
+            // totalCount = 0;
+            $('#sum').val('');
+            $('#totCount').val('');
+
+            var values = JSON.parse("[" + $(selId).val() + "]");
+
+            var valuesArray = [];
+
+            values.forEach(function (value) {
+                valuesArray.push(value); // Push each value to valuesArray
+            });
+
+
+            // Join the values with comma and update in input field
+            $('#hdselectedItems').val(valuesArray.join(','));
+            console.log("valuesArray", $('#hdselectedItems').val());
+            totalCount++;
+
+        }
+        else {
+            totalCount--;
+            //$('#sum').val('');
+            if ($(selId).prop('checked', false)) {
+                ; // Uncheck the checkbox
+                var values = JSON.parse("[" + $(selId).val() + "]");
+            }
+            $('#totCount').val(totalCount);
+            //lastpaidFee = 0;
+        }
+    }
+    // });
+
+
+
+
+
+
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.checkbox').change(function () { //".checkbox" change
+            if (this.checked == false) { //if this item is unchecked
+                $("#selectall")[0].checked = false; //change "select all" checked status to false
+            }
+        });
+
+        $("#selectall").change(function () {
+            var status = this.checked; // "select all" checked status
+            //alert(status);
+            var arr = [];
+            $('.checkbox').each(function () { //iterate all listed checkbox items
+                var id = this.id;
+                // alert(id);
+                this.checked = status; //change ".checkbox" checked status
+                var arr = [];
+                arr = id;
+                var arrid = "";
+                var j = 0;
+                var k = 0;
+                //cb-stdid
+                for (var i = 3; i < arr.length; i++) {
+                    if (arr[i] == '-') {
+                        k++;
+                        continue;
+                    }
+                    if (k == 0) {
+                        arrid += arr[i];
+                    }
+                    j++;
+                }
+                //alert(dtype);
+                for (var k = 3 + j + 5; k < arr.length; k++) {
+                    arrcast += arr[k];
+                }
+
+            });
+        });
+        // End select all
+
+
+    });
+</script>
+
+
+
+
 
 <style>
     .input-validation-error {
@@ -1158,3 +1443,6 @@
         border:1px solid #999;
     }*/
 </style>
+
+
+

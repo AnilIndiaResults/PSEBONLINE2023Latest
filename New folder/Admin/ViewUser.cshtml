@@ -1,0 +1,481 @@
+﻿@model PSEBONLINE.Models.AdminUserModel
+@{
+    ViewBag.Title = "ViewUser";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+    .div {
+        display: none;
+    }
+
+    a:hover + .div {
+        display: block;
+    }
+</style>
+<h1>View All User</h1>
+    <div class="row">
+        @using (Html.BeginForm("ViewUser", "Admin", FormMethod.Post, new { id = "searchform" }))
+        {
+            // @ViewBag.SelectedBranch
+          
+               <div class="col-md-2">@Html.DropDownList("Branch", ViewBag.Branch as SelectList, "--All Branch---", new { @class = "" })</div>
+                @*<div class="col-md-2">@Html.DropDownList("Branch", new SelectList(ViewBag.Branch, "Value", "Text", ViewBag.SelectedBranch), "--All Branch---", new { @class = ""})</div>*@
+                <div class="col-md-2"><input type="text" id="SearchUserId"  name="SearchUserId" placeholder="Enter User Id" value="@Request["SearchUserId"]" /></div>
+                <div class="col-md-2"><input type="text" id="SearchMobile" onkeypress="return isNumberKey(event);" name="SearchMobile" placeholder="Enter Mobile" value="@Request["SearchMobile"]" /></div>
+                <div class="col-md-2">
+                    <input type="submit" value="Search" />  <a href="/Admin/ViewUser" class="btn">Reset</a>
+                </div>
+           }
+    </div>
+    <div id="loading1"></div>
+    <div class="clearfix"></div>
+    <div class="row" id="divMain1">
+        <div class="col-md-4">Grid Total:  @ViewBag.TotalCount</div>
+        <div class="col-md-8 text-right">          
+            <input type="submit" value="Send Password" id="btnPassword" />      
+            <button type="button" class="" data-toggle="modal" data-target="#myModal">Compose Sms</button>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="t01" class="table table-bordered">
+                    <tr class="active-tr">
+                        <th width="5%">All <input type="checkbox" id="selectall" /></th>
+                        <th width="5%">S.No</th>
+                        <th width="10%">User ID</th>
+                        <th width="12%">User Name</th>
+                        <th width="10%">Password</th>
+                        <th width="12%">Email</th>
+                        <th width="10%">Mobile</th>
+                        <th width="10%">Created Date</th>
+                        <th width="10%">Branch</th>
+                        <th width="5%">Status</th>
+                        <th width="11%">Actions</th>
+                    </tr>
+                    @{
+                        if (ViewBag.TotalCount > 0)
+                        {
+                            int d = 0;
+                            int Count = 0;
+                            //if (ViewBag.pagesize == 1)
+                            //{
+                            //    Count = 0;
+                            //}
+                            //else
+                            //{
+                            //    Count = 20 * (ViewBag.pagesize - 1);
+                            //}
+                            for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                            {
+                                d = d + 1;
+                                var id = Model.StoreAllData.Tables[0].Rows[i]["id"].ToString();
+                                var user = Model.StoreAllData.Tables[0].Rows[i]["user"].ToString();
+                                var User_fullnm = Model.StoreAllData.Tables[0].Rows[i]["User_fullnm"].ToString();
+                                var pass = Model.StoreAllData.Tables[0].Rows[i]["pass"].ToString();
+                                var EmailID = Model.StoreAllData.Tables[0].Rows[i]["EmailID"].ToString();
+                                var Mobno = Model.StoreAllData.Tables[0].Rows[i]["Mobno"].ToString();
+                                var CreatedDt = Model.StoreAllData.Tables[0].Rows[i]["CreatedDt"].ToString();
+                                var STATUS = Model.StoreAllData.Tables[0].Rows[i]["STATUS"].ToString();
+                                var Branch = Model.StoreAllData.Tables[0].Rows[i]["Branch"].ToString();
+                                Count = Count + 1;
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="checkbox" id="cb-@id" value="@id" />
+                                    </td>
+                                    <td>
+                                        @Count
+                                    </td>
+                                    <td>
+                                        @user
+                                    </td>
+                                    <td>
+                                        @User_fullnm
+                                    </td>
+                                    <td>
+                                        <a style="font-size:10px;cursor:pointer">View Password</a>
+                                        <div class="div">@pass</div>
+                                    </td>
+                                    <td>
+                                        @EmailID
+                                    </td>
+                                    <td>
+                                        @Mobno
+                                    </td>
+                                    <td>
+                                        @CreatedDt
+                                    </td>
+                                    <td>
+                                        @Branch
+                                    </td>
+                                    <td>
+                                        @*@STATUS.ToUpper()*@ 
+                                        <a href='@Url.Action("UpdateUserStatus", "admin", new { id = @id  })' onclick="return confirm('You are sure to change this?');">
+                                            <img src="@(STATUS.ToUpper() == "ACTIVE" ? "/Images/enable.gif" : "/Images/disable.gif"  )" />
+                                        </a>
+                                    </td>
+                                   
+                                    <td>
+                                        <div class="cart">
+                                            Choose Action <span class="caret"></span>
+                                            <div id="sidebar">
+                                                <ul>
+                                                    @*<li> @Html.ActionLink("View", "ViewUserDetails", new { id = id })</li>*@
+                                                    <li style="@(ViewBag.IsModiFy == 1 ? "display:block" : "display:none")">@Html.ActionLink("Modify", "ModifyUser", new { id = id }) </li>
+                                                    @*<li style="@(ViewBag.IsDelete == 1 ? "display:block" : "display:none")">@Html.ActionLink("Delete", "DeleteUser", new { id = id })</li>*@
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @*if (d == ViewBag.TotalCount)
+                                {
+                                    <tr>
+                                        <td colspan="11">
+                                            Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                            @if (ViewBag.pagesize == 1)
+                                            {   @:<<
+                                                @Html.Raw("&nbsp;");
+                                                @:< Prev
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp = ViewBag.pagesize + 1;
+                                                    <a href="~/Admin/ViewUser?id=@ViewBag.cid&page=@dp">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/Admin/ViewUser?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var dp = ViewBag.pagesize - 1;
+                                                <a href="~/Admin/ViewUser?id=@ViewBag.cid&page=1"><<</a>
+                                                @Html.Raw("&nbsp;");
+                                                <a href="~/Admin/ViewUser?id=@ViewBag.cid&page=@dp">< Prev</a>
+                                                @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                if (ViewBag.pn > ViewBag.pagesize)
+                                                {
+                                                    var dp1 = ViewBag.pagesize + 1;
+                                                    <a href="~/Admin/ViewUser?id=@ViewBag.cid&page=@dp1">Next ></a>
+                                                    @Html.Raw("&nbsp;");
+                                                    <a href="~/Admin/ViewUser?id=@ViewBag.cid&page=@ViewBag.pn">>></a>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }*@
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    @ViewBag.Message
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>   
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">       
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Compose SMS</h4>
+            </div>
+            <div class="modal-body">
+                <center>  <input type="text" id="txtSMS" name="txtSMS" maxlength="150" required /></center>
+                <input type="button" class="btn" value="Send SMS" id="btnSMS" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        var form = $("#searchform").serialize();
+        $("#btnNext").click(function () {
+            $.ajax({
+                url: 'School/Next',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value, form },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#btnPrevious").click(function () {
+            $.ajax({
+                url: 'School/Previous',
+                data: { currentPageIndex: document.getElementById('currentPageIndex').value },
+                success: function (response) {
+                    $("body").html(response);
+                }
+            });
+        });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            if (value == 1 || value == 3 || value == 5) {
+                $("#searchform").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        // alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    };
+                });
+            } else {
+                $("#searchform").off('keypress');
+            }
+
+        });
+    });
+</script>
+
+
+<script type="text/javascript">
+        $(document).ready(function ()
+        {
+            $('.checkbox').change(function () { //".checkbox" change
+                    if (this.checked == false) { //if this item is unchecked
+                    $("#selectall")[0].checked = false; //change "select all" checked status to false
+                }
+            });
+
+            $("#selectall").change(function () {
+                var status = this.checked; // "select all" checked status
+                var arr = [];
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                   // alert(id);
+                    this.checked = status; //change ".checkbox" checked status
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var j = 0;
+                    var k = 0;
+                    //cb-stdid
+                    for (var i = 3; i < arr.length; i++) {
+                        if (arr[i] == '-')
+                        {
+                            k++;
+                            continue;
+                        }
+                        if (k == 0)
+                        {
+                            arrid += arr[i];
+                        }
+                        j++;
+                    }
+                    //alert(dtype);
+                    for (var k = 3 + j + 5; k < arr.length; k++) {
+                        arrcast += arr[k];
+                    }
+
+                });
+            });
+            // End select all
+
+            //Start Send Password
+            $("#btnPassword").click(function () {
+               //  alert("Start send password ");
+                var chkdee = "";
+                var storeid = "";
+                var storeid1 = "";
+                var storechkid = "";
+                var storescid = "";
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                  // alert("userid= "+ id);
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var arrcast = "";
+                    var j = 0;
+                    for (var i = 3; i < arr.length; i++) {
+                        if (arr[i] == '-') {
+                            break;
+                        }
+                        arrid += arr[i];
+                    }
+                    if (this.checked) {
+                        storeid += arrid + ",";
+                    }
+                });
+
+
+              
+                if (storeid == "") {
+                    alert("Please Select Records For Send Password.");
+                }
+                else if (storeid != "") {
+                 //  alert('Now Send:' + storeid)
+                    $('#divMain1').hide();
+                    $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $.ajax({
+                        type: "POST",
+                        url: "/Admin/JqSendPassword", // this for calling the web method function in cs code.
+                        data: '{storeid:"' + storeid + '" }',// user name or email value
+                       // data: '{storeid:"' + storeid + '",Action:"' + ViewBag.SelectedAction + '" }',// user name or email value  //
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: OnSuccess,
+                        failure: function (response) {
+                            alert(response);
+                             $('#divMain1').show();
+                             $('div#loading1').empty();
+                        }
+                    });
+                    function OnSuccess(response) {
+                        if (response.dee == "1") {
+                            alert("Send Password Successfully");
+                             $('#divMain1').show();
+                             $('div#loading1').empty();
+                        }
+                        else {
+                            alert("Something Went Wrong, Please Try Again.");
+                             $('#divMain1').show();
+                           $('div#loading1').empty();
+                        }
+
+                    }
+                }
+
+            });
+
+            //End  Send Password
+
+
+            //Start Compose Password
+            $("#btnSMS").click(function () {
+               // alert("Start Compose password ");             
+
+                var chkdee = "";
+                var storeid = "";
+                var storeid1 = "";
+                var storechkid = "";
+                var storescid = "";
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                   // alert("userid= " + id);
+                    var arr = [];
+                    arr = id;
+                    var arrid = "";
+                    var arrcast = "";
+                    var j = 0;
+                    for (var i = 3; i < arr.length; i++) {
+                        if (arr[i] == '-') {
+                            break;
+                        }
+                        arrid += arr[i];
+                    }
+                    if (this.checked) {
+                        storeid += arrid + ",";
+                    }
+                });
+
+
+                
+                if ($("#txtSMS").val() == "") {
+                    $("#txtSMS").addClass("input-validation-error");                  
+                    return false;
+                }               
+                else if (storeid == "") {
+                    alert("Please Select Records For Send Password.");
+                }
+                else if (storeid != "") {
+                  //  alert('Now Send SMS:' + storeid)
+                    $('#divMain1').hide();
+                    $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $.ajax({
+                        type: "POST",
+                        url: "/Admin/JqComposeSms", // this for calling the web method function in cs code.
+                        //data: '{storeid:"' + storeid + '" }',// user name or email value
+                        data: '{storeid:"' + storeid + '",SMS:"' + $("#txtSMS").val() + '" }',// user name or email value  //
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: OnSuccess,
+                        failure: function (response) {
+                            alert(response);
+                            $('#divMain1').show();
+                            $('div#loading1').empty();
+                        }
+                    });
+                    function OnSuccess(response) {
+                        if (response.dee == "1") {  
+                            alert("Send Compose SMS Successfully");
+                            $("#myModal").hide();
+                            $('#divMain1').show();
+                            $('div#loading1').empty();
+                            window.location.href = "/Admin/ViewUser";
+                        }
+                        else {
+                            alert("Something Went Wrong, Please Try Again.");
+                            $('#divMain1').show();
+                            $('div#loading1').empty();
+                        }
+
+                    }
+                }
+
+            });
+
+            //End  Compose SMS
+        });
+
+
+
+
+</script>
+
+<script type="text/javascript>
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+<script type="text/javascript">
+$("document").ready(function () {
+    $('#Branch').val('@ViewBag.SelectedBranch');
+});
+</script>

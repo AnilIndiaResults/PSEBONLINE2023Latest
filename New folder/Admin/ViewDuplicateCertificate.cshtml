@@ -1,0 +1,2107 @@
+﻿@model PSEBONLINE.Models.DuplicateCertificate
+@{
+    ViewBag.Title = "ViewDuplicateCertificate";
+    Layout = "~/Views/Shared/_Header.cshtml";
+}
+<style type="text/css">
+    .ktm {
+        padding: 0 8px !important;
+    }
+
+    .lft {
+        float: left;
+    }
+
+    .rft {
+        float: right;
+    }
+</style>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<h1>View Duplicate Certificate</h1>
+<div class="row" id="divMain1">
+    <div class="col-md-12">
+        <fieldset style="margin-bottom:15px">
+            <legend>Search</legend>
+            @using (Html.BeginForm("ViewDuplicateCertificate", "Admin", FormMethod.Post, new { id = "searchform" }))
+            {
+                <div class="col-md-2">Select Branch @Html.DropDownList("Branch", new SelectList(ViewBag.MyBranch, "Value", "Text", ViewBag.SelectedBranch), "--All Branch--", new { @class = "" })</div>
+                <div class="col-md-2">Select District @Html.DropDownList("Dist1", new SelectList(ViewBag.MyDist, "Value", "Text", ViewBag.SelectedDist), "--All District--", new { @class = "" })</div>
+                <div class="col-md-2">Select Type @Html.DropDownList("Type1", new SelectList(ViewBag.MyType, "Value", "Text", ViewBag.SelectedType), "--All Type--", new { @class = "" })</div>
+                <div class="col-md-1">SelectStatus @Html.DropDownList("SelStatus", new SelectList(ViewBag.MyStatus, "Value", "Text", ViewBag.SelectedStatus), "--All---", new { @class = "", id = "SelectStatus" })</div>
+                <div class="col-md-2">Search By @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---", new { @class = "", id = "SelectItem" })</div>
+                <div class="col-md-2">
+                    &nbsp;<br />
+                    <input type="text" id="SearchString" name="SearchString" value="@Request["SearchString"]" />
+                </div>
+                <div class="col-md-1">
+                    <br />
+                    <input type="submit" value="Search" style="margin-bottom:2PX;display:inline-block" />
+                    <input type="submit" name="submit" value="Reset" />
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 rqf">Note : Kindly click search button to show records.</div>
+            }
+        </fieldset>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-4 noprint">Grid Total:  @ViewBag.TotalCount1</div>
+    <div class="col-md-8 noprint" style="text-align:right">
+        @if (ViewBag.AdminType.ToString().ToUpper() == "DM" && ViewBag.TotalCount > 0)
+        {
+            <br />  <a href="/Admin/DuplicateCertificate" class="btn">Back</a>
+            <input type="submit" id="btnForward" value="Recommended To Duplicate Certificate Branch" />
+        }
+        else if (ViewBag.AdminType.ToString().ToUpper().Contains("COMPUTER") && ViewBag.TotalCount > 0)
+        {
+            <br />  <input type="submit" id="btnPrinting" value="Forward To Certificate Printing" />
+            <input type="submit" id="btnSet" value="Forward To Dealing Set" />
+            <input type="submit" id="btnForm" value="View Duplicate Certificate Form" />
+            <input type="submit" id="btnBackDM" value="Revert To DM" />
+        }
+        else if (ViewBag.AdminType.ToString().ToUpper().Contains("SINGLE") && ViewBag.TotalCount > 0)
+        {
+            <br />  <input type="submit" id="btnReport" value="View Address Slip" />
+        }
+    </div>  
+
+
+
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="t01" class="table table-bordered">
+                <tr class="active-tr">
+                    <th>S.No</th>
+                    <th>Set</th>
+                    <th>DairyNo.</th>
+                    <th>DairyDate</th>
+                    <th>Class</th>
+                    <th>Session/Year</th>
+                    <th>Roll</th>
+                    <th>Name</th>
+                    <th>Dist</th>
+                    <th>Corrections</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                    <th style="@(ViewBag.AdminType.ToString().ToUpper() == "DM"  ? "display:block" : "display:none")"><input type="checkbox" id="selectall" />ALL</th>
+                    <th style="@(ViewBag.AdminType.ToString().ToUpper().Contains("COMPUTER")  ? "display:block" : "display:none")"><input type="checkbox" id="selectall1" />ALL</th>
+                    <th style="@(ViewBag.AdminType.ToString().ToUpper().Contains("SINGLE")  ? "display:block" : "display:none")"><input type="checkbox" id="selectall2" />ALL</th>
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        int d = 0;
+                        int Count = 0;
+                        if (ViewBag.pagesize == 1)
+                        {
+                            Count = 0;
+                        }
+                        else
+                        {
+                            Count = 20 * (ViewBag.pagesize - 1);
+                        }
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            d = d + 1;
+                            var Id = Model.StoreAllData.Tables[0].Rows[i]["Id"].ToString();
+                            var DairyNo = Model.StoreAllData.Tables[0].Rows[i]["DairyNo"].ToString();
+                            var DairyDate = Model.StoreAllData.Tables[0].Rows[i]["DairyDate"].ToString();
+                            var Class = Model.StoreAllData.Tables[0].Rows[i]["Class"].ToString();
+                            var Session = Model.StoreAllData.Tables[0].Rows[i]["Session"].ToString();
+                            var Roll = Model.StoreAllData.Tables[0].Rows[i]["roll"].ToString();
+                            var DIST = Model.StoreAllData.Tables[0].Rows[i]["DIST"].ToString();
+                            var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+                            var DISTNM = Model.StoreAllData.Tables[0].Rows[i]["DISTNM"].ToString();
+                            var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+                            var DispNo = Model.StoreAllData.Tables[0].Rows[i]["DispNo"].ToString();
+                            var DispDate = Model.StoreAllData.Tables[0].Rows[i]["DispDate"].ToString();
+                            var CertNo = Model.StoreAllData.Tables[0].Rows[i]["CertNo"].ToString();
+                            var CertDate = Model.StoreAllData.Tables[0].Rows[i]["CertDate"].ToString();
+                            var ReceivedName = Model.StoreAllData.Tables[0].Rows[i]["username"].ToString();
+                            var Address = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+                            var Year = Model.StoreAllData.Tables[0].Rows[i]["Year"].ToString();
+                            var IsSameAsRecord = Model.StoreAllData.Tables[0].Rows[i]["IsSameAsRecord"].ToString();
+                            var Before = Model.StoreAllData.Tables[0].Rows[i]["Before1"].ToString();
+                            var After = Model.StoreAllData.Tables[0].Rows[i]["After1"].ToString();
+                            var TypeOf = Model.StoreAllData.Tables[0].Rows[i]["TypeOf"].ToString();
+                            var REMARKS = Model.StoreAllData.Tables[0].Rows[i]["REMARKS"].ToString();
+
+                            var FNAME = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var MNAME = Model.StoreAllData.Tables[0].Rows[i]["MNAME"].ToString();
+                            var ReceiptNo = Model.StoreAllData.Tables[0].Rows[i]["ReceiptNo"].ToString();
+                            var ReceiptDate = Model.StoreAllData.Tables[0].Rows[i]["ReceiptDate"].ToString();
+                            var FeeAmount = Model.StoreAllData.Tables[0].Rows[i]["FeeAmount"].ToString();
+
+                            var ReceiptDateMM = Model.StoreAllData.Tables[0].Rows[i]["ReceiptDateMM"].ToString();
+                            var DairyDateMM = Model.StoreAllData.Tables[0].Rows[i]["DairyDateMM"].ToString();
+                            var ScanFile = Model.StoreAllData.Tables[0].Rows[i]["ScanFile"].ToString();
+                            var IsForward = Model.StoreAllData.Tables[0].Rows[i]["IsForward"].ToString();
+                            var ObjectionLetter = Model.StoreAllData.Tables[0].Rows[i]["ObjectionLetter"].ToString();
+                            var Branch = Model.StoreAllData.Tables[0].Rows[i]["Branch"].ToString();
+                            var IsStatus = Model.StoreAllData.Tables[0].Rows[i]["IsStatus"].ToString();
+                            var Status = Model.StoreAllData.Tables[0].Rows[i]["Status"].ToString();
+                            var UserDist = Model.StoreAllData.Tables[0].Rows[i]["UserDist"].ToString();
+                            var ModifyDate = Model.StoreAllData.Tables[0].Rows[i]["UpdatedDate"].ToString();
+                            var DiscrepancyValue = Model.StoreAllData.Tables[0].Rows[i]["DiscrepancyValue"].ToString();
+                            var IsFormPrint = Model.StoreAllData.Tables[0].Rows[i]["IsFormPrint"].ToString() == "1" ? "P" : "";
+                            var IsType = Model.StoreAllData.Tables[0].Rows[i]["IsType"].ToString();
+                            var TypeName = Model.StoreAllData.Tables[0].Rows[i]["TypeName"].ToString();
+                            var DupSet = Model.StoreAllData.Tables[0].Rows[i]["DupSetNew"].ToString();
+                            var OrderBy = Model.StoreAllData.Tables[0].Rows[i]["OrderBy"].ToString();
+                            var OrderNo = Model.StoreAllData.Tables[0].Rows[i]["OrderNo"].ToString();
+                            var OrderDate = Model.StoreAllData.Tables[0].Rows[i]["OrderDate"].ToString().Split(' ')[0];
+
+                            var Result = Model.StoreAllData.Tables[0].Rows[i]["Result"].ToString();
+                            var ResultDt = Model.StoreAllData.Tables[0].Rows[i]["ResultDt"].ToString();
+                            var MaxMarks = Model.StoreAllData.Tables[0].Rows[i]["MaxMarks"].ToString();
+                            var ObtMarks = Model.StoreAllData.Tables[0].Rows[i]["ObtMarks"].ToString();
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var REGNO = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                            <tr>
+                                <td>@d</td>
+                                <td>@DupSet</td>
+                                <td>
+                                    @if (ScanFile == "")
+                                    { <span>@DairyNo</span>}
+                                    else
+                                    {<a href="@("/"+ScanFile)" id="ScanFile" title="Click here to Download File" target="_blank">@DairyNo</a>}
+
+
+                                    <div class="container">
+                                        @*View*@
+                                        <div class="modal fade" id="myModal2-@Id" role="dialog">
+                                            <div class="modal-dialog" style="width:70%">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Details  of Dairy No  : @DairyNo</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                            <tr>
+                                                                <td width="25%">Dairy No.</td>
+                                                                <td><input type="text" id="DairyNo-@Id" name="DairyNo" class="form-control" readonly value="@DairyNo" /></td>
+
+                                                                <td>Dairy Date</td>
+                                                                <td><input type="text" id="DairyDate-@Id" name="DairyDate" value="@DairyDateMM" class="form-control" readonly /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Class</td>
+                                                                <td><input type="text" id="Class-@Id" name="Class" value="@Class" class="form-control" readonly /></td>
+
+                                                                <td>Session </td>
+                                                                <td><input type="text" id="Session-@Id" name="Session" value="@Session" class="form-control" readonly /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Roll </td>
+                                                                <td><input type="text" id="Roll-@Id" name="Roll" value="@Roll" maxlength="15" onkeypress="return isNumberKey(event)" class="form-control" readonly /></td>
+
+                                                                <td>DIST </td>
+                                                                <td><input type="text" id="Dist-@Id" name="Dist" value="@DISTNM" class="form-control" readonly /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Name </td>
+                                                                <td><input type="text" id="Name-@Id" name="Name" value="@Name" class="form-control" readonly /></td>
+
+                                                                <td>Mobile</td>
+                                                                <td><input type="text" id="Mobile-@Id" name="Mobile" value="@Mobile" maxlength="10" onkeypress="return isNumberKey(event)" class="form-control" readonly /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Result </td>
+                                                                <td><input type="text" id="Result-@Id" name="Result" value="@Result" class="form-control" readonly /></td>
+                                                                <td>Result Details</td>
+                                                                <td><input type="text" id="ResultDt-@Id" name="ResultDt" value="@ResultDt" class="form-control" readonly /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Address </td>
+                                                                <td><input type="text" id="Address-@Id" name="Address" value="@Address" class="form-control" readonly /></td>
+
+                                                                <td>Year</td>
+                                                                <td><input type="text" id="Year-@Id" name="Year" value="@Year" class="form-control" readonly /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Father Name </td>
+                                                                <td><input type="text" id="FNAME-@Id" name="FNAME" value="@FNAME" class="form-control" readonly /></td>
+
+                                                                <td>Mother Name </td>
+                                                                <td><input type="text" id="MNAME-@Id" name="MNAME" value="@MNAME" onkeypress="return validateNumber(event)" class="form-control" readonly /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Receipt No </td>
+                                                                <td><input type="text" id="ReceiptNo-@Id" name="ReceiptNo" value="@ReceiptNo" onkeypress="return validateNumber(event)" class="form-control" readonly /></td>
+
+                                                                <td>Fee/Amount</td>
+                                                                <td><input type="text" id="FeeAmount-@Id" name="FeeAmount" value="@FeeAmount" onkeypress="return validateNumber(event)" class="form-control" readonly /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Receipt Date </td>
+                                                                <td><input type="text" id="ReceiptDate-@Id" name="ReceiptDate" value="@ReceiptDateMM" placeholder="MM/dd/yyyy" class="form-control" readonly /></td>
+                                                                <td>File</td>
+                                                                <td>
+                                                                    @if (ScanFile == "")
+                                                                    { <span>No Form</span>}
+                                                                    else
+                                                                    {<a href="@("/"+ScanFile)" id="ScanFile" target="_blank">Download Form</a>}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>DOB</td>
+                                                                <td><input type="text" id="DOB-@Id" name="DOB" value="@DOB" class="form-control" readonly /></td>
+                                                                <td>REGNO</td>
+                                                                <td><input type="text" id="REGNO-@Id" name="REGNO" value="@REGNO" class="form-control" readonly /></td>
+                                                            </tr>
+
+                                                            @if (IsSameAsRecord == "NO")
+                                                            {
+                                                                if (Model.StoreAllData.Tables[2].Rows.Count > 0)
+                                                                {
+                                                            <tr><td colspan="4">Type Name : @TypeName</td></tr>
+                                                            <tr>
+                                                                <td colspan="4">
+                                                                    <table width="100%" id="view-@Id">
+                                                                        <tr class="active-tr">
+                                                                            <th width="30%">TypeOf</th>
+                                                                            <th width="35%">Before</th>
+                                                                            <th width="35%">After</th>
+                                                                        </tr>
+                                                                        @{
+                                                                                    for (int s = 0; s < Model.StoreAllData.Tables[2].Rows.Count; s++)
+                                                                                    {
+                                                                                        var sID = Model.StoreAllData.Tables[2].Rows[s]["ID"].ToString();
+                                                                                        var DCID = Model.StoreAllData.Tables[2].Rows[s]["DCID"].ToString();
+                                                                                        var TypeOf2 = Model.StoreAllData.Tables[2].Rows[s]["TypeOf"].ToString();
+                                                                                        var Before2 = Model.StoreAllData.Tables[2].Rows[s]["Before"].ToString();
+                                                                                        var After2 = Model.StoreAllData.Tables[2].Rows[s]["After"].ToString();
+                                                                                        if (Id == DCID)
+                                                                                        {
+                                                                                <tr id="trs-@Id-@sID">
+                                                                                    <td>@TypeOf2</td>
+                                                                                    <td class="keyboardInput">@Before2</td>
+                                                                                    <td class="keyboardInput">@After2</td>
+                                                                                </tr>
+
+                                                                                        }
+                                                                                    }
+                                                                        }
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                                                        }
+                                                                                    }
+
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*Registry*@
+                                        <div class="modal fade" id="myModal4-@Id" role="dialog">
+                                            <div class="modal-dialog" style="width:50%">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Modification of Dairy No  : @DairyNo</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                            <tr>
+                                                                <td colspan="4"><span class="text-primary">Certificate Details</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Cert No.</td>
+                                                                <td><input type="text" id="CertNo1-@Id" name="CertNo1" value="@CertNo" class="form-control" readonly /></td>
+                                                                <td>Cert Date</td>
+                                                                <td><input type="text" id="CertDate1-@Id" name="CertDate1" value="@CertDate" class="form-control" readonly></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="4"><span class="text-primary">Enter Registry Details</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="4">
+                                                                    <input type="radio" name="Ishand" class="ishand" value="1" />By Hand
+                                                                    <input type="radio" name="Ishand" class="ishand" value="2" />Dispatch
+                                                                </td>
+                                                            </tr>
+                                                            <tr id="trReg">
+                                                                <td>Registry No.</td>
+                                                                <td>RP<input type="text" id="DispNo-@Id" name="DispNo" maxlength="9" onkeypress="return isNumberKey(event)" />IN</td>
+
+                                                                <td>Registry Date</td>
+                                                                <td><input type="text" id="DispDate-@Id" name="DispDate" placeholder="MM/dd/yyyy" class="date1"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Remarks</td>
+                                                                <td><input type="text" id="RemarksDisp-@Id" name="RemarksDisp" maxlength="100" /></td>
+                                                                <td></td>
+                                                                <td><input type="button" class="btn" value="Submit" id="btnsubmitRegenateDisp" onclick="ReceiveDisp(@d,'@Id')" /></td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*ObjectionLetter   & Cert*@
+                                        <div class="modal fade" id="myModal3-@Id" role="dialog">
+                                            <div class="modal-dialog" style="width:50%">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Modification of Dairy No  : @DairyNo</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                            <tr>
+                                                                <td colspan="4"><span class="text-primary">Objection Letter</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Upload Objection Letter</td>
+                                                                @{  using (Html.BeginForm("ObjectionLetter", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                                        {
+
+                                                                @Html.Hidden("HId", @Id)
+                                                                @Html.Hidden("HDairyNo", @DairyNo)
+                                                                @Html.Hidden("HMobile", @Mobile)
+
+                                                                <td>
+                                                                    <input type="file" name="ObjectionLetter" required />
+                                                                </td>
+                                                                <td><input type="text" id="RemarksObjection" placeholder="Enter Remarks" name="RemarksObjection" maxlength="100" required /></td>
+                                                                <td>
+                                                                    @*<input type="submit" value="Upload">*@
+                                                                    <button type="submit" value="Upload" class="btn">Upload</button>
+                                                                </td>
+                                                                        }
+
+                                                                }
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="4" style="text-align:center"><span class="text-danger" style="font-size:24px">OR</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="4"><span class="text-primary">Enter Details</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Cert No.</td>
+                                                                <td><input type="text" id="CertNo-@Id" name="CertNo" maxlength="10" onkeypress="return isNumberKey(event)" /></td>
+
+                                                                <td>Cert Date</td>
+                                                                <td><input type="text" id="CertDate-@Id" name="CertDate" placeholder="MM/dd/yyyy" class="date1"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                @*<td>Remarks</td>
+                                                                    <td><input type="text" id="RemarksCert-@Id" name="RemarksCert" maxlength="100" /></td>
+                                                                    <td></td>*@
+                                                                <td colspan="4" style="text-align:center"><input type="button" class="btn" value="Submit" id="btnsubmitRegenateCert" onclick="ReceiveCert(@d,'@Id')" /></td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*History*@
+                                        <div class="modal fade" id="myModal5-@Id" role="dialog">
+                                            <div class="modal-dialog" style="width:80%">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>View History of Dairy No  : @DairyNo</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                            <tr>
+                                                                <td colspan="4">
+                                                                    <table width="100%" id="view-@Id">
+                                                                        <tr class="active-tr">
+                                                                            <th width="20%">Status</th>
+                                                                            <th width="40%">Remarks</th>
+                                                                            <th width="20%">Remarks By</th>
+                                                                            <th width="20%">Remarks Date</th>
+                                                                        </tr>
+                                                                        @{
+                                                                            for (int h = 0; h < Model.StoreAllData.Tables[3].Rows.Count; h++)
+                                                                            {
+                                                                                var RID = Model.StoreAllData.Tables[3].Rows[h]["RID"].ToString();
+                                                                                var DCID = Model.StoreAllData.Tables[3].Rows[h]["DCID"].ToString();
+                                                                                var TYPE11 = Model.StoreAllData.Tables[3].Rows[h]["TYPE"].ToString();
+                                                                                var Status11 = Model.StoreAllData.Tables[3].Rows[h]["Status"].ToString();
+                                                                                var Remarks11 = Model.StoreAllData.Tables[3].Rows[h]["REMARKS"].ToString();
+                                                                                var RemarksDate11 = Model.StoreAllData.Tables[3].Rows[h]["RemarksDate"].ToString();
+                                                                                var RemarksBy = Model.StoreAllData.Tables[3].Rows[h]["RemarksBy"].ToString();
+                                                                                var letter = Model.StoreAllData.Tables[3].Rows[h]["letter"].ToString();
+                                                                                if (Id == DCID)
+                                                                                {
+                                                                        <tr id="trs-@Id-@RID">
+                                                                            <td>
+                                                                                @Status11
+                                                                                @{
+                                                                                            if (Model.StoreAllData.Tables[3].Rows[h]["TYPE"].ToString().ToUpper().Trim() == "L")
+                                                                                            {
+                                                                                            <br /><a href="@("/"+letter)" id="ObjectionLetter" target="_blank">Download</a>
+
+                                                                                            }
+                                                                                }
+
+                                                                            </td>
+                                                                            <td>@Remarks11</td>
+                                                                            <td>@RemarksBy</td>
+                                                                            <td>@RemarksDate11</td>
+                                                                        </tr>
+                                                                                                }
+                                                                                            }
+                                                                        }
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @*Correction Order Details*@
+                                        <div class="modal fade" id="myModal6-@Id" role="dialog">
+                                            <div class="modal-dialog" style="width:50%">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Correction Order Details Of Dairy No  : @DairyNo</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        @if (OrderNo != "") {
+                                                        <div> <a href="@("/Admin/DuplicateCertificateOrderSlip/"+ DairyNo )" id="ord" target="_blank">View Correction Order Slip</a> </div>
+}
+else
+{
+                                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                            <tr>
+                                                                <td>Order By</td>
+                                                                <td colspan="3">
+                                                                    @Html.DropDownList("OrderBy", new SelectList(ViewBag.MyOrder, "Value", "Text", ViewBag.SelectedOrder), "--All --", new { id = "OrderBy-" + @Id, @class = "" })
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Order Diary No.</td>
+                                                                <td><input type="text" id="OrderNo-@Id" name="OrderNo" maxlength="10" /></td>
+
+                                                                <td>Order Date</td>
+                                                                <td><input type="text" id="OrderDate-@Id" name="OrderDate" placeholder="MM/dd/yyyy" class="date1"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="4" style="text-align:center"><input type="button" class="btn" value="Submit" id="btnsubmitOrder" onclick="ReceiveOrder(@d,'@Id')" /></td>
+                                                            </tr>
+                                                        </table>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*Spoil Certificate*@
+                                        <div class="modal fade" id="myModal7-@Id" role="dialog">
+                                            <div class="modal-dialog" style="width:50%">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Dairy No  : @DairyNo</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                            <tr>
+                                                                <td colspan="4"><span class="text-primary">Certificate Details</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Cert No.</td>
+                                                                <td><input type="text" id="CertNo7-@Id" name="CertNo7" value="@CertNo" class="form-control" readonly /></td>
+                                                                <td>Cert Date</td>
+                                                                <td><input type="text" id="CertDate7-@Id" name="CertDate7" value="@CertDate" class="form-control" readonly></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Remarks</td>
+                                                                <td colspan="3"><input type="text" id="Remarks7-@Id" name="Remarks7" readonly maxlength="100" value="Certificate No @CertNo dated @CertDate is spoiled & forwarded to Dealing Set for issue new Certificate" /></td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="4" class="rqf">After Spoil Certificate, Certificate/Dispatch details will be removed & case forwarded to dealing set for issue new certificate. Are you sure to spoil this certificate? </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2"></td>
+                                                                <td><input type="button" class="btn" value="Submit" id="btnsubmitSpoilCertificate" onclick="SpoilCertificate(@d,'@Id')" /></td>
+                                <td><button type="button" class="close" data-dismiss="modal">Cancel</button></td>
+
+                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @*Update Cert/Des/Order Details*@
+                                        <div class="modal fade" id="myModal8-@Id" role="dialog">
+                                            <div class="modal-dialog" style="width:50%">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h3>Update Cert/Des/Order Details Of Dairy No  : @DairyNo</h3>
+                                                    </div>
+                                                    <div class="modal-body">                                                     
+                                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">.
+@if (OrderNo != "")
+{
+
+                                                            <tr>
+                                                                <td colspan="5"><span class="text-primary">Order Details</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.DropDownListFor(m=>m.OrderBy, new SelectList(ViewBag.MyOrder, "Value", "Text", ViewBag.SelectedOrder), "--All --", new { id = "OrderByU-" + @Id, @class = "" })
+                                                                    @*@Html.DropDownList("OrderBy", new SelectList(ViewBag.MyOrder, "Value", "Text", ViewBag.SelectedOrder), "--All --", new { id = "OrderBy-" + @Id, @class = "" })*@
+                                                                </td>
+                                                                <td>Order Diary No.</td>
+                                                                <td><input type="text" id="OrderNoU-@Id" name="OrderNoU" value="@OrderNo" placeholder="Order Diary No." maxlength="10" /></td>
+                                                                <td>Order Date</td>
+                                                                <td><input type="text" id="OrderDateU-@Id" name="OrderDateU"  value="@OrderDate" placeholder="MM/dd/yyyy" class="date1"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="5" style="text-align:center"><input type="button" class="btn" value="Update Order Details" id="btnsubmitOrder" onclick="UpdateDetails(@d,'@Id','10')" /></td>
+                                                            </tr>
+}
+@if (CertNo != "")
+{
+                                                            <tr>
+                                                                <td colspan="5"><span class="text-primary">Certificate Details</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Cert No.</td>
+                                                                <td><input type="text" id="CertNoU-@Id" name="CertNoU" value="@CertNo" class="form-control"  /></td>
+                                                                <td></td>
+                                                                <td>Cert Date</td>
+                                                                <td><input type="text" id="CertDateU-@Id" name="CertDateU" value="@CertDate" placeholder="MM/dd/yyyy" class="date1" ></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="5" style="text-align:center"><input type="button" class="btn" value="Update Certificate Details"  id="btnsubmitRegenateCert" onclick="UpdateDetails(@d,'@Id',8)" /></td>
+                                                            </tr>
+                                                            
+}
+                                                            @if(DispNo  !="")
+                                                            {
+                                                                   <tr>
+                                                                        <td colspan="5"><span class="text-primary">Enter Registry Details</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="5">
+                                                                            <input type="radio"  name="IshandU" class="ishandU" value="1" checked="@(DispNo.ToLower() == "byhand" ? "checked" : string.Empty)" />By Hand
+                                                                            <input type="radio" name="IshandU" class="ishandU" value="2" checked="@(DispNo.ToLower() != "byhand" ? "checked" : string.Empty)" />Dispatch
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="trRegU">
+                                                                        <td>Registry No.</td>
+                                                                        <td><input type="text" id="DispNoU-@Id" name="DispNoU" value="@DispNo"  maxlength="9" onkeypress="return isNumberKey(event)" /></td>
+                                                                        <td></td>
+                                                                        <td>Registry Date</td>
+                                                                        <td><input type="text" id="DispDateU-@Id" name="DispDateU" value="@DispDate"  placeholder="MM/dd/yyyy" class="date1"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="5" style="text-align:center"><input type="button" class="btn" value="Update Registry Details"  id="btnsubmitRegenateDisp" onclick="UpdateDetails(@d,'@Id','9')" /></td>
+                                                                    </tr>
+                                                            }
+
+                                                          
+                                                        </table>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@DairyDate</td>
+                                <td>@Class</td>
+                                <td>@Session/@Year</td>
+                                <td>@Roll</td>
+                                <td>@Name/@FNAME</td>
+                                <td>@DISTNM</td>
+                                <td>
+                                    @if (IsSameAsRecord == "NO")
+                                     { <span class="text-danger">@DiscrepancyValue</span> }
+                                    else
+                                    { <span>Same</span> }
+                                </td>
+
+                                <td>
+                                    @if (IsStatus == "0" || IsStatus == "1" || IsStatus == "10" || IsStatus == "11")
+                                                                    {<span>@Status</span> }
+                                    else if (IsStatus == "2")
+                                    {
+                                        <span>@Status</span> <br />
+                                        <span class="rqf">Cert No: @CertNo@Html.Raw("&nbsp;")@Html.Raw(" [")@CertDate.Substring(0, 10) @Html.Raw("] ")</span>
+
+                                    }
+                                    else if (IsStatus == "3")
+                                    {   <span class="rqf"><a href="@("/"+ObjectionLetter)" id="ObjectionLetter" target="_blank">Download @Status</a></span>}
+                                    else if (IsStatus == "4")
+                                    {
+                                        <span>@Status</span> <br />
+                                        <span class="rqf">RP No:@DispNo@Html.Raw("&nbsp;")@Html.Raw(" [")@DispDate.Substring(0, 10) @Html.Raw("] ")</span>
+                                    }
+
+                                </td>
+                                <td>@ModifyDate</td>
+                                <td>
+                                    <div class="cart">
+                                        Choose Action <span class="caret"></span>
+                                        <div id="sidebar">
+                                            <ul>
+
+                                             
+                                                <li><a href="" data-toggle="modal" data-target="#myModal2-@Id">View Details</a></li>
+                                                <li><a href="" data-toggle="modal" data-target="#myModal5-@Id">View History</a></li>
+                                                <li style="@(ViewBag.IsAck == 1 ? "display:block" : "display:none")"><a href="@("/Admin/DuplicateCertificateAcknowledgement/"+ DairyNo )" id="ack" target="_blank">View Acknowledgement</a></li>
+
+
+
+
+                                                @if (ViewBag.AdminType.ToString().ToUpper() == "DM")
+                                                {
+                                                    @*<li>  <a href="@("/Admin/DuplicateCertificateAcknowledgement/"+ DairyNo )" id="ack" target="_blank">View Acknowledgement</a></li>*@
+                                                if (IsStatus == "0")
+                                                {
+                                                        <li style="@(ViewBag.IsModiFy == 1 ? "display:block" : "display:none")">  @Html.ActionLink("Modify Details", "DuplicateCertificate", new { id = encrypt.QueryStringModule.Encrypt(Id) })</li>
+                                                    }
+                                                }
+
+                                                else if (IsStatus == "1" || IsStatus == "2" || IsStatus == "3" || IsStatus == "10" || IsStatus == "11")
+                                                {
+
+                                                  <li style="@(CertNo == "" && DispNo == "" && ViewBag.IsModiFy == 1 ? "display:block" : "display:none")">@Html.ActionLink("Modify Details", "DuplicateCertificate", new { id = encrypt.QueryStringModule.Encrypt(Id) })</li>
+                                                    <li style="@(CertNo == "" && DispNo == "" && ViewBag.IsCert == 1 ? "display:block" : "display:none")"><a href="" data-toggle="modal" data-target="#myModal3-@Id">Update Certificate Number</a></li>
+                                                    <li style="@(CertNo != "" && DispNo == "" && ViewBag.IsDisp == 1 ? "display:block" : "display:none")"><a href="" data-toggle="modal" data-target="#myModal4-@Id">Update Dispatch Details</a></li>
+
+                                                    if (IsType == "2" || IsType == "3" || IsType == "4" || IsType == "5")
+                                                    {
+                                                     <li style="@(ViewBag.IsOrder == 1 ? "display:block" : "display:none")"> <a href="" data-toggle="modal" data-target="#myModal6-@Id">Update Correction Order Details</a></li>
+                                                    }
+
+
+                                                  
+                                                    @*else if (ViewBag.AdminType.ToString().Contains("SINGLE"))
+                                                        {
+                                                            if (CertNo != "" && DispNo == "")
+                                                            {
+                                                                <li style="@(CertNo != "" && DispNo == "" && ViewBag.IsDisp == 1   ? "display:block" : "display:none")"><a href="" data-toggle="modal" data-target="#myModal4-@Id">Update Dispatch Details</a></li>
+                                                            }
+                                                        }*@
+                                                }
+
+                                                @if (IsStatus == "2" || IsStatus == "4")
+                                                {
+                                                    if (ViewBag.AdminType.ToString().Contains("COMPUTER"))
+                                                    {
+                                                        <li style="@(CertNo != "" ? "display:block" : "display:none")"><a href="" data-toggle="modal" data-target="#myModal7-@Id">Spoil Certificate/a></li>
+
+                                                    }
+                                                }
+
+                                                 @if (IsStatus == "2"  || IsStatus == "4" || IsStatus == "11")
+                                                 {
+                                                  <li style="@(ViewBag.IsUpdate == 1 ? "display:block" : "display:none")"><a href="" data-toggle="modal" data-target="#myModal8-@Id">Update Cert/Des/Order Details</a></li>
+                                                 }
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td style="@(ViewBag.AdminType.ToString().ToUpper() == "DM"  ? "display:block" : "display:none")">
+                                    @if (IsForward == "0")
+                                    { <input type="checkbox" class="checkbox" id="cb-@Id" value="@Id" />}
+                                </td>
+                                <td style="@(ViewBag.AdminType.ToString().ToUpper().Contains("COMPUTER")  ? "display:block" : "display:none")">
+                                    @if (IsForward != "0" && CertNo == "")
+                                    {
+                                        <input type="checkbox" class="checkbox" id="cb-@Id" value="@Id" />
+                                    }
+                                    @IsFormPrint
+                                </td>
+                                <td style="@(ViewBag.AdminType.ToString().ToUpper().Contains("SINGLE")  ? "display:block" : "display:none")">
+                                    <input type="checkbox" class="checkbox" id="cb-@Id" value="@Id" />
+                                </td>
+                            </tr>
+
+                                                                                            if (d == ViewBag.TotalCount)
+                                                                                            {
+                                                                                                <tr>
+                                                                                                    <td colspan="11">
+                                                                                                        Page @ViewBag.pagesize of @ViewBag.pn &nbsp;
+                                                                                                        @if (ViewBag.pagesize == 1)
+                                                                                                        {   @:<<
+                                                                                                            @Html.Raw("&nbsp;");
+                                                                                                            @:< Prev
+                                                                                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                                                                            if (ViewBag.pn > ViewBag.pagesize)
+                                                                                                            {
+                                                                                                                var dp = ViewBag.pagesize + 1;
+                                                                                                                <a href="~/Admin/ViewDuplicateCertificate?page=@dp">Next ></a>
+                                                                                                                @Html.Raw("&nbsp;");
+                                                                                                                <a href="~/Admin/ViewDuplicateCertificate?page=@ViewBag.pn">>></a>
+                                                                                                            }
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            var dp = ViewBag.pagesize - 1;
+                                                                                                            <a href="~/Admin/ViewDuplicateCertificate?page=1"><<</a>
+                                                                                                            @Html.Raw("&nbsp;");
+                                                                                                            <a href="~/Admin/ViewDuplicateCertificate?page=@dp">< Prev</a>
+                                                                                                            @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;"); @Html.Raw("&nbsp;");
+                                                                                                            if (ViewBag.pn > ViewBag.pagesize)
+                                                                                                            {
+                                                                                                                var dp1 = ViewBag.pagesize + 1;
+                                                                                                                <a href="~/Admin/ViewDuplicateCertificate?page=@dp1">Next ></a>
+                                                                                                                @Html.Raw("&nbsp;");
+                                                                                                                <a href="~/Admin/ViewDuplicateCertificate?page=@ViewBag.pn">>></a>
+                                                                                                            }
+                                                                                                        }
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <tr>
+                                                                                                    <td colspan="11">
+                                                                                                        @ViewBag.Message
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div id="loading1"></div>
+
+<script>
+    $(document).ready(function () {
+
+        var value = document.getElementById('SelectItem').value;
+        if (value == 3) {
+            $("#SearchString").datepicker("enable");
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                return false;
+            });
+            $("#SearchString").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: new Date(),
+                yearRange: "2017:2018"
+            });
+
+        }
+        else if (value == 1 || value == 2) {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+            $("#SearchString").keypress(function (evt) {
+                var charCode = (evt.which) ? evt.which : event.keyCode
+                if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                    return true;
+                }
+                else {
+                    alert("Invalid character...Enter Only Number!!");
+                    return false;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchString").datepicker("disable");
+            document.getElementById('SearchString').disabled = false;
+            $("#SearchString").off('keypress');
+        }
+    });
+
+        $("#SelectItem").change(function () {
+            var value = document.getElementById('SelectItem').value;
+            $('#SearchString').val('');
+            if (value == 3) {
+                $("#SearchString").datepicker("enable");
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                        return false;
+
+                });
+                $("#SearchString").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    maxDate: new Date(),
+                    yearRange: "2017:2018"
+                });
+
+            }
+            else if (value == 1 || value == 2) {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+                $("#SearchString").keypress(function (evt) {
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+                    if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+                        return true;
+                    }
+                    else {
+                        alert("Invalid character...Enter Only Number!!");
+                        return false;
+                    }
+                });
+            }
+
+            else {
+                $("#SearchString").datepicker("disable");
+                document.getElementById('SearchString').disabled = false;
+                $("#SearchString").off('keypress');
+            }
+
+        });
+
+</script>
+
+<script type="text/javascript">
+
+    $(function(){
+        $('.ishand').click(function(){
+           // alert(1);
+            if ($(this).is(':checked'))
+            {
+               // alert($(this).val());
+                if($(this).val() == "2"){
+                    $("#trReg").show();}
+                else{ $("#trReg").hide()}
+            }
+        });
+        $('.ishandU').click(function () {
+            // alert(1);
+            if ($(this).is(':checked')) {
+                // alert($(this).val());
+                if ($(this).val() == "2") {
+                    $("#trRegU").show();
+                }
+                else { $("#trRegU").hide() }
+            }
+        });
+    });
+
+            $(document).ready(function () {
+                $('.checkbox').change(function () { //".checkbox" change
+                    if (this.checked == false) { //if this item is unchecked
+                        $("#selectall1")[0].checked = false; //change "select all" checked status to false
+                    }
+                });
+
+                $("#selectall1").change(function () {
+                    var status = this.checked; // "select all" checked status
+                    var arr = [];
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+                        var id = this.id;
+                        // alert(id);
+                        this.checked = status; //change ".checkbox" checked status
+                        var arr = [];
+                        arr = id;
+                        var arrid = "";
+                        var j = 0;
+                        var k = 0;
+                        //cb-stdid
+                        for (var i = 3; i < arr.length; i++) {
+                            if (arr[i] == '-') {
+                                k++;
+                                continue;
+                            }
+                            if (k == 0) {
+                                arrid += arr[i];
+                            }
+                            j++;
+                        }
+                        //alert(dtype);
+                        for (var k = 3 + j + 5; k < arr.length; k++) {
+                            arrcast += arr[k];
+                        }
+
+                    });
+                });
+
+                $("#selectall2").change(function () {
+                    var status = this.checked; // "select all" checked status
+                    var arr = [];
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+                        var id = this.id;
+                        // alert(id);
+                        this.checked = status; //change ".checkbox" checked status
+                        var arr = [];
+                        arr = id;
+                        var arrid = "";
+                        var j = 0;
+                        var k = 0;
+                        //cb-stdid
+                        for (var i = 3; i < arr.length; i++) {
+                            if (arr[i] == '-') {
+                                k++;
+                                continue;
+                            }
+                            if (k == 0) {
+                                arrid += arr[i];
+                            }
+                            j++;
+                        }
+                        //alert(dtype);
+                        for (var k = 3 + j + 5; k < arr.length; k++) {
+                            arrcast += arr[k];
+                        }
+
+                    });
+                });
+
+                // End select all
+                $("#btnPrinting").click(function () {
+                  //  alert(1);
+
+                    var isSelected = false;
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+
+                        var id = this.id;
+                        //alert(id);
+                        var ischk = this.checked;
+                       // alert("ischk: "+ id + " : " +  ischk);
+                        if (ischk == true) {
+                            isSelected = true;
+                        }
+                        // alert(" ischk: "+ ischk);
+                    });
+
+                    //alert(isSelected);
+                    if (isSelected == false) {
+                        alert("Please selcted atleast 1 record");
+                        return isSelected;
+                    }
+
+                    else {
+                        var chkdee = "";
+                        var storeid = "";
+                        var storeid1 = "";
+                        var storechkid = "";
+                        var storescid = "";
+                        $('.checkbox').each(function () { //iterate all listed checkbox items
+                            var id = this.id;
+                            // alert("userid= "+ id);
+                            var arr = [];
+                            arr = id;
+                            var arrid = "";
+                            var arrcast = "";
+                            var j = 0;
+                            for (var i = 3; i < arr.length; i++) {
+                                if (arr[i] == '-') {
+                                    break;
+                                }
+                                arrid += arr[i];
+                            }
+                            if (this.checked) {
+                                storeid += arrid + ",";
+                            }
+                        });
+
+                        //alert(storeid);
+                        storeid = storeid.slice(0, -1);
+                        if (storeid == "") {
+                            alert("Please Select Records For Printing.");
+                        }
+                        else if (storeid != "") {
+                           // alert('Now Printing:' + storeid)
+                           // $('#divMain1').hide();
+                            $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                            $.ajax({
+                                type: "POST",
+                                url: "/Admin/JqDCForwardList", // this for calling the web method function in cs code.
+                                data: '{storeid:"' + storeid + '",Action:"2" }',// user name or email value  //
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: OnSuccess,
+                                failure: function (response) {
+                                    alert(response);
+                                    //$('#divMain1').show();
+                                    $('div#loading1').empty();
+                                }
+                            });
+                            function OnSuccess(response) {
+                                if (response.dee != "1") {
+                                    alert("Failure, Please Try Again.");
+                                   // $('#divMain1').show();
+                                    $('div#loading1').empty();
+                                }
+                                else {
+                                  //  window.location.href = '/Admin/ViewDuplicateCertificate';
+                                    alert("Forward to Certificate Printing Successfully");
+                                    $('input:checkbox').attr('checked', false);
+                                   // $('#divMain1').show();
+                                    $('div#loading1').empty();
+
+                                }
+
+                            }
+                        }
+                    }
+                });
+
+
+
+                $("#btnSet").click(function () {
+                   // alert(1);
+
+                    var isSelected = false;
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+                        var id = this.id;
+                        var ischk = this.checked;
+                        if (ischk == true) {
+                            isSelected = true;
+                        }
+                        // alert(" ischk: "+ ischk);
+                    });
+
+                    //alert(isSelected);
+                    if (isSelected == false) {
+                        alert("Please selcted atleast 1 record");
+                        return isSelected;
+                    }
+
+                    else {
+                        var chkdee = "";
+                        var storeid = "";
+                        var storeid1 = "";
+                        var storechkid = "";
+                        var storescid = "";
+                        $('.checkbox').each(function () { //iterate all listed checkbox items
+                            var id = this.id;
+                            // alert("userid= "+ id);
+                            var arr = [];
+                            arr = id;
+                            var arrid = "";
+                            var arrcast = "";
+                            var j = 0;
+                            for (var i = 3; i < arr.length; i++) {
+                                if (arr[i] == '-') {
+                                    break;
+                                }
+                                arrid += arr[i];
+                            }
+                            if (this.checked) {
+                                storeid += arrid + ",";
+                            }
+                        });
+
+                        //alert(storeid);
+                        storeid = storeid.slice(0, -1);
+                        if (storeid == "") {
+                            alert("Please Select Records For Dealing Set.");
+                        }
+                        else if (storeid != "") {
+                         //   alert('Now Set:' + storeid)
+                           // $('#divMain1').hide();
+                            $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                            $.ajax({
+                                type: "POST",
+                                url: "/Admin/JqDCForwardList", // this for calling the web method function in cs code.
+                                data: '{storeid:"' + storeid + '",Action:"3" }',// user name or email value  //
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: OnSuccess,
+                                failure: function (response) {
+                                    alert(response);
+                                    //$('#divMain1').show();
+                                    $('div#loading1').empty();
+                                }
+                            });
+                            function OnSuccess(response) {
+                                if (response.dee != "1") {
+                                    alert("Failure, Please Try Again.");
+                                  //  $('#divMain1').show();
+                                    $('div#loading1').empty();
+                                }
+                                else {
+                                  //  window.location.href = '/Admin/ViewDuplicateCertificate';
+                                    alert("Forward to Dealing Set Successfully");
+                                    $('input:checkbox').attr('checked', false);
+                                  //  $('#divMain1').show();
+                                    $('div#loading1').empty();
+
+                                }
+
+                            }
+                        }
+                    }
+                });
+
+
+                $("#btnReport").click(function () {
+                    // alert(1);
+
+                    var isSelected = false;
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+                        var id = this.id;
+                        var ischk = this.checked;
+                        if (ischk == true) {
+                            isSelected = true;
+                        }
+                        // alert(" ischk: "+ ischk);
+                    });
+
+                    //alert(isSelected);
+                    if (isSelected == false) {
+                        alert("Please selcted atleast 1 record");
+                        return isSelected;
+                    }
+
+                    else {
+                        var chkdee = "";
+                        var storeid = "";
+                        var storeid1 = "";
+                        var storechkid = "";
+                        var storescid = "";
+                        $('.checkbox').each(function () { //iterate all listed checkbox items
+                            var id = this.id;
+                            // alert("userid= "+ id);
+                            var arr = [];
+                            arr = id;
+                            var arrid = "";
+                            var arrcast = "";
+                            var j = 0;
+                            for (var i = 3; i < arr.length; i++) {
+                                if (arr[i] == '-') {
+                                    break;
+                                }
+                                arrid += arr[i];
+                            }
+                            if (this.checked) {
+                                storeid += arrid + ",";
+                            }
+                        });
+
+                        //alert(storeid);
+                        storeid = storeid.slice(0, -1);
+                        if (storeid == "") {
+                            alert("Please Select Records For Report.");
+                        }
+                        else if (storeid != "") {
+                           //alert('Now Report:' + storeid)
+                            // $('#divMain1').hide();
+                            $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                            $.ajax({
+                                type: "POST",
+                                url: "/Admin/JqDCForwardList", // this for calling the web method function in cs code.
+                                data: '{storeid:"' + storeid + '",Action:"4" }',// user name or email value  //
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: OnSuccess,
+                                failure: function (response) {
+                                    alert(response);
+                                    //$('#divMain1').show();
+                                    $('div#loading1').empty();
+                                }
+                            });
+                            function OnSuccess(response) {
+                                //window.location.href = '/Admin/AddressSlip';
+                                $('input:checkbox').attr('checked', false);
+                                // $('#divMain1').show();
+                                $('div#loading1').empty();
+                                window.open('/Admin/AddressSlip', '_blank');
+
+                            }
+                        }
+                    }
+                });
+
+                $("#btnForm").click(function () {
+                    // alert(1);
+
+                    var isSelected = false;
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+                        var id = this.id;
+                        var ischk = this.checked;
+                        if (ischk == true) {
+                            isSelected = true;
+                        }
+                        // alert(" ischk: "+ ischk);
+                    });
+
+                    //alert(isSelected);
+                    if (isSelected == false) {
+                        alert("Please selcted atleast 1 record");
+                        return isSelected;
+                    }
+
+                    else {
+                        var chkdee = "";
+                        var storeid = "";
+                        var storeid1 = "";
+                        var storechkid = "";
+                        var storescid = "";
+                        $('.checkbox').each(function () { //iterate all listed checkbox items
+                            var id = this.id;
+                            // alert("userid= "+ id);
+                            var arr = [];
+                            arr = id;
+                            var arrid = "";
+                            var arrcast = "";
+                            var j = 0;
+                            for (var i = 3; i < arr.length; i++) {
+                                if (arr[i] == '-') {
+                                    break;
+                                }
+                                arrid += arr[i];
+                            }
+                            if (this.checked) {
+                                storeid += arrid + ",";
+                            }
+                        });
+
+                        //alert(storeid);
+                        storeid = storeid.slice(0, -1);
+                        if (storeid == "") {
+                            alert("Please Select Records For Report.");
+                        }
+                        else if (storeid != "") {
+                            //alert('Now Report:' + storeid)
+                            // $('#divMain1').hide();
+                            $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                            $.ajax({
+                                type: "POST",
+                                url: "/Admin/JqDCForwardList", // this for calling the web method function in cs code.
+                                data: '{storeid:"' + storeid + '",Action:"5" }',// user name or email value  //
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: OnSuccess,
+                                failure: function (response) {
+                                    alert(response);
+                                    //$('#divMain1').show();
+                                    $('div#loading1').empty();
+                                }
+                            });
+                            function OnSuccess(response) {
+                                //window.location.href = '/Admin/AddressSlip';
+                                $('input:checkbox').attr('checked', false);
+                                // $('#divMain1').show();
+                                $('div#loading1').empty();
+                                window.open('/Admin/DuplicateCertificateForm', '_blank');
+
+                            }
+                        }
+                    }
+                });
+
+                $("#btnBackDM").click(function () {
+                    //alert(1);
+
+                    var isSelected = false;
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+                        var id = this.id;
+                        var ischk = this.checked;
+                        if (ischk == true) {
+                            isSelected = true;
+                        }
+                        // alert(" ischk: "+ ischk);
+                    });
+
+                    //alert(isSelected);
+                    if (isSelected == false) {
+                        alert("Please selcted atleast 1 record");
+                        return isSelected;
+                    }
+
+                    else {
+                        var chkdee = "";
+                        var storeid = "";
+                        var storeid1 = "";
+                        var storechkid = "";
+                        var storescid = "";
+                        $('.checkbox').each(function () { //iterate all listed checkbox items
+                            var id = this.id;
+                            // alert("userid= "+ id);
+                            var arr = [];
+                            arr = id;
+                            var arrid = "";
+                            var arrcast = "";
+                            var j = 0;
+                            for (var i = 3; i < arr.length; i++) {
+                                if (arr[i] == '-') {
+                                    break;
+                                }
+                                arrid += arr[i];
+                            }
+                            if (this.checked) {
+                                storeid += arrid + ",";
+                            }
+                        });
+
+                        //alert(storeid);
+                        storeid = storeid.slice(0, -1);
+                        if (storeid == "") {
+                            alert("Please Select Records For Report.");
+                        }
+                        else if (storeid != "") {
+                            //alert('Now Report:' + storeid)
+                            // $('#divMain1').hide();
+                            $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                            $.ajax({
+                                type: "POST",
+                                url: "/Admin/JqDCForwardList", // this for calling the web method function in cs code.
+                                data: '{storeid:"' + storeid + '",Action:"7" }',// user name or email value  //
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: OnSuccess,
+                                failure: function (response) {
+                                    alert(response);
+                                    //$('#divMain1').show();
+                                    $('div#loading1').empty();
+                                }
+                            });
+                            function OnSuccess(response) {                               
+                                alert("Revert to District Manager Successfully");
+                                $('input:checkbox').attr('checked', false);
+                                //  $('#divMain1').show();
+                                $('div#loading1').empty();
+                            }
+                        }
+                    }
+                });
+            });
+
+</script>
+
+<script type="text/javascript">
+            $('#btnsubmit').click(function () {
+                //  alert(1);
+                var isSelected = false;
+                $('.checkbox').each(function () { //iterate all listed checkbox items
+                    var id = this.id;
+                    var ischk = this.checked;
+                    if(ischk == true)
+                    {
+                        isSelected = true;
+                    }
+                    // alert(" ischk: "+ ischk);
+                });
+
+                //alert(isSelected);
+                if(isSelected == false)
+                {
+                    alert("Please selcted atleast 1 record");
+                }
+                return isSelected;
+            });
+
+            $(document).ready(function () {
+                $('.checkbox').change(function () { //".checkbox" change
+                    if (this.checked == false) { //if this item is unchecked
+                        $("#selectall")[0].checked = false; //change "select all" checked status to false
+                    }
+                });
+
+                $("#selectall").change(function () {
+                    var status = this.checked; // "select all" checked status
+                    var arr = [];
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+                        var id = this.id;
+                        // alert(id);
+                        this.checked = status; //change ".checkbox" checked status
+                        var arr = [];
+                        arr = id;
+                        var arrid = "";
+                        var j = 0;
+                        var k = 0;
+                        //cb-stdid
+                        for (var i = 3; i < arr.length; i++) {
+                            if (arr[i] == '-') {
+                                k++;
+                                continue;
+                            }
+                            if (k == 0) {
+                                arrid += arr[i];
+                            }
+                            j++;
+                        }
+                        //alert(dtype);
+                        for (var k = 3 + j + 5; k < arr.length; k++) {
+                            arrcast += arr[k];
+                        }
+
+                    });
+                });
+                // End select all
+                $("#btnForward").click(function () {
+                   // alert(1);
+                    var chkdee = "";
+                    var storeid = "";
+                    var storeid1 = "";
+                    var storechkid = "";
+                    var storescid = "";
+                    $('.checkbox').each(function () { //iterate all listed checkbox items
+                        var id = this.id;
+                        // alert("userid= "+ id);
+                        var arr = [];
+                        arr = id;
+                        var arrid = "";
+                        var arrcast = "";
+                        var j = 0;
+                        for (var i = 3; i < arr.length; i++) {
+                            if (arr[i] == '-') {
+                                break;
+                            }
+                            arrid += arr[i];
+                        }
+                        if (this.checked) {
+                            storeid += arrid + ",";
+                        }
+                    });
+
+                    //alert(storeid);
+                    storeid = storeid.slice(0, -1);
+                    if (storeid == "") {
+                        alert("Please Select Records For Forward.");
+                    }
+                    else if (storeid != "") {
+                       //  alert('Now forward:' + storeid)
+                        $('#divMain1').hide();
+                        $('div#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                        $.ajax({
+                            type: "POST",
+                            url: "/Admin/JqDCForwardList", // this for calling the web method function in cs code.
+                           data: '{storeid:"' + storeid + '",Action:"1" }',// user name or email value  //
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: OnSuccess,
+                            failure: function (response) {
+                                alert(response);
+                                $('#divMain1').show();
+                                $('div#loading1').empty();
+                            }
+                        });
+                        function OnSuccess(response) {
+                            if (response.dee != "1") {
+                                alert("Failure, Please Try Again.");
+                                $('#divMain1').show();
+                                $('div#loading1').empty();
+                            }
+                            else {
+                               // window.location.href = '/Admin/ViewDuplicateCertificate';
+                                alert("Recommended To Duplicate Certificate Branch Successfully");
+                                $('input:checkbox').attr('checked', false);
+                                $('#divMain1').show();
+                                $('div#loading1').empty();
+
+                            }
+
+                        }
+                    }
+
+                });
+            });
+
+</script>
+
+<style>
+    .input-validation-error {
+        background-color: #FF9494 !important;
+        border: solid 1px Red !important;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function Forward(k, Id) {
+        //alert("Id :" + Id);
+
+        var txt;
+        var flag = confirm("Are you sure to Recommended To Duplicate Certificate Branch");
+        //if (flag == true) {
+        //    txt = "You pressed OK!";
+        //} else {
+        //    txt = "You pressed Cancel!";
+        //}
+        //alert(flag);
+        if (flag == false) {
+            return false;
+        }
+        else {
+            var modelUser = {
+                id: Id,
+                DairyNo: $("#DairyNo-" + Id).val(),
+                DairyDate: "",
+                Class: $("#Class-" + Id).val(),
+                Session: $("#Session-" + Id).val(),
+                Roll: $("#Roll-" + Id).val(),
+                Name: $("#Name-" + Id).val(),
+                Mobile: $("#Mobile-" + Id).val(),
+                Dist: $("#Dist-" + Id).val(),
+                DispNo: $("#DispNo-" + Id).val(),
+                DispDate: $("#DispDate-" + Id).val(),
+                CertNo: $("#CertNo-" + Id).val(),
+                CertDate: $("#CertDate-" + Id).val(),
+                Remarks: $("#RemarksDisp-" + Id).val()
+            };
+            var TableData;
+            TableData = JSON.stringify(modelUser);
+
+
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/Admin/JqModifyDuplicateCertificate", { "Data": TableData, "Id": Id, "Type": 4, "Byhand": 1 },
+          function (data) {
+              $('#loading1').empty();
+              // alert('data.status  = ' + data.status);
+              if (data.status == "1") {
+                 // window.location.href = '/Admin/ViewDuplicateCertificate';
+                  alert("Recommended To Duplicate Certificate Branch Successfully");
+              }
+              else {
+                  alert("Failure, Please Try Again.");
+              }
+          });
+        }
+    }
+
+
+    function ReceiveDisp(k, Id) {
+        //alert("Id :" + Id);
+        var flag = 0;
+        var vv =  $("input:radio.ishand:checked").val();
+       // alert("vv :" + vv);
+        if(vv == "2")
+        {
+            if ($("#DispNo-" + Id).val() == "") {
+                $("#DispNo-" + Id).addClass("input-validation-error");
+                flag = 1;
+            }
+
+            if ($("#DispNo-" + Id).val() != "") {
+                if ($("#DispNo-" + Id).val().length != "9") {
+                    $("#DispNo-" + Id).addClass("input-validation-error");
+                    flag = 1;
+                    alert('Enter 9 Digit Registry Number');
+                }
+            }
+
+
+            if ($("#DispDate-" + Id).val() == "") {
+                $("#DispDate-" + Id).addClass("input-validation-error");
+                flag = 1;
+            }
+        }
+        if ($("#RemarksDisp-" + Id).val() == "") {
+            $("#RemarksDisp-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            //alert('fill model')
+            var modelUser = {
+                id: Id,
+                DairyNo: $("#DairyNo-" + Id).val(),
+                DairyDate: "",
+                Class: $("#Class-" + Id).val(),
+                Session: $("#Session-" + Id).val(),
+                Roll: $("#Roll-" + Id).val(),
+                Name: $("#Name-" + Id).val(),
+                Mobile: $("#Mobile-" + Id).val(),
+                Dist: $("#Dist-" + Id).val(),
+                DispNo: $("#DispNo-" + Id).val(),
+                DispDate: $("#DispDate-" + Id).val(),
+                CertNo: $("#CertNo-" + Id).val(),
+                CertDate: $("#CertDate-" + Id).val(),
+                Remarks: $("#RemarksDisp-" + Id).val()
+            };
+            var TableData;
+            TableData = JSON.stringify(modelUser);
+
+
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/Admin/JqModifyDuplicateCertificate", { "Data": TableData, "Id": Id, "Type": 3, "Byhand": vv },
+          function (data) {
+              $('#loading1').empty();
+              // alert('data.status  = ' + data.status);
+              if (data.status == "1") {
+                //  window.location.href = '/Admin/ViewDuplicateCertificate';
+                  alert("Updated Successfully");
+				    $('#myModal4-' + Id).modal('hide');
+              }
+              else {
+                  alert("Failure, Please Try Again.");
+              }
+          });
+        }
+    }
+
+    function ReceiveModify(k, Id) {
+        var flag = 0;
+        if ($("#DairyNo-" + Id).val() == "") {
+            $("#DairyNo-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#DairyDate-" + Id).val() == "") {
+            $("#DairyDate-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#Class-" + Id).val() == "") {
+            $("#Class-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#Session-" + Id).val() == "") {
+            $("#Session-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#Roll-" + Id).val() == "") {
+            $("#Roll-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#Name-" + Id).val() == "") {
+            $("#Name-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#Mobile-" + Id).val() == "") {
+            $("#Mobile-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#Dist-" + Id).val() == "") {
+            $("#Dist-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#Address-" + Id).val() == "") {
+            $("#Address-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#Year-" + Id).val() == "" || $("#Year-" + Id).val() =="0") {
+            $("#Year-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#Remarks-" + Id).val() == "") {
+            $("#Remarks-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+
+
+        if ($("#FNAME-" + Id).val() == "") {
+            $("#FNAME-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#MNAME-" + Id).val() == "") {
+            $("#MNAME-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#ReceiptNo-" + Id).val() == "") {
+            $("#ReceiptNo-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#ReceiptDate-" + Id).val() == "") {
+            $("#ReceiptDate-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#FeeAmount-" + Id).val() == "") {
+            $("#FeeAmount-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+
+
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            var modelUser = {
+                id: Id,
+                DairyNo: $("#DairyNo-" + Id).val(),
+                DairyDate: $("#DairyDate-" + Id).val(),
+                Class: $("#Class-" + Id).val(),
+                Session: $("#Session-" + Id).val(),
+                Roll: $("#Roll-" + Id).val(),
+                Name: $("#Name-" + Id).val(),
+                Mobile: $("#Mobile-" + Id).val(),
+                Dist: $("#Dist-" + Id).val(),
+                DispNo: $("#DispNo-" + Id).val(),
+                DispDate: $("#DispDate-" + Id).val(),
+                Remarks: $("#Remarks-" + Id).val(),
+                Address: $("#Address-" + Id).val(),
+                Year: $("#Year-" + Id).val(),
+                IsSameAsRecord: $("#IsSameAsRecord-" + Id).val(),
+                TypeOf: $("#TypeOf-" + Id).val(),
+                Before: $("#Before-" + Id).val(),
+                After: $("#After-" + Id).val(),
+                FNAME: $("#FNAME-" + Id).val(),
+                MNAME: $("#MNAME-" + Id).val(),
+                ReceiptNo: $("#ReceiptNo-" + Id).val(),
+                ReceiptDate: $("#ReceiptDate-" + Id).val(),
+                FeeAmount: $("#FeeAmount-" + Id).val()
+            };
+            var TableData;
+            TableData = JSON.stringify(modelUser);
+             // $.post("/Admin/JqModifyUser", { "User": TableData, "distid": storeid.slice(0, -1), "pageid": pageid.slice(0, -1) },
+
+
+            $('#loading1-' + Id).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/Admin/JqModifyDuplicateCertificate", { "Data": TableData, "Id": Id, "Type": 1, "Byhand": 1 },
+          function (data) {
+              $('#loading1-' + Id).empty();
+              // alert('data.status  = ' + data.status);
+              if (data.status == "1") {
+                  window.location.href = '/Admin/ViewDuplicateCertificate';
+                  alert("Data Updated Successfully");
+              }
+              else {
+                  alert("Failure, Please Try Again.");
+              }
+          });
+
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: "../Admin/ModifyDuplicateCertificate", // this for calling the web method function in cs code.
+            //    data: '{DispNo:"' + $("#DispNo-" + Id).val() + '",DispDate:"' + $("#DispDate-" + Id).val() + '",remarks:"remarks",Id:"' + Id + '"}',// user name or email value
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    success: function (response) {
+            //        // alert(response.sn);
+            //        if (response.sn == "Yes") {
+            //            alert("Updated Successfully " + Id + "");
+            //            //window.location.href = "/Admin/ViewDuplicateCertificate";
+            //            window.location.reload(true);
+            //            // nxtDiv2(nxt, schl, prv);
+            //        }
+            //        else if (response.sn == "DP") {
+            //            alert("Duplicate Dispatch Number.. Please Change ");
+            //            $("#DispNo-" + Id).focus();
+            //            $("#DispNo-" + Id).addClass("input-validation-error");
+            //        }
+            //        else {
+            //            alert("Receive  Failure.. Please Try Again.");
+            //        }
+            //    },
+            //    failure: function (response) {
+            //        alert(response);
+            //    }
+            //});
+
+        }
+    }
+
+
+
+    function ReceiveCert(k, Id) {
+         //alert("Id :" + Id);
+        var flag = 0;
+        if ($("#CertNo-" + Id).val() == "") {
+            $("#CertNo-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#CertDate-" + Id).val() == "") {
+            $("#CertDate-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        //if ($("#RemarksCert-" + Id).val() == "") {
+        //    $("#RemarksCert-" + Id).addClass("input-validation-error");
+        //    flag = 1;
+        //}
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            //alert('fill model')
+            var modelUser = {
+                id: Id,
+                DairyNo: $("#DairyNo-" + Id).val(),
+                DairyDate:"",
+                Class: $("#Class-" + Id).val(),
+                Session: $("#Session-" + Id).val(),
+                Roll: $("#Roll-" + Id).val(),
+                Name: $("#Name-" + Id).val(),
+                Mobile: $("#Mobile-" + Id).val(),
+                Dist: $("#Dist-" + Id).val(),
+                DispNo: $("#DispNo-" + Id).val(),
+                DispDate: $("#DispDate-" + Id).val(),
+                CertNo: $("#CertNo-" + Id).val(),
+                CertDate: $("#CertDate-" + Id).val(),
+                Remarks: ""
+            };
+            // alert(modelUser);
+            var TableData;
+            TableData = JSON.stringify(modelUser);
+            // $.post("/Admin/JqModifyUser", { "User": TableData, "distid": storeid.slice(0, -1), "pageid": pageid.slice(0, -1) },
+            // alert(TableData);
+
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/Admin/JqModifyDuplicateCertificate", { "Data": TableData, "Id": Id, "Type": 2, "Byhand": 1 },
+          function (data) {
+              $('#loading1').empty();
+             // alert('data.status  = ' + data.status);
+              if (data.status == "1") {
+                //  window.location.href = '/Admin/ViewDuplicateCertificate';
+                  alert("Certificate Number Alloted Successfully");
+				    $('#myModal3-' + Id).modal('hide');
+              }
+              else {
+                  alert("Failure, Please Try Again.");
+              }
+          });
+
+        }
+    }
+
+
+    function ReceiveOrder(k, Id) {
+        var flag = 0;
+        var ob = "#OrderBy-" + Id;
+        var OrderBy = $(ob+ ' option:selected').val();
+        if (OrderBy == "" || OrderBy == "0") {
+            $("#OrderBy-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#OrderNo-" + Id).val() == "") {
+            $("#OrderNo-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if ($("#OrderDate-" + Id).val() == "") {
+            $("#OrderDate-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            var modelUser = {
+                id: Id,
+                DairyNo: $("#DairyNo-" + Id).val(),
+                OrderBy: $("#OrderBy-" + Id).val(),
+                OrderNo: $("#OrderNo-" + Id).val(),
+                OrderDate: $("#OrderDate-" + Id).val(),
+                Remarks: ""
+            };
+
+            var TableData;
+            TableData = JSON.stringify(modelUser);
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/Admin/JqModifyDuplicateCertificate", { "Data": TableData, "Id": Id, "Type": 6, "Byhand": 1 },
+          function (data) {
+              $('#loading1').empty();
+              if (data.status == "1") {
+                  alert("Order Number Alloted Successfully of Dairy Number: " + $("#DairyNo-" + Id).val());
+                  $('#myModal6-' + Id).modal('hide');
+                  window.open("/Admin/DuplicateCertificateOrderSlip/" + $("#DairyNo-" + Id).val(), '_blank');
+              }
+              else {
+                  alert("Failure, Please Try Again.");
+              }
+          });
+
+        }
+    }
+
+    //SpoilCertificate
+    function SpoilCertificate(k, Id) {       
+        var flag = 0;       
+        if ($("#Remarks7-" + Id).val() == "") {
+            $("#Remarks7-" + Id).addClass("input-validation-error");
+            flag = 1;
+        }
+        if (flag == 1) {
+            return false;
+        }
+        else {           
+            var modelUser = {
+                id: Id,               
+                CertNo: $("#CertNo7-" + Id).val(),
+                CertDate: $("#CertDate7-" + Id).val(),
+                Remarks: $("#Remarks7-" + Id).val()
+            };
+            var TableData;
+            TableData = JSON.stringify(modelUser);
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/Admin/JqModifyDuplicateCertificate", { "Data": TableData, "Id": Id, "Type": 7, "Byhand": 1 },
+                function (data) {
+                    $('#loading1').empty();                   
+                    if (data.status == "1") {
+                        //  window.location.href = '/Admin/ViewDuplicateCertificate';
+                        alert("Spoil Certificate Successfully");
+                        $('#myModal7-' + Id).modal('hide');
+                    }
+                    else {
+                        alert("Failure, Please Try Again.");
+                    }
+                });
+        }
+    }
+
+    $(function () {
+        $(".date").datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: new Date(),
+            yearRange: "2017:2018",
+
+        });
+        $(".date1").datepicker({
+            dateFormat: "mm/dd/yy",
+            changeMonth: true,
+            changeYear: true,
+            maxDate: new Date(),
+            yearRange: "2017:2018",
+
+        });
+    });
+</script>
+
+<script>
+    function UpdateDetails(k, Id, t) {
+        //alert("Id :" + Id);
+        //alert("t :" + t);       
+        var flag = 0;
+        var vv = 0;
+        var modelUser;
+        if (t == "10")// OrderNo
+        {          
+            var ob = "#OrderByU-" + Id;
+            var OrderBy = $(ob + ' option:selected').val();
+            if (OrderBy == "" || OrderBy == "0") {
+                $("#OrderByU-" + Id).addClass("input-validation-error");
+                flag = 1;
+            }
+            if ($("#OrderNoU-" + Id).val() == "") {
+                $("#OrderNoU-" + Id).addClass("input-validation-error");
+                flag = 1;
+            }
+            if ($("#OrderDateU-" + Id).val() == "") {
+                $("#OrderDateU-" + Id).addClass("input-validation-error");
+                flag = 1;
+            }
+
+        }
+        else if (t == "8")//certU
+        {         
+
+            if ($("#CertNoU-" + Id).val() == "") {
+                $("#CertNoU-" + Id).addClass("input-validation-error");
+                flag = 1;
+            }
+            if ($("#CertDateU-" + Id).val() == "") {
+                $("#CertDateU-" + Id).addClass("input-validation-error");
+                flag = 1;
+            }
+        }
+        else if (t == "9")//DispNo
+        {
+           
+            vv = $("input:radio.ishandU:checked").val();
+            // alert("vv :" + vv);
+            if (vv == "2") {
+                if ($("#DispNoU-" + Id).val() == "") {
+                    $("#DispNoU-" + Id).addClass("input-validation-error");
+                    flag = 1;
+                }
+
+                if ($("#DispNoU-" + Id).val() != "") {
+                    if ($("#DispNoU-" + Id).val().length != "9") {
+                        $("#DispNoU-" + Id).addClass("input-validation-error");
+                        flag = 1;
+                        alert('Enter 9 Digit Registry Number');
+                    }
+                }
+
+
+                if ($("#DispDateU-" + Id).val() == "") {
+                    $("#DispDateU-" + Id).addClass("input-validation-error");
+                    flag = 1;
+                }
+            }
+        }       
+
+
+        if (flag == 1) {
+            return false;
+        }
+        else {
+            //alert('fill model')
+            if (t == "10") {
+                 modelUser = {
+                    id: Id,
+                    DairyNo: $("#DairyNo-" + Id).val(),
+                    OrderBy: $("#OrderByU-" + Id).val(),
+                    OrderNo: $("#OrderNoU-" + Id).val(),
+                    OrderDate: $("#OrderDateU-" + Id).val(),
+                    Remarks: ""
+                };
+            }
+            else {
+                 modelUser = {
+                    id: Id,
+                    DairyNo: $("#DairyNo-" + Id).val(),
+                    DispNo: $("#DispNoU-" + Id).val(),
+                    DispDate: $("#DispDateU-" + Id).val(),
+                    CertNo: $("#CertNoU-" + Id).val(),
+                    CertDate: $("#CertDateU-" + Id).val(),
+                    Remarks: "",                    
+                };
+            }
+         
+            var TableData;
+            TableData = JSON.stringify(modelUser);
+          
+
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            $.post("/Admin/JqModifyDuplicateCertificate", { "Data": TableData, "Id": Id, "Type": t, "Byhand": vv },
+                function (data) {
+                    $('#loading1').empty();
+                    // alert('data.status  = ' + data.status);
+                    if (data.status == "1") {
+                        //  window.location.href = '/Admin/ViewDuplicateCertificate';
+                        alert("Updated Successfully");
+                        $('#myModal8-' + Id).modal('hide');
+                    }
+                    else {
+                        alert("Failure, Please Try Again.");
+                    }
+                });
+        }
+    }
+
+
+   
+
+
+
+
+
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function resetAllControls() {
+        $("#searchform").find('input:text, input:password, input:file, select, textarea').val('');
+    };
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+
+

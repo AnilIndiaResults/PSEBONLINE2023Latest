@@ -1,0 +1,104 @@
+﻿@model PSEBONLINE.Models.DuplicateCertificate
+@{
+    ViewBag.Title = "Address Slip";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/Print-4P.css" />
+<style type="text/css">body {font-size: 11px}</style>
+@using (Html.BeginForm("", "", FormMethod.Post, new { id = "searchform" }))
+{
+<h1 class="noprint" style="font-size:22px;padding:10px 0">Duplicate Certificate Form</h1>
+<div class="row noprint">
+    <div class="col-md-12 noprint text-right">
+        <input type="button" value="Print" class="btn" onclick="window.print()" />
+        <input type="button" value="Back" class="btn" onclick="goBack()" />
+    </div>
+</div>
+<div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12" style="vertical-align:top">
+@{
+    int columns = 2;
+    if (ViewBag.TotalCount > 0)
+    {
+
+        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+        {
+            var DairyNo = Model.StoreAllData.Tables[0].Rows[i]["DairyNo"].ToString();
+            var Name = Model.StoreAllData.Tables[0].Rows[i]["Name"].ToString();
+            var FNAME = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+            var Address = Model.StoreAllData.Tables[0].Rows[i]["Address"].ToString();
+            var Mobile = Model.StoreAllData.Tables[0].Rows[i]["Mobile"].ToString();
+
+            int col = i % columns;
+
+            if (col == 0)
+            {
+                // left
+                <div class="lft-sec">
+                    <table width="98%" border="0" style="float:left">
+                        <tr>
+                            <td colspan="2" style="text-align:center" class="pdntb"><span style="font-size:20px">Dairy No. @DairyNo</span></td>
+                        </tr>
+                        <tr>
+                            <td>To</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td width="8%" rowspan="3"></td>
+                            <td>@Name / @FNAME</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Address<br />@Address
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Mobile No.: @Mobile
+                            </td>
+                        </tr>
+                    </table>
+                    </div>
+                    }
+                    else  // col == 1
+                    {
+                    // right
+                    <div class="rgt-sec">
+                        <table width="98%" border="0">
+                            <tr>
+                                <td colspan="2" style="text-align:center" class="pdntb"><span style="font-size:20px">Dairy No. @DairyNo</span></td>
+                            </tr>
+                            <tr>
+                                <td>To</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td width="8%" rowspan="3"></td>
+                                <td>@Name / @FNAME</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Address<br />@Address
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Mobile No.: @Mobile
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    }
+                    }
+                    }
+                    }
+                </div>
+        </div>
+    }
+
+<script>
+function goBack() {
+    window.history.back();
+}
+</script>

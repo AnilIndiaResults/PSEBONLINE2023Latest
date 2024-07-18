@@ -1,0 +1,348 @@
+﻿@model PSEBONLINE.Models.SchoolModels
+@{
+    Layout = "~/Views/Shared/_Login_Header.cshtml";
+}
+
+<h2>TC Request</h2>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+@using (Html.BeginForm("TCRequest", "School", FormMethod.Post, new { id = "searchform" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <fieldset style="margin-bottom:15px">
+                <legend>Search</legend>
+                <div class="col-md-3">
+                    Total Count - @ViewBag.TotalCount<br />&nbsp;
+                </div>
+                <div class="clearfix"></div>
+                @*<div class="col-md-2">
+                    Select School Code
+                    @Html.DropDownList("totalcountlist", new SelectList(ViewBag.MySchcode, "Value", "Text", ViewBag.SelectedItemcode), "--Select---")
+                </div>*@
+                @*<div class="col-md-2">
+                    Enter School Code<br />                   
+                    @Html.TextBoxFor(m => m.TotalSearchString, new { id = "TotalSearchString", onkeypress = "return isNumberKey(event);", @maxlength = "7" })
+                   
+                </div>*@
+                @*<form id="myForm">*@
+                @*<div class="col-md-2">
+                    Select Form   @Html.DropDownList("SelForm", new SelectList(ViewBag.MyForm, "Value", "Text", ViewBag.SelectedForm), "--All---")
+                </div>*@
+                <div class="col-md-2">
+                    Search By   @Html.DropDownList("SelList", new SelectList(ViewBag.MySch, "Value", "Text", ViewBag.SelectedItem), "--All---")
+                </div>
+                <div class="col-md-2">
+                    &nbsp;<br />
+                    <input type="text" id="SearchByString" name="SearchByString" value="@Request["SearchByString"]" />
+                </div>
+
+                <div class="col-md-2">&nbsp;<br /><input type="submit" onclick="return valForm();" value="Search" /></div>
+                <div class="clearfix"></div>
+                <div class="col-md-10">
+                    @{
+
+                        if (TempData["notice"] != null)
+                        {
+                            @TempData["notice"]
+                        }
+                    }
+                </div>
+                @*<div class="col-md-2">
+                    <input type="submit" onclick="return valForm();" formmethod="post" formaction="FinalsubmitResult" value="Final submit Result" />
+                </div>*@
+
+
+                @*</form>*@
+            </fieldset>
+        </div>
+    </div>
+                        }
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="t01">
+                <tr class="active-tr">
+                    <th width="5%">Sl.<br />No.</th>
+                    <th width="5%">ID</th>
+                    <th width="5%">SCHL</th>
+                    <th width="5%">Sr.No.</th>
+                    <th width="5%">Form</th>
+                    <th width="5%">Reg No</th>
+                    <th width="5%">CandidateName</th>
+                    <th width="5%">FatherName</th>
+                    <th width="15%">DOB</th>
+                    <th width="15%">RDate</th>
+                    <th width="15%">ADAte</th>
+                    <th width="15%">TCrefNo</th>
+                    <th width="2%">TC</th>
+                    <th width="3%">Action</th>
+
+                </tr>
+                @{
+                    if (ViewBag.TotalCount > 0)
+                    {
+                        for (int i = 0; i < Model.StoreAllData.Tables[0].Rows.Count; i++)
+                        {
+                            var stdid = Model.StoreAllData.Tables[0].Rows[i]["ID"].ToString();
+                            var SCHL = Model.StoreAllData.Tables[0].Rows[i]["SCHL"].ToString();
+                            var SRL = Model.StoreAllData.Tables[0].Rows[i]["SRL"].ToString();
+                            var FORM = Model.StoreAllData.Tables[0].Rows[i]["FORM"].ToString();
+                            var REGNO = Model.StoreAllData.Tables[0].Rows[i]["REGNO"].ToString();
+                            var NAME = Model.StoreAllData.Tables[0].Rows[i]["NAME"].ToString();
+                            var FNAME = Model.StoreAllData.Tables[0].Rows[i]["FNAME"].ToString();
+                            var DOB = Model.StoreAllData.Tables[0].Rows[i]["DOB"].ToString();
+                            var RDate = Model.StoreAllData.Tables[0].Rows[i]["REGDATE"].ToString();
+                            var ADMDATE = Model.StoreAllData.Tables[0].Rows[i]["ADMDATE"].ToString();
+                            var TCrefno = Model.StoreAllData.Tables[0].Rows[i]["TCrefno"].ToString();
+                            var Tcstatus = Model.StoreAllData.Tables[0].Rows[i]["Tcstatus"].ToString();
+                            int Count = i + 1;
+                            <tr>
+                                <td>
+                                    @Count
+                                </td>
+                                <td>
+                                    @stdid
+                                </td>
+                                <td>
+                                    @SCHL
+                                </td>
+                                <td>
+                                    @SRL
+                                </td>
+                                <td>
+                                    @FORM
+                                </td>
+                                <td>
+                                    @REGNO
+                                </td>
+                                <td>
+                                    @NAME
+                                </td>
+                                <td>
+                                    @FNAME
+                                </td>
+                                <td>
+                                    @DOB
+                                </td>
+                                <td>
+                                    @RDate
+                                </td>
+                                <td>
+                                    @ADMDATE
+                                </td>
+                                <td>
+                                    @TCrefno
+                                </td>
+                                <td>
+                                    @*@Tcstatus*@
+                                    @{
+                                        if (@Tcstatus == "2")
+                                        {
+                                            @*@Html.ActionLink("TC", "TCRequest")*@
+                                            @Html.ActionLink("TC", "TCRequest", new { id = encrypt.QueryStringModule.Encrypt(stdid) })
+                                        }
+                                        else
+                                        {
+                                        @Html.ActionLink("TC", "TCRequest", new { id = encrypt.QueryStringModule.Encrypt(stdid) })
+                                        }
+                                    }
+
+                                </td>
+                                <td>
+                                    <div>
+
+                                        @{
+                                            <label>@Html.ActionLink("VIEW", "TCRequestDone", new { id = encrypt.QueryStringModule.Encrypt(stdid) })</label>
+
+                                        }
+                                        @*@reclock*@
+                                    </div>
+                                    <div>
+
+                                    </div>
+                                </td>
+
+                            </tr>
+
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="11">
+                                                        @ViewBag.Message
+                                                    </td>
+                                                </tr>
+                                            }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+@{
+    if (ViewData["Tcstatus"] != null)
+    {
+        if (ViewData["Tcstatus"].ToString() == "2")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("TC Already Generated.");
+                document.location.href='@Url.Action("TCRequest", "School",new { id = "" })';
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Click View to Generated TC.");
+                document.location.href='@Url.Action("TCRequest", "School",new { id = "" })';
+            </script>
+        }
+    }
+}
+
+<script>
+
+
+    $(document).ready(function () {
+
+        var Value = document.getElementById('SelectItem').value;
+        if (Value == 6) {
+            $("#SearchByString").datepicker("enable");
+            $("#SearchByString").off('keypress');
+            $("#SearchByString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchByString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (Value == 5 || Value == 3 || Value == 4) {
+            $("#SearchByString").datepicker("disable");
+            document.getElementById('SearchByString').disabled = false;
+            $("#SearchByString").off('keypress');
+            $("#SearchByString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchByString").datepicker("disable");
+            document.getElementById('SearchByString').disabled = false;
+            $("#SearchByString").off('keypress');
+        }
+    });
+
+
+    $("#SelList").change(function () {
+        var value = document.getElementById('SelList').value;
+        $('#SearchByString').val('');
+        if (value == 6) {
+            $("#SearchByString").datepicker("enable");
+            $("#SearchByString").off('keypress');
+            $("#SearchByString").keypress(function (evt) {
+                return false;
+
+            });
+            $("#SearchByString").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                maxDate: '-10Y',
+
+            });
+
+        }
+        else if (Value == 3 || Value == 4 || Value == 5) {
+            $("#SearchByString").datepicker("disable");
+            document.getElementById('SearchByString').disabled = false;
+            $("#SearchByString").off('keypress');
+            $("#SearchByString").keypress(function (evt) {
+                var keyCode = (evt.which) ? evt.which : evt.keyCode
+                if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32) {
+                    alert("Only Characters Allowed!!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            });
+        }
+
+        else {
+            $("#SearchByString").datepicker("disable");
+            document.getElementById('SearchByString').disabled = false;
+            $("#SearchByString").off('keypress');
+        }
+
+
+        if (Value == 1 || Value == 2 || Value == 3 || Value == 4 || Value == 5 || Value == 6) {
+            document.getElementById("SearchByString").disabled = false;
+        }
+        else {
+            document.getElementById("SearchByString").disabled = true;
+        }
+    });
+
+    $("#totalcountlist").change(function () {
+        var Value = document.getElementById('totalcountlist').value;
+        if (Value == "1") {
+            document.getElementById('TotalSearchString').disabled = false;
+        }
+        else {
+            document.getElementById('TotalSearchString').disabled = true;
+        }
+
+    });
+
+
+    //function valForm() {
+
+    //    var SchlList = document.getElementById("totalcountlist");
+    //    if (SchlList.value == "" || SchlList.value == "0") {
+    //        alert("Select School");
+    //        SchlList.focus();
+    //        return false;
+    //    }
+
+    //    var Schlcode = document.getElementById("TotalSearchString");
+    //    if (Schlcode.value == "" || Schlcode.value == "0") {
+    //        alert("Enter School Code");
+    //        Schlcode.focus();
+    //        return false;
+    //    }
+    //}
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 8) || (charCode == 46)) {
+
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+</script>
+
+
+

@@ -24,6 +24,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web.Http.Results;
 using iTextSharp.text.pdf;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace PSEBONLINE.Controllers
 {
@@ -5890,6 +5891,10 @@ namespace PSEBONLINE.Controllers
 		{
 			try
 			{
+				if (Session["SCHL"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
 
 				ViewBag.Total = 0;
 				Session["Session"] = @PSEBONLINE.Repository.SessionSettingMastersRepository.GetSessionSettingMasters().SessionShortYear;// Add for Challan Print
@@ -5912,7 +5917,8 @@ namespace PSEBONLINE.Controllers
 					string ChallanId = "";
 					//ViewData["OutError"] = "IsUserInChallan";
 					ViewBag.LastDate = "";
-					FeeOpenModel = openDB.spFeeDetailsOpen_Repayment(schl);
+					//FeeOpenModel = openDB.spFeeDetailsOpen_Repayment(schl);
+					FeeOpenModel = openDB.selectFeeDetailsOpen_Repayment(schl);
 					//ViewBag.Total = _feeOpen.TotalFee + _feeOpen.ExamTotalFee;
 					ViewBag.Total = 1;
 					ViewBag.LastDate = _feeOpen.BankLastDate.ToString("dd/MM/yyyy");
@@ -5944,252 +5950,452 @@ namespace PSEBONLINE.Controllers
 			}
 		}
 
-		[HttpPost]
-		public ActionResult CalculateFeeForOpenRepayment(FeeOpenModel _feeOpen, FormCollection frm)
-		{
-			try
-			{
-				StringBuilder StudentListStringBuilder = new StringBuilder();
-				List<FeeOpen> feeOpenList = new List<FeeOpen>();
-				List<ChallanMasterModel> CMList = new List<ChallanMasterModel>();
-				ChallanMasterModel CM = new ChallanMasterModel();
+		//[HttpPost]
+		//public ActionResult CalculateFeeForOpenRepayment(FeeOpenModel _feeOpen, FormCollection frm)
+		//{
+		//	try
+		//	{
+		//		StringBuilder StudentListStringBuilder = new StringBuilder();
+		//		List<FeeOpen> feeOpenList = new List<FeeOpen>();
+		//		List<ChallanMasterModel> CMList = new List<ChallanMasterModel>();
+		//		ChallanMasterModel CM = new ChallanMasterModel();
 
-				if (Session["SCHL"] == null)
-				{
-					return RedirectToAction("Index", "Login");
-				}
-				if (_feeOpen.feeopenData.BankCode == null)
-				{
-					ViewBag.Message = "Please Select Bank";
-					ViewData["SelectBank"] = "1";
-					return View(_feeOpen);
-				}
-				else
-				{
-					string BankCode = _feeOpen.feeopenData.BankCode;
-					string PayModValue = "online";
-					string bankName = "";
+		//		if (Session["SCHL"] == null)
+		//		{
+		//			return RedirectToAction("Index", "Login");
+		//		}
+		//		if (_feeOpen.feeopenData.BankCode == null)
+		//		{
+		//			ViewBag.Message = "Please Select Bank";
+		//			ViewData["SelectBank"] = "1";
+		//			return View(_feeOpen);
+		//		}
+		//		else
+		//		{
+		//			string BankCode = _feeOpen.feeopenData.BankCode;
+		//			string PayModValue = "online";
+		//			string bankName = "";
 
-					if (BankCode == "301" || BankCode == "302")
-					{
-						PayModValue = "online";
-						if (BankCode == "301")
-						{
-							bankName = "HDFC Bank";
-						}
-						else if (BankCode == "302")
-						{
-							bankName = "Punjab And Sind Bank";
-						}
-					}
-					else if (BankCode == "203")
-					{
-						PayModValue = "hod";
-						bankName = "PSEB HOD";
-					}
-					else if (BankCode == "202" || BankCode == "204")
-					{
-						PayModValue = "offline";
-						if (BankCode == "202")
-						{
-							bankName = "Punjab National Bank";
-						}
-						else if (BankCode == "204")
-						{
-							bankName = "State Bank of India";
-						}
-					}
-
-
-					string schl = Session["SCHL"].ToString();
-					string today = DateTime.Today.ToString("dd/MM/yyyy");
-					_feeOpen = openDB.spFeeDetailsOpen_Repayment(schl);
-					ViewBag.Total = 0;
-					int totalFee = 0;
-					int ExamTotalFee = 0;
-
-					var APPNO = "";
-					var FeeStudentList = "";
-					var SCHLREGID = "";
-					var SchoolCode = "";
-					var addfee = 0;
-					var latefee = 0;
-					var prosfee = 0;
-					var addsubfee = 0;
-					var add_sub_count = 0;
-					var regfee = 0;
-					var FEE = 0;
-					var TOTFEE = 0;
-					var OpenExamFee = 0;
-					var OpenLateFee = 0;
-					var OpenTotalFee = 0;
-					var FEECAT = 0;
-					var FEECODE = 0;
-					var FEEMODE = 0;
-					var lastpaidFee = 0;
-
-					List<string> str = new List<string>();
+		//			if (BankCode == "301" || BankCode == "302")
+		//			{
+		//				PayModValue = "online";
+		//				if (BankCode == "301")
+		//				{
+		//					bankName = "HDFC Bank";
+		//				}
+		//				else if (BankCode == "302")
+		//				{
+		//					bankName = "Punjab And Sind Bank";
+		//				}
+		//			}
+		//			else if (BankCode == "203")
+		//			{
+		//				PayModValue = "hod";
+		//				bankName = "PSEB HOD";
+		//			}
+		//			else if (BankCode == "202" || BankCode == "204")
+		//			{
+		//				PayModValue = "offline";
+		//				if (BankCode == "202")
+		//				{
+		//					bankName = "Punjab National Bank";
+		//				}
+		//				else if (BankCode == "204")
+		//				{
+		//					bankName = "State Bank of India";
+		//				}
+		//			}
 
 
-					foreach (FeeOpen ListfeeOpen in _feeOpen.feeopenList)
-					{
-						totalFee += ListfeeOpen.TotalFee;
-						ExamTotalFee += ListfeeOpen.ExamTotalFee;
-						str.Add(ListfeeOpen.AppNo);
-						CM.SCHLREGID = Session["SCHL"].ToString();
-						CM.SchoolCode = Session["SCHL"].ToString();
-						CM.addfee += ListfeeOpen.AdmissionFee; // AdmissionFee / ADDFEE
-						CM.latefee += ListfeeOpen.LateFee;
-						CM.prosfee += ListfeeOpen.ProsFee;
-						CM.addsubfee += ListfeeOpen.AddSubFee;
-						CM.add_sub_count += ListfeeOpen.NoAddSub;
-						CM.regfee = +ListfeeOpen.RegConti;
-						CM.FEE += ListfeeOpen.TotalFee;
-						TOTFEE += ListfeeOpen.TotalFee + ListfeeOpen.ExamTotalFee;
-						CM.OpenExamFee += ListfeeOpen.ExamRegFee;
-						CM.OpenLateFee += ListfeeOpen.ExamLateFee;
-						CM.OpenTotalFee += ListfeeOpen.ExamTotalFee;
-						CM.FEECAT = ListfeeOpen.FeeCat;
-						CM.FEECODE = ListfeeOpen.FeeCode;
-						CM.FEEMODE = "CASH";
-						CM.BANK = bankName;
-						CM.BCODE = BankCode;
-						CM.BANKCHRG = Convert.ToInt32(0);
-						CM.LOT = 0;
-						CM.DepositoryMobile = "CASH";
-						CM.type = "candt";
-						CM.ChallanVDateN = ListfeeOpen.BankLastDate;
-						CM.CHLNVDATE = ListfeeOpen.BankLastDate.ToString("dd/MM/yyyy");
-						lastpaidFee += ListfeeOpen.lastPaidFee;
-					}
+		//			string schl = Session["SCHL"].ToString();
+		//			string today = DateTime.Today.ToString("dd/MM/yyyy");
+		//			_feeOpen = openDB.spFeeDetailsOpen_Repayment(schl,"");
+		//			ViewBag.Total = 0;
+		//			int totalFee = 0;
+		//			int ExamTotalFee = 0;
 
-					CM.TOTFEE = TOTFEE - lastpaidFee;
+		//			var APPNO = "";
+		//			var FeeStudentList = "";
+		//			var SCHLREGID = "";
+		//			var SchoolCode = "";
+		//			var addfee = 0;
+		//			var latefee = 0;
+		//			var prosfee = 0;
+		//			var addsubfee = 0;
+		//			var add_sub_count = 0;
+		//			var regfee = 0;
+		//			var FEE = 0;
+		//			var TOTFEE = 0;
+		//			var OpenExamFee = 0;
+		//			var OpenLateFee = 0;
+		//			var OpenTotalFee = 0;
+		//			var FEECAT = 0;
+		//			var FEECODE = 0;
+		//			var FEEMODE = 0;
+		//			var lastpaidFee = 0;
+
+		//			List<string> str = new List<string>();
 
 
+		//			foreach (FeeOpen ListfeeOpen in _feeOpen.feeopenList)
+		//			{
+		//				totalFee += ListfeeOpen.TotalFee;
+		//				ExamTotalFee += ListfeeOpen.ExamTotalFee;
+		//				str.Add(ListfeeOpen.AppNo);
+		//				CM.SCHLREGID = Session["SCHL"].ToString();
+		//				CM.SchoolCode = Session["SCHL"].ToString();
+		//				CM.addfee += ListfeeOpen.AdmissionFee; // AdmissionFee / ADDFEE
+		//				CM.latefee += ListfeeOpen.LateFee;
+		//				CM.prosfee += ListfeeOpen.ProsFee;
+		//				CM.addsubfee += ListfeeOpen.AddSubFee;
+		//				CM.add_sub_count += ListfeeOpen.NoAddSub;
+		//				CM.regfee = +ListfeeOpen.RegConti;
+		//				CM.FEE += ListfeeOpen.TotalFee;
+		//				TOTFEE += ListfeeOpen.TotalFee + ListfeeOpen.ExamTotalFee;
+		//				CM.OpenExamFee += ListfeeOpen.ExamRegFee;
+		//				CM.OpenLateFee += ListfeeOpen.ExamLateFee;
+		//				CM.OpenTotalFee += ListfeeOpen.ExamTotalFee;
+		//				CM.FEECAT = ListfeeOpen.FeeCat;
+		//				CM.FEECODE = ListfeeOpen.FeeCode;
+		//				CM.FEEMODE = "CASH";
+		//				CM.BANK = bankName;
+		//				CM.BCODE = BankCode;
+		//				CM.BANKCHRG = Convert.ToInt32(0);
+		//				CM.LOT = 0;
+		//				CM.DepositoryMobile = "CASH";
+		//				CM.type = "candt";
+		//				CM.ChallanVDateN = ListfeeOpen.BankLastDate;
+		//				CM.CHLNVDATE = ListfeeOpen.BankLastDate.ToString("dd/MM/yyyy");
+		//				lastpaidFee += ListfeeOpen.lastPaidFee;
+		//			}
+
+		//			CM.TOTFEE = TOTFEE - lastpaidFee;
 
 
 
-					CM.APPNO = string.Join(",", str.ToList());
-					CM.FeeStudentList = string.Join(",", str.ToList());
+
+
+		//			CM.APPNO = string.Join(",", str.ToList());
+		//			CM.FeeStudentList = string.Join(",", str.ToList());
 
 
 
-					CM.LumsumFine = Convert.ToInt32(0);
-					CM.LSFRemarks = "";
-					string SchoolMobile = "";
-					string result = "0";
-					result = openDB.OpenInsertPaymentForm(CM, frm, out SchoolMobile);
-					if (result == "0" || result == "")
-					{
-						//--------------Not saved
-						ViewData["result"] = 0;
-						return View(_feeOpen);
-					}
-					if (result == "-1")
-					{
-						//-----alredy exist
-						ViewData["result"] = -1;
-						return View(_feeOpen);
-					}
-					else
-					{
-						ViewData["FeeStatus"] = null;
-						ViewData["SelectBank"] = null;
-						ViewData["result"] = 1;
-						ViewBag.ChallanNo = result;
-						string paymenttype = CM.BCODE;
-						string TotfeePG = (CM.TOTFEE).ToString();
+		//			CM.LumsumFine = Convert.ToInt32(0);
+		//			CM.LSFRemarks = "";
+		//			string SchoolMobile = "";
+		//			string result = "0";
+		//			result = openDB.OpenInsertPaymentForm(CM, frm, out SchoolMobile);
+		//			if (result == "0" || result == "")
+		//			{
+		//				//--------------Not saved
+		//				ViewData["result"] = 0;
+		//				return View(_feeOpen);
+		//			}
+		//			if (result == "-1")
+		//			{
+		//				//-----alredy exist
+		//				ViewData["result"] = -1;
+		//				return View(_feeOpen);
+		//			}
+		//			else
+		//			{
+		//				ViewData["FeeStatus"] = null;
+		//				ViewData["SelectBank"] = null;
+		//				ViewData["result"] = 1;
+		//				ViewBag.ChallanNo = result;
+		//				string paymenttype = CM.BCODE;
+		//				string TotfeePG = (CM.TOTFEE).ToString();
 
-						if (PayModValue.ToString().ToLower().Trim() == "online" && result.ToString().Length > 10)
-						{
-							#region Payment Gateyway
+		//				if (PayModValue.ToString().ToLower().Trim() == "online" && result.ToString().Length > 10)
+		//				{
+		//					#region Payment Gateyway
 
-							if (paymenttype.ToUpper() == "301" && ViewBag.ChallanNo != "") /*HDFC*/
-							{
-								string AccessCode = ConfigurationManager.AppSettings["CcAvenueAccessCode"];
-								string CheckoutUrl = ConfigurationManager.AppSettings["CcAvenueCheckoutUrl"];
-								string WorkingKey = ConfigurationManager.AppSettings["CcAvenueWorkingKey"];
-								//******************
-								string invoiceNumber = ViewBag.ChallanNo;
-								string amount = TotfeePG;
-								//***************
-								var queryParameter = new CCACrypto();
+		//					if (paymenttype.ToUpper() == "301" && ViewBag.ChallanNo != "") /*HDFC*/
+		//					{
+		//						string AccessCode = ConfigurationManager.AppSettings["CcAvenueAccessCode"];
+		//						string CheckoutUrl = ConfigurationManager.AppSettings["CcAvenueCheckoutUrl"];
+		//						string WorkingKey = ConfigurationManager.AppSettings["CcAvenueWorkingKey"];
+		//						//******************
+		//						string invoiceNumber = ViewBag.ChallanNo;
+		//						string amount = TotfeePG;
+		//						//***************
+		//						var queryParameter = new CCACrypto();
 
-								string strURL = GatewayController.BuildCcAvenueRequestParameters(invoiceNumber, amount);
+		//						string strURL = GatewayController.BuildCcAvenueRequestParameters(invoiceNumber, amount);
 
-								return View("../Gateway/CcAvenue", new CcAvenueViewModel(queryParameter.Encrypt
-										   (strURL, WorkingKey), AccessCode, CheckoutUrl));
+		//						return View("../Gateway/CcAvenue", new CcAvenueViewModel(queryParameter.Encrypt
+		//								   (strURL, WorkingKey), AccessCode, CheckoutUrl));
 
-							}
-							else if (paymenttype.ToUpper() == "302" && ViewBag.ChallanNo != "")/*ATOM*/
-							{
+		//					}
+		//					else if (paymenttype.ToUpper() == "302" && ViewBag.ChallanNo != "")/*ATOM*/
+		//					{
 
-								string TransactionID = encrypt.QueryStringModule.Encrypt(ViewBag.ChallanNo);
-								string TransactionAmount = encrypt.QueryStringModule.Encrypt(TotfeePG);
-								string clientCode = CM.SCHLREGID;
-								// User Details
-								string udf1CustName = encrypt.QueryStringModule.Encrypt(CM.SCHLREGID); // roll number
-								string udf2CustEmail = CM.FEECAT; /// Kindly submit Appno/Refno in client id, Fee cat in Emailid (ATOM)
-								string udf3CustMob = encrypt.QueryStringModule.Encrypt(SchoolMobile);
+		//						string TransactionID = encrypt.QueryStringModule.Encrypt(ViewBag.ChallanNo);
+		//						string TransactionAmount = encrypt.QueryStringModule.Encrypt(TotfeePG);
+		//						string clientCode = CM.SCHLREGID;
+		//						// User Details
+		//						string udf1CustName = encrypt.QueryStringModule.Encrypt(CM.SCHLREGID); // roll number
+		//						string udf2CustEmail = CM.FEECAT; /// Kindly submit Appno/Refno in client id, Fee cat in Emailid (ATOM)
+		//						string udf3CustMob = encrypt.QueryStringModule.Encrypt(SchoolMobile);
 
-								//AtomCheckoutUrl(string ChallanNo, string amt, string clientCode, string cmn, string cme, string cmno)
-								return RedirectToAction("AtomCheckoutUrl", "Gateway", new { ChallanNo = TransactionID, amt = TransactionAmount, clientCode = clientCode, cmn = udf1CustName, cme = udf2CustEmail, cmno = udf3CustMob });
+		//						//AtomCheckoutUrl(string ChallanNo, string amt, string clientCode, string cmn, string cme, string cmno)
+		//						return RedirectToAction("AtomCheckoutUrl", "Gateway", new { ChallanNo = TransactionID, amt = TransactionAmount, clientCode = clientCode, cmn = udf1CustName, cme = udf2CustEmail, cmno = udf3CustMob });
 
-							}
-							#endregion Payment Gateyway
-						}
-						else
-						{
+		//					}
+		//					#endregion Payment Gateyway
+		//				}
+		//				else
+		//				{
 
-							string Sms = "Your Challan no. " + result + " of Lot no " + Session["SCHL"].ToString() + " successfully generated and valid till Dt " + CM.CHLNVDATE + ". Regards PSEB";
-							string tempid = "1007161586293060875";
-							string getSms = new AbstractLayer.DBClass().gosmsPsebforschool(SchoolMobile, Sms, tempid);
-							//--For Showing Message---------//                   
-							return RedirectToAction("GenerateChallaan", "Home", new { ChallanId = result });
+		//					string Sms = "Your Challan no. " + result + " of Lot no " + Session["SCHL"].ToString() + " successfully generated and valid till Dt " + CM.CHLNVDATE + ". Regards PSEB";
+		//					string tempid = "1007161586293060875";
+		//					string getSms = new AbstractLayer.DBClass().gosmsPsebforschool(SchoolMobile, Sms, tempid);
+		//					//--For Showing Message---------//                   
+		//					return RedirectToAction("GenerateChallaan", "Home", new { ChallanId = result });
 
-						}
+		//				}
 
 
-						ViewData["result"] = -10;
-						return View(_feeOpen);
+		//				ViewData["result"] = -10;
+		//				return View(_feeOpen);
 
-						//HomeDB _homeDB = new HomeDB();
-						//DataSet ds = openDB.GetChallanDetailsById(result);
-						//CM.ChallanMasterData = ds;
-						//if (CM.ChallanMasterData == null || CM.ChallanMasterData.Tables[0].Rows.Count == 0)
-						//{
-						//    Session["payVerify"] = "0";
-						//}
-						//else
-						//{
-						//    string ChallanId = "";
-						//    string res = openDB.IsUserInChallan(_openUserLogin.APPNO.ToString(), out ChallanId).ToString();
-						//    if (ChallanId.Length > 12)
-						//    {
-						//        Session["payStatus"] = "1";
-						//        int x = openDB.IsChallanVerified(_openUserLogin.APPNO.ToString(), ChallanId);
-						//        if (x == 0)
-						//        {
-						//            Session["payVerify"] = "0";
-						//        }
-						//        else
-						//        {
-						//            Session["payVerify"] = "1";
-						//        }
-						//    }
-						//}
-						//return RedirectToAction("GenerateChallaan", "Open", new { Id = result });
-					}
-				}
-			}
-			catch (Exception)
-			{
-				return View(_feeOpen);
-			}
-		}
+		//				//HomeDB _homeDB = new HomeDB();
+		//				//DataSet ds = openDB.GetChallanDetailsById(result);
+		//				//CM.ChallanMasterData = ds;
+		//				//if (CM.ChallanMasterData == null || CM.ChallanMasterData.Tables[0].Rows.Count == 0)
+		//				//{
+		//				//    Session["payVerify"] = "0";
+		//				//}
+		//				//else
+		//				//{
+		//				//    string ChallanId = "";
+		//				//    string res = openDB.IsUserInChallan(_openUserLogin.APPNO.ToString(), out ChallanId).ToString();
+		//				//    if (ChallanId.Length > 12)
+		//				//    {
+		//				//        Session["payStatus"] = "1";
+		//				//        int x = openDB.IsChallanVerified(_openUserLogin.APPNO.ToString(), ChallanId);
+		//				//        if (x == 0)
+		//				//        {
+		//				//            Session["payVerify"] = "0";
+		//				//        }
+		//				//        else
+		//				//        {
+		//				//            Session["payVerify"] = "1";
+		//				//        }
+		//				//    }
+		//				//}
+		//				//return RedirectToAction("GenerateChallaan", "Open", new { Id = result });
+		//			}
+		//		}
+		//	}
+		//	catch (Exception)
+		//	{
+		//		return View(_feeOpen);
+		//	}
+		//}
 
-		[HttpPost]
-		//public ActionResult ProcessCheckedItems(List<string> selectedItems,string bankCode)
+		//[HttpPost]
+		////public ActionResult ProcessCheckedItems(List<string> selectedItems,string bankCode)
+		//public ActionResult ProcessCheckedItems(FeeOpenModel _feeOpen, FormCollection frm)
+
+
+		//{
+		//	if (frm["reset"].ToString() == "Reset")
+		//	{
+		//		//return View(_feeOpen);
+		//	  _feeOpen = openDB.spFeeDetailsOpen_Repayment(Session["SCHL"].ToString(), "Reset");
+		//	  return CalculateFeeForOpenRepayment(Session["SCHL"].ToString());
+		//	}
+
+
+		//	string seleitems = frm["selectedItems"].ToString();
+		//	List<string> str = seleitems.Split(',').ToList<string>();
+		//	List<string> StudentList = new List<string>();
+		//	try
+		//	{
+
+
+		//		// Process the selected items here
+		//		// 'selectedItems' will contain the combined ID and Name values
+		//		ChallanMasterModel CM = new ChallanMasterModel();
+		//		string today = DateTime.Today.ToString("dd/MM/yyyy");
+		//		string PayModValue = "online";
+		//		int totalFee = 0;
+		//		int ExamTotalFee = 0;
+
+		//		var APPNO = "";
+		//		var FeeStudentList = "";
+		//		var SCHLREGID = "";
+		//		var SchoolCode = "";
+		//		var addfee = 0;
+		//		var latefee = 0;
+		//		var prosfee = 0;
+		//		var addsubfee = 0;
+		//		var add_sub_count = 0;
+		//		var regfee = 0;
+		//		var FEE = 0;
+		//		var TOTFEE = 0;
+		//		var OpenExamFee = 0;
+		//		var OpenLateFee = 0;
+		//		var OpenTotalFee = 0;
+		//		var FEECAT = 0;
+		//		var FEECODE = 0;
+		//		var FEEMODE = 0;
+		//		var lastpaidFee = 0;
+
+		//		foreach (var combinedValue in str)
+		//		{
+		//			if (combinedValue != "")
+		//			{
+		//				// Split the combined value into ID and Name
+		//				var values = combinedValue.Split('-');
+
+		//				totalFee += int.Parse(values[0]);
+		//				ExamTotalFee += int.Parse(values[1]);
+		//				StudentList.Add(values[2]);
+		//				CM.SCHLREGID = Session["SCHL"].ToString();
+		//				CM.SchoolCode = Session["SCHL"].ToString();
+		//				CM.addfee += int.Parse(values[3]); // AdmissionFee / ADDFEE
+		//				CM.latefee += int.Parse(values[4]);
+		//				CM.prosfee += int.Parse(values[5]);
+		//				CM.addsubfee += int.Parse(values[6]);
+		//				CM.regfee += int.Parse(values[7]);
+		//				CM.OpenExamFee += int.Parse(values[8]);
+		//				CM.OpenLateFee += int.Parse(values[9]);
+
+		//				//CM.FEECAT = values[13];
+		//				//CM.FEECODE = values[14];
+		//				//CM.FEEMODE = "CASH";
+		//				//CM.BANK = (values[15]);
+		//				//CM.BCODE = (values[16]);
+		//				//CM.BANKCHRG = Convert.ToInt32(0);
+		//				//CM.LOT = 0;
+		//				//CM.DepositoryMobile = "CASH";
+		//				//CM.type = "candt";
+		//				//CM.ChallanVDateN =  DateTime.Parse(values[17]);
+		//				//CM.CHLNVDATE = values[18];
+		//				lastpaidFee += int.Parse(values[10]);
+
+		//				// Now you have both the ID and Name for the selected item
+		//				// Do whatever you need with them
+		//			}
+		//		}
+		//		TOTFEE = totalFee + ExamTotalFee;
+		//		CM.FeeStudentList = string.Join(",", StudentList.ToList());
+		//		CM.FEECODE = "40";
+		//		CM.BCODE = _feeOpen.feeopenData.BankCode;
+		//		CM.TOTFEE = TOTFEE - lastpaidFee;
+
+		//		CM.LumsumFine = Convert.ToInt32(0);
+		//		CM.LSFRemarks = "";
+		//		string SchoolMobile = "";
+		//		string result = "0";
+		//		DateTime dateselected;
+		//		if (DateTime.TryParseExact(today, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dateselected))
+		//		{
+		//			CM.ChallanVDateN = dateselected;
+		//			CM.CHLNVDATE = dateselected.ToString("dd/MM/yyyy");
+		//			if (CM.BCODE == "302")
+		//			{
+		//				CM.BANK = "HDFC Bank";
+		//			}
+		//			if (CM.BCODE == "301")
+		//			{
+		//				CM.BANK = "ATOM";
+		//			}
+		//			CM.FEEMODE = "Online";
+
+		//			result = openDB.OpenInsertPaymentForm_For_Repayment(CM, out SchoolMobile);
+		//		}
+
+		//		if (result == "0" || result == "")
+		//		{
+		//			//--------------Not saved
+		//			ViewData["result"] = 0;
+		//			return Json(new { success = false });
+		//		}
+		//		if (result == "-1")
+		//		{
+		//			//-----alredy exist
+		//			ViewData["result"] = -1;
+		//			return Json(new { success = false });
+		//		}
+		//		else
+		//		{
+		//			ViewData["FeeStatus"] = null;
+		//			ViewData["SelectBank"] = null;
+		//			ViewData["result"] = 1;
+		//			ViewBag.ChallanNo = result;
+		//			string paymenttype = _feeOpen.feeopenData.BankCode;
+		//			string TotfeePG = (CM.TOTFEE).ToString();
+
+		//			if (PayModValue.ToString().ToLower().Trim() == "online" && result.ToString().Length > 10)
+		//			{
+		//				#region Payment Gateyway
+
+		//				if (paymenttype.ToUpper() == "301" && ViewBag.ChallanNo != "") /*HDFC*/
+		//				{
+		//					string AccessCode = ConfigurationManager.AppSettings["CcAvenueAccessCode"];
+		//					string CheckoutUrl = ConfigurationManager.AppSettings["CcAvenueCheckoutUrl"];
+		//					string WorkingKey = ConfigurationManager.AppSettings["CcAvenueWorkingKey"];
+		//					//******************
+		//					string invoiceNumber = ViewBag.ChallanNo;
+		//					string amount = TotfeePG;
+
+		//					//***************
+		//					var queryParameter = new CCACrypto();
+
+		//					string strURL = GatewayController.BuildCcAvenueRequestParameters(invoiceNumber, amount);
+
+		//					return View("../Gateway/CcAvenue", new CcAvenueViewModel(queryParameter.Encrypt
+		//							   (strURL, WorkingKey), AccessCode, CheckoutUrl));
+
+		//				}
+		//				else if (paymenttype.ToUpper() == "302" && ViewBag.ChallanNo != "")/*ATOM*/
+		//				{
+
+		//					string TransactionID = encrypt.QueryStringModule.Encrypt(ViewBag.ChallanNo);
+		//					string TransactionAmount = encrypt.QueryStringModule.Encrypt(TotfeePG);
+		//					string clientCode = CM.APPNO;
+		//					// User Details
+		//					string udf1CustName = encrypt.QueryStringModule.Encrypt(CM.SCHLREGID); // roll number
+		//					string udf2CustEmail = CM.FEECAT; /// Kindly submit Appno/Refno in client id, Fee cat in Emailid (ATOM)
+		//					string udf3CustMob = encrypt.QueryStringModule.Encrypt(SchoolMobile);
+
+		//					//AtomCheckoutUrl(string ChallanNo, string amt, string clientCode, string cmn, string cme, string cmno)
+		//					return RedirectToAction("AtomCheckoutUrl", "Gateway", new { ChallanNo = TransactionID, amt = TransactionAmount, clientCode = clientCode, cmn = udf1CustName, cme = udf2CustEmail, cmno = udf3CustMob });
+
+		//				}
+		//				#endregion Payment Gateyway
+		//			}
+		//			else
+		//			{
+
+		//				string Sms = "Your Challan no. " + result + " of Lot no " + Session["SCHL"].ToString() + " successfully generated and valid till Dt " + CM.CHLNVDATE + ". Regards PSEB";
+		//				string tempid = "1007161586293060875";
+		//				string getSms = new AbstractLayer.DBClass().gosmsPsebforschool(SchoolMobile, Sms, tempid);
+		//				//--For Showing Message---------//
+		//				return View(new { ChallanId = result });
+		//				//return RedirectToAction("GenerateChallaan", "Home", new { ChallanId = result });
+
+
+		//			}
+
+		//			return View(new { ChallanId = result });
+		//			//return RedirectToAction("GenerateChallaan", "Home", new { ChallanId = result });
+
+
+		//		}
+		//	}
+		//	catch (Exception e)
+		//	{
+		//		return Json(new { success = false });
+		//	}
+
+		//	return View();
+		//}
+
+
 		public ActionResult ProcessCheckedItems(FeeOpenModel _feeOpen, FormCollection frm)
 
 		{
@@ -6237,16 +6443,18 @@ namespace PSEBONLINE.Controllers
 
 						totalFee += int.Parse(values[0]);
 						ExamTotalFee += int.Parse(values[1]);
-						StudentList.Add(values[2]);
+						//StudentList.Add(values[2]);
+						StudentList.Add(values[12]);
 						CM.SCHLREGID = Session["SCHL"].ToString();
 						CM.SchoolCode = Session["SCHL"].ToString();
-						CM.addfee += int.Parse(values[3]); // AdmissionFee / ADDFEE
-						CM.latefee += int.Parse(values[4]);
-						CM.prosfee += int.Parse(values[5]);
-						CM.addsubfee += int.Parse(values[6]);
-						CM.regfee += int.Parse(values[7]);
-						CM.OpenExamFee += int.Parse(values[8]);
-						CM.OpenLateFee += int.Parse(values[9]);
+						lastpaidFee += int.Parse(values[11]);
+						//CM.addfee += int.Parse(values[3]); // AdmissionFee / ADDFEE
+						//CM.latefee += int.Parse(values[4]);
+						//CM.prosfee += int.Parse(values[5]);
+						//CM.addsubfee += int.Parse(values[6]);
+						//CM.regfee += int.Parse(values[7]);
+						//CM.OpenExamFee += int.Parse(values[8]);
+						//CM.OpenLateFee += int.Parse(values[9]);
 
 						//CM.FEECAT = values[13];
 						//CM.FEECODE = values[14];
@@ -6259,17 +6467,19 @@ namespace PSEBONLINE.Controllers
 						//CM.type = "candt";
 						//CM.ChallanVDateN =  DateTime.Parse(values[17]);
 						//CM.CHLNVDATE = values[18];
-						lastpaidFee += int.Parse(values[10]);
+						//lastpaidFee += int.Parse(values[10]);
+
 
 						// Now you have both the ID and Name for the selected item
 						// Do whatever you need with them
 					}
 				}
-				TOTFEE = totalFee + ExamTotalFee;
+				//TOTFEE = totalFee + ExamTotalFee;
+				TOTFEE = lastpaidFee;
 				CM.FeeStudentList = string.Join(",", StudentList.ToList());
 				CM.FEECODE = "40";
 				CM.BCODE = _feeOpen.feeopenData.BankCode;
-				CM.TOTFEE = TOTFEE - lastpaidFee;
+				CM.TOTFEE = TOTFEE;
 
 				CM.LumsumFine = Convert.ToInt32(0);
 				CM.LSFRemarks = "";
@@ -6280,11 +6490,11 @@ namespace PSEBONLINE.Controllers
 				{
 					CM.ChallanVDateN = dateselected;
 					CM.CHLNVDATE = dateselected.ToString("dd/MM/yyyy");
-					if (CM.BCODE == "302")
+					if (CM.BCODE == "301")
 					{
 						CM.BANK = "HDFC Bank";
 					}
-					if (CM.BCODE == "301")
+					if (CM.BCODE == "302")
 					{
 						CM.BANK = "ATOM";
 					}
@@ -6360,6 +6570,7 @@ namespace PSEBONLINE.Controllers
 						string tempid = "1007161586293060875";
 						string getSms = new AbstractLayer.DBClass().gosmsPsebforschool(SchoolMobile, Sms, tempid);
 						//--For Showing Message---------//
+						ViewBag.chlnmsg = Sms;
 						return View(new { ChallanId = result });
 						//return RedirectToAction("GenerateChallaan", "Home", new { ChallanId = result });
 
@@ -6379,7 +6590,6 @@ namespace PSEBONLINE.Controllers
 
 			return View();
 		}
-
 		#endregion
 
 	}

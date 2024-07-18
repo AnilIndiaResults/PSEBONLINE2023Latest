@@ -6339,7 +6339,10 @@ namespace PSEBONLINE.Controllers
                 var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
                 ViewBag.MyClass = itemClass.ToList();
 
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" }, 
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
                 //List<AttendanceAdminReport> obj = new List<AttendanceAdminReport>();
                 //obj = _context.AttendanceAdmin.ToList();
@@ -6374,7 +6377,10 @@ namespace PSEBONLINE.Controllers
                 var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
                 ViewBag.MyClass = itemClass.ToList();
 
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" }, 
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
                 ViewBag.ClassSelected = frm["Class"].ToString();
                 string sCls = frm["Class"].ToString();
@@ -8030,10 +8036,599 @@ namespace PSEBONLINE.Controllers
         }
 
 
-        
+		public JsonResult GetSubjectClassWise(string selectclasseValue) // Calling on http post (on Submit)
+		{
+
+			List<SelectListItem> sublist10th = new List<SelectListItem>();
+
+			string classe = selectclasseValue;
+
+			DataSet ds1 = new AbstractLayer.RegistrationDB().Matric_Subject(classe);
+
+			List<SelectListItem> class2 = new List<SelectListItem>();
+			foreach (DataRow dr in ds1.Tables[0].Rows)
+			{
+				string subnm = dr["subnm"] != DBNull.Value ? dr["subnm"].ToString() : "";
+				string sub = dr["sub"] != DBNull.Value ? dr["sub"].ToString() : "";
+				class2.Add(new SelectListItem { Text = subnm, Value = sub });
+			}
+
+
+			ViewBag.MySubject = new SelectList(class2, "Value", "Text");
+
+			sublist10th = class2;
+
+			return Json(new { sublist10th = class2 }, JsonRequestBehavior.AllowGet);
+
+		}
+
+
+
+		public ActionResult StudentAttendanceStatus(AttendanceAdminDetailsReport rpModel)
+		{
+
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+				SchoolModels sm = new SchoolModels();
+				AbstractLayer.SchoolDB objDBsub = new AbstractLayer.SchoolDB();
+				//sm.ExamSub = "";
+
+				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
+				ViewBag.MyClass = itemClass.ToList();
+
+				var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" },
+                    //new { ID = "O", Name = "OPEN" },
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+				ViewBag.MyRP = itemRP.ToList();
+
+				var itemStatus = new SelectList(new[] { new { ID = "P", Name = "Pending" }, new { ID = "F", Name = "Final Submitted" }, }, "ID", "Name", 1);
+				ViewBag.MyStatus = itemStatus.ToList();
+
+
+				//ViewBag.MySubject = ViewBag.MySubject ?? new List<SelectListItem>();
+				ViewBag.MyExamDate = new List<SelectListItem>();
+				ViewBag.MySubject = ViewBag.MySubject ?? new List<SelectListItem>();
 
 
 
 
-    }
+				return View(rpModel);
+			}
+			catch (Exception ex)
+			{
+				return View(rpModel);
+			}
+
+		}
+		[AdminLoginCheckFilter]
+		[HttpPost]
+		public ActionResult StudentAttendanceStatus(FormCollection frm)
+		{
+			AttendanceAdminDetailsReport rpModel = new AttendanceAdminDetailsReport();
+
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+
+				string centercode = frm["centercode"].ToString();
+				string schoolcode = frm["schoolcode"].ToString();
+				//string subjectcode = frm["subjectcode"].ToString();
+				string cls = frm["Class"].ToString();
+				string category = frm["SelRP"].ToString();
+				string ExamDate = frm["ExamDate"].ToString();
+				string Status = frm["Status"].ToString();
+				string Subject = frm["ExamSube"].ToString();
+
+				ViewBag.SelectedClass = cls;
+				ViewBag.SelectedRP = category;
+				ViewBag.centercode = centercode;
+				//ViewBag.subjectcode = subjectcode;
+				ViewBag.schoolcode = schoolcode;
+				ViewBag.SelectedExamDate = ExamDate;
+				ViewBag.SelectedStatus = Status;
+				ViewBag.SelectedSubject = Subject;
+
+				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
+				ViewBag.MyClass = itemClass.ToList();
+
+				var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" },
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+				ViewBag.MyRP = itemRP.ToList();
+				ViewBag.ClassSelected = frm["Class"].ToString();
+
+				var itemStatus = new SelectList(new[] { new { ID = "P", Name = "Pending" }, new { ID = "F", Name = "Final Submitted" }, }, "ID", "Name", 1);
+				ViewBag.MyStatus = itemStatus.ToList();
+
+				ViewBag.MyExamDate = ViewBag.MyExamDate ?? new List<SelectListItem>();
+				ViewBag.MySubject = ViewBag.MySubject ?? new List<SelectListItem>();
+
+
+
+
+				string sCls = frm["Class"].ToString();
+				//List<AttendanceReportCount> obj = new List<AttendanceReportCount>();.
+				DataSet ds = new DataSet();
+				//obj = _context.AttendanceAdmin.Where(s => s.cls == (sCls == "" ? s.cls : sCls) && s.centrecode == (centercode == "" ? s.centrecode : centercode) && s.rp == (category == "" ? s.rp : category)).ToList();
+				rpModel.StoreAllData = AbstractLayer.AttendanceDB.GetAllDataStudentAttendanceStatus(centercode, schoolcode, sCls, category, ExamDate, Status, Subject);
+				//AttendenceSummaryDetailsSPAdmin
+
+
+				if (frm["Export"] != null)
+				{
+					string fileName1 = "AttendanceReport_Data_" + DateTime.Now.ToString("ddMMyyyyHHmm") + ".xls";
+					using (XLWorkbook wb = new XLWorkbook())
+					{
+						//List<dynamic> dynamicList = ConvertDataTableToList(rpModel.StoreAllData.Tables[0]);
+						List<AttendanceAdminDetailsReport> AttendanceAdminDetailsReport = ConvertDataTableToList(rpModel.StoreAllData.Tables[0]);
+
+						wb.Worksheets.Add(ToDataTable(AttendanceAdminDetailsReport));
+						wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+						wb.Style.Font.Bold = true;
+						Response.Clear();
+						Response.Buffer = true;
+						Response.Charset = "";
+						Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+						Response.AddHeader("content-disposition", "attachment;filename=" + fileName1 + "");
+						using (MemoryStream MyMemoryStream = new MemoryStream())
+						{
+							wb.SaveAs(MyMemoryStream);
+							MyMemoryStream.WriteTo(Response.OutputStream);
+							Response.Flush();
+							Response.End();
+						}
+					}
+				}
+
+				return View(rpModel);
+			}
+			catch (Exception ex)
+			{
+				return View(rpModel);
+			}
+
+		}
+
+
+		public List<AttendanceAdminDetailsReport> ConvertDataTableToList(DataTable dataTable)
+		{
+			List<AttendanceAdminDetailsReport> AttendanceAdminDetailsReport = new List<AttendanceAdminDetailsReport>();
+			AttendanceAdminDetailsReport AttendanceData = new AttendanceAdminDetailsReport();
+
+
+
+			// Iterate through the rows of the DataTable
+			foreach (DataRow row in dataTable.Rows)
+			{
+				AttendanceData.distnm = row["distnm"].ToString();
+				AttendanceData.schl = row["schl"].ToString();
+				AttendanceData.schle = row["schle"].ToString();
+				AttendanceData.centrecode = row["centrecode"].ToString();
+				AttendanceData.cls = row["cls"].ToString();
+				AttendanceData.rp = row["rp"].ToString();
+				AttendanceData.RPname = row["RPname"].ToString();
+				AttendanceData.subcode = row["subcode"].ToString();
+				AttendanceData.SubNM = row["SubNM"].ToString();
+				AttendanceData.Exmdate = row["Exmdate"].ToString();
+				AttendanceData.Total = Convert.ToInt32(row["Total"]);
+				AttendanceData.Present = Convert.ToInt32(row["Present"]);
+				AttendanceData.Absent = Convert.ToInt32(row["Absent"]);
+				AttendanceData.Cancel = Convert.ToInt32(row["Cancel"]);
+				AttendanceData.UMC = Convert.ToInt32(row["UMC"]);
+				AttendanceData.clsName = row["clsName"].ToString();
+				AttendanceData.examBatch = row["examBatch"].ToString();
+				AttendanceData.memoNumber = row["memoNumber"].ToString();
+				AttendanceData.statusNM = row["statusNM"].ToString();
+				AttendanceData.remarks = row["remarks"].ToString();
+
+
+
+				// Iterate through the columns of the DataTable
+
+
+				// Add the dynamic object to the list
+				AttendanceAdminDetailsReport.Add(AttendanceData);
+			}
+
+			return AttendanceAdminDetailsReport;
+		}
+
+		public JsonResult GetExamDateClassWise(string selectclasseValue) // Calling on http post (on Submit)
+		{
+
+			List<SelectListItem> ExamDate1 = new List<SelectListItem>();
+
+			string classe = selectclasseValue;
+
+			DataSet ds1 = new AbstractLayer.RegistrationDB().GetExamDate(classe);
+
+			List<SelectListItem> ExamDateList = new List<SelectListItem>();
+			foreach (DataRow dr in ds1.Tables[0].Rows)
+			{
+				string examdatevalue = dr["examdate"] != DBNull.Value ? dr["examdate"].ToString() : "";
+				string examdatetext = dr["examdate"] != DBNull.Value ? dr["examdate"].ToString() : "";
+				ExamDateList.Add(new SelectListItem { Text = examdatetext, Value = examdatevalue });
+			}
+
+
+			ViewBag.MyExamDate = new SelectList(ExamDateList, "Value", "Text");
+
+			ExamDate1 = ExamDateList;
+
+			return Json(new { ExamDate1 = ExamDateList }, JsonRequestBehavior.AllowGet);
+
+		}
+
+		public ActionResult AttendanceSummaryReport()
+		{
+
+			AttendanceAdminDtl obj = new AttendanceAdminDtl();
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+				SchoolModels sm = new SchoolModels();
+				AbstractLayer.SchoolDB objDBsub = new AbstractLayer.SchoolDB();
+				//sm.ExamSub = "";
+
+				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
+				ViewBag.MyClass = itemClass.ToList();
+
+				var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" },
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+				ViewBag.MyRP = itemRP.ToList();
+				var itemAttendanceStatus = new SelectList(new[] { new { ID = "All", Name = "All" }, new { ID = "A", Name = "Absent" }, new { ID = "UMC", Name = "UMC" }, new { ID = "Cancel", Name = "Cancel" }, }, "ID", "Name", 1);
+				ViewBag.AttendanceStatus = itemAttendanceStatus.ToList();
+
+				string adminId = Session["AdminId"].ToString().Trim();
+				DataSet ds = new DataSet();
+				ds = objDB.RegistrationReport(adminId);
+
+				List<SelectListItem> districts = new List<SelectListItem>();
+
+				if (ds.Tables.Count > 1)
+				{
+					if (ds.Tables[1].Rows.Count > 0)
+					{
+						foreach (DataRow dr in ds.Tables[1].Rows)
+						{
+							districts.Add(new SelectListItem { Text = dr["DISTNM"].ToString(), Value = dr["DIST"].ToString() });
+						}
+					}
+				}
+
+				ViewBag.districts = districts;
+				TempData["districts"] = districts;
+				ViewBag.MySubject = ViewBag.SelectClass ?? new List<SelectListItem>();
+
+
+				return View(obj);
+			}
+			catch (Exception ex)
+			{
+				return View(obj);
+			}
+
+		}
+		[AdminLoginCheckFilter]
+		[HttpPost]
+		public ActionResult AttendanceSummaryReport(FormCollection frm)
+		{
+			AttendanceAdminDtl obj = new AttendanceAdminDtl();
+
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+
+				//string centercode = frm["centercode"].ToString();
+				string cls = frm["Class"].ToString();
+				string category = frm["SelRP"].ToString();
+				string Subject = frm["ExamSube"].ToString();
+				string District = frm["district"].ToString();
+				string SelAction = frm["SelAction"].ToString();
+				ViewBag.SelectedClass = cls;
+				ViewBag.SelectedRP = category;
+				//ViewBag.centercode = centercode;
+				ViewBag.SelectedSubject = Subject;
+				ViewBag.SelectedDist = District;
+				ViewBag.SelectedAction = SelAction;
+
+				var itemClass = new SelectList(new[] { new { ID = "12", Name = "SrSec" }, new { ID = "10", Name = "Matric" }, }, "ID", "Name", 1);
+				ViewBag.MyClass = itemClass.ToList();
+
+				var itemRP = new SelectList(new[] { 
+                    //new { ID = "R", Name = "REG" }, 
+                    //new { ID = "O", Name = "OPEN" },
+                    new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+				ViewBag.MyRP = itemRP.ToList();
+				ViewBag.ClassSelected = frm["Class"].ToString();
+
+				var itemAttendanceStatus = new SelectList(new[] { new { ID = "All", Name = "All" }, new { ID = "A", Name = "Absent" }, new { ID = "UMC", Name = "UMC" }, new { ID = "Cancel", Name = "Cancel" }, }, "ID", "Name", 1);
+				ViewBag.AttendanceStatus = itemAttendanceStatus.ToList();
+
+				string adminId = Session["AdminId"].ToString().Trim();
+				DataSet ds = new DataSet();
+				ds = objDB.RegistrationReport(adminId);
+
+				List<SelectListItem> districts = new List<SelectListItem>();
+
+				if (ds.Tables.Count > 1)
+				{
+					if (ds.Tables[1].Rows.Count > 0)
+					{
+						foreach (DataRow dr in ds.Tables[1].Rows)
+						{
+							districts.Add(new SelectListItem { Text = dr["DISTNM"].ToString(), Value = dr["DIST"].ToString() });
+						}
+					}
+				}
+				ViewBag.districts = districts;
+				TempData["districts"] = districts;
+				ViewBag.MySubject = ViewBag.MySubject ?? new List<SelectListItem>();
+
+				string sCls = frm["Class"].ToString();
+				//obj = _context.AttendanceAdmin.Where(s => s.cls == (sCls == "" ? s.cls : sCls) && s.centrecode == (centercode == "" ? s.centrecode : centercode) && s.rp == (category == "" ? s.rp : category)).ToList();
+				DataSet ds1 = new DataSet();
+				obj.StoreAllData = AbstractLayer.AttendanceDB.AttendenceSummaryReport(sCls, category, Subject, District, SelAction);
+				//obj.storeAllData = ds1.Tables[0];
+				//AttendenceSummaryDetailsSPAdmin
+
+				if (obj.StoreAllData.Tables[1].Rows.Count > 0)
+				{
+					ViewBag.classs = obj.StoreAllData.Tables[1].Rows[0]["clsName"].ToString();
+					ViewBag.examDate = obj.StoreAllData.Tables[1].Rows[0]["examDate"].ToString();
+					ViewBag.subCode = obj.StoreAllData.Tables[1].Rows[0]["subCode"].ToString();
+					ViewBag.SubNM = obj.StoreAllData.Tables[1].Rows[0]["SubNM"].ToString();
+					ViewBag.Total = obj.StoreAllData.Tables[1].Rows[0]["TOTAL"].ToString();
+					ViewBag.Present = obj.StoreAllData.Tables[1].Rows[0]["PRESENT"].ToString();
+					ViewBag.Absent = obj.StoreAllData.Tables[1].Rows[0]["ABSENTS"].ToString();
+					ViewBag.Cancel = obj.StoreAllData.Tables[1].Rows[0]["Cancel"].ToString();
+					ViewBag.UMC = obj.StoreAllData.Tables[1].Rows[0]["UMC"].ToString();
+					ViewBag.Pending = obj.StoreAllData.Tables[1].Rows[0]["Pending"].ToString();
+				}
+
+				//if (ds1.Tables[0].Rows.Count > 0)
+				//{
+				//    var itemSubUType = StaticDB.DataTableToList<AttendanceAdminDetailsReport_New>(ds1.Tables[0]);
+				//    obj.AttendanceAdminDetailsReport_New = itemSubUType.ToList();
+				//}
+				//foreach (var item in obj.AttendanceAdminDetailsReport_New)
+				//{
+				//    ViewBag.classs = item.clsName;
+				//}
+				////List<AttendanceReportCount> obj2 = new List<AttendanceReportCount>();
+				//if (ds1.Tables[1].Rows.Count > 0)
+				//{
+				//    var itemSubUType2 = StaticDB.DataTableToList<AttendanceReportDetailsCount>(ds1.Tables[1]);
+				//    obj.AttendanceReportDetailsCount = itemSubUType2.ToList();
+				//}
+				//foreach (var item2 in obj.AttendanceReportDetailsCount)
+				//{
+				//    ViewBag.Total = item2.Total;
+				//    ViewBag.Present = item2.Present;
+				//    ViewBag.Absent = item2.Absent;
+				//    ViewBag.Cancel = item2.Cancel;
+				//    ViewBag.UMC = item2.UMC;
+				//}
+
+				////List<AttendanceReportCandDetails> obj3 = new List<AttendanceReportCandDetails>();
+				//if (ds1.Tables[2].Rows.Count > 0)
+				//{
+				//    var itemSubUType3 = StaticDB.DataTableToList<AttendanceReportCandidateDetails>(ds1.Tables[2]);
+				//    obj.AttendanceReportCandidateDetails = itemSubUType3.ToList();
+				//}
+				//foreach (var item3 in obj.AttendanceReportCandidateDetails)
+				//{
+				//    ViewBag.rollno = item3.roll;
+				//    ViewBag.cand_name = item3.Candi_Name;
+				//    ViewBag.fatner_name = item3.Father_Name;
+
+
+				//}
+
+
+				if (frm["Export"] != null)
+				{
+					string fileName1 = "AtteRe" + DateTime.Now.ToString("ddMMyyyyHHmm") + ".xls";
+					using (XLWorkbook wb = new XLWorkbook())
+					{
+						List<AttendanceAdminDtl> AttendanceAdminDetails = ConvertDataTableToList2(obj.StoreAllData.Tables[0]);
+
+
+						wb.Worksheets.Add(ToDataTable(AttendanceAdminDetails));
+						wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+						wb.Style.Font.Bold = true;
+						Response.Clear();
+						Response.Buffer = true;
+						Response.Charset = "";
+						Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+						Response.AddHeader("content-disposition", "attachment;filename=" + fileName1 + "");
+						using (MemoryStream MyMemoryStream = new MemoryStream())
+						{
+							wb.SaveAs(MyMemoryStream);
+							MyMemoryStream.WriteTo(Response.OutputStream);
+							Response.Flush();
+							Response.End();
+						}
+					}
+				}
+
+				return View(obj);
+			}
+			catch (Exception ex)
+			{
+				return View(obj);
+			}
+
+		}
+
+		public List<AttendanceAdminDtl> ConvertDataTableToList2(DataTable dataTable)
+		{
+			List<AttendanceAdminDtl> AttendanceAdminDtl = new List<AttendanceAdminDtl>();
+
+
+
+			// Iterate through the rows of the DataTable
+			foreach (DataRow row in dataTable.Rows)
+			{
+				AttendanceAdminDtl AttendanceData = new AttendanceAdminDtl();
+
+				AttendanceData.cls = row["cls"].ToString();
+				AttendanceData.rollNo = row["rollNo"].ToString();
+				AttendanceData.subcode = row["SubCode"].ToString();
+				AttendanceData.subName = row["SubName"].ToString();
+				AttendanceData.studentId = row["studentId"].ToString();
+				AttendanceData.candidateName = row["candidateName"].ToString();
+				AttendanceData.motherName = row["motherName"].ToString();
+				AttendanceData.fatherName = row["fatherName"].ToString();
+				AttendanceData.dob = row["dob"].ToString();
+				AttendanceData.differentlyAbled = row["differentlyAbled"].ToString();
+				AttendanceData.attendanceStatus = row["attendanceStatus"].ToString();
+
+
+
+
+				// Iterate through the columns of the DataTable
+
+
+				// Add the dynamic object to the list
+				AttendanceAdminDtl.Add(AttendanceData);
+			}
+
+			return AttendanceAdminDtl;
+		}
+
+		public ActionResult MiddlePrimaryFeeReport(AttendanceAdminDetailsReport rpModel)
+		{
+
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+
+				DataSet ds = new DataSet();
+
+				rpModel.StoreAllData = AbstractLayer.AttendanceDB.GetAllDataMiddlePrimaryFeeReport();
+				//AttendenceSummaryDetailsSPAdmin
+
+
+
+
+
+				return View(rpModel);
+			}
+			catch (Exception ex)
+			{
+				return View(rpModel);
+			}
+
+		}
+
+		public ActionResult CentreHeadDetail(CentreHeadDetailModel rpModel)
+		{
+
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+
+				DataSet ds = new DataSet();
+
+				rpModel.StoreAllData = AbstractLayer.AttendanceDB.GetAllDataCentreHeadDetail();
+				//AttendenceSummaryDetailsSPAdmin
+
+
+
+
+
+				return View(rpModel);
+			}
+			catch (Exception ex)
+			{
+				return View(rpModel);
+			}
+
+		}
+
+		public ActionResult DownloadImage()
+		{
+
+			DownloadImageModel obj = new DownloadImageModel();
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+
+
+
+				return View(obj);
+			}
+			catch (Exception ex)
+			{
+				return View(obj);
+			}
+
+		}
+		[AdminLoginCheckFilter]
+		[HttpPost]
+		public ActionResult DownloadImage(FormCollection frm)
+		{
+			DownloadImageModel obj = new DownloadImageModel();
+
+			try
+			{
+				AdminLoginSession adminLoginSession = (AdminLoginSession)Session["AdminLoginSession"];
+				if (Session["AdminLoginSession"] == null)
+				{
+					return RedirectToAction("Index", "Login");
+				}
+
+				string rollno = frm["rollno"].ToString();
+
+
+				ViewBag.rollno = rollno;
+
+				DataSet ds1 = new DataSet();
+				obj.StoreAllData = AbstractLayer.AttendanceDB.DownloadImageData(rollno);
+
+
+
+				return View(obj);
+			}
+			catch (Exception ex)
+			{
+				return View(obj);
+			}
+
+		}
+	}
 }

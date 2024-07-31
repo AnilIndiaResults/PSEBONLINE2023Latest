@@ -1,6 +1,9 @@
 ﻿@model PSEBONLINE.Models.SchoolModels
+
 @{ Layout = "~/Views/Shared/_Headerui.cshtml"; }
 
+@*<link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/cardprintr.css" />
+    <link rel="stylesheet" href="https://registration2022.pseb.ac.in/Content/print-4p.css" />*@
 @using (Html.BeginForm("schoolProfile", "AssociateCommuni", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
 
@@ -12,7 +15,7 @@
             @Html.Partial("_AssociateMenu")
         </div>
 
-        <div class="col-md-9 overflow-auto" style="max-height:400px">
+        <div class="col-md-9 overflow-auto" style="max-height:400px;overflow:auto;">
             <h4>School Profile Details</h4>
             <div>
                 @Html.HiddenFor(a => a.id)
@@ -68,7 +71,56 @@
                     <label class="kdsfont">@Html.DisplayFor(a => a.ADDRESSP, new { })</label>
 
                 </div>
+
+                <div class="col-md-2">
+                    Is Your School Also Affiliated With PSEB
+                </div>
+                <div class="col-md-4">
+                    @{
+                        List<SelectListItem> catgilist = new List<SelectListItem>();
+                        catgilist.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+                        catgilist.Add(new SelectListItem { Text = "YES", Value = "YES" });
+                        catgilist.Add(new SelectListItem { Text = "NO", Value = "NO" });
+
+                    }
+
+                    @Html.DropDownListFor(model => model.AssociateIsPseb, catgilist, new { id = "isPsebReg" })
+
+                </div>
+                <div id="psebschlcode">
+                    <div class="col-md-2">
+                        Enter PSEB Code
+                    </div>
+                    <div class="col-md-4">
+                        @*@Html.TextBox("psebCode", null, new { id = "psebCode", placeholder = "Enter Valid School Code" })*@
+                        @*<label>*@
+                        @Html.TextBoxFor(model => model.Associateschlcode, new { id = "psebCode", @maxlength = "7", onkeypress = "return isNumberKey(event);", onchange = "SchoolCodeAvailability()", placeholder = "Enter Valid School Code" })
+                        @Html.ValidationMessageFor(model => model.SCHL, "", new { @class = "text-danger" })
+                        <span id="lblStatus"></span>
+                        @*</label>*@
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div id="schlname">
+                    <div class="col-md-2">School Name<sup style="color:red;font-size:15px;">*</sup></div>
+                    <div class="col-md-10">
+                        @*<label ></label>*@
+
+
+                        @Html.TextBoxFor(m => m.Associateschlname, new { id = "validschle", @disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Associateschlname, new { id = "validschleForSave" })
+                        @*@Html.HiddenFor(m => m.Associateschlname, new { id = "validschlee" })*@
+
+
+
+                    </div>
+                </div>
+
             </div>
+
+
+
             <div class="clearfix"></div>
             <h4>Class/ Stream Details</h4>
             <div class="row">
@@ -332,22 +384,22 @@
             </div>
 
             <div class="clearfix"></div>
-            <h4>Staff / Teacher Details</h4>
+            @*<h4>Staff / Teacher Details</h4>*@
             <div class="row">
-                <div class="col-md-2">
-                    Total Teachers <span class="rqf">*</span>
-                </div>
-                <div class="col-md-4 ">
-                    <label>@ViewBag.TotalTeachers</label>
-                </div>
-                <div class="col-md-6 right">
-                    <a href="/SchoolProfile/DisplaySchoolStaffDetails" class="btn" target="_blank">Click here to View Teacher List</a>
+                @*<div class="col-md-2">
+                        Total Teachers <span class="rqf">*</span>
+                    </div>*@
+                @*<div class="col-md-4 ">
+                        <label>@ViewBag.TotalTeachers</label>
+                    </div>*@
+                @*<div class="col-md-6 right">
+                        <a href="/SchoolProfile/DisplaySchoolStaffDetails" class="btn" target="_blank">Click here to View Teacher List</a>
 
-                </div>
-                <div class="clearfix"></div>
+                    </div>*@
+                <!--<div class="clearfix"></div>-->
                 @* <div class="col-md-12"><span class="rqf">Attach appointment letter/Qualification Certificate/Salary Details/ Experience/Agreement of new appointed teachers only with printed hard copy.</span></div>*@
-                <div class="col-md-12"><span class="rqf">If you want to Add/Modify/View Staff list, then click above button "Click here to view teacher list"</span></div>
-                <div class="clearfix"></div>
+                <!--<div class="col-md-12"><span class="rqf">If you want to Add/Modify/View Staff list, then click above button "Click here to view teacher list"</span></div>
+                <div class="clearfix"></div>-->
                 <div class="col-md-12">
                     <span class="rqf">
                         &nbsp;<br />
@@ -356,7 +408,14 @@
                 </div>
             </div>
             <div class="clearfix"></div>
-            <div class="col-md-12 text-center tbp"> <a href="/SchoolProfile/Update_School_Information" class="btn">Click Here to Update School Information</a> <a href="/AssociateCommuni/Index" class="btn">Back</a></div>
+            <div class="col-md-12 text-center tbp">
+                @if (Session["IsFormLock"].ToString() == "0")
+                {
+                    <input type="submit" class="btn btn-primary" value="Click Here to Update School Information" onclick="return valForm();" />
+                }
+                @*<a href="/SchoolProfile/Update_School_Information" class="btn" onclick="return valForm();">Click Here to Update School Information</a>*@
+                <a href="/AssociateCommuni/Index" class="btn">Back</a>
+            </div>
         </div>
 
 
@@ -809,10 +868,215 @@
 
 
 @{ if (ViewData["resultSVF"] != null)
-                {
-                    if (ViewData["resultSVF"].ToString() == "2")
-                    {
-    <script type="text/javascript" language="javascript">alert("Data Not Found");</script> }
-                } }
+    {
+        if (ViewData["resultSVF"].ToString() == "2")
+        {
+            <script type="text/javascript" language="javascript">alert("Data Not Found");</script>
+        }
+    } }
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+
+
+
+
+
+
+    $(document).ready(function () {
+        var isPsebReg = $("#isPsebReg").val();
+        $("#schlname").css("display", "none");
+        /* $("#psebCode").val('');*/
+        $("#validschle").val('');
+
+
+        console.log("isPsebReg", isPsebReg);
+        if (isPsebReg != "" && isPsebReg != "NO" && isPsebReg != "0") {
+
+            $("#psebschlcode").css("display", "block");
+            /* $("#psebCode").val('');*/
+
+        }
+        else {
+            $("#psebschlcode").css("display", "none");
+
+            clear()
+        }
+
+
+    });
+
+    $("#isPsebReg").change(function () {
+        var isPsebReg1 = $("#isPsebReg").val();
+        console.log("isPsebReg change", isPsebReg1);
+        if (isPsebReg1 == "" || isPsebReg1 == "NO" || isPsebReg1 == "0") {
+            $("#psebschlcode").css("display", "none");
+            $("#schlname").css("display", "none");
+            $("#validschle").val('');
+
+        }
+        else {
+            $("#psebschlcode").css("display", "block");
+            $("#psebCode").val('');
+            clear()
+        }
+    });
+
+    function clear() {
+        $("#validschle").val('');
+        $("#validschleForSave").val('');
+
+
+        /*$("#SCHLE").prop("readonly", false);*/
+
+    }
+
+
+    function SchoolCodeAvailability() { //This function call on text change.
+
+        var selectedID = $("#psebCode").val();
+        console.log("psebCode change", selectedID);
+        $.ajax({
+            type: "POST",
+            url: "/AssociateCommuni/CheckSchoolCode", // this for calling the web method function in cs code.
+            data: '{schoolcode: "' + $("#psebCode").val() + '" }',// user name or email value
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccess,
+            failure: function (response) {
+                // alert(response);
+            }
+
+        });
+    }
+
+
+    function OnSuccess(response) {
+        console.log("response", response)
+        var msg = $('#lblStatus');
+        msg.text("");
+        switch (response.oid) {
+            case "0":
+                clear();
+                msg.css("slidedown", "slow");
+                msg.css("color", "red");
+                /*   alert("Invalid School Code");*/
+                $("#lblStatus").text("Invalid School Code");
+                msg.text("Invalid School Code");
+                $("#schlname").css("display", "none");
+
+                break;
+            case "5":
+                clear();
+
+                msg.text("Invalid School Code");
+                msg.css("slidedown", "slow");
+                msg.css("color", "red");
+                msg.text("School Code Already Exists");
+                $("#schlname").css("display", "none");
+
+                break;
+            case "1":
+                msg.css("slidedown", "slow");
+                msg.css("color", "green");
+                $("#schlname").css("display", "block");
+                //  msg.text("Valid School Code");
+                console.log(response);
+
+
+                $("#validschle").val(response.sm.SCHLNME);
+                $("#validschleForSave").val(response.sm.SCHLNME);
+
+
+                /*$("#validschle").prop("readonly", true);*/
+                msg.text("Valid School Code , " + response.sm.SCHL + "");
+
+
+                break;
+        }
+    }
+
+
+
+</script>
+
+
+
+<script type="text/javascript">
+
+
+
+    function valForm() {
+
+
+        var isPsebReg1 = $("#isPsebReg").val();
+        var selectschlcode = $("#psebCode").val();
+        var selectschoolname = $("#validschle").val();
+        console.log("selectschlcode", selectschlcode)
+        console.log("selectschoolname", selectschoolname)
+        console.log("isPsebReg1", isPsebReg1)
+
+
+        if (isPsebReg1 == "YES") {
+            if (selectschlcode == "" || selectschlcode == "NO" || selectschlcode == "0") {
+                alert("Please Enter School Code")
+                document.getElementById("psebCode").focus();
+                return false;
+            }
+            if (selectschoolname == "" || selectschoolname == "NO" || selectschoolname == "0") {
+                alert("Please Verify SchoolName")
+                document.getElementById("validschle").focus();
+                return false;
+            }
+
+
+        }
+
+
+
+    }
+
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode >= 48 && charCode <= 57) || (charCode == 9) || (charCode == 8) || (charCode == 46)) {
+            return true;
+        }
+        else {
+            alert("Invalid character...Enter Only Number!!");
+            return false;
+        }
+    }
+
+</script>
+
+@{ if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                    window.location.href = '@Url.Action("SchoolProfile", "AssociateCommuni")';
+                </script>
+            }
+
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                                                    //alert('ViewBag.Mesaage');
+                </script>
+            }
+
+        }
+    }
+}
 
 

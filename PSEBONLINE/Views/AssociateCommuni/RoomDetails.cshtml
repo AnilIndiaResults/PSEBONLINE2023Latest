@@ -1,13 +1,10 @@
-﻿
-
-
-
-
-@model PSEBONLINE.Models.AssociateModel
+﻿@model PSEBONLINE.Models.AssociateModel
 @{ ViewBag.Title = "Building Safety Certificate Details";
     Layout = "~/Views/Shared/_Headerui.cshtml"; }
 @using (Html.BeginForm("RoomDetails", "AssociateCommuni", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
+
+
     <div class="row">
         <div class="col-md-12">@Html.Partial("_AssociateHeading")</div>
         <div class="clearfix"></div>
@@ -17,152 +14,187 @@
         <div class="col-md-9">
             <div class="row">
                 <div class="col-md-12"><h4>Room Details</h4></div>
+                <div class="col-md-12 text-right pb-4"><a href="" data-toggle="modal" data-target="#myModalAddRoomForm" class="btn">Add New</a></div>
                 <div class="col-md-12">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">Total Entry</th>
-                                <th scope="col"></th>
-                                <th scope="col">Total Rooms</th>
-                                <th scope="col"></th>
-                                <th scope="col">
-                                    Total Covered Area (Sq. Ft.)
-                                </th>
+                    @if (Model.RoomDetailsModelList != null)
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                @{
+                                    //int totalrooms = Model.RoomDetailsModelList.Sum(item => item.Quantity ?? 0);
 
-                                <th scope="col">
-                                </th>
-                                <th scope="col">
-                                </th>
-                                <th scope="col">
-                                </th>
-                            </tr>
-
-                            <tr>
-                                <th scope="col">Sr No.</th>
-                                <th scope="col">Room Type</th>
-                                <th scope="col">Floor Names</th>
-                                <th scope="col">Height</th>
-                                <th scope="col">
-                                    Width
-                                </th>
-
-                                <th scope="col">
-                                    Quantity
-                                </th>
-                                <th scope="col">
-                                    Area (Sq. Ft.)
-
-                                </th>
-                                <th scope="col">
-                                    Action
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.RoomDetailsModelList != null)
-                            {
-                                foreach (var room in Model.RoomDetailsModelList)
-                                {
-                                    <tr>
-                                        <td>@room.Id</td>
-                                        <td>@room.RoomType</td>
-                                        <td>@room.FloorName</td>
-                                        <td>@room.Height</td>
-                                        <td>@room.width</td>
-                                        <td>@room.Quantity</td>
-                                        <td>@room.Area</td>
-                                        <td> @Html.ActionLink("Delete", "DeleteRoomDetails", @room.Id)</td>
-
-
-                                    </tr>
+                                    int totalrooms = Model.RoomDetailsModelList.Sum(item => item.Quantity);
                                 }
+                                <tr>
+                                    <th scope="col">Total Entry</th>
+                                    <th scope="col"></th>
+                                    <th scope="col">Total Rooms: @totalrooms</th>
+                                    <th scope="col"></th>
+                                    <th scope="col">
+                                        Total Covered Area (Sq. Ft.)
+                                    </th>
 
-                            }
-                        </tbody>
-                    </table>
+                                    <th scope="col">
+                                    </th>
+                                    <th scope="col">
+                                    </th>
+                                    <th scope="col">
+                                    </th>
+                                </tr>
+
+                                <tr>
+                                    <th scope="col">Sr No.</th>
+                                    <th scope="col">Room Type</th>
+                                    <th scope="col">Floor Names</th>
+                                    <th scope="col">Height</th>
+                                    <th scope="col">
+                                        Width
+                                    </th>
+
+                                    <th scope="col">
+                                        Quantity
+                                    </th>
+                                    <th scope="col">
+                                        Area (Sq. Ft.)
+
+                                    </th>
+                                    <th scope="col">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RoomDetailsModelList != null)
+                                {
+                                    int Count = 0;
+                                    foreach (var room in Model.RoomDetailsModelList)
+                                    {
+                                        Count = Count + 1;
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@room.RoomType</td>
+                                            <td>@room.FloorName</td>
+                                            <td>@room.Height</td>
+                                            <td>@room.width</td>
+                                            <td>@room.Quantity</td>
+                                            <td>@room.Area</td>
+                                            <td>
+                                                @Html.ActionLink("Delete", "ActionDeleteRoomDetails", "AssociateCommuni", new { id = @room.Id, SCHL = @room.SCHL, act = "D" }, new { onclick = "return confirm('Are you sure want to Delete ?');" })
+                                            </td>
+
+
+                                        </tr>
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    }
+
+                    else
+                    {
+                            <h2>Record Not Found</h2>
+                        
+                    }
                 </div>
-
-
-                <div class="col-md-12">
-                    <div class="col-md-3">&nbsp Room Type<span class="rqf">*</span></div>
-                    <div class="col-md-5">@Html.DropDownListFor(a => a.RoomDetailsModel.RoomType, new SelectList(ViewBag.roomtype, "Value", "Text", ViewBag.Selectedroomtype), "---Select ---", new { @required = "required", @class = "" })</div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="col-md-3">&nbsp Floor Name<span class="rqf">*</span></div>
-                    <div class="col-md-5">@Html.DropDownListFor(a => a.RoomDetailsModel.FloorName, new SelectList(ViewBag.floorName, "Value", "Text", ViewBag.SelectedfloorName), "---Select ---", new { @required = "required", @class = "" })</div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="col-md-3">
-                        &nbsp Height (Sq. Ft.)
-                        <span class="rqf">*</span>
-                    </div>
-                    <div class="col-md-5">
-
-                         @Html.TextBoxFor(a => a.RoomDetailsModel.Height, new { @required = "required", @id = "height", @class = "form-control", @oninput = "this.value = this.value.replace(/[^0-9]/g, '');", @onkeydown = "handleKeyDown(event, 'height')" })
-                        @*<input type="text" asp-for="@Model.RoomDetailsModel.Height" value="" class="form-control" placeholder="Height" name="Height">*@
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="col-md-3">
-                        &nbsp Width (Sq. Ft.)
-                        <span class="rqf">*</span>
-                    </div>
-                    <div class="col-md-5">
-                        @Html.TextBoxFor(a => a.RoomDetailsModel.width, new { @required = "required", @id = "width", @class = "form-control", @oninput = "this.value = this.value.replace(/[^0-9]/g, '');", @onkeydown = "handleKeyDown(event, 'width')" })
-                        @*<input type="text" asp-for="@Model.RoomDetailsModel.width" value="" class="form-control" placeholder="width" name="width">*@
-
-                    </div>
-
-                </div>
-
-                <div class="col-md-12">
-                    <div class="col-md-3">
-                        &nbsp Quantity
-                        <span class="rqf">*</span>
-                    </div>
-                    <div class="col-md-5">
-                        @Html.TextBoxFor(a => a.RoomDetailsModel.Quantity, new { @required = "required", @id = "quantity", @oninput = "this.value = this.value.replace(/[^0-9]/g, '');", @class = "form-control", @onkeydown = "handleKeyDown(event, 'quantity')" })
-
-                        @* <input type="text" asp-for="@Model.RoomDetailsModel.Quantity" value="" class="form-control" placeholder="Quantity" name="Quantity">*@
-
-                    </div>
-
-                </div>
-
-                <div class="col-md-12">
-                    <div class="col-md-3">
-                        &nbsp Area
-                        <span class="rqf">*</span>
-                    </div>
-                    <div class="col-md-5">
-                        @Html.TextBoxFor(a => a.RoomDetailsModel.Area, new { @required = "required", @class = "form-control", @readonly = "readonly", @id = "area" })
-                        @Html.HiddenFor(a => a.RoomDetailsModel.SCHL, new {  @class = "form-control" })
-
-                        @* <input type="text" asp-for="@Model.RoomDetailsModel.Area" value="" class="form-control" placeholder="Area" name="Area">*@
-
-                    </div>
-                </div>
-
-
-                <div class="col-md-12">
-
-                    <div class="col-md-10 text-center">
-                        <input type="submit" class="btn btn-primary" value="Save" />
-                        @*@Html.ActionLink("Save", "SaveRoomDetails")*@
-                        @*<button @Html.ActionLink("DisplayText", "Index", "Home", class="btn btn-primary">Save</button>*@
-                    </div>
-                </div>
-
-
 
 
             </div>
 
+
         </div>
     </div>
+
+    <!--Add Room Form-->
+
+    <div class="modal fade" id="myModalAddRoomForm" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" style="width: 50%; position:unset">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3>Add New Room</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-5">&nbsp Room Type<span class="rqf">*</span></div>
+                            <div class="col-md-7">@Html.DropDownListFor(a => a.RoomDetailsModel.RoomType, new SelectList(ViewBag.roomtype, "Value", "Text", ViewBag.Selectedroomtype), "---Select ---", new { @required = "required", @class = "" })</div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-5">&nbsp Floor Name<span class="rqf">*</span></div>
+                            <div class="col-md-7">@Html.DropDownListFor(a => a.RoomDetailsModel.FloorName, new SelectList(ViewBag.floorName, "Value", "Text", ViewBag.SelectedfloorName), "---Select ---", new { @required = "required", @class = "" })</div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-5">
+                                &nbsp Height (Sq. Ft.)
+                                <span class="rqf">*</span>
+                            </div>
+                            <div class="col-md-7">
+
+                                @Html.TextBoxFor(a => a.RoomDetailsModel.Height, new { @required = "required", @id = "height", @class = "form-control", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '');" })
+                                @*<input type="text" asp-for="@Model.RoomDetailsModel.Height" value="" class="form-control" placeholder="Height" name="Height">*@
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-5">
+                                &nbsp Width (Sq. Ft.)
+                                <span class="rqf">*</span>
+                            </div>
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(a => a.RoomDetailsModel.width, new { @required = "required", @id = "width", @class = "form-control", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '');" })
+                                @*<input type="text" asp-for="@Model.RoomDetailsModel.width" value="" class="form-control" placeholder="width" name="width">*@
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-5">
+                                &nbsp Quantity
+                                <span class="rqf">*</span>
+                            </div>
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(a => a.RoomDetailsModel.Quantity, new { @required = "required", @id = "quantity", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '');", @class = "form-control" })
+
+                                @* <input type="text" asp-for="@Model.RoomDetailsModel.Quantity" value="" class="form-control" placeholder="Quantity" name="Quantity">*@
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-5">
+                                &nbsp Area
+                                <span class="rqf">*</span>
+                            </div>
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(a => a.RoomDetailsModel.Area, new { @required = "required", @class = "form-control ", @id = "Area" })
+                                @Html.HiddenFor(a => a.RoomDetailsModel.SCHL, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12 pt-3 pb-3">
+
+                            <div class="col-md-10 text-center">
+                                <input type="submit" class="btn btn-primary" value="Save" />
+                                @*@Html.ActionLink("Save", "SaveRoomDetails")*@
+                                @*<button @Html.ActionLink("DisplayText", "Index", "Home", class="btn btn-primary">Save</button>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!--Add Room Form-->
 }
 
 
@@ -185,6 +217,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script>
     $(document).ready(function () {
         $(".date").datepicker({
@@ -209,27 +242,77 @@
         }
     }
 
-    function calculateArea(field) {
+    //function calculateArea(field) {
+    //    var height = parseFloat(document.getElementById("height").value);
+    //    var width = parseFloat(document.getElementById("width").value);
+    //    var quantity = parseFloat(document.getElementById("quantity").value);
+    //    var totalArea = (height * width) * quantity;
+    //    document.getElementById("area").value = totalArea.toFixed(2);
 
 
-        debugger
+    //    // Assuming 2 decimal places
 
+    //    // Display or use the totalArea as needed
+
+    //}
+</script>
+
+
+
+<script>
+    function calculateArea() {
         var height = parseFloat(document.getElementById("height").value);
         var width = parseFloat(document.getElementById("width").value);
-        var quantity = parseInt(document.getElementById("quantity").value);
-        var totalArea = (height * width) * quantity;
-        document.getElementById('area').value = totalArea.toFixed(2); // Assuming 2 decimal places
+        var quantity = parseFloat(document.getElementById("quantity").value);
 
-        // Display or use the totalArea as needed
+        if (!isNaN(height) && !isNaN(width) && !isNaN(quantity)) {
+            var totalArea = (height * width) * quantity;
 
+            // Update the corresponding model property with the calculated value
+            document.getElementById("Area").value = totalArea;
+        } else {
+
+            document.getElementById("Area").value = ""; // Clear the model property value
+        }
     }
+
+    // Bind the calculateArea function to both "Enter" key press and input event
+    document.getElementById("height").addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calculateArea();
+        }
+    });
+
+    document.getElementById("width").addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calculateArea();
+        }
+    });
+
+    document.getElementById("quantity").addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calculateArea();
+        }
+    });
+
+    document.getElementById("height").addEventListener("input", calculateArea);
+    document.getElementById("width").addEventListener("input", calculateArea);
+    document.getElementById("quantity").addEventListener("input", calculateArea);
 </script>
+
 
 
 @{ if (ViewData["result"] != null)
     {
         if (ViewData["result"].ToString() != "")
         {
+            if (ViewData["result"].ToString() == "2")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Deleted SuccessFully..");
+                    window.location.href = '@Url.Action("RoomDetails", "AssociateCommuni", new { id = Model.RoomDetailsModel.SCHL })';
+                </script>
+            }
             if (ViewData["result"].ToString() == "1")
             {
                 <script type="text/javascript" language="javascript">
@@ -245,7 +328,7 @@
             {
                 <script type="text/javascript" language="javascript">
                     alert("Submit Failure, Please Try Again");
-                                            //alert('ViewBag.Mesaage');</script>
+                                                                                                                                                                            //alert('ViewBag.Mesaage');</script>
             }
 
         }

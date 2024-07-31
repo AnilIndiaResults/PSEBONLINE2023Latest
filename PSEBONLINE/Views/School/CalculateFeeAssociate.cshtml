@@ -1,0 +1,306 @@
+﻿@model PSEBONLINE.Models.PrivatePaymentformViewModel
+@{
+    ViewBag.Title = "CalculateFee";
+    Layout = "~/Views/Shared/_Headerui.cshtml";
+}
+
+@*<div class="rqf">
+
+    Today, You Are Not Authorize To Calcualate Fee of Open Admission and Examination due to dates are over .. Kindly contact with Controller Examination at PSEB Head Office</div>
+    <div>*@
+<section class="content-header">
+    @*<h1>Calculate Fee of Application Number : @Session["app_no"].ToString()</h1>
+        <ol class="breadcrumb">
+            <li><a href="/open/Applicationstatus/@Session["app_no"].ToString()"><i class="fa fa-home"></i> Home</a></li>*@
+    <li class="active">Calculate Fee</li>
+    </ol>
+</section>
+<div id="dialogOnline" style="display: none">
+    <span class="rqf">Click OK button to do Online Payment through Credit Card, Debit Card, Net Banking etc of any bank otherwise click Cancel button.</span>
+</div>
+
+@{
+
+    using (Html.BeginForm("CalculateFeeAssociate", "School", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+    {
+        if (TempData["NotValidForFinalSubmit"] != null)
+        {
+
+
+
+
+
+
+            <div class="popup">
+                <center>
+                    <table cellspacing="0" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h1 style="color:#cc0000">Missing Field and Details</h1>
+                                    <p style="font-size:16px;line-height:24px">
+                                        You cannot final submit because you have not filled mandatory details correctly.<br /><br />
+                                        <span class="rqf">Missing Details :</span> @Html.Raw(TempData["NotValidForFinalSubmit"].ToString()) <br />
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+            </div>
+        }
+
+        else
+        {
+
+
+            <div class="box">
+                <div class="row">
+                    <div class="col-md-12">@Html.Partial("_AssociateHeading")</div>
+                    <div class="clearfix"></div>
+                    @*<div class="col-md-3">
+                            @Html.Partial("_AssociateMenu")
+                        </div>*@
+                    <div class="col-md-12" id="divMain1">
+                        <table class="table table-bordered" id="t01">
+                            @{
+                                var Challanid = "";
+                                if (Convert.ToString(ViewData["result"]) != "-1" || ViewData["result"] == null)
+                                {
+                                    <tr>
+
+                                        @if (Model.PaymentFormData.Tables[0].Rows[0]["AllowBanks"].ToString().Contains("301"))
+                                        {
+                                            <td><span>@Html.RadioButtonFor(m => m.BankCode, "301", new { id = "HDFC" })<img src="~/Images/HDFC.jpg" alt="HDFC" width="150" /></span></td>
+                                        }
+                                        @if (Model.PaymentFormData.Tables[0].Rows[0]["AllowBanks"].ToString().Contains("302"))
+                                        {
+                                            <td>
+
+                                                <span style="display:none">@Html.RadioButtonFor(m => m.BankCode, "302", new { id = "ATOM" }) <img src="~/Images/PNSB.jpg" alt="ATOM" width="150" /></span>
+                                            </td>
+                                        }
+
+
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            @if (Model.PaymentFormData.Tables[0].Rows[0]["AllowBanks"].ToString().Contains("301") || Model.PaymentFormData.Tables[0].Rows[0]["AllowBanks"].ToString().Contains("302"))
+                                            {
+                                                <input id="btnPayment" type="button" value="Proceed to Pay Online" class="btn" />
+                                                @*<input type="submit" value="Proceed to Final Submit & Generate Challan" onclick="return valForm();" />*@
+
+                                            }
+                                        </td>
+                                        <td>
+                                            &nbsp;&nbsp; <input value="Back" type="button" onclick="javascript:document.location.href='@Url.Action("Index", "Login")'" />
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                        <div id="loading1"></div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+}
+
+
+
+
+@{
+    if (ViewData["SelectBank"] != null)
+    {
+        if (ViewData["SelectBank"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                                                            alert("Please Select Bank ");
+                                                            window.location.href = '@Url.Action("CalculateFee", "Open")';
+            </script>
+
+        }
+    }
+
+
+    if (ViewData["result"] != null)
+    {
+
+        if (ViewData["result"].ToString() == "0")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Challan Not Generated, Plz Try Again");
+                $('#Main1').show();
+                $('#loading1').empty();
+            </script>
+
+        }
+        else if (ViewData["result"].ToString() == "-1")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("Challan Already Exists");
+                $('#Main1').show();
+                $('#loading1').empty();
+            </script>
+
+        }
+        else if (ViewData["result"].ToString() == "1")
+        {
+            <script type="text/javascript" language="javascript">
+                                                            alert("Challan Generated Successfully Bank ");
+                                                            $('#Main1').show();
+                                                            $('#loading1').empty();
+                                                            //window.location.href = '@Url.Action("GenerateChallaan", "Open", new { Id = @ViewBag.ChallanNo })';
+            </script>
+
+        }
+        else if (ViewData["result"].ToString() == "20")
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@ViewBag.Message');
+                $('#Main1').show();
+                $('#loading1').empty();
+            </script>
+
+        }
+
+    }
+}
+
+
+
+
+<script type="text/javascript">
+    //Start Payment
+    $("#btnPaymentHOD").click(function () {
+        var HOD = document.getElementById("HOD").checked;
+
+
+        if (HOD == false) {
+            alert("Please Select Any Bank");
+            return false;
+        }
+        else {
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to Final Submit ?");
+            return true;
+        }
+
+    });
+</script>
+
+
+<script type="text/javascript">
+
+    $("#btnPayment").click(function () {
+
+        var SBPa = document.getElementById("HDFC").checked;
+
+
+        if (SBPa == false) {
+            alert("Please Select Any Bank For Online Payment");
+            return false;
+        }
+        else {
+
+            $('#Main1').hide();
+            $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+            alert("Are you sure to do online payment?");
+            $('#dialogOnline').dialog('open');
+            return true;
+        }
+
+    });
+    $(function () {
+        $("#dialogOnline").dialog({
+            modal: true,
+            autoOpen: false,
+            title: "Are you sure to do online payment?",
+            width: 400,
+            height: 220,
+            buttons: {
+                "OK": function () {
+                    // $('#loading1').html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $('#myForm').submit();
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $('#loading1').empty("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+</script>
+
+@*<script type="text/javascript">
+
+        function Send(k) {
+            // alert('regenaret start');
+            var txtChallanNo = '#txtChallanNo-' + k;
+            //  alert("Start  Re-Generate Challan " + txtChallanNo);
+
+            var SBIa = document.getElementById("SBI-" + k).checked;
+            var PNBa = document.getElementById("PNB-" + k).checked;
+            var BCODE = "";
+            if (SBIa == false && PNBa == false) {
+                alert("Please Select Any Bank");
+                return false;
+            }
+            else if (SBIa == true && PNBa == true) {
+                alert("Please Select Only 1 Bank Either SBI or PNB");
+                document.getElementById("SBI-" + k).checked = false;
+                document.getElementById("PNB-" + k).checked = false;
+                return false;
+            }
+            else {
+                if (document.getElementById("SBI-" + k).checked == true) { BCODE = "204"; }
+                else if (document.getElementById("PNB-" + k).checked == true) { BCODE = "202"; }
+                else { BCODE = ""; }
+            }
+
+            if (BCODE == "") {
+                alert('Please Select Bank')
+                return false;
+            }
+            else if ($('#txtChallanNo-' + k).val() == "") {
+                $('#txtChallanNo-' + k).addClass("input-validation-error");
+                return false;
+            }
+            else {
+                //  alert('Now Re-Generate Challan of :' + $('#txtChallanNo-' + k).val())
+                // $('#Main1').hide();
+                $('#loading1-' + k).html("<p><img src='https://registration2022.pseb.ac.in/images/loadingk.gif'></p>");
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/jqReGenerateChallaanNew",
+                    data: '{ChallanId:"' + $('#txtChallanNo-' + k).val() + '", BCODE:"' + BCODE + '" }',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: OnSuccess,
+                    failure: function (response) {
+                        alert(response);
+                        $('#loading1-' + k).empty();
+                    }
+                });
+                function OnSuccess(response) {
+                    if (response.dee == "1") {
+                        alert("Challan Re-Generated Successfully & Your Challan ID is " + response.chid);
+                        $("#myModal-" + k).hide();
+                        $('#loading1-' + k).empty();
+                        window.open("/Open/GenerateChallaan?Id=" + response.chid, "_blank");
+                    }
+                    else {
+                        alert("Failure, Please Try Again.");
+                        $('#loading1-' + k).empty();
+                    }
+                }
+            }
+        }
+
+    </script>*@
+
+

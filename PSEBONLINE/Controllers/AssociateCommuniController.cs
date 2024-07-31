@@ -1,4 +1,7 @@
-﻿using PSEBONLINE.AbstractLayer;
+﻿using Amazon.S3;
+using Amazon.S3.Transfer;
+using DocumentFormat.OpenXml.Drawing;
+using PSEBONLINE.AbstractLayer;
 using PSEBONLINE.Models;
 using System;
 using System.Collections.Generic;
@@ -7,13 +10,22 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Amazon.S3.Transfer;
+using Amazon.S3;
+using Amazon;
+using System.Configuration;
+using DocumentFormat.OpenXml.VariantTypes;
+using System.Web.Http.Results;
+using DocumentFormat.OpenXml.EMMA;
 
 namespace PSEBONLINE.Controllers
 {
     public class AssociateCommuniController : Controller
 
     {
-        private readonly DBContext _context = new DBContext();
+		private const string BUCKET_NAME = "psebdata";
+
+		private readonly DBContext _context = new DBContext();
         public AbstractLayer.ErrorLog oErrorLog = new AbstractLayer.ErrorLog();
         public AbstractLayer.DBClass objCommon = new AbstractLayer.DBClass();
         public AbstractLayer.AffiliationDB affiliationDB = new AbstractLayer.AffiliationDB();
@@ -29,88 +41,143 @@ namespace PSEBONLINE.Controllers
             return RedirectToAction("schoolProfile");
         }
 
-        [HttpGet]
-        public ActionResult RoomDetails(string id)
+		#region roomdetail
+		[HttpGet]
+		public ActionResult RoomDetails(string id)
+		{
+			AssociateModel ViewModel = new AssociateModel();
+			ViewModel.RoomDetailsModelList = new List<RoomDetailsModel>();
+
+			ViewModel.RoomDetailsModel = new RoomDetailsModel();
+
+
+			if (Session["SCHL"] == null)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			ViewModel.RoomDetailsModel.SCHL = Session["SCHL"].ToString();
+			var roomtype = new SelectList(new[]{
+		new { ID="Class Room", Name="Class Room" },
+		new { ID="Store", Name="Store" },
+		new { ID="Principal Room", Name="Principal Room" },
+		new { ID="Science Lab", Name="Science Lab" },
+		new { ID="Computer Lab", Name="Computer Lab" },
+		new { ID="Other Room", Name="Other Room" },
+	}, "ID", "Name", 1);
+			ViewBag.roomtype = roomtype.ToList();
+			ViewBag.Selectedroomtype = "0";
+
+			var floorName = new SelectList(new[]{
+		new { ID="Ground Floor", Name="Ground Floor" },
+		new { ID="1st Floor", Name="1st Floor" },
+		new { ID="2nd Floor", Name="2nd Floor" },
+		new { ID="3rd Floor", Name="3rd Floor" },
+		new { ID="4th Floor", Name="4th Floor" },
+		new { ID="5th Floor", Name="5th Floor" },
+		new { ID="6th Floor", Name="6th Floor" },
+		new { ID="7th Floor", Name="7th Floor" },
+	}, "ID", "Name", 1);
+			ViewBag.floorName = floorName.ToList();
+			ViewBag.SelectedfloorName = "0";
+
+			ViewModel.RoomDetailsModelList = AssociateDB.GetAssociateRoomDetails(Session["schl"].ToString());
+
+
+			return View(ViewModel);
+		}
+
+
+		[HttpPost]
+		public ActionResult RoomDetails(string id, AssociateModel roomModel)
+		{
+			//AssociateModel ViewModel = new AssociateModel();
+			//ViewModel.RoomDetailsModelList = new List<RoomDetailsModel>();
+			//ViewModel.RoomDetailsModel = new RoomDetailsModel();
+			string outError = "0";
+
+			string rslt = AssociateDB.SaveRoomDetails(roomModel, "2", Session["SCHL"].ToString());
+
+
+			if (rslt == "OK")
+			{
+				ViewData["result"] = "1";
+				ViewBag.Mesaage = outError;
+			}
+			else
+			{
+				ViewData["result"] = outError.ToString();
+				ViewBag.Mesaage = outError;
+			}
+			return RoomDetails(id);
+
+
+			//if (rslt == "OK")
+			//{
+
+			//    roomModel = new AssociateModel();
+			//    return RoomDetails(id);
+			//}
+			//else
+			//{
+			//    AssociateModel NewroomModel = new AssociateModel();
+			//    return View();
+			//}
+		}
+		#endregion
+		public ActionResult DeleteRoomDetails(int id, string schl)
         {
-            AssociateModel ViewModel = new AssociateModel();
-            ViewModel.RoomDetailsModelList = new List<RoomDetailsModel>();
-          
-            ViewModel.RoomDetailsModel = new RoomDetailsModel();
-           
+			
+			string outError = "0";
+			string rslt = AssociateDB.DeleteRoomDetails(id, schl, "4");
+			return RedirectToAction("RoomDetails", "AssociateCommuni", new { id = schl });
+		}
 
-            if (Session["SCHL"] == null)
-            {
-                return RedirectToAction("Index", "Login");
-            }
+		public ActionResult ActionDeleteRoomDetails(Int32 id, string SCHL, string act)
+		{
+			try
+			{
+				string outError = "0";
+				string result = "";
+				SCHL = Session["SCHL"].ToString();
+				AssociateModel easdm = new AssociateModel();
+				if (id == null)
+				{
+					return RedirectToAction("Index", "AssociateCommuni");
+				}
+				else
+				{
+					if (act == "D")
+					{
+						if (easdm.RoomDetailsModel == null)
+						{
+							easdm.RoomDetailsModel = new RoomDetailsModel();
+						}
 
-            var roomtype = new SelectList(new[]{
-        new { ID="Class Room", Name="Class Room" },
-        new { ID="Store", Name="Store" },
-        new { ID="Principal Room", Name="Principal Room" },
-        new { ID="4", Name="Science Lab" },
-        new { ID="Science Lab", Name="Computer Lab" },
-        new { ID="Other Room", Name="Other Room" },
-    }, "ID", "Name", 1);
-            ViewBag.roomtype = roomtype.ToList();
-            ViewBag.Selectedroomtype = "0";
+						easdm.RoomDetailsModel.Id = id;
+						result = AssociateDB.SaveRoomDetails(easdm, "4", Session["SCHL"].ToString());
+						if (result == "OK")
+						{
+							ViewData["result"] = "2";
+							ViewBag.Mesaage = outError;
+						}
+						else
+						{
+							ViewData["result"] = outError.ToString();
+							ViewBag.Mesaage = outError;
+						}
+					}
+				}
 
-            var floorName = new SelectList(new[]{
-        new { ID="Ground Floor", Name="Ground Floor" },
-        new { ID="1st Floor", Name="1st Floor" },
-        new { ID="2nd Floor", Name="2nd Floor" },
-        new { ID="3rd Floor", Name="3rd Floor" },
-        new { ID="4th Floor", Name="4th Floor" },
-        new { ID="5th Floor", Name="5th Floor" },
-        new { ID="6th Floor", Name="6th Floor" },
-        new { ID="7th Floor", Name="7th Floor" },
-    }, "ID", "Name", 1);
-            ViewBag.floorName = floorName.ToList();
-            ViewBag.SelectedfloorName = "0";
-
-            ViewModel.RoomDetailsModelList = AssociateDB.GetAssociateRoomDetails();
-           
-
-            return View(ViewModel);
-        }
-
-
-        [HttpPost]
-        public ActionResult RoomDetails(string id,AssociateModel roomModel)
-        {
-            //AssociateModel ViewModel = new AssociateModel();
-            //ViewModel.RoomDetailsModelList = new List<RoomDetailsModel>();
-            //ViewModel.RoomDetailsModel = new RoomDetailsModel();
-            string outError = "0";
-            string rslt = AssociateDB.SaveRoomDetails(roomModel);
+			}
+			catch (Exception)
+			{
+			}
+			return RedirectToAction("RoomDetails", "AssociateCommuni", new { id = SCHL });
 
 
-            if (rslt == "OK")
-            {
-                ViewData["result"] = "1";
-                ViewBag.Mesaage = outError;
-            }
-            else
-            {
-                ViewData["result"] = outError.ToString();
-                ViewBag.Mesaage = outError;
-            }
-            return RoomDetails(id);
+		}
 
-
-            //if (rslt == "OK")
-            //{
-               
-            //    roomModel = new AssociateModel();
-            //    return RoomDetails(id);
-            //}
-            //else
-            //{
-            //    AssociateModel NewroomModel = new AssociateModel();
-            //    return View();
-            //}
-        }
-
-        public int calculateArea(AssociateModel roomModel)
+		public int calculateArea(AssociateModel roomModel)
         {
             roomModel.RoomDetailsModel.Area = (roomModel.RoomDetailsModel.Height * roomModel.RoomDetailsModel.width) * roomModel.RoomDetailsModel.Quantity;
             return roomModel.RoomDetailsModel.Area;
@@ -123,13 +190,16 @@ namespace PSEBONLINE.Controllers
         {
             try
             {
-
-                if (Session["SCHL"] == null)
+				Session["IsFormLock"] = "0";
+				Session["IsSchoolUpdated"] = "0";
+				if (Session["SCHL"] == null)
                 {
                     return RedirectToAction("Index", "Login");
                 }
-
-                ViewBag.SCHL = Session["SCHL"].ToString();
+                sm.SCHL = Session["SCHL"].ToString();
+				AssociateDB.InsertAssociationContinuation(sm, 1, out string outerrot);
+                
+				ViewBag.SCHL = Session["SCHL"].ToString();
                 DataSet outDs = new DataSet();
                 AssociateModel am1 = AssociateDB.AssociateContinuationBySchlTemp(Session["SCHL"].ToString(), 1, out outDs);//ResultStatics
                 if (am1.ID > 0)
@@ -144,8 +214,13 @@ namespace PSEBONLINE.Controllers
                     ViewBag.BPNAME = am1.BPNAME;
                     ViewBag.ASZONE = am1.ASZONE;
                     ViewBag.ASZONE = am1.ASZONE;
+					ViewBag.ispdebReg = am1.isPsebReg;
+                    ViewBag.ispdebSchholCode = am1.Associateschlcode;
                     ViewBag.OI1 = am1.OI1;
-                }
+                    Session["IsFormLock"] = am1.IsFormLock;
+                    Session["IsSchoolUpdated"] = "1";
+
+				}
                 else
                 {
                     ViewBag.AID = 0;
@@ -160,7 +235,11 @@ namespace PSEBONLINE.Controllers
                 }
                 else
                 {
-                    sm.id = Convert.ToInt32(ds.Tables[0].Rows[0]["id"].ToString());
+                    Session["ClassLvl"] = ds.Tables[0].Rows[0]["Class"].ToString();
+
+					
+
+					sm.id = Convert.ToInt32(ds.Tables[0].Rows[0]["id"].ToString());
                     sm.SCHL = ds.Tables[0].Rows[0]["schl"].ToString();
                     sm.idno = ds.Tables[0].Rows[0]["idno"].ToString();
                     sm.CLASS = ds.Tables[0].Rows[0]["CLASS"].ToString();
@@ -186,13 +265,12 @@ namespace PSEBONLINE.Controllers
                     sm.STATIONP = ds.Tables[0].Rows[0]["STATIONP"].ToString();
                     sm.DISTNM = ds.Tables[0].Rows[0]["DISTNM"].ToString();
                     sm.DISTNMPun = ds.Tables[0].Rows[0]["DISTNMPun"].ToString();
-
-
+                    
                     sm.DOB = ds.Tables[0].Rows[0]["DOB"].ToString();
                     sm.DOJ = ds.Tables[0].Rows[0]["DOJ"].ToString();
                     sm.ExperienceYr = ds.Tables[0].Rows[0]["ExperienceYr"].ToString();
                     sm.PQualification = ds.Tables[0].Rows[0]["PQualification"].ToString();
-
+                  
                     sm.PRINCIPAL = ds.Tables[0].Rows[0]["PRINCIPAL"].ToString();
                     sm.STDCODE = ds.Tables[0].Rows[0]["STDCODE"].ToString();
                     sm.PHONE = ds.Tables[0].Rows[0]["PHONE"].ToString();
@@ -206,19 +284,17 @@ namespace PSEBONLINE.Controllers
                     sm.OtContactno = ds.Tables[0].Rows[0]["OtContactno"].ToString();
                     sm.EMAILID = ds.Tables[0].Rows[0]["EMAILID"].ToString();
                     sm.NSQF_flag = ds.Tables[0].Rows[0]["NSQF_flag"].ToString() == "Y" ? "YES" : "NO";
-
+                    
                     sm.REMARKS = ds.Tables[0].Rows[0]["REMARKS"].ToString();
                     sm.UDATE = ds.Tables[0].Rows[0]["UDATE"].ToString();
                     sm.correctionno = ds.Tables[0].Rows[0]["correctionno"].ToString();
-
-
+                      
                     sm.MSET = ViewBag.MSET = ds.Tables[0].Rows[0]["MSET"].ToString();
                     sm.MOSET = ViewBag.MOSET = ds.Tables[0].Rows[0]["MOSET"].ToString();
                     sm.SSET = ViewBag.SSET = ds.Tables[0].Rows[0]["SSET"].ToString();
                     sm.SOSET = ViewBag.SOSET = ds.Tables[0].Rows[0]["SOSET"].ToString();
-
-                    //Regular
-
+                     
+                      
                     sm.middle = ds.Tables[0].Rows[0]["middle"].ToString() == "Y" ? "YES" : "NO";
                     sm.MATRIC = ds.Tables[0].Rows[0]["MATRIC"].ToString() == "Y" ? "YES" : "NO";
                     sm.HUM = ds.Tables[0].Rows[0]["HUM"].ToString() == "Y" ? "YES" : "NO";
@@ -227,8 +303,7 @@ namespace PSEBONLINE.Controllers
                     sm.VOC = ds.Tables[0].Rows[0]["VOC"].ToString() == "Y" ? "YES" : "NO";
                     sm.TECH = ds.Tables[0].Rows[0]["TECH"].ToString() == "Y" ? "YES" : "NO";
                     sm.AGRI = ds.Tables[0].Rows[0]["AGRI"].ToString() == "Y" ? "YES" : "NO";
-
-                    //OPen
+                      
                     sm.omiddle = ds.Tables[0].Rows[0]["omiddle"].ToString() == "Y" ? "YES" : "NO";
                     sm.OMATRIC = ds.Tables[0].Rows[0]["OMATRIC"].ToString() == "Y" ? "YES" : "NO";
                     sm.OHUM = ds.Tables[0].Rows[0]["OHUM"].ToString() == "Y" ? "YES" : "NO";
@@ -237,28 +312,26 @@ namespace PSEBONLINE.Controllers
                     sm.OVOC = ds.Tables[0].Rows[0]["OVOC"].ToString() == "Y" ? "YES" : "NO";
                     sm.OTECH = ds.Tables[0].Rows[0]["OTECH"].ToString() == "Y" ? "YES" : "NO";
                     sm.OAGRI = ds.Tables[0].Rows[0]["OAGRI"].ToString() == "Y" ? "YES" : "NO";
-
-
-                    //New
-
+                     
+                      
                     sm.MID_CR = ViewBag.MID_CR = ds.Tables[0].Rows[0]["MID_CR"].ToString();
                     sm.MID_NO = ViewBag.MID_NO = ds.Tables[0].Rows[0]["MID_NO"].ToString();
                     sm.MID_YR = ViewBag.MID_YR = ds.Tables[0].Rows[0]["MID_YR"].ToString();
                     sm.MID_S = ViewBag.MID_S = Convert.ToInt32(ds.Tables[0].Rows[0]["MID_S"].ToString());
                     sm.MID_DNO = ViewBag.MID_DNO = ds.Tables[0].Rows[0]["MID_DNO"].ToString();
-
+                      
                     sm.HID_CR = ViewBag.HID_CR = ds.Tables[0].Rows[0]["HID_CR"].ToString();
                     sm.HID_NO = ViewBag.HID_NO = ds.Tables[0].Rows[0]["HID_NO"].ToString();
                     sm.HID_YR = ViewBag.HID_YR = ds.Tables[0].Rows[0]["HID_YR"].ToString();
                     sm.HID_S = ViewBag.HID_S = Convert.ToInt32(ds.Tables[0].Rows[0]["HID_S"].ToString());
                     sm.HID_DNO = ViewBag.HID_DNO = ds.Tables[0].Rows[0]["HID_DNO"].ToString();
-
+                      
                     sm.SID_CR = ViewBag.SID_CR = ds.Tables[0].Rows[0]["SID_CR"].ToString();
                     sm.SID_NO = ViewBag.SID_NO = ds.Tables[0].Rows[0]["SID_NO"].ToString();
                     sm.SID_DNO = ViewBag.SID_DNO = ds.Tables[0].Rows[0]["SID_DNO"].ToString();
                     sm.H = ViewBag.H = ds.Tables[0].Rows[0]["H"].ToString();
                     sm.HYR = ViewBag.HYR = ds.Tables[0].Rows[0]["HYR"].ToString();
-
+                     
                     sm.H_S = ViewBag.H_S = Convert.ToInt32(ds.Tables[0].Rows[0]["H_S"].ToString());
                     sm.C = ViewBag.C = ds.Tables[0].Rows[0]["C"].ToString();
                     sm.CYR = ViewBag.CYR = ds.Tables[0].Rows[0]["CYR"].ToString();
@@ -266,20 +339,20 @@ namespace PSEBONLINE.Controllers
                     sm.S = ViewBag.S = ds.Tables[0].Rows[0]["S"].ToString();
                     sm.SYR = ViewBag.SYR = ds.Tables[0].Rows[0]["SYR"].ToString();
                     sm.S_S = ViewBag.S_S = Convert.ToInt32(ds.Tables[0].Rows[0]["S_S"].ToString());
-
+                      
                     sm.A = ViewBag.A = ds.Tables[0].Rows[0]["A"].ToString();
                     sm.AYR = ViewBag.AYR = ds.Tables[0].Rows[0]["AYR"].ToString();
                     sm.A_S = ViewBag.A_S = Convert.ToInt32(ds.Tables[0].Rows[0]["A_S"].ToString());
-
+                     
                     sm.V = ViewBag.V = ds.Tables[0].Rows[0]["V"].ToString();
                     sm.VYR = ViewBag.VYR = ds.Tables[0].Rows[0]["VYR"].ToString();
                     sm.V_S = ViewBag.V_S = Convert.ToInt32(ds.Tables[0].Rows[0]["V_S"].ToString());
-
+                      
                     sm.T = ViewBag.T = ds.Tables[0].Rows[0]["T"].ToString();
                     sm.TYR = ViewBag.TYR = ds.Tables[0].Rows[0]["TYR"].ToString();
                     sm.T_S = ViewBag.T_S = Convert.ToInt32(ds.Tables[0].Rows[0]["T_S"].ToString());
-
-
+                     
+                    
                     sm.MID_UTYPE = ViewBag.MID_UTYPE = ds.Tables[0].Rows[0]["MID_UTYPEFull"].ToString();
                     sm.HID_UTYPE = ViewBag.HID_UTYPE = ds.Tables[0].Rows[0]["HID_UTYPEFull"].ToString();
                     sm.H_UTYPE = ViewBag.H_UTYPE = ds.Tables[0].Rows[0]["H_UTYPEFull"].ToString();
@@ -288,10 +361,14 @@ namespace PSEBONLINE.Controllers
                     sm.V_UTYPE = ViewBag.V_UTYPE = ds.Tables[0].Rows[0]["V_UTYPEFull"].ToString();
                     sm.A_UTYPE = ViewBag.A_UTYPE = ds.Tables[0].Rows[0]["A_UTYPEFull"].ToString();
                     sm.T_UTYPE = ViewBag.T_UTYPE = ds.Tables[0].Rows[0]["T_UTYPEFull"].ToString();
-
+                      
                     sm.Tcode = ViewBag.Tcode = ds.Tables[0].Rows[0]["Tcode"].ToString();
                     sm.Tehsile = ViewBag.omiddle = ds.Tables[0].Rows[0]["Tehsile"].ToString();
                     sm.Tehsilp = ViewBag.omiddle = ds.Tables[0].Rows[0]["Tehsilp"].ToString();
+                    sm.AssociateIsPseb = ViewBag.ispdebReg;
+                    sm.Associateschlcode = ViewBag.ispdebSchholCode;
+
+
 
 
 
@@ -339,9 +416,23 @@ namespace PSEBONLINE.Controllers
         }
 
         [HttpPost]
-        public ActionResult schoolProfile(SchoolModels sm)
+        public ActionResult schoolProfile(FormCollection frm, SchoolModels sm)
         {
-            return schoolProfile(Session["SCHL"].ToString(),sm);
+            //var isPseb = frm["ispsebreg"];
+            int result = 0;
+			sm.SCHL = Session["SCHL"].ToString();
+
+
+			result = AssociateDB.InsertAssociationContinuation( sm, 1, out string outerrot);
+            if (result == 1)
+            {
+                ViewData["result"] = "1";
+            }
+            else
+            {
+				ViewData["result"] = "0";
+			}
+			return schoolProfile(Session["SCHL"].ToString(),sm);
         }
         #endregion
 
@@ -363,17 +454,35 @@ namespace PSEBONLINE.Controllers
             }
 
 
-            // YesNo 
-            //   ViewBag.YearList = objCommon.GetSessionYear();
-            List<SelectListItem> itemSession = new List<SelectListItem>();
-            itemSession = objCommon.GetSessionYear();
-            itemSession.Add(new SelectListItem { Text = "2019", Value = "2019" });
-            itemSession.Add(new SelectListItem { Text = "2020", Value = "2020" });
-            ViewBag.YearList = itemSession.Where(s => Convert.ToInt32(s.Value) >= 2016).OrderByDescending(s => s.Value);
+			// YesNo 
+			//   ViewBag.YearList = objCommon.GetSessionYear();
+			//         List<SelectListItem> itemSession = new List<SelectListItem>();
+			//         itemSession = objCommon.GetSessionYear();
+			//         itemSession.Add(new SelectListItem { Text = "2019", Value = "2019" });
+			//         itemSession.Add(new SelectListItem { Text = "2020", Value = "2020" });
+			//ViewBag.YearList = itemSession.Where(s => Convert.ToInt32(s.Value) >= 2016).OrderByDescending(s => s.Value);
+
+			List<SelectListItem> itemSession = new List<SelectListItem>();
+			itemSession = objCommon.GetSessionYear();
+			itemSession.Add(new SelectListItem { Text = "2026", Value = "2026" });
+			itemSession.Add(new SelectListItem { Text = "2025", Value = "2025" });
+			itemSession.Add(new SelectListItem { Text = "2024", Value = "2024" });
+			itemSession.Add(new SelectListItem { Text = "2023", Value = "2023" });
+			//itemSession.Add(new SelectListItem { Text = "2023", Value = "2023" });
+			//itemSession.Add(new SelectListItem { Text = "2022", Value = "2022" });
+			//itemSession.Add(new SelectListItem { Text = "2021", Value = "2021" });
+			int currentYear = DateTime.Now.Year;
+			ViewBag.BSYearList = itemSession.Where(s => Convert.ToInt32(s.Value) >= Convert.ToInt32(currentYear - 4) && Convert.ToInt32(s.Value) <= Convert.ToInt32(currentYear)).OrderByDescending(s => s.Value);
+            ViewBag.YearList = itemSession.Where(s => Convert.ToInt32(s.Value) >= Convert.ToInt32(currentYear - 3) && Convert.ToInt32(s.Value) <= Convert.ToInt32(currentYear)).OrderByDescending(s => s.Value);
+            ViewBag.YearListTo = itemSession.Where(s => Convert.ToInt32(s.Value) >= Convert.ToInt32(currentYear)).OrderByDescending(s => s.Value);
+			
 
 
-            ViewBag.SelectedYear = "0";
-            var itemsch = new SelectList(new[]{new {ID="1",Name="Punjab Public Works Department, B&R"},new {ID="2",Name="Department of Rural development and Panchayat"},
+
+			ViewBag.SelectedYear = "0";
+            var itemsch = new SelectList(new[]{new {ID="1",Name="Punjab Public Works Department, B&R"},
+                new {ID="2",Name="Department of Rural development and Panchayat"},
+                new {ID="3",Name="Registered Architect pannel chandigarh administration"},
             }, "ID", "Name", 1);
             ViewBag.MySch = itemsch.ToList();
             ViewBag.SelectedItem = "0";
@@ -423,11 +532,25 @@ namespace PSEBONLINE.Controllers
             }
             ViewBag.SCHL = Session["SCHL"].ToString();
             // YesNo 
+            //List<SelectListItem> itemSession = new List<SelectListItem>();
+            //itemSession = objCommon.GetSessionYear();
+            //itemSession.Add(new SelectListItem { Text = "2019", Value = "2019" });
+            //itemSession.Add(new SelectListItem { Text = "2020", Value = "2020" });
+            //ViewBag.YearList = itemSession.Where(s => Convert.ToInt32(s.Value) >= 2016).OrderByDescending(s => s.Value);
             List<SelectListItem> itemSession = new List<SelectListItem>();
             itemSession = objCommon.GetSessionYear();
-            itemSession.Add(new SelectListItem { Text = "2019", Value = "2019" });
-            itemSession.Add(new SelectListItem { Text = "2020", Value = "2020" });
-            ViewBag.YearList = itemSession.Where(s => Convert.ToInt32(s.Value) >= 2016).OrderByDescending(s => s.Value);
+            itemSession.Add(new SelectListItem { Text = "2026", Value = "2026" });
+            itemSession.Add(new SelectListItem { Text = "2025", Value = "2025" });
+            itemSession.Add(new SelectListItem { Text = "2024", Value = "2024" });
+            itemSession.Add(new SelectListItem { Text = "2023", Value = "2023" });
+            //itemSession.Add(new SelectListItem { Text = "2023", Value = "2023" });
+            //itemSession.Add(new SelectListItem { Text = "2022", Value = "2022" });
+            //itemSession.Add(new SelectListItem { Text = "2021", Value = "2021" });
+            int currentYear = DateTime.Now.Year;
+            ViewBag.BSYearList = itemSession.Where(s => Convert.ToInt32(s.Value) >= Convert.ToInt32(currentYear - 4) && Convert.ToInt32(s.Value) <= Convert.ToInt32(currentYear)).OrderByDescending(s => s.Value);
+            ViewBag.YearList = itemSession.Where(s => Convert.ToInt32(s.Value) >= Convert.ToInt32(currentYear - 3) && Convert.ToInt32(s.Value) <= Convert.ToInt32(currentYear)).OrderByDescending(s => s.Value);
+            ViewBag.YearListTo = itemSession.Where(s => Convert.ToInt32(s.Value) >= Convert.ToInt32(currentYear)).OrderByDescending(s => s.Value);
+
 
             ViewBag.SelectedYear = "0";
             var itemsch = new SelectList(new[]{new {ID="1",Name="Punjab Public Works Department, B&R"},new {ID="2",Name="Department of Rural development and Panchayat"},
@@ -439,31 +562,31 @@ namespace PSEBONLINE.Controllers
             string filename = "";
             if (bsfile != null)
             {
-                string ext = Path.GetExtension(bsfile.FileName);
-                filename = am.SCHL + "_BSFILE" + ext;
-                var path = Path.Combine(Server.MapPath("~/Upload/Affiliation/SafetyDetails"), filename);
-                string FilepathExist = Path.Combine(Server.MapPath("~/Upload/Affiliation/SafetyDetails"));
-                if (!Directory.Exists(FilepathExist))
-                {
-                    Directory.CreateDirectory(FilepathExist);
-                }
-                bsfile.SaveAs(path);
-                am.BSFILE = "Affiliation/SafetyDetails/" + filename;
+                //string ext = Path.GetExtension(bsfile.FileName);
+                //filename = am.SCHL + "_BSFILE" + ext;
+                //var path = Path.Combine(Server.MapPath("~/Upload/Affiliation/SafetyDetails"), filename);
+                //string FilepathExist = Path.Combine(Server.MapPath("~/Upload/Affiliation/SafetyDetails"));
+                //if (!Directory.Exists(FilepathExist))
+                //{
+                //    Directory.CreateDirectory(FilepathExist);
+                //}
+                //bsfile.SaveAs(path);
+                //am.BSFILE = "Affiliation/SafetyDetails/" + filename;
             }
 
             string filename1 = "";
             if (fsfile != null)
             {
-                string ext = Path.GetExtension(bsfile.FileName);
-                filename1 = am.SCHL + "_FSFILE" + ext;
-                var path = Path.Combine(Server.MapPath("~/Upload/Affiliation/SafetyDetails"), filename1);
-                string FilepathExist = Path.Combine(Server.MapPath("~/Upload/Affiliation/SafetyDetails"));
-                if (!Directory.Exists(FilepathExist))
-                {
-                    Directory.CreateDirectory(FilepathExist);
-                }
-                fsfile.SaveAs(path);
-                am.FSFILE = "Affiliation/SafetyDetails/" + filename1;
+                //string ext = Path.GetExtension(bsfile.FileName);
+                //filename1 = am.SCHL + "_FSFILE" + ext;
+                //var path = Path.Combine(Server.MapPath("~/Upload/Affiliation/SafetyDetails"), filename1);
+                //string FilepathExist = Path.Combine(Server.MapPath("~/Upload/Affiliation/SafetyDetails"));
+                //if (!Directory.Exists(FilepathExist))
+                //{
+                //    Directory.CreateDirectory(FilepathExist);
+                //}
+                //fsfile.SaveAs(path);
+                //am.FSFILE = "Affiliation/SafetyDetails/" + filename1;
             }
 
             DataSet outDs = new DataSet();
@@ -556,7 +679,7 @@ namespace PSEBONLINE.Controllers
         //}
 
         [HttpPost]
-        public ActionResult studentCount(string cmd,StudentCountModel studentCountModel)
+        public ActionResult studentCount(string cmd, StudentCountModel studentCountModel)
         {
             if (Session["SCHL"] == null)
             {
@@ -571,7 +694,7 @@ namespace PSEBONLINE.Controllers
 
             if (cmd.ToLower() == "submit" || cmd.ToLower() == "save")
             {
-                studentCountModel.SCHL = Session["SCHL"].ToString();
+                //studentCountModel.SCHL = Session["SCHL"].ToString();
                 result = AssociateDB.InsertAssociationStudentCount(studentCountModel, 2, out outError);  // 0 for insert
 
                 if (result > 0)
@@ -595,22 +718,22 @@ namespace PSEBONLINE.Controllers
         public ActionResult studentCount(StudentCountModel studentModel)
         {
 
-            if (Session["SCHL"] == null)
+			AssociateModel ViewModel = new AssociateModel();
+
+			if (Session["SCHL"] == null)
             {
                 return RedirectToAction("Index", "Login");
             }
-           
-
-            //ViewModel.StudentCountModelList = AssociateDB.GetAssociateStudentCount(Session["SCHL"].ToString());
 
 
-            return View(studentModel);
+			ViewModel = AssociateDB.GetAssociateStudentCount(Session["SCHL"].ToString());
+
+
+            return View(ViewModel.StudentCountModel);
         }
 
         [HttpGet]
-        public ActionResult UploadDocument(string id,AssociationDocumentDetailsModel adm)
-
-            
+        public ActionResult UploadDocument(string id,AssociationDocumentDetailsModel adm)            
         {
 
             AssociateModel ViewModel = new AssociateModel();
@@ -676,13 +799,11 @@ namespace PSEBONLINE.Controllers
 
         [HttpPost]
         public ActionResult UploadDocument(string id, AssociationDocumentDetailsModel adm, string cmd, FormCollection frm, HttpPostedFileBase docfile)
-        {
-
-            
+        {            
 
             if (string.IsNullOrEmpty(id))
             {
-                return RedirectToAction("Index", "AssociationCommuni");
+                return RedirectToAction("SchoolProfile", "AssociationCommuni");
             }
             adm.StoreAllData = AssociateDB.GetAssociationDocumentDetails(2, 0, id, "");
             adm.AssociationDocumentMasterList = AssociateDB.AssociationDocumentMasterList(adm.StoreAllData.Tables[1]);//  Document List
@@ -702,11 +823,32 @@ namespace PSEBONLINE.Controllers
                 if (docfile != null)
                 {
                     //Upload/Affiliation
-                    string ext = Path.GetExtension(docfile.FileName);
-                    filename = adm.SCHL + "_" + DocName.Replace(" ", "_") + ext;
-                    path = Path.Combine(Server.MapPath(exactPath), filename);
-                    FilepathExist = Path.Combine(Server.MapPath(exactPath));
-                    adm.DocFile = "Upload2023/AssociateDocuments/" + filename;
+                    string ext = System.IO.Path.GetExtension(docfile.FileName);
+                    //filename = adm.SCHL + "_" + DocName.Replace(" ", "_") + ext;
+                    //path = Path.Combine(Server.MapPath(exactPath), filename);
+                    //FilepathExist = Path.Combine(Server.MapPath(exactPath));
+                    //adm.DocFile = "Upload2023/AssociateDocuments/" + filename;
+                    string Orgfile = adm.SCHL + "_" + DocName.Replace(" ", "_") + ext;
+                    using (var client = new AmazonS3Client(ConfigurationManager.AppSettings["AWSKey"], ConfigurationManager.AppSettings["AWSValue"], RegionEndpoint.APSouth1))
+                    {
+                        using (var newMemoryStream = new MemoryStream())
+                        {
+                            var uploadRequest = new TransferUtilityUploadRequest
+                            {
+                                InputStream = docfile.InputStream,
+                                Key = string.Format("allfiles/Upload2023/AssociateDocuments/Photo/{0}", Orgfile),
+                                BucketName = BUCKET_NAME,
+                                CannedACL = S3CannedACL.PublicRead
+                            };
+
+                            var fileTransferUtility = new TransferUtility(client);
+                            fileTransferUtility.Upload(uploadRequest);
+                        }
+                    }
+             
+                    adm.DocFile = "allfiles/Upload2023/AssociateDocuments/Photo/" + Orgfile;
+
+                    
                 }
 
 
@@ -715,11 +857,11 @@ namespace PSEBONLINE.Controllers
 
                     result = AssociateDB.InsertAssociationDocumentDetails(adm, 0, out outError);  // 0 for insert
 
-                    if (!Directory.Exists(FilepathExist))
-                    {
-                        Directory.CreateDirectory(FilepathExist);
-                    }
-                    docfile.SaveAs(path);
+                    //if (!Directory.Exists(FilepathExist))
+                    //{
+                    //    Directory.CreateDirectory(FilepathExist);
+                    //}
+                    //docfile.SaveAs(path);
                 }
                 else if (cmd.ToLower() == "delete")
                 {
@@ -823,14 +965,11 @@ namespace PSEBONLINE.Controllers
 
             if (Session["SCHL"] == null)
             {
-                return RedirectToAction("Index", "Login");
-            }
-
-           
-
-            
-            //for yes no dropdown
-            var YesnoItemList = new SelectList(new[] { new { ID = "Yes", Name = "Yes" }, new { ID = "No", Name = "No" }, }, "ID", "Name", 1);
+				return RedirectToAction("Index", "Login");
+			}
+			
+			//for yes no dropdown
+			var YesnoItemList = new SelectList(new[] { new { ID = "Yes", Name = "Yes" }, new { ID = "No", Name = "No" }, }, "ID", "Name", 1);
             ViewBag.YesNoItem = YesnoItemList.ToList();
             ViewBag.SelectItem = "0";
 
@@ -844,7 +983,10 @@ namespace PSEBONLINE.Controllers
             ViewBag.InternetListListItem = InternetList.ToList();
             ViewBag.SelectInternetListtem = "0";
 
-            return View(schoolInfraModel);
+			schoolInfraModel.SCHL = Session["SCHL"].ToString();
+			schoolInfraModel = AssociateDB.SaveSchoolInfrastructure(schoolInfraModel, 1,out string OutError);
+
+			return View(schoolInfraModel);
         }
 
         [HttpPost]
@@ -885,7 +1027,145 @@ namespace PSEBONLINE.Controllers
             return SchoolInfra(schoolInfraModel);
         }
 
-       
-    }
+		[HttpGet]
+		public ActionResult PrintForm(string id, AssociateModel am)
+        {
+			try
+			{
+
+
+                ViewBag.AID = 0;
+
+				ViewBag.FinalSubmit = "";
+
+				if (Session["SCHL"] == null)
+				{ return RedirectToAction("Index", "Home"); }
+				//
+				if (id == null)
+				{
+					return RedirectToAction("Index", "AssociationCommuni");
+				}
+
+				ViewBag.SCHL = Session["SCHL"].ToString();
+				if (id != ViewBag.SCHL)
+				{
+					return RedirectToAction("Index", "Home");
+				}
+			
+				SchoolModels sm = new SchoolModels();
+				DataSet outDs = new DataSet();
+				am = AssociateDB.AssociateContinuationBySchlTemp(id, 1, out outDs);//Type2 ( for staff details)
+                //ViewBag.rowcount = am.StoreAllData.Tables[4].Rows.Count;
+				if (am.ID > 0)
+				{
+					am.StoreAllData = outDs;
+					ViewBag.Totalcount = 1;
+					ViewBag.AID = am.ID;
+					ViewBag.ChallanId = am.ChallanId;
+					ViewBag.IsVerified = am.challanVerify;
+					ViewBag.ChallanDt = am.ChallanDt;
+				}
+				else
+				{
+                    ViewData["result"] = 0;
+					ViewBag.AID = 0;
+					ViewBag.IsVerified = 0;
+					ViewBag.Totalcount = 0;
+				}
+
+				return View(am);
+			}
+			catch (Exception ex)
+			{
+
+				return View();
+			}
+		}
+
+
+		[HttpPost]
+		public ActionResult PrintForm()
+		{
+            string rslt = AbstractLayer.AssociateDB.FinamSubmitInsertAssociationContinuation(Session["SCHL"].ToString(), out string OutError);
+            if (rslt == "1")
+            {
+                ViewData["result"] = "1";
+				ViewBag.FinalSubmit = "1";
+			}
+            else
+            {
+				ViewData["result"] = "0";
+				ViewBag.FinalSubmit = "0";
+			}
+			return View();
+		}
+
+
+		[HttpGet]
+		public ActionResult FinalPrintForm(string id, AssociateModel am)
+		{
+			string result = AssociateDB.IsValidForChallan(Session["SCHL"].ToString(),1,out DataSet ds);
+			if (result != string.Empty)
+			{
+				TempData["NotValidForFinalSubmit"] = result;
+				return View(am);
+				// return RedirectToAction("ViewEAffiliation", "EAffiliation", new { id= Session["eAffiliationAppNo"].ToString() });
+			}
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult FinalPrintForm(string id)
+		{
+			string rslt = AbstractLayer.AssociateDB.FinamSubmitInsertAssociationContinuation(Session["SCHL"].ToString(), out string OutError);
+			if (rslt == "1")
+			{
+				ViewData["result"] = "1";
+				ViewBag.FinalSubmit = "1";
+			}
+			else
+			{
+				ViewData["result"] = "0";
+				ViewBag.FinalSubmit = "0";
+			}
+			return View();
+		}
+
+
+		public JsonResult CheckSchoolCode(string schoolcode)
+		{
+
+			string outid = "0";
+			DataSet ds;
+			SchoolModels schoolModels = new AbstractLayer.SchoolDB().GetSchoolDataBySchl(schoolcode, out ds);    //SelectSchoolDatabyID 
+			if (schoolModels.SCHL != null)
+			{
+				outid = "1";
+			}
+
+
+			if (outid == "1")
+			{
+				string search = "SCHL='" + schoolcode + "'";
+				DataSet dschk = AssociateDB.AssocciateList("", search, "", 0, 3);
+				if (dschk.Tables.Count > 0)
+				{
+					if (dschk.Tables[0].Rows.Count > 0)
+					{
+						bool dupSCHLEMAIL = dschk.Tables[0].AsEnumerable().Any(row => schoolcode.ToUpper() == row.Field<string>("SCHL").ToUpper());
+
+						if (dupSCHLEMAIL == true)
+						{
+							outid = "5";
+						}
+					}
+				}
+			}
+
+			return Json(new { sm = schoolModels, oid = outid }, JsonRequestBehavior.AllowGet);
+		}
+
+
+	}
 }
 

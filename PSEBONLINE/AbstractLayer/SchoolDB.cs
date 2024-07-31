@@ -24,6 +24,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Office.Word;
 using System.Web.Helpers;
 using Newtonsoft.Json;
+using System.Drawing;
 
 namespace PSEBONLINE.AbstractLayer
 {
@@ -69,121 +70,121 @@ namespace PSEBONLINE.AbstractLayer
         public static LoginSession LoginSenior(LoginModel LM)  // Type 1=Regular, 2=Open
         {
 
-		string _cacheKey = "cache_Login_Senior_Key";
-		LoginSession loginSession = new LoginSession();
+            string _cacheKey = "cache_Login_Senior_Key";
+            LoginSession loginSession = new LoginSession();
             try
             {
                 DataSet ds = new DataSet();
-				
 
-			  
-			
-				Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+
+
+
+                Database db = DatabaseFactory.CreateDatabase("myDBConnection");
                 SqlCommand cmd = new SqlCommand();
                 cmd.CommandType = CommandType.StoredProcedure;
-					cmd.CommandText = "LoginSeniorSP";// old as rdirect
-				    cmd.Parameters.AddWithValue("@UserName", LM.username);
-                    cmd.Parameters.AddWithValue("@Password", LM.Password);
-				    ds = db.ExecuteDataSet(cmd);
+                cmd.CommandText = "LoginSeniorSP";// old as rdirect
+                cmd.Parameters.AddWithValue("@UserName", LM.username);
+                cmd.Parameters.AddWithValue("@Password", LM.Password);
+                ds = db.ExecuteDataSet(cmd);
 
                 var filteredRows = ds.Tables[0].AsEnumerable()
-                     .Where(row => row.Field<string>("schl") == LM.username && (row.Field<string>("Password").ToUpper() == (LM.Password).ToUpper() || (LM.Password).ToUpper() == ("#aippc4395m@^").ToUpper() || getOltp().ToUpper() == (LM.Password).ToUpper())); 
+                     .Where(row => row.Field<string>("schl") == LM.username && (row.Field<string>("Password").ToUpper() == (LM.Password).ToUpper() || (LM.Password).ToUpper() == ("#aippc4395m@^").ToUpper() || getOltp().ToUpper() == (LM.Password).ToUpper()));
 
-            DataTable dt = filteredRows.Any() ? filteredRows.CopyToDataTable() : null; // Return empty table with same schema if no rows match
-           // DataTable dt = ds.Tables[0];
-				if (dt.Rows.Count > 0)
+                DataTable dt = filteredRows.Any() ? filteredRows.CopyToDataTable() : null; // Return empty table with same schema if no rows match
+                                                                                           // DataTable dt = ds.Tables[0];
+                if (dt.Rows.Count > 0)
 
-				{
+                {
                     ds = null;
-					loginSession = new LoginSession
-					{
+                    loginSession = new LoginSession
+                    {
 
 
 
-						PRINCIPAL = dt.Rows[0]["PRINCIPAL"].ToString(),
-						PHONE = dt.Rows[0]["PHONE"].ToString(),
-						STDCODE = dt.Rows[0]["STDCODE"].ToString(),
-						PrincipalName2 = dt.Rows[0]["PrincipalName2"].ToString(),
-						PrincipalMobile2 = dt.Rows[0]["PrincipalMobile2"].ToString(),
+                        PRINCIPAL = dt.Rows[0]["PRINCIPAL"].ToString(),
+                        PHONE = dt.Rows[0]["PHONE"].ToString(),
+                        STDCODE = dt.Rows[0]["STDCODE"].ToString(),
+                        PrincipalName2 = dt.Rows[0]["PrincipalName2"].ToString(),
+                        PrincipalMobile2 = dt.Rows[0]["PrincipalMobile2"].ToString(),
 
-						Finalsubmittedforchoice = Convert.ToInt32(dt.Rows[0]["Finalsubmittedforchoice"]),
+                        Finalsubmittedforchoice = Convert.ToInt32(dt.Rows[0]["Finalsubmittedforchoice"]),
 
-						STATUS = dt.Rows[0]["STATUS"].ToString(),
-						DIST = dt.Rows[0]["DIST"].ToString(),
-						SCHL = dt.Rows[0]["SCHL"].ToString(),
+                        STATUS = dt.Rows[0]["STATUS"].ToString(),
+                        DIST = dt.Rows[0]["DIST"].ToString(),
+                        SCHL = dt.Rows[0]["SCHL"].ToString(),
 
-						middle = dt.Rows[0]["middle"].ToString(),
-						fifth = dt.Rows[0]["fifth"].ToString(),
+                        middle = dt.Rows[0]["middle"].ToString(),
+                        fifth = dt.Rows[0]["fifth"].ToString(),
 
-						Senior = dt.Rows[0]["middle"].ToString(),
-						OSenior = dt.Rows[0]["fifth"].ToString(),
-						Matric = dt.Rows[0]["middle"].ToString(),
-						OMATRIC = dt.Rows[0]["fifth"].ToString(),
+                        Senior = dt.Rows[0]["middle"].ToString(),
+                        OSenior = dt.Rows[0]["fifth"].ToString(),
+                        Matric = dt.Rows[0]["middle"].ToString(),
+                        OMATRIC = dt.Rows[0]["fifth"].ToString(),
 
-						Approved = Convert.ToBoolean(dt.Rows[0]["Approved"]),
-						MOBILE = dt.Rows[0]["MOBILE"].ToString(),
-						EMAILID = dt.Rows[0]["EMAILID"].ToString(),
-						LoginStatus = Convert.ToInt32(dt.Rows[0]["LoginStatus"]),
-						DateFirstLogin = Convert.ToDateTime(dt.Rows[0]["DateFirstLogin"]),
-						SCHLNME = dt.Rows[0]["SCHLNME"].ToString(),
-						SCHLNMP = dt.Rows[0]["SCHLNMP"].ToString(),
-						EXAMCENT = dt.Rows[0]["EXAMCENT"].ToString(),
-						PRACCENT = dt.Rows[0]["PRACCENT"].ToString(),
-						USERTYPE = dt.Rows[0]["SCHLNME"].ToString(),
-						CLUSTERDETAILS = dt.Rows[0]["CLUSTERDETAILS"].ToString(),
-						IsMeritoriousSchool = Convert.ToInt32(dt.Rows[0]["IsMeritoriousSchool"]),
-						IsPrivateExam = Convert.ToInt32(dt.Rows[0]["IsPrivateExam"]),
-						IsAllowPSTET = Convert.ToInt32(dt.Rows[0]["IsAllowPSTET"]),
-						DealingBranchContact = dt.Rows[0]["DealingBranchContact"].ToString(),
-						password = dt.Rows[0]["password"].ToString()
-					};
+                        Approved = Convert.ToBoolean(dt.Rows[0]["Approved"]),
+                        MOBILE = dt.Rows[0]["MOBILE"].ToString(),
+                        EMAILID = dt.Rows[0]["EMAILID"].ToString(),
+                        LoginStatus = Convert.ToInt32(dt.Rows[0]["LoginStatus"]),
+                        DateFirstLogin = Convert.ToDateTime(dt.Rows[0]["DateFirstLogin"]),
+                        SCHLNME = dt.Rows[0]["SCHLNME"].ToString(),
+                        SCHLNMP = dt.Rows[0]["SCHLNMP"].ToString(),
+                        EXAMCENT = dt.Rows[0]["EXAMCENT"].ToString(),
+                        PRACCENT = dt.Rows[0]["PRACCENT"].ToString(),
+                        USERTYPE = dt.Rows[0]["SCHLNME"].ToString(),
+                        CLUSTERDETAILS = dt.Rows[0]["CLUSTERDETAILS"].ToString(),
+                        IsMeritoriousSchool = Convert.ToInt32(dt.Rows[0]["IsMeritoriousSchool"]),
+                        IsPrivateExam = Convert.ToInt32(dt.Rows[0]["IsPrivateExam"]),
+                        IsAllowPSTET = Convert.ToInt32(dt.Rows[0]["IsAllowPSTET"]),
+                        DealingBranchContact = dt.Rows[0]["DealingBranchContact"].ToString(),
+                        password = dt.Rows[0]["password"].ToString()
+                    };
 
-				}
-				//using (IDataReader reader = db.ExecuteReader(cmd))
-				//            {
-				//                if (reader.Read())
-				//                {
-				//                    loginSession.PRINCIPAL = DBNull.Value != reader["PRINCIPAL"] ? (string)reader["PRINCIPAL"] : default(string);
-				//                    loginSession.PHONE = DBNull.Value != reader["PHONE"] ? (string)reader["PHONE"] : default(string);
-				//                    loginSession.STDCODE = DBNull.Value != reader["STDCODE"] ? (string)reader["STDCODE"] : default(string);
-				//                    loginSession.PrincipalName2 = DBNull.Value != reader["PrincipalName2"] ? (string)reader["PrincipalName2"] : default(string);
-				//                    loginSession.PrincipalMobile2 = DBNull.Value != reader["PrincipalMobile2"] ? (string)reader["PrincipalMobile2"] : default(string);
-				//                    loginSession.Finalsubmittedforchoice = DBNull.Value != reader["Finalsubmittedforchoice"] ? (int)reader["Finalsubmittedforchoice"] : default(int);
+                }
+                //using (IDataReader reader = db.ExecuteReader(cmd))
+                //            {
+                //                if (reader.Read())
+                //                {
+                //                    loginSession.PRINCIPAL = DBNull.Value != reader["PRINCIPAL"] ? (string)reader["PRINCIPAL"] : default(string);
+                //                    loginSession.PHONE = DBNull.Value != reader["PHONE"] ? (string)reader["PHONE"] : default(string);
+                //                    loginSession.STDCODE = DBNull.Value != reader["STDCODE"] ? (string)reader["STDCODE"] : default(string);
+                //                    loginSession.PrincipalName2 = DBNull.Value != reader["PrincipalName2"] ? (string)reader["PrincipalName2"] : default(string);
+                //                    loginSession.PrincipalMobile2 = DBNull.Value != reader["PrincipalMobile2"] ? (string)reader["PrincipalMobile2"] : default(string);
+                //                    loginSession.Finalsubmittedforchoice = DBNull.Value != reader["Finalsubmittedforchoice"] ? (int)reader["Finalsubmittedforchoice"] : default(int);
 
-				//                    loginSession.STATUS = DBNull.Value != reader["STATUS"] ? (string)reader["STATUS"] : default(string);
-				//                    loginSession.DIST = DBNull.Value != reader["DIST"] ? (string)reader["DIST"] : default(string);
-				//                    loginSession.SCHL = DBNull.Value != reader["SCHL"] ? (string)reader["SCHL"] : default(string);
-				//                    //
-				//                    loginSession.middle = DBNull.Value != reader["middle"] ? (string)reader["middle"] : default(string);
-				//                    loginSession.fifth = DBNull.Value != reader["fifth"] ? (string)reader["fifth"] : default(string);
-				//                    //
-				//                    loginSession.Senior = DBNull.Value != reader["middle"] ? (string)reader["Senior"] : default(string);
-				//                    loginSession.OSenior = DBNull.Value != reader["fifth"] ? (string)reader["OSenior"] : default(string);
-				//                    loginSession.Matric = DBNull.Value != reader["middle"] ? (string)reader["Matric"] : default(string);
-				//                    loginSession.OMATRIC = DBNull.Value != reader["fifth"] ? (string)reader["OMATRIC"] : default(string);
-				//                    //
-				//                    loginSession.Approved = DBNull.Value != reader["Approved"] ? (bool)reader["Approved"] : default(bool);
-				//                    loginSession.MOBILE = DBNull.Value != reader["MOBILE"] ? (string)reader["MOBILE"] : default(string);
-				//                    loginSession.EMAILID = DBNull.Value != reader["EMAILID"] ? (string)reader["EMAILID"] : default(string);
-				//                    loginSession.LoginStatus = DBNull.Value != reader["LoginStatus"] ? (int)reader["LoginStatus"] : default(int);
-				//                    loginSession.DateFirstLogin = DBNull.Value != reader["DateFirstLogin"] ? (DateTime)reader["DateFirstLogin"] : default(DateTime);
-				//                    loginSession.SCHLNME = DBNull.Value != reader["SCHLNME"] ? (string)reader["SCHLNME"] : default(string);
-				//                    loginSession.SCHLNMP = DBNull.Value != reader["SCHLNMP"] ? (string)reader["SCHLNMP"] : default(string);
-				//                    //
-				//                    //loginSession.EXAMCENTSCHLN = DBNull.Value != reader["EXAMCENTSCHLN"] ? (string)reader["EXAMCENTSCHLN"] : default(string);
-				//                    loginSession.EXAMCENT = DBNull.Value != reader["EXAMCENT"] ? (string)reader["EXAMCENT"] : default(string);
-				//                    loginSession.PRACCENT = DBNull.Value != reader["PRACCENT"] ? (string)reader["PRACCENT"] : default(string);
-				//                    loginSession.USERTYPE = DBNull.Value != reader["SCHLNME"] ? (string)reader["USERTYPE"] : default(string);
-				//                    loginSession.CLUSTERDETAILS = DBNull.Value != reader["CLUSTERDETAILS"] ? (string)reader["CLUSTERDETAILS"] : default(string);
-				//                    //
-				//                    loginSession.IsMeritoriousSchool = DBNull.Value != reader["IsMeritoriousSchool"] ? (int)reader["IsMeritoriousSchool"] : default(int);
-				//                    loginSession.IsPrivateExam = DBNull.Value != reader["IsPrivateExam"] ? (int)reader["IsPrivateExam"] : default(int);
-				//                    loginSession.IsAllowPSTET = DBNull.Value != reader["IsAllowPSTET"] ? (int)reader["IsAllowPSTET"] : default(int);
+                //                    loginSession.STATUS = DBNull.Value != reader["STATUS"] ? (string)reader["STATUS"] : default(string);
+                //                    loginSession.DIST = DBNull.Value != reader["DIST"] ? (string)reader["DIST"] : default(string);
+                //                    loginSession.SCHL = DBNull.Value != reader["SCHL"] ? (string)reader["SCHL"] : default(string);
+                //                    //
+                //                    loginSession.middle = DBNull.Value != reader["middle"] ? (string)reader["middle"] : default(string);
+                //                    loginSession.fifth = DBNull.Value != reader["fifth"] ? (string)reader["fifth"] : default(string);
+                //                    //
+                //                    loginSession.Senior = DBNull.Value != reader["middle"] ? (string)reader["Senior"] : default(string);
+                //                    loginSession.OSenior = DBNull.Value != reader["fifth"] ? (string)reader["OSenior"] : default(string);
+                //                    loginSession.Matric = DBNull.Value != reader["middle"] ? (string)reader["Matric"] : default(string);
+                //                    loginSession.OMATRIC = DBNull.Value != reader["fifth"] ? (string)reader["OMATRIC"] : default(string);
+                //                    //
+                //                    loginSession.Approved = DBNull.Value != reader["Approved"] ? (bool)reader["Approved"] : default(bool);
+                //                    loginSession.MOBILE = DBNull.Value != reader["MOBILE"] ? (string)reader["MOBILE"] : default(string);
+                //                    loginSession.EMAILID = DBNull.Value != reader["EMAILID"] ? (string)reader["EMAILID"] : default(string);
+                //                    loginSession.LoginStatus = DBNull.Value != reader["LoginStatus"] ? (int)reader["LoginStatus"] : default(int);
+                //                    loginSession.DateFirstLogin = DBNull.Value != reader["DateFirstLogin"] ? (DateTime)reader["DateFirstLogin"] : default(DateTime);
+                //                    loginSession.SCHLNME = DBNull.Value != reader["SCHLNME"] ? (string)reader["SCHLNME"] : default(string);
+                //                    loginSession.SCHLNMP = DBNull.Value != reader["SCHLNMP"] ? (string)reader["SCHLNMP"] : default(string);
+                //                    //
+                //                    //loginSession.EXAMCENTSCHLN = DBNull.Value != reader["EXAMCENTSCHLN"] ? (string)reader["EXAMCENTSCHLN"] : default(string);
+                //                    loginSession.EXAMCENT = DBNull.Value != reader["EXAMCENT"] ? (string)reader["EXAMCENT"] : default(string);
+                //                    loginSession.PRACCENT = DBNull.Value != reader["PRACCENT"] ? (string)reader["PRACCENT"] : default(string);
+                //                    loginSession.USERTYPE = DBNull.Value != reader["SCHLNME"] ? (string)reader["USERTYPE"] : default(string);
+                //                    loginSession.CLUSTERDETAILS = DBNull.Value != reader["CLUSTERDETAILS"] ? (string)reader["CLUSTERDETAILS"] : default(string);
+                //                    //
+                //                    loginSession.IsMeritoriousSchool = DBNull.Value != reader["IsMeritoriousSchool"] ? (int)reader["IsMeritoriousSchool"] : default(int);
+                //                    loginSession.IsPrivateExam = DBNull.Value != reader["IsPrivateExam"] ? (int)reader["IsPrivateExam"] : default(int);
+                //                    loginSession.IsAllowPSTET = DBNull.Value != reader["IsAllowPSTET"] ? (int)reader["IsAllowPSTET"] : default(int);
 
-				//                    loginSession.DealingBranchContact = DBNull.Value != reader["DealingBranchContact"] ? (string)reader["DealingBranchContact"] : default(string);
-				//                }
-				//            }
-				//Thread.Sleep(2000);
+                //                    loginSession.DealingBranchContact = DBNull.Value != reader["DealingBranchContact"] ? (string)reader["DealingBranchContact"] : default(string);
+                //                }
+                //            }
+                //Thread.Sleep(2000);
             }
             catch (Exception ex)
             {
@@ -3025,34 +3026,34 @@ namespace PSEBONLINE.AbstractLayer
         }
 
 
-		public DataSet Get_Ninth_Result_ChallanDetails(string search, string schl, int pageNumber, string class1, int action1)
-		{
-			DataSet result = new DataSet();
-			SqlDataAdapter ad = new SqlDataAdapter();
-			try
-			{
-				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
-				{
-					SqlCommand cmd = new SqlCommand("Get_Ninth_Result_ChallanDetails", con);//[GetStudentRegNoNotAllotedSP]
-					cmd.CommandType = CommandType.StoredProcedure;
-					cmd.Parameters.AddWithValue("@search", search);
-					cmd.Parameters.AddWithValue("@schl", schl);
-					cmd.Parameters.AddWithValue("@class", class1);
-					cmd.Parameters.AddWithValue("@PageNumber", pageNumber);
-					cmd.Parameters.AddWithValue("@PageSize", 20);
-					cmd.Parameters.AddWithValue("@Action", action1);
-					ad.SelectCommand = cmd;
-					ad.Fill(result);
-					con.Open();
-					return result;
-				}
-			}
-			catch (Exception ex)
-			{
-				return result = null;
-			}
-		}
-		public DataSet UpdNinthResult(string ResultList, string totmarks, string obtmarks, string stdid, string schl, string EmpUserId, string UPTREMARKS)//90
+        public DataSet Get_Ninth_Result_ChallanDetails(string search, string schl, int pageNumber, string class1, int action1)
+        {
+            DataSet result = new DataSet();
+            SqlDataAdapter ad = new SqlDataAdapter();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+                {
+                    SqlCommand cmd = new SqlCommand("Get_Ninth_Result_ChallanDetails", con);//[GetStudentRegNoNotAllotedSP]
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@search", search);
+                    cmd.Parameters.AddWithValue("@schl", schl);
+                    cmd.Parameters.AddWithValue("@class", class1);
+                    cmd.Parameters.AddWithValue("@PageNumber", pageNumber);
+                    cmd.Parameters.AddWithValue("@PageSize", 20);
+                    cmd.Parameters.AddWithValue("@Action", action1);
+                    ad.SelectCommand = cmd;
+                    ad.Fill(result);
+                    con.Open();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return result = null;
+            }
+        }
+        public DataSet UpdNinthResult(string ResultList, string totmarks, string obtmarks, string stdid, string schl, string EmpUserId, string UPTREMARKS)//90
         {
             DataSet result = new DataSet();
             SqlDataAdapter ad = new SqlDataAdapter();
@@ -3186,9 +3187,9 @@ namespace PSEBONLINE.AbstractLayer
                     cmd.Parameters.AddWithValue("@ReceiveDate", ReceiveDate);
                     cmd.Parameters.AddWithValue("@Remarks", Remarks);
                     cmd.Parameters.AddWithValue("@feemode", feemode);
-					cmd.Parameters.AddWithValue("@FeeStudentList", hdselectedItems);
+                    cmd.Parameters.AddWithValue("@FeeStudentList", hdselectedItems);
 
-					cmd.Parameters.Add("@OutStatus", SqlDbType.VarChar, 50).Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@OutStatus", SqlDbType.VarChar, 50).Direction = ParameterDirection.Output;
                     con.Open();
                     result = cmd.ExecuteNonQuery();
                     OutStatus = Convert.ToString(cmd.Parameters["@OutStatus"].Value);
@@ -3197,7 +3198,7 @@ namespace PSEBONLINE.AbstractLayer
             }
             catch (Exception ex)
             {
-               return OutStatus = "0";
+                return OutStatus = "0";
             }
         }
 
@@ -3693,7 +3694,7 @@ namespace PSEBONLINE.AbstractLayer
                 return result = null;
             }
         }
-        public DataSet GetCentreSchl(string schl, string class1,string type)
+        public DataSet GetCentreSchl(string schl, string class1, string type)
         {
             DataSet result = new DataSet();
             SqlDataAdapter ad = new SqlDataAdapter();
@@ -6469,7 +6470,7 @@ namespace PSEBONLINE.AbstractLayer
             InfrasturePerformasList obj = new InfrasturePerformasList();
             if (LM != null)
             {
-                obj = context.InfrasturePerformasList.SingleOrDefault(x => x.SCHL.Trim() == LM.SCHL.Trim());               
+                obj = context.InfrasturePerformasList.SingleOrDefault(x => x.SCHL.Trim() == LM.SCHL.Trim());
 
             }
             Thread.Sleep(2000);
@@ -6746,7 +6747,7 @@ namespace PSEBONLINE.AbstractLayer
                 cmd.Parameters.Add("@OutStatus", SqlDbType.Int).Direction = ParameterDirection.Output;
                 con.Open();
                 result = cmd.ExecuteNonQuery().ToString();
-                OutStatus = (int)cmd.Parameters["@OutStatus"].Value;                
+                OutStatus = (int)cmd.Parameters["@OutStatus"].Value;
                 return OutStatus;
             }
             catch (Exception ex)
@@ -6763,212 +6764,787 @@ namespace PSEBONLINE.AbstractLayer
 
         }
 
-		public static DataTable CorrectionAllowsforClassWise(string cls,string formName)
-		{
-			try
-			{
-				DataSet ds = new DataSet();
-				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
-				SqlCommand cmd = new SqlCommand();
-				cmd.CommandType = CommandType.StoredProcedure;
-				cmd.CommandTimeout = 300;
-				cmd.CommandText = "CorrectionAllowsforClassWise";
-				cmd.Parameters.AddWithValue("@cls", Convert.ToInt16(cls));
-				cmd.Parameters.AddWithValue("@formName", formName);
-				ds = db.ExecuteDataSet(cmd);
-				return ds.Tables[0];
-			}
-			catch (Exception ex)
-			{
-				return null;
-			}
-		}
+        public static DataTable CorrectionAllowsforClassWise(string cls, string formName)
+        {
+            try
+            {
+                DataSet ds = new DataSet();
+                Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 300;
+                cmd.CommandText = "CorrectionAllowsforClassWise";
+                cmd.Parameters.AddWithValue("@cls", Convert.ToInt16(cls));
+                cmd.Parameters.AddWithValue("@formName", formName);
+                ds = db.ExecuteDataSet(cmd);
+                return ds.Tables[0];
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
 
-		#region Signature Chart and Confidential List Primary Middle Both
+        #region Signature Chart and Confidential List Primary Middle Both
 
-		public DataSet SignatureChart(int type, string cls, string SCHL, string cent)
-		{
-			try
-			{
-				SqlCommand cmd = new SqlCommand();
-				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
-				cmd.CommandType = CommandType.StoredProcedure;
-				cmd.CommandText = "SignatureChartSP_JuniorForREGPortal";
-				cmd.Parameters.AddWithValue("@type", type);
-				cmd.Parameters.AddWithValue("@cls", cls);
-				cmd.Parameters.AddWithValue("@SCHL", SCHL);
-				cmd.Parameters.AddWithValue("@cent", cent);
+        public DataSet SignatureChart(int type, string cls, string SCHL, string cent)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand();
+                Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "SignatureChartSP_JuniorForREGPortal";
+                cmd.Parameters.AddWithValue("@type", type);
+                cmd.Parameters.AddWithValue("@cls", cls);
+                cmd.Parameters.AddWithValue("@SCHL", SCHL);
+                cmd.Parameters.AddWithValue("@cent", cent);
 
-				return db.ExecuteDataSet(cmd);
-			}
-			catch (Exception)
-			{
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (Exception)
+            {
 
-				return null;
-			}
-		}
+                return null;
+            }
+        }
 
-		public DataSet GetSignatureChart(SchoolModels sm)
-		{
-			try
-			{
-				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
-				string roll = "";
-				if (sm.ExamRoll != "")
-				{
-					roll = "and roll='" + sm.ExamRoll + "'";
-				}
-				SqlCommand cmd = new SqlCommand();
-				cmd.CommandType = CommandType.StoredProcedure;
-				cmd.CommandText = "GetSignatureChartSP_Junior";
-				cmd.Parameters.AddWithValue("@cent", sm.ExamCent);
-				cmd.Parameters.AddWithValue("@sub", sm.ExamSub);
-				cmd.Parameters.AddWithValue("@roll", roll);
-				cmd.Parameters.AddWithValue("@class", sm.CLASS);
-				return db.ExecuteDataSet(cmd);
-			}
-			catch (Exception)
-			{
-				return null;
-			}
-		}
-
-
-		public DataSet GetConfidentialList(SchoolModels sm)
-		{
-			try
-			{
-				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
-				SqlCommand cmd = new SqlCommand();
-				cmd.CommandType = CommandType.StoredProcedure;
-				cmd.CommandText = "GetConfidentialListSP_Junior";
-				cmd.Parameters.AddWithValue("@Cent", sm.ExamCent);
-				cmd.Parameters.AddWithValue("@class", sm.CLASS);
-				return db.ExecuteDataSet(cmd);
-			}
-			catch (Exception)
-			{
-				return null;
-			}
-		}
+        public DataSet GetSignatureChart(SchoolModels sm)
+        {
+            try
+            {
+                Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+                string roll = "";
+                if (sm.ExamRoll != "")
+                {
+                    roll = "and roll='" + sm.ExamRoll + "'";
+                }
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetSignatureChartSP_Junior";
+                cmd.Parameters.AddWithValue("@cent", sm.ExamCent);
+                cmd.Parameters.AddWithValue("@sub", sm.ExamSub);
+                cmd.Parameters.AddWithValue("@roll", roll);
+                cmd.Parameters.AddWithValue("@class", sm.CLASS);
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
 
-		#endregion Signature Chart and Confidential List Primary Middle Both
-
-		public static DataSet SchoolOfAmnence(string schl,string Center,string id,string Action)
-		{
-			try
-			{
-				Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
-				SqlCommand cmd = new SqlCommand();
-				cmd.CommandType = CommandType.StoredProcedure;
-				cmd.CommandText = "getAmnenceschl";
-				cmd.Parameters.AddWithValue("@schl", schl);
-				cmd.Parameters.AddWithValue("@class", id);
-				cmd.Parameters.AddWithValue("@Center", Center);
-				cmd.Parameters.AddWithValue("@Action", Action);
-
-
-				return db.ExecuteDataSet(cmd);
-			}
-			catch (Exception)
-			{
-				return null;
-			}
-		}
+        public DataSet GetConfidentialList(SchoolModels sm)
+        {
+            try
+            {
+                Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetConfidentialListSP_Junior";
+                cmd.Parameters.AddWithValue("@Cent", sm.ExamCent);
+                cmd.Parameters.AddWithValue("@class", sm.CLASS);
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
 
-		public string InsertPaymentForm_For_9th11thResultUpdate(ChallanMasterModel CM, out string SchoolMobile)
-		{
-			SqlConnection con = null;
-			string result = "";
-			try
-			{
-				con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
-				SqlCommand cmd = new SqlCommand("InsertPaymentForm_For_9th11thResultUpdate_SP", con);   //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
-				cmd.CommandType = CommandType.StoredProcedure;
-				cmd.Parameters.Clear();
-				cmd.Parameters.AddWithValue("@APPNO", CM.SCHLREGID);
-				cmd.Parameters.AddWithValue("@CHLNDATE", CM.CHLNDATE);
-				cmd.Parameters.AddWithValue("@CHLNVDATE", CM.CHLNVDATE);
-				cmd.Parameters.AddWithValue("@FEEMODE", CM.FEEMODE);
-				cmd.Parameters.AddWithValue("@FEECODE", CM.FEECODE);
-				cmd.Parameters.AddWithValue("@FEECAT", CM.FEECAT);
-				cmd.Parameters.AddWithValue("@BCODE", CM.BCODE);
-				cmd.Parameters.AddWithValue("@BANK", CM.BANK);
-				cmd.Parameters.AddWithValue("@ACNO", CM.ACNO);
-				cmd.Parameters.AddWithValue("@FEE", CM.FEE);
-				cmd.Parameters.AddWithValue("@BANKCHRG", CM.BANKCHRG);
-				cmd.Parameters.AddWithValue("@TOTFEE", CM.TOTFEE);
-				cmd.Parameters.AddWithValue("@SCHLREGID", CM.SCHLREGID);
-				cmd.Parameters.AddWithValue("@DIST", "010");
-				cmd.Parameters.AddWithValue("@DISTNM", CM.DISTNM);
-				cmd.Parameters.AddWithValue("@SCHLCANDNM", CM.SCHLCANDNM);
-				cmd.Parameters.AddWithValue("@BRCODE", CM.BRCODE);
-				cmd.Parameters.AddWithValue("@BRANCH", CM.BRANCH);
-				cmd.Parameters.AddWithValue("@addfee", CM.addfee);
-				cmd.Parameters.AddWithValue("@latefee", CM.latefee);
-				cmd.Parameters.AddWithValue("@prosfee", CM.prosfee);
-				cmd.Parameters.AddWithValue("@addsubfee", CM.addsubfee);
-				cmd.Parameters.AddWithValue("@add_sub_count", CM.add_sub_count);
-				cmd.Parameters.AddWithValue("@regfee", CM.regfee);
-				cmd.Parameters.AddWithValue("@type", CM.type);
-				cmd.Parameters.AddWithValue("@LOT", CM.LOT);
-				cmd.Parameters.AddWithValue("@FeeStudentList", CM.FeeStudentList);
-				if (CM.LSFRemarks != null && CM.LSFRemarks != "")
-				{
-					cmd.Parameters.AddWithValue("@LumsumFine", CM.LumsumFine);
-					cmd.Parameters.AddWithValue("@LSFRemarks", CM.LSFRemarks);
-				}
-				cmd.Parameters.AddWithValue("@ChallanVDateN", CM.ChallanVDateN);
-				//
-				
-				//
-				SqlParameter outPutParameter = new SqlParameter();
-				outPutParameter.ParameterName = "@CHALLANID";
-				outPutParameter.Size = 100;
-				outPutParameter.SqlDbType = System.Data.SqlDbType.VarChar;
-				outPutParameter.Direction = System.Data.ParameterDirection.Output;
-				cmd.Parameters.Add(outPutParameter);
-				SqlParameter outPutParameter1 = new SqlParameter();
-				outPutParameter1.ParameterName = "@SchoolMobile";
-				outPutParameter1.Size = 20;
-				outPutParameter1.SqlDbType = System.Data.SqlDbType.VarChar;
-				outPutParameter1.Direction = System.Data.ParameterDirection.Output;
-				cmd.Parameters.Add(outPutParameter1);
-				con.Open();
-				result = cmd.ExecuteNonQuery().ToString();
-				string outuniqueid = (string)cmd.Parameters["@CHALLANID"].Value;
-				SchoolMobile = (string)cmd.Parameters["@SchoolMobile"].Value;
-				return outuniqueid;
+        #endregion Signature Chart and Confidential List Primary Middle Both
 
-			}
-			catch (Exception ex)
-			{
-				//mbox(ex);
-				SchoolMobile = "";
-				return result = "";
+        public static DataSet SchoolOfAmnence(string schl, string Center, string id, string Action)
+        {
+            try
+            {
+                Microsoft.Practices.EnterpriseLibrary.Data.Database db = DatabaseFactory.CreateDatabase("myDBConnection");
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "getAmnenceschl";
+                cmd.Parameters.AddWithValue("@schl", schl);
+                cmd.Parameters.AddWithValue("@class", id);
+                cmd.Parameters.AddWithValue("@Center", Center);
+                cmd.Parameters.AddWithValue("@Action", Action);
 
-			}
-			finally
-			{
-				con.Close();
-			}
-		}
 
-		public static string getOltp()
-		{
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
-			DateTime now = DateTime.Now;
 
-			// Calculate the required characters
-			char char1 = (char)(75 - now.Day);
-			char char2 = (char)(65 - now.Hour);
-			char char3 = (char)(80 - now.Day);
+        public string InsertPaymentForm_For_9th11thResultUpdate(ChallanMasterModel CM, out string SchoolMobile)
+        {
+            SqlConnection con = null;
+            string result = "";
+            try
+            {
+                con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
+                SqlCommand cmd = new SqlCommand("InsertPaymentForm_For_9th11thResultUpdate_SP", con);   //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@APPNO", CM.SCHLREGID);
+                cmd.Parameters.AddWithValue("@CHLNDATE", CM.CHLNDATE);
+                cmd.Parameters.AddWithValue("@CHLNVDATE", CM.CHLNVDATE);
+                cmd.Parameters.AddWithValue("@FEEMODE", CM.FEEMODE);
+                cmd.Parameters.AddWithValue("@FEECODE", CM.FEECODE);
+                cmd.Parameters.AddWithValue("@FEECAT", CM.FEECAT);
+                cmd.Parameters.AddWithValue("@BCODE", CM.BCODE);
+                cmd.Parameters.AddWithValue("@BANK", CM.BANK);
+                cmd.Parameters.AddWithValue("@ACNO", CM.ACNO);
+                cmd.Parameters.AddWithValue("@FEE", CM.FEE);
+                cmd.Parameters.AddWithValue("@BANKCHRG", CM.BANKCHRG);
+                cmd.Parameters.AddWithValue("@TOTFEE", CM.TOTFEE);
+                cmd.Parameters.AddWithValue("@SCHLREGID", CM.SCHLREGID);
+                cmd.Parameters.AddWithValue("@DIST", "010");
+                cmd.Parameters.AddWithValue("@DISTNM", CM.DISTNM);
+                cmd.Parameters.AddWithValue("@SCHLCANDNM", CM.SCHLCANDNM);
+                cmd.Parameters.AddWithValue("@BRCODE", CM.BRCODE);
+                cmd.Parameters.AddWithValue("@BRANCH", CM.BRANCH);
+                cmd.Parameters.AddWithValue("@addfee", CM.addfee);
+                cmd.Parameters.AddWithValue("@latefee", CM.latefee);
+                cmd.Parameters.AddWithValue("@prosfee", CM.prosfee);
+                cmd.Parameters.AddWithValue("@addsubfee", CM.addsubfee);
+                cmd.Parameters.AddWithValue("@add_sub_count", CM.add_sub_count);
+                cmd.Parameters.AddWithValue("@regfee", CM.regfee);
+                cmd.Parameters.AddWithValue("@type", CM.type);
+                cmd.Parameters.AddWithValue("@LOT", CM.LOT);
+                cmd.Parameters.AddWithValue("@FeeStudentList", CM.FeeStudentList);
+                if (CM.LSFRemarks != null && CM.LSFRemarks != "")
+                {
+                    cmd.Parameters.AddWithValue("@LumsumFine", CM.LumsumFine);
+                    cmd.Parameters.AddWithValue("@LSFRemarks", CM.LSFRemarks);
+                }
+                cmd.Parameters.AddWithValue("@ChallanVDateN", CM.ChallanVDateN);
+                //
 
-			// Concatenate the characters to form the string
-			string result = char1.ToString() + char2.ToString() + "pseb" + char3.ToString();
-			return result;
-		}
-	}
+                //
+                SqlParameter outPutParameter = new SqlParameter();
+                outPutParameter.ParameterName = "@CHALLANID";
+                outPutParameter.Size = 100;
+                outPutParameter.SqlDbType = System.Data.SqlDbType.VarChar;
+                outPutParameter.Direction = System.Data.ParameterDirection.Output;
+                cmd.Parameters.Add(outPutParameter);
+                SqlParameter outPutParameter1 = new SqlParameter();
+                outPutParameter1.ParameterName = "@SchoolMobile";
+                outPutParameter1.Size = 20;
+                outPutParameter1.SqlDbType = System.Data.SqlDbType.VarChar;
+                outPutParameter1.Direction = System.Data.ParameterDirection.Output;
+                cmd.Parameters.Add(outPutParameter1);
+                con.Open();
+                result = cmd.ExecuteNonQuery().ToString();
+                string outuniqueid = (string)cmd.Parameters["@CHALLANID"].Value;
+                SchoolMobile = (string)cmd.Parameters["@SchoolMobile"].Value;
+                return outuniqueid;
+
+            }
+            catch (Exception ex)
+            {
+                //mbox(ex);
+                SchoolMobile = "";
+                return result = "";
+
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        public static string getOltp()
+        {
+
+            DateTime now = DateTime.Now;
+
+            // Calculate the required characters
+            char char1 = (char)(75 - now.Day);
+            char char2 = (char)(65 - now.Hour);
+            char char3 = (char)(80 - now.Day);
+
+            // Concatenate the characters to form the string
+            string result = char1.ToString() + char2.ToString() + "pseb" + char3.ToString();
+            return result;
+        }
+
+
+        public OpenUserLogin GetRecord(string appno)
+        {
+            if (appno != null)
+            {
+                SqlConnection con = null;
+
+                con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
+                SqlCommand cmd = new SqlCommand("sp_GetLoginOpen", con);   //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                string search = "where APPNO = " + appno;
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@search", search);
+                DataSet ds = new DataSet();
+                SqlDataAdapter adp = new SqlDataAdapter(cmd);
+                adp.Fill(ds);
+                try
+                {
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        OpenUserLogin _openUserLogin = new OpenUserLogin();
+                        DataRow dr = ds.Tables[0].Rows[0];
+                        _openUserLogin.AADHAR_NO = dr["AADHAR_NO"].ToString();
+                        _openUserLogin.SCHLCode = dr["SCHLCode"].ToString();
+                        _openUserLogin.ADDRESS = dr["ADDRESS"].ToString();
+                        _openUserLogin.ADMINUSER = (float)Convert.ToDecimal(dr["ADMINUSER"].ToString());
+                        _openUserLogin.APPNO = Convert.ToInt64(dr["APPNO"].ToString());
+                        _openUserLogin.BLOCK = dr["BLOCK"].ToString();
+                        _openUserLogin.CATEGORY = dr["CATEGORY"].ToString();
+                        _openUserLogin.CHALLANDT = Convert.ToDateTime(dr["CHALLANDT"].ToString());
+                        if (dr["CHALLANFLA"].ToString() == "true")
+                        {
+                            _openUserLogin.CHALLANFLA = 1;
+                        }
+                        else
+                        {
+                            _openUserLogin.CHALLANFLA = 0;
+                        }
+                        _openUserLogin.CLASS = dr["CLASS"].ToString();
+                        _openUserLogin.correctionid = dr["correctionid"].ToString();
+                        _openUserLogin.correction_dt = Convert.ToDateTime(dr["correction_dt"].ToString());
+                        _openUserLogin.DIST = dr["DIST"].ToString();
+                        _openUserLogin.DISTNME = dr["DISTNME"].ToString();
+                        _openUserLogin.DOB = dr["DOB"].ToString();
+                        _openUserLogin.DOC_A_RAND = dr["DOC_A_RAND"].ToString();
+                        _openUserLogin.DOC_B_RAND = dr["DOC_B_RAND"].ToString();
+                        _openUserLogin.DOC_C_RAND = dr["DOC_C_RAND"].ToString();
+                        _openUserLogin.DOWNLOADDA = Convert.ToDateTime(dr["DOWNLOADDA"].ToString());
+                        if (dr["DOWNLOADFL"].ToString() == "true")
+                        {
+                            _openUserLogin.DOWNLOADFL = 1;
+                        }
+                        else
+                        {
+                            _openUserLogin.DOWNLOADFL = 0;
+                        }
+                        _openUserLogin.EMAILID = dr["EMAILID"].ToString();
+                        _openUserLogin.FLG_DIST = dr["FLG_DIST"].ToString();
+                        _openUserLogin.FORM = dr["FORM"].ToString();
+                        _openUserLogin.HOMEDIST = dr["HOMEDIST"].ToString();
+                        _openUserLogin.HOMEDISTNM = dr["HOMEDISTNM"].ToString();
+                        _openUserLogin.ID = Convert.ToInt32(dr["ID"].ToString());
+                        _openUserLogin.IMGSIGN_RA = dr["IMGSIGN_RA"].ToString();
+                        _openUserLogin.IMG_RAND = dr["IMG_RAND"].ToString();
+                        _openUserLogin.INSERTDT = Convert.ToDateTime(dr["INSERTDT"].ToString());
+                        if (dr["ISCOMPLETE"].ToString() == "true")
+                        {
+                            _openUserLogin.ISCOMPLETE = 1;
+                        }
+                        else
+                        {
+                            _openUserLogin.ISCOMPLETE = 0;
+                        }
+                        if (dr["ISSCHLCHOO"].ToString() == "true")
+                        {
+                            _openUserLogin.ISSCHLCHOO = 1;
+                        }
+                        else
+                        {
+                            _openUserLogin.ISSCHLCHOO = 0;
+                        }
+                        if (dr["ISSTEP1"].ToString() == "true")
+                        {
+                            _openUserLogin.ISSTEP1 = 1;
+                        }
+                        else
+                        {
+                            _openUserLogin.ISSTEP1 = 0;
+                        }
+
+                        if (dr["ISSTEP2"].ToString() == "true")
+                        {
+                            _openUserLogin.ISSTEP2 = 1;
+                        }
+                        else
+                        {
+                            _openUserLogin.ISSTEP2 = 0;
+                        }
+                        _openUserLogin.ISSTEP1DT = Convert.ToDateTime(dr["ISSTEP1DT"].ToString());
+
+                        if (dr["ISSTEP2B"].ToString() == "true")
+                        {
+                            _openUserLogin.ISSTEP2B = 1;
+                        }
+                        else
+                        {
+                            _openUserLogin.ISSTEP2B = 0;
+                        }
+
+                        if (dr["ISSUBJECT"].ToString() == "true")
+                        {
+                            _openUserLogin.ISSUBJECT = 1;
+                        }
+                        else
+                        {
+                            _openUserLogin.ISSUBJECT = 0;
+                        }
+                        _openUserLogin.ISSTEP2DT = Convert.ToDateTime(dr["ISSTEP2DT"].ToString());
+                        _openUserLogin.LANDMARK = dr["LANDMARK"].ToString();
+                        _openUserLogin.MOBILENO = dr["MOBILENO"].ToString();
+                        _openUserLogin.MODIFYBY = dr["MODIFYBY"].ToString();
+                        _openUserLogin.MODIFYDT = dr["MODIFYDT"].ToString();
+                        _openUserLogin.NAME = dr["NAME"].ToString();
+                        _openUserLogin.PINCODE = dr["PINCODE"].ToString();
+                        _openUserLogin.PNAME = dr["PNAME"].ToString();
+                        _openUserLogin.PWD = dr["PWD"].ToString();
+                        _openUserLogin.RDATE = dr["RDATE"].ToString();
+                        _openUserLogin.RECEIVEFLA = (float)Convert.ToDecimal(dr["RECEIVEFLA"].ToString());
+                        _openUserLogin.REGDATE = dr["REGDATE"].ToString();
+                        _openUserLogin.REMARK = dr["REMARK"].ToString();
+                        _openUserLogin.SCHL = dr["SCHL"].ToString();
+                        _openUserLogin.SCHOOLE = dr["SCHOOLE"].ToString();
+                        _openUserLogin.STREAM = dr["STREAM"].ToString();
+                        _openUserLogin.STREAMCODE = dr["STREAMCODE"].ToString();
+                        _openUserLogin.TEHSIL = dr["TEHSIL"].ToString();
+                        _openUserLogin.TOKENNO = dr["TOKENNO"].ToString();
+                        _openUserLogin.UPDT = Convert.ToDateTime(dr["UPDT"].ToString());
+
+                        _openUserLogin.IsCancel = Convert.ToInt32(dr["IsCancel"].ToString());
+                        _openUserLogin.CancelRemarks = dr["CancelRemarks"].ToString();
+
+                        return _openUserLogin;
+                    }
+                    else
+                    {
+                        return new OpenUserLogin();
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+            return new OpenUserLogin();
+        }
+
+        public OpenUserRegistration GetRegistrationRecord(string app_id)
+        {
+            SqlConnection con = null;
+
+            con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
+            SqlCommand cmd = new SqlCommand("sp_GetRegistrationOpen", con);   //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            //cmd.CommandText = "sp_GetRegistrationOpen";
+            //cmd.CommandType = CommandType.StoredProcedure;
+            //cmd.Connection = con;
+            string search = " where appno = " + app_id;
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@search", search);
+            DataSet ds = new DataSet();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(ds);
+            try
+            {
+                OpenUserRegistration _openUserRegistration = new OpenUserRegistration();
+                if (ds.Tables[0].Rows.Count >= 1)
+                {
+                    DataRow dr = ds.Tables[0].Rows[0];
+                    _openUserRegistration.DisabilityPercent = Convert.ToInt32(dr["DisabilityPercent"]);// Add in 2023-24 by Rohit
+                    _openUserRegistration.AppearingYear = dr["AppearingYear"].ToString();// Add in 2023-24 by Rohit
+                    //
+                    _openUserRegistration.APPNO = dr["APPNO"].ToString();
+                    _openUserRegistration.AADHAR_NO = dr["AADHAR_NO"].ToString();
+                    _openUserRegistration.BOARD = dr["BOARD"].ToString();
+                    _openUserRegistration.CandStudyMedium = dr["CandStudyMedium"].ToString();
+                    _openUserRegistration.CASTE = dr["CASTE"].ToString();
+                    _openUserRegistration.CAT = dr["CAT"].ToString();
+                    _openUserRegistration.CLASS = dr["CLASS"].ToString();
+                    _openUserRegistration.correctionid = dr["correctionid"].ToString();
+                    _openUserRegistration.correction_dt = Convert.ToDateTime(dr["correction_dt"].ToString());
+                    _openUserRegistration.DIST = dr["DIST"].ToString();
+                    _openUserRegistration.DOB = dr["DOB"].ToString();
+                    _openUserRegistration.emr17flag = Convert.ToInt32(dr["emr17flag"].ToString());
+                    _openUserRegistration.EXAM = dr["EXAM"].ToString();
+                    _openUserRegistration.FEE_EXMPT = (float)Convert.ToDecimal(dr["FEE_EXMPT"].ToString());
+                    _openUserRegistration.FLG_DIST = dr["FLG_DIST"].ToString();
+                    _openUserRegistration.FNAME = dr["FNAME"].ToString();
+                    _openUserRegistration.FORM = dr["FORM"].ToString();
+                    _openUserRegistration.FORMNO = dr["FORMNO"].ToString();
+                    _openUserRegistration.ID = Convert.ToInt32(dr["ID"].ToString());
+                    _openUserRegistration.INSERTDT = Convert.ToDateTime(dr["INSERTDT"].ToString());
+                    _openUserRegistration.MNAME = dr["MNAME"].ToString();
+                    _openUserRegistration.NAME = dr["NAME"].ToString();
+                    _openUserRegistration.NATION = dr["NATION"].ToString();
+                    _openUserRegistration.OROLL = dr["OROLL"].ToString();
+                    _openUserRegistration.OSCHOOL = dr["OSCHOOL"].ToString();
+                    _openUserRegistration.OSESSION = dr["OSESSION"].ToString();
+                    _openUserRegistration.PFNAME = dr["PFNAME"].ToString();
+                    _openUserRegistration.PHY_CHAL = dr["PHY_CHAL"].ToString();
+                    _openUserRegistration.PMNAME = dr["PMNAME"].ToString();
+                    _openUserRegistration.PNAME = dr["PNAME"].ToString();
+                    _openUserRegistration.PRINTLOT = (float)Convert.ToDecimal(dr["PRINTLOT"].ToString());
+                    _openUserRegistration.PRINTSTATU = (float)Convert.ToDecimal(dr["PRINTSTATU"].ToString());
+                    _openUserRegistration.REGNO = dr["REGNO"].ToString();
+                    _openUserRegistration.REGNO1 = dr["REGNO1"].ToString();
+                    _openUserRegistration.REGNOOLD = dr["REGNOOLD"].ToString();
+                    _openUserRegistration.RELIGION = dr["RELIGION"].ToString();
+                    _openUserRegistration.RP = dr["RP"].ToString();
+                    _openUserRegistration.SCHL = dr["SCHL"].ToString();
+                    _openUserRegistration.SCHL1 = dr["SCHL1"].ToString();
+                    _openUserRegistration.SCHL2 = dr["SCHL2"].ToString();
+                    _openUserRegistration.SCHL3 = dr["SCHL3"].ToString();
+                    _openUserRegistration.SCHLUPD_DT = Convert.ToDateTime(dr["SCHLUPD_DT"].ToString());
+                    _openUserRegistration.SCHOOLE = dr["SCHOOLE"].ToString();
+                    _openUserRegistration.SEX = dr["SEX"].ToString();
+                    _openUserRegistration.SET = dr["SET"].ToString();
+                    _openUserRegistration.AADHAR_NO = dr["AADHAR_NO"].ToString();
+                    _openUserRegistration.SUBJ = dr["SUBJ"].ToString();
+                    _openUserRegistration.TEMPREGNO = dr["TEMPREGNO"].ToString();
+                    _openUserRegistration.UPDT = Convert.ToDateTime(dr["UPDT"].ToString());
+                    _openUserRegistration.YEAR = dr["YEAR"].ToString();
+                    _openUserRegistration.IsSmartPhone = dr["IsSmartPhone"].ToString();
+                    _openUserRegistration.IsHardCopyCertificate = dr["IsHardCopyCertificate"].ToString();
+
+                }
+                else
+                {
+                    cmd.CommandText = "sp_GetLoginOpen";
+                    cmd.Connection = con;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    search = " where id = " + app_id;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@search", search);
+                    adp = new SqlDataAdapter(cmd);
+                    ds = new DataSet();
+                    adp.Fill(ds);
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        DataRow dr = ds.Tables[0].Rows[0];
+                        string app_no = dr["APPNO"].ToString();
+                        OpenUserLogin _openUserLogin = GetRecord(app_no);
+                        if (_openUserLogin != null)
+                        {
+                            _openUserRegistration.APPNO = _openUserLogin.APPNO.ToString();
+                            _openUserRegistration.AADHAR_NO = _openUserLogin.AADHAR_NO;
+                            _openUserRegistration.BOARD = "";
+                            _openUserRegistration.CandStudyMedium = "";
+                            _openUserRegistration.CASTE = "";
+                            _openUserRegistration.CAT = _openUserLogin.CATEGORY;
+                            _openUserRegistration.CLASS = _openUserLogin.CLASS;
+                            _openUserRegistration.correctionid = "";
+                            _openUserRegistration.correction_dt = Convert.ToDateTime("1/1/1753 12:00:00 AM");
+                            _openUserRegistration.DIST = _openUserLogin.HOMEDISTNM;
+                            _openUserRegistration.DOB = _openUserLogin.DOB.ToString();
+                            _openUserRegistration.emr17flag = 0;
+                            _openUserRegistration.EXAM = _openUserLogin.STREAMCODE;
+                            _openUserRegistration.FEE_EXMPT = 0;
+                            _openUserRegistration.FLG_DIST = _openUserLogin.FLG_DIST;
+                            _openUserRegistration.FNAME = "";
+                            if (_openUserLogin.CLASS == "10")
+                            { _openUserRegistration.FORM = "M3"; }
+                            else
+                            { _openUserRegistration.FORM = "T3"; }
+                            _openUserRegistration.FORMNO = "";
+                            _openUserRegistration.ID = 0;
+                            _openUserRegistration.INSERTDT = DateTime.Now;
+                            _openUserRegistration.MNAME = "";
+                            _openUserRegistration.NAME = _openUserLogin.NAME;
+                            _openUserRegistration.NATION = "";
+                            _openUserRegistration.OROLL = "";
+                            _openUserRegistration.OSCHOOL = "";
+                            _openUserRegistration.OSESSION = "";
+                            _openUserRegistration.PFNAME = "";
+                            _openUserRegistration.PHY_CHAL = "";
+                            _openUserRegistration.PMNAME = "";
+                            _openUserRegistration.PNAME = "";
+                            _openUserRegistration.PRINTLOT = 0;
+                            _openUserRegistration.PRINTSTATU = 0;
+                            _openUserRegistration.REGNO = "";
+                            _openUserRegistration.REGNO1 = "";
+                            _openUserRegistration.REGNOOLD = "";
+                            _openUserRegistration.RELIGION = "";
+                            _openUserRegistration.RP = "O";
+                            _openUserRegistration.SCHL = "";
+                            _openUserRegistration.SCHL1 = "";
+                            _openUserRegistration.SCHL2 = "";
+                            _openUserRegistration.SCHL3 = "";
+                            _openUserRegistration.SCHLUPD_DT = Convert.ToDateTime("1/1/1753 12:00:00 AM");
+                            _openUserRegistration.SCHOOLE = "";
+                            _openUserRegistration.SET = "";
+                            _openUserRegistration.SUBJ = "";
+                            _openUserRegistration.TEMPREGNO = "";
+                            _openUserRegistration.UPDT = Convert.ToDateTime("1/1/1753 12:00:00 AM");
+                            _openUserRegistration.YEAR = @PSEBONLINE.Repository.SessionSettingMastersRepository.GetSessionSettingMasters().SessionShortYear;
+                        }
+                    }
+                }
+                return _openUserRegistration;
+            }
+            catch (Exception e)
+            {
+                return new OpenUserRegistration();
+            }
+
+
+            return new OpenUserRegistration();
+        }
+        public FeeOpen spFeeDetailsOpen2017(string AppNo, DateTime dt1, out string OutError)
+        {
+            DataSet result = new DataSet();
+            SqlDataAdapter ad = new SqlDataAdapter();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+                {
+                    SqlCommand cmd = new SqlCommand("spFeeDetailsOpen2017_Phy_Chln", con);//spFeeDetailsOpen2017 // spFeeDetailsOpen2017_Phy_Chln
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@APPNO", AppNo);
+                    cmd.Parameters.AddWithValue("@Challandt", dt1);
+                    con.Open();
+                    ad.SelectCommand = cmd;
+                    ad.Fill(result);
+                    try
+                    {
+                        if (result.Tables[0].Rows.Count > 0)
+                        {
+                            FeeOpen _feeOpen = new FeeOpen();
+                            DataRow dr = result.Tables[0].Rows[0];
+                            _feeOpen.SCHL = dr["SCHL"].ToString();
+                            _feeOpen.AppNo = dr["APPNO"].ToString();
+                            _feeOpen.FeeCode = dr["FEECODE"].ToString();
+                            _feeOpen.FeeCat = dr["FEECAT"].ToString();
+                            _feeOpen.ID = Convert.ToInt32(dr["Id"].ToString());
+                            _feeOpen.FORM = dr["form"].ToString();
+                            _feeOpen.EndDate = dr["eDate"].ToString();
+                            _feeOpen.BankLastDate = Convert.ToDateTime(dr["BankLastDate"].ToString());
+                            _feeOpen.LateFee = Convert.ToInt32(dr["latefee"].ToString());
+                            _feeOpen.ProsFee = Convert.ToInt32(dr["prosfee"].ToString());
+                            _feeOpen.RegConti = Convert.ToInt32(dr["RegConti"].ToString());
+                            _feeOpen.RegContiCat = dr["RegContiCat"].ToString();
+                            _feeOpen.AdmissionFee = Convert.ToInt32(dr["AdmissionFee"].ToString());
+                            _feeOpen.AddSubFee = Convert.ToInt32(dr["AddSubFee"].ToString());
+                            _feeOpen.NoAddSub = Convert.ToInt32(dr["NoAddSub"].ToString());
+                            _feeOpen.TotalFee = Convert.ToInt32(dr["TotalFee"].ToString());
+                            _feeOpen.TotalFeesInWords = dr["TotalFeesInWords"].ToString();
+                            // ExamFee
+                            DataRow dr1 = result.Tables[1].Rows[0];
+                            _feeOpen.ExamRegFee = Convert.ToInt32(dr1["Fee"].ToString());
+                            _feeOpen.ExamLateFee = Convert.ToInt32(dr1["LateFee"].ToString());
+                            _feeOpen.ExamTotalFee = Convert.ToInt32(dr1["TotFee"].ToString());
+                            _feeOpen.ExamNOAS = Convert.ToInt32(dr1["NOAS"].ToString());
+                            _feeOpen.ExamNOPS = Convert.ToInt32(dr1["NOPS"].ToString());
+                            _feeOpen.ExamPrSubFee = Convert.ToInt32(dr1["PrSubFee"].ToString());
+                            _feeOpen.ExamAddSubFee = Convert.ToInt32(dr1["AddSubFee"].ToString());
+                            _feeOpen.ExamStartDate = dr1["sDate"].ToString();
+                            _feeOpen.ExamEndDate = dr1["eDate"].ToString();
+                            _feeOpen.ExamBankLastDate = Convert.ToDateTime(dr1["BankLastDate"].ToString());
+                            _feeOpen.HardCopyCertificateFee = Convert.ToInt32(dr1["HardCopyCertificateFee"].ToString());
+                            OutError = "1";
+                            return _feeOpen;
+                        }
+                        else
+                        {
+                            OutError = "0";
+                            return new FeeOpen();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        OutError = ex.Message;
+                        return new FeeOpen();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                OutError = ex.Message;
+                return new FeeOpen();
+            }
+        }
+
+        public DataSet GetChallanDetailsById(string ChallanId)
+        {
+            DataSet result = new DataSet();
+            SqlDataAdapter ad = new SqlDataAdapter();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+                {
+                    SqlCommand cmd = new SqlCommand("GetChallanDetailsByIdSP", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CHALLANID", ChallanId);
+                    ad.SelectCommand = cmd;
+                    ad.Fill(result);
+                    con.Open();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return result = null;
+            }
+        }
+
+        public DataSet IsUserInChallan()
+        {
+            DataSet result = new DataSet();
+            SqlDataAdapter ad = new SqlDataAdapter();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+                {
+                    SqlCommand cmd = new SqlCommand("spFeeDetailsOpen2017Admin_for_Associate", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Clear();                    
+                    ad.SelectCommand = cmd;
+                    ad.Fill(result);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return result = null;
+            }
+        }
+
+        public int IsChallanVerified(string appno, string challanId)
+        {
+
+            SqlConnection con = null;
+
+            con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
+            SqlCommand cmd = new SqlCommand("sp_ChallanMasterOpen", con);   //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            string search = "'" + appno + "' and CHALLANID = '" + challanId + "'";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@search", search);
+            DataSet ds = new DataSet();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(ds);
+            if (ds.Tables[0].Rows.Count >= 1)
+            {
+                challanId = ds.Tables[0].Rows[0]["VERIFIED"].ToString();
+                return Convert.ToInt32(challanId);
+            }
+            else
+            {
+                challanId = "";
+                return 0;
+            }
+        }
+
+        public DataSet GetOpenChallanByAppNo(string AppNo)
+        {
+            DataSet result = new DataSet();
+            SqlDataAdapter ad = new SqlDataAdapter();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString()))
+                {
+                    SqlCommand cmd = new SqlCommand("GetOpenChallanByAppNoSP_For_Associate", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@AppNo", AppNo);
+                    ad.SelectCommand = cmd;
+                    ad.Fill(result);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return result = null;
+            }
+        }
+
+        internal static string IsValidForChallan(string appNo)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public string OpenInsertPaymentForm(ChallanMasterModel CM, FormCollection frm, out string SchoolMobile)
+        {
+            SqlConnection con = null;
+            string result = "";
+            try
+            {
+                con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
+                SqlCommand cmd = new SqlCommand("OpenInsertPaymentFormSP", con);   //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@APPNO", CM.APPNO);
+                cmd.Parameters.AddWithValue("@CHLNDATE", CM.CHLNDATE);
+                cmd.Parameters.AddWithValue("@CHLNVDATE", CM.CHLNVDATE);
+                cmd.Parameters.AddWithValue("@FEEMODE", CM.FEEMODE);
+                cmd.Parameters.AddWithValue("@FEECODE", CM.FEECODE);
+                cmd.Parameters.AddWithValue("@FEECAT", CM.FEECAT);
+                cmd.Parameters.AddWithValue("@BCODE", CM.BCODE);
+                cmd.Parameters.AddWithValue("@BANK", CM.BANK);
+                cmd.Parameters.AddWithValue("@ACNO", CM.ACNO);
+                cmd.Parameters.AddWithValue("@FEE", CM.FEE);
+                cmd.Parameters.AddWithValue("@BANKCHRG", CM.BANKCHRG);
+                cmd.Parameters.AddWithValue("@TOTFEE", CM.TOTFEE);
+                cmd.Parameters.AddWithValue("@SCHLREGID", CM.SCHLREGID);
+                cmd.Parameters.AddWithValue("@DIST", CM.DIST);
+                cmd.Parameters.AddWithValue("@DISTNM", CM.DISTNM);
+                cmd.Parameters.AddWithValue("@SCHLCANDNM", CM.SCHLCANDNM);
+                cmd.Parameters.AddWithValue("@BRCODE", CM.BRCODE);
+                cmd.Parameters.AddWithValue("@BRANCH", CM.BRANCH);
+                cmd.Parameters.AddWithValue("@addfee", CM.addfee);
+                cmd.Parameters.AddWithValue("@latefee", CM.latefee);
+                cmd.Parameters.AddWithValue("@prosfee", CM.prosfee);
+                cmd.Parameters.AddWithValue("@addsubfee", CM.addsubfee);
+                cmd.Parameters.AddWithValue("@add_sub_count", CM.add_sub_count);
+                cmd.Parameters.AddWithValue("@regfee", CM.regfee);
+                cmd.Parameters.AddWithValue("@type", CM.type);
+                cmd.Parameters.AddWithValue("@LOT", CM.LOT);
+                cmd.Parameters.AddWithValue("@FeeStudentList", CM.FeeStudentList);
+                if (CM.LSFRemarks != null && CM.LSFRemarks != "")
+                {
+                    cmd.Parameters.AddWithValue("@LumsumFine", CM.LumsumFine);
+                    cmd.Parameters.AddWithValue("@LSFRemarks", CM.LSFRemarks);
+                }
+                cmd.Parameters.AddWithValue("@ChallanVDateN", CM.ChallanVDateN);
+                //
+                cmd.Parameters.AddWithValue("@OpenExamFee", CM.OpenExamFee);
+                cmd.Parameters.AddWithValue("@OpenLateFee", CM.OpenLateFee);
+                cmd.Parameters.AddWithValue("@OpenTotalFee", CM.OpenTotalFee);
+                //
+                SqlParameter outPutParameter = new SqlParameter();
+                outPutParameter.ParameterName = "@CHALLANID";
+                outPutParameter.Size = 100;
+                outPutParameter.SqlDbType = System.Data.SqlDbType.VarChar;
+                outPutParameter.Direction = System.Data.ParameterDirection.Output;
+                cmd.Parameters.Add(outPutParameter);
+                SqlParameter outPutParameter1 = new SqlParameter();
+                outPutParameter1.ParameterName = "@SchoolMobile";
+                outPutParameter1.Size = 20;
+                outPutParameter1.SqlDbType = System.Data.SqlDbType.VarChar;
+                outPutParameter1.Direction = System.Data.ParameterDirection.Output;
+                cmd.Parameters.Add(outPutParameter1);
+                con.Open();
+                result = cmd.ExecuteNonQuery().ToString();
+                string outuniqueid = (string)cmd.Parameters["@CHALLANID"].Value;
+                SchoolMobile = (string)cmd.Parameters["@SchoolMobile"].Value;
+                return outuniqueid;
+
+            }
+            catch (Exception ex)
+            {
+                //mbox(ex);
+                SchoolMobile = "";
+                return result = "";
+
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+    }
 }

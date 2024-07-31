@@ -1480,7 +1480,7 @@ namespace PSEBONLINE.AbstractLayer
             try
             {
                 con = new SqlConnection(ConfigurationManager.ConnectionStrings[CommonCon].ToString());
-                SqlCommand cmd = new SqlCommand("InsertPaymentFormMainSP", con);   //InsertPaymentFormSP //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
+                SqlCommand cmd = new SqlCommand("InsertAssociatePaymentFormMainSP", con);   //InsertPaymentFormSP //InsertPaymentFormSPTest  // [InsertPaymentFormSP_Rohit]
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 300;
                 cmd.Parameters.AddWithValue("@EmpUserId", CM.EmpUserId);

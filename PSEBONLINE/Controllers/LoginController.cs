@@ -223,6 +223,7 @@ namespace PSEBONLINE.Controllers
                     TempData["result"] = loginSession.LoginStatus;
                     Session["Session"] = lm.Session.ToString();
                     Session["DIST"] = loginSession.DIST.ToString();
+                    Session["IsAssociate"] = loginSession.USERTYPE;
 
                     string lastSessionShow = getlastSessions(Session["Session"].ToString());
                     string[] years = lastSessionShow.Split(',');

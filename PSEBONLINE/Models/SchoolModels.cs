@@ -868,7 +868,10 @@ namespace PSEBONLINE.Models
         public SchoolAllotedToAgency schoolAllotedToAgency;
         public SchoolAllowForMarksEntry schoolAllowForMarksEntry;
 
+        public string AssociateIsPseb { get; set; }
 
+        public string Associateschlcode { get; set; }
+        public string Associateschlname { get; set; }
         public string SCHLNME { get; set; }
         public string SCHLNMP { get; set; }
         public string APPNO { get; set; }

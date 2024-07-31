@@ -1,0 +1,86 @@
+﻿@model PSEBONLINE.Models.AssociateModel
+@{
+    ViewBag.Title = "Final Submit";
+    Layout = "~/Views/Shared/_Card_Header.cshtml";
+}
+
+@if (TempData["NotValidForFinalSubmit"] != null)
+{
+
+
+
+
+
+
+    <div class="popup">
+        <center>
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        <td>
+                            <h1 style="color:#cc0000">Missing Field and Details</h1>
+                            <p style="font-size:16px;line-height:24px">
+                                You cannot final submit because you have not filled mandatory details correctly.<br /><br />
+                                <span class="rqf">Missing Details :</span> @Html.Raw(TempData["NotValidForFinalSubmit"].ToString()) <br />
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </center>
+    </div>
+}
+else
+{
+
+    using (Html.BeginForm("FinalPrintForm", "AssociateCommuni", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="row">
+            <div class="card">
+                <div class="card-header"></div>
+                <div class="card-body">
+                    <div class="text-center mt-5">
+                        @if (Session["IsFormLock"].ToString() == "0")
+                        {
+                            <input type="submit" value="Lock and Submit Form" class="btn btn-bg-primary" />
+                        }
+
+                    </div>
+                </div>
+                <div class="card-footer">
+
+                </div>
+            </div>
+            
+
+        </div>
+
+    }
+
+
+}
+
+
+@{ if (ViewData["result"] != null)
+    {
+        if (ViewData["result"].ToString() != "")
+        {
+            if (ViewData["result"].ToString() == "1")
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit SuccessFully..");
+                    window.location.href = '@Url.Action("SchoolProfile", "AssociateCommuni")';
+                </script>
+            }
+
+            else
+            {
+                <script type="text/javascript" language="javascript">
+                    alert("Submit Failure, Please Try Again");
+                   //alert('ViewBag.Mesaage');
+                </script>
+            }
+
+        }
+    } }
+

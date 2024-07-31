@@ -18,8 +18,11 @@ namespace PSEBONLINE.Models
         public List<AssociationDocumentDetailsModel> AssociationDocumentDetailsModelList { get; set; }
 
         public List<StudentCountModel> StudentCountModelList { get; set; }
-              public StudentCountModel StudentCountModel { get; set; }
-        
+        public StudentCountModel StudentCountModel { get; set; }
+
+        public List<AssociateSchoolModels> AssociateSchoolModelsList { get; set; }
+        public AssociateSchoolModels AssociateSchoolModel { get; set; }
+
         public List<AssociateContinuationDashBoardViews> AssociateContinuationDashBoardViewsList { get; set; }
         public AssociateContinuationDashBoardViews AssociateContinuationDashBoardViews { get; set; }
 
@@ -217,7 +220,7 @@ namespace PSEBONLINE.Models
 
         public string CourtCaseFile { get; set; }
 
-        public int IsFormLock { get; set; }
+        public Int16 IsFormLock { get; set; }
         public string IsFormLockOn { get; set; }
         public string IsFormLockBy { get; set; }
 
@@ -231,8 +234,74 @@ namespace PSEBONLINE.Models
         public string Remarks { get; set; }
 
 
-    }
+        public string Sec1 { get; set; }
+        public string Sec2 { get; set; }
+        public string Sec3 { get; set; }
+        public string Sec4 { get; set; }
+        public string Sec5 { get; set; }
+        public string Sec6 { get; set; }
+        public string Sec7 { get; set; }
+        public string Sec8 { get; set; }
+        public string Sec9 { get; set; }
+        public string Sec10 { get; set; }
+        public string Sec11Hum { get; set; }
+        public string Sec11Voc { get; set; }
+        public string Sec11Comm { get; set; }
+        public string Sec11Sci { get; set; }
+        public string Sec12Hum { get; set; }
+        public string Sec12Voc { get; set; }
+        public string Sec12Comm { get; set; }
+        public string Sec12Sci { get; set; }
+        public string TotStu1 { get; set; }
+        public string TotStu2 { get; set; }
+        public string TotStu3 { get; set; }
+        public string TotStu4 { get; set; }
+        public string TotStu5 { get; set; }
+        public string TotStu6 { get; set; }
+        public string TotStu7 { get; set; }
+        public string TotStu8 { get; set; }
+        public string TotStu9 { get; set; }
+        public string TotStu10 { get; set; }
+        public string TotStu11Hum { get; set; }
+        public string TotStu11Voc { get; set; }
+        public string TotStu11Comm { get; set; }
+        public string TotStu11Sci { get; set; }
+        public string TotStu12Hum { get; set; }
+        public string TotStu12Voc { get; set; }
+        public string TotStu12Comm { get; set; }
+        public string TotStu12Sci { get; set; }
 
+        public string TAS { get; set; }
+        public string CAS { get; set; }
+        public string Playgl { get; set; }
+        public string PlayGDS { get; set; }
+        public string SBC { get; set; }
+        public string DBC { get; set; }
+        public string TotalNoOfcomputer { get; set; }
+        public string smartClass { get; set; }
+        public string ComputerLab { get; set; }
+        public string PhysicsLab { get; set; }
+        public string ChemistryLab { get; set; }
+        public string liabrary { get; set; }
+        public string Noofbooks { get; set; }
+        public string typeinternet { get; set; }
+        public string isTransport { get; set; }
+        public string NoofPrinter { get; set; }
+        public string pagePrintCapacity { get; set; }
+        public string isCasePending { get; set; }
+        public string isAccountCheque { get; set; }
+        public string isRoAvail { get; set; }
+        public string isToilet { get; set; }
+        public string isDisplayBoard { get; set; }
+        public string OtherActivities { get; set; }
+        public string isPsebReg { get; set; }
+        public string Associateschlcode { get; set; }
+        public string AssociateLtrFile { get; set; }
+
+        public string BuildingMapfile { get; set; }
+
+
+    }
     public class AssociateContinuationDashBoardViews
         {
             [Key]
@@ -333,9 +402,7 @@ namespace PSEBONLINE.Models
         public string TotStu12Voc { get; set; }
         public string TotStu12Comm { get; set; }
         public string TotStu12Sci { get; set; }
-      
-
-
+        public int StudentCountId { get;  set; }
     }
 
 
@@ -398,7 +465,248 @@ namespace PSEBONLINE.Models
 
     }
 
+    public class AssociateSchoolModels
+    {
 
+
+
+        public string SCHLNME { get; set; }
+        public string SCHLNMP { get; set; }
+        public string APPNO { get; set; }
+        public string SameAsSchl { get; set; }
+        //fifth
+        public string uclass { get; set; }
+        public string lclass { get; set; }
+        public string fifth { get; set; }
+        public string FIF_YR { get; set; }
+        public string FIF_S { get; set; }
+        public string FIF_UTYPE { get; set; }
+        public string FIF_NO { get; set; }
+
+        //Rohit
+        public string omattype { get; set; }
+        public string ohumtype { get; set; }
+        public string oscitype { get; set; }
+        public string ocommtype { get; set; }
+        public string acno { get; set; }
+        public string confirmacno { get; set; }
+
+        //
+        public string LinkSchool { get; set; }
+        public string OHID_YR { get; set; }
+        public string OMID_YR { get; set; }
+        public string OHYR { get; set; }
+        public string OSYR { get; set; }
+        public string OCYR { get; set; }
+        public string OVYR { get; set; }
+        public string OTYR { get; set; }
+        public string OAYR { get; set; }
+
+        public string HID_YR_SEC { get; set; }
+        public string MID_YR_SEC { get; set; }
+        public string HYR_SEC { get; set; }
+        public string SYR_SEC { get; set; }
+        public string CYR_SEC { get; set; }
+        public string VYR_SEC { get; set; }
+        public string TYR_SEC { get; set; }
+        public string AYR_SEC { get; set; }
+
+        public string OHID_YR_SEC { get; set; }
+        public string OMID_YR_SEC { get; set; }
+        public string OHYR_SEC { get; set; }
+        public string OSYR_SEC { get; set; }
+        public string OCYR_SEC { get; set; }
+        public string OVYR_SEC { get; set; }
+        public string OTYR_SEC { get; set; }
+        public string OAYR_SEC { get; set; }
+
+        //Ranjan
+        public string hdnFlag { get; set; }
+        public string category { get; set; }
+        public string Exam_Type { get; set; }
+        public string Edublock { get; set; }
+        public string EduCluster { get; set; }
+        public string SchlType { get; set; }
+        public string SchlEstd { get; set; }
+        public string Bank { get; set; }
+        public string IFSC { get; set; }
+        public string geoloc { get; set; }
+        public string Phychall { get; set; }
+        public string Quali { get; set; }
+        //---------------------------------------------------
+        //Rohit
+        public string CandId { set; get; }
+        //Ranjan
+        public string ResultList { get; set; }
+        public string Selsec { get; set; }
+        // schl result 
+        public string SelSet { get; set; }
+        public string SearchByString { get; set; }
+        public string SelList { get; set; }
+        public string SelForm { get; set; }
+        public string REGNO { get; set; }
+        public string TotalSearchString { get; set; }
+        //public int? ID { get; set; }
+        public string SchlCode { get; set; }
+        public string Candi_Name { get; set; }
+        public string Father_Name { get; set; }
+        public string Mother_Name { get; set; }
+        public string DOB { get; set; }
+        public string DOJ { get; set; }
+        public string ExperienceYr { get; set; }
+        public string PQualification { get; set; }
+        public string Gender { get; set; }
+        public string TotalMarks { get; set; }
+        public string ObtainedMarks { get; set; }
+        public string Result { get; set; }
+        public string totMark { get; set; }
+        public string reclock { get; set; }
+        public string SearchResult { get; set; }
+        public string FormName { get; set; }
+        public string SdtID { get; set; }
+        public string EXAM { get; set; }
+        //
+        //rohit
+        public bool Agree { get; set; }
+
+        public string ExamCent { get; set; }
+        public string ExamSub { get; set; }
+        public string ExamRoll { get; set; }
+        public string udisecode { get; set; }
+        public DataSet StoreAllData { get; set; }
+
+        // School Master Table details
+        public string status { get; set; }
+        public string session { get; set; }
+        public string dist { get; set; }
+        //public string schl { get; set; }
+        public string idno { get; set; }
+        public string OCODE { get; set; }
+        public string CLASS { get; set; }
+        public string AREA { get; set; }
+        public string SCHLP { get; set; }
+        public string STATIONP { get; set; }
+        public string SCHLE { get; set; }
+        public string STATIONE { get; set; }
+        public string DISTE { get; set; }
+        public string DISTP { get; set; }
+        public string DISTNM { get; set; }
+        public string MATRIC { get; set; }
+        public string HUM { get; set; }
+        public string SCI { get; set; }
+        public string COMM { get; set; }
+        public string VOC { get; set; }
+        public string TECH { get; set; }
+        public string AGRI { get; set; }
+        public string OMATRIC { get; set; }
+        public string OHUM { get; set; }
+        public string OSCI { get; set; }
+        public string OCOMM { get; set; }
+        public string OVOC { get; set; }
+        public string OTECH { get; set; }
+        public string OAGRI { get; set; }
+        public string IDATE { get; set; }
+        public string VALIDITY { get; set; }
+        public string UDATE { get; set; }
+        public string REMARKS { get; set; }
+        public int id { get; set; }
+        public string middle { get; set; }
+        public string omiddle { get; set; }
+        public string correctionno { get; set; }
+
+        public string DISTNMPun { get; set; }
+        public string username { get; set; }
+        public string userip { get; set; }
+        public string ImpschlOcode { get; set; }
+        public string SSET { get; set; }
+        public string MSET { get; set; }
+        public string SOSET { get; set; }
+        public string MOSET { get; set; }
+        public string MID_CR { get; set; }
+        public string MID_NO { get; set; }
+        public string MID_YR { get; set; }
+        public int MID_S { get; set; }
+        public string MID_DNO { get; set; }
+
+        public string HID_CR { get; set; }
+        public string HID_NO { get; set; }
+        public string HID_YR { get; set; }
+        public int HID_S { get; set; }
+        public string HID_DNO { get; set; }
+
+        public string SID_CR { get; set; }
+        public string SID_NO { get; set; }
+        public string SID_DNO { get; set; }
+        public string H { get; set; }
+        public string HYR { get; set; }
+
+        public int H_S { get; set; }
+        public string C { get; set; }
+        public string CYR { get; set; }
+        public int C_S { get; set; }
+        public string S { get; set; }
+        public string SYR { get; set; }
+        public int S_S { get; set; }
+
+        public string A { get; set; }
+        public string AYR { get; set; }
+        public int A_S { get; set; }
+
+        public string V { get; set; }
+        public string VYR { get; set; }
+        public int V_S { get; set; }
+
+        public string T { get; set; }
+        public string TYR { get; set; }
+        public int T_S { get; set; }
+
+        public string MID_UTYPE { get; set; }
+        public string HID_UTYPE { get; set; }
+        public string H_UTYPE { get; set; }
+        public string S_UTYPE { get; set; }
+        public string C_UTYPE { get; set; }
+        public string V_UTYPE { get; set; }
+        public string A_UTYPE { get; set; }
+        public string T_UTYPE { get; set; }
+
+        public string Tcode { get; set; }
+        public string Tehsile { get; set; }
+        public string Tehsilp { get; set; }
+
+        //-tblschUser
+        public string USER { get; set; }
+        public string SCHL { get; set; }
+        public string PASSWORD { get; set; }
+        public string PRINCIPAL { get; set; }
+        public string STDCODE { get; set; }
+        public string PHONE { get; set; }
+        public string MOBILE { get; set; }
+        public string EMAILID { get; set; }
+        public string CONTACTPER { get; set; }
+        public string CPSTD { get; set; }
+        public string CPPHONE { get; set; }
+        public string OtContactno { get; set; }
+        public string ACTIVE { get; set; }
+        public string USERTYPE { get; set; }
+        public string ADDRESSE { get; set; }
+        public string ADDRESSP { get; set; }
+        public string vflag { get; set; }
+        public bool cflag { get; set; }
+        public string DateFirstLogin { get; set; }
+        public string Vcode { get; set; }
+        public string Approved { get; set; }
+        public bool schlInfoUpdFlag { get; set; }
+        public string mobile2 { get; set; }
+        public int PEND_RESULT { get; set; }
+        public string NSQF_flag { get; set; }
+
+
+
+        public string CorrectionNoOld { get; set; }
+        public string RemarksOld { get; set; }
+        public string RemarkDateOld { get; set; }
+        public string CorrectionDetails { get; set; }
+    }
 
 
 }

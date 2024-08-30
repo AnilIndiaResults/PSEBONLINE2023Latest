@@ -15,6 +15,10 @@ using System.Collections.Specialized;
 using Newtonsoft.Json;
 using System.Net;
 using DocumentFormat.OpenXml.Bibliography;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace PSEBONLINE.Controllers
 {
@@ -2587,14 +2591,44 @@ namespace PSEBONLINE.Controllers
 
         }
 
+        //[HttpPost]
+        //public ActionResult VerifyPaymentInChallanDetail(string SearchString, int TotFee)
+        //{
+
+        //    ViewBag.SuccessVerifyMsg = "Fail";
+        //    try
+        //    {
+        //        callBackAPI(SearchString, TotFee);
+        //    }
+        //    catch
+        //    {
+        //        return Json(new { success = false });
+        //    }
+        //    if (ViewBag.SuccessVerifyMsg == "Success")
+        //    {
+        //        return Json(new { success = true });
+        //    }
+
+
+        //    return Json(new { success = false }); // Return a JSON response
+        //}
+
         [HttpPost]
-        public ActionResult VerifyPaymentInChallanDetail(string SearchString, int TotFee)
+        public ActionResult VerifyPaymentInChallanDetail(string searchString, int totFee, string challanDate, int bcode)
         {
 
             ViewBag.SuccessVerifyMsg = "Fail";
             try
             {
-                callBackAPI(SearchString, TotFee);
+                if (bcode == 301)
+                {
+                    callBackAPI(searchString, totFee);
+                }
+                else if (bcode == 302)
+                {
+                    AtomTranxCheckAPI(searchString, totFee, Convert.ToDateTime(challanDate));
+                }
+
             }
             catch
             {
@@ -2607,6 +2641,123 @@ namespace PSEBONLINE.Controllers
 
 
             return Json(new { success = false }); // Return a JSON response
+        }
+
+        public bool AtomTranxCheckAPI(string tranxid, int amount, DateTime date)
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+                string challanId = tranxid;
+                string formattedDate = date.ToString("yyyy-MM-dd");
+                decimal totalFee = amount;
+
+                var requestData = new
+                {
+                    merchTxnId = challanId,
+                    merchTxnDate = formattedDate,
+                    amount = totalFee
+                };
+                string apiUrl = "https://psebatmapi.pseb.ac.in//api/AtomStatusApi/AtomStatusApi";
+
+                var response = CallApi(client, apiUrl, requestData);
+
+                // Process the response
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseContent = response.Content.ReadAsStringAsync().Result;
+
+                    // Deserialize the response JSON                              
+
+                    var jsonResponse = JsonConvert.DeserializeObject<JObject>(responseContent);
+                    var decryptVal = jsonResponse["Decryptval"].ToString();
+                    var payInstrument = JsonConvert.DeserializeObject<JObject>(decryptVal)["payInstrument"];
+                    var responseDetails = payInstrument.First["responseDetails"];
+                    var settlementDetails = payInstrument.First["settlementDetails"];
+                    var payDetails = payInstrument.First["payDetails"];
+
+                    string message = responseDetails["message"].ToString();
+
+
+                    if (message == "SUCCESS")
+                    {
+                        string settlementDate = "";
+                        if (settlementDetails["settlementDate"] != null)
+                        {
+                            settlementDate = settlementDetails["settlementDate"].ToString();
+                        }
+                        else
+                        {
+                            settlementDate = formattedDate;
+                        }
+                        string atomTxnId = "";
+                        if (payDetails["atomTxnId"] != null)
+                        {
+                            atomTxnId = payDetails["atomTxnId"].ToString();
+                        }
+                        else
+                        {
+                            atomTxnId = challanId;
+                        }
+                        //DateTime order_date_time = settlementDate;
+                        DataTable dt1 = new DataTable();
+
+                        dt1.Columns.Add("CHALLANID");
+                        dt1.Columns.Add("TOTFEE");
+                        dt1.Columns.Add("BRCODE");
+                        dt1.Columns.Add("BRANCH");
+                        dt1.Columns.Add("J_REF_NO");
+                        dt1.Columns.Add("DEPOSITDT");
+                        dt1.Columns.Add("PAYMETHOD");
+                        dt1.Columns.Add("PAYSTATUS");
+
+                        dt1.AcceptChanges();
+                        DataRow myDataRow = dt1.NewRow();
+                        myDataRow["CHALLANID"] = challanId;
+                        myDataRow["TOTFEE"] = totalFee.ToString();
+                        myDataRow["BRCODE"] = "302";
+                        myDataRow["BRANCH"] = "ATOM";
+                        myDataRow["J_REF_NO"] = atomTxnId;
+                        //myDataRow["DEPOSITDT"] = order_date_time.ToString("dd/MM/yyyy hh:mm:ss");
+                        myDataRow["DEPOSITDT"] = settlementDate;
+                        myDataRow["PAYMETHOD"] = "ATOMCALLAPI";
+                        myDataRow["PAYSTATUS"] = "Success";
+                        dt1.Rows.Add(myDataRow);
+                        dt1.AcceptChanges();
+
+                        AbstractLayer.BankDB objDB = new AbstractLayer.BankDB();
+                        BankModels BM = new BankModels();
+                        BM.BCODE = "302";
+                        BM.MIS_FILENM = "A";
+
+                        int OutStatus1 = 0; string OutError = "";
+                        DataTable dtResult = objDB.BulkOnlinePayment(dt1, 0, 0, BM, out OutStatus1, out OutError);  // 
+                        if (OutStatus1 > 0)
+                        {
+                            ViewBag.SuccessVerifyMsg = "Success";
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private HttpResponseMessage CallApi(HttpClient client, string apiUrl, object requestData)
+        {
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+
+            return client.PostAsync(apiUrl, content).Result;
         }
 
         public bool callBackAPI(string orderid, int amount)

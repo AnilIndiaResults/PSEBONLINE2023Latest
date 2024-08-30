@@ -207,10 +207,12 @@
                                                         @Html.ActionLink("Enter Fee Deposit Details", "FeeDepositDetails", "Home", new { id = @challanid }, "")
                                                     }
                                                 </li>
-                                                @if ((@Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "0" || IsCancel == "1") && bcode == "301")
+                                                @if ((@Model.StoreAllData.Tables[0].Rows[i]["VERIFIED"].ToString() == "0" || IsCancel == "1") && bcode == "301" || bcode == "302")
                                                 {
-                                                    <li style="@(ViewBag.IsVerify > 0 ? "display:block" : "display:none")">
-                                                        <a href="#" class="verifyPaymentLink" data-challanid="@challanid" data-TotFee="@TotFee">Verify Payment</a>
+                                                    <li style="@(ViewBag.IsVerify > 0 ? " display:block" : "display:none" )">
+                                                        @*<a href="#" class="verifyPaymentLink" data-challanid="@challanid" data-TotFee="@TotFee">Verify Payment</a>*@
+                                                        <a href="#" class="verifyPaymentLink" data-challanid="@challanid" data-challandate="@CHLNDATE" data-totfee="@TotFee" data-bcode="@bcode">Verify Payment</a>
+
                                                     </li>
                                                 }
 
@@ -864,17 +866,20 @@
         $(".verifyPaymentLink").click(function (e) {
            
             e.preventDefault();
-          
+
             var challanid = $(this).data("challanid");
-            
-            var TotFee = $(this).data("totfee");
-           // var TotFee = parseInt(TotFee, 10); // Convert to integer
-           
+            var challanDate = $(this).data("challandate");
+            var totFee = $(this).data("totfee");
+            var bcode = $(this).data("bcode");
+
+    // var TotFee = parseInt(TotFee, 10); // Convert to integer
+
+
            
             $.ajax({
                 url: "@Url.Action("VerifyPaymentInChallanDetail", "Challan")",
                 type: "POST",
-                data: { searchString: challanid, TotFee: TotFee },
+                data: { searchString: challanid, totFee: totFee, challanDate: challanDate, bcode: bcode },
                 success: function (response) {
                     if (response.success === true) {
                         // Handle success response

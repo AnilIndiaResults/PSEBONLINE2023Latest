@@ -62,7 +62,7 @@ namespace PSEBONLINE.Controllers
             string schl = Session["SCHL"].ToString();
             ViewBag.SCHL = schl;
             Session["AffSession"] = ChangeYearForAFFSession(Session["Session"].ToString());
-                    DataSet outDs = new DataSet();
+            DataSet outDs = new DataSet();
             am = affiliationDB.AffiliationContinuationBySchl(Session["SCHL"].ToString(), 1, out outDs);//ResultStatics
             if (am.ID > 0)
             {
@@ -1399,8 +1399,8 @@ namespace PSEBONLINE.Controllers
 
 
             var itemsch = new SelectList(new[]{
-                new {ID="1",Name="Lumsum fee of 12 year or life time already paid"},
-                new {ID="2",Name="Pay Fee for three (3) Years"},
+                new {ID="1",Name="Lumsum fee of 12 year or life time already paid"}
+                //new {ID="2",Name="Pay Fee for three (3) Years"},
                  // new {ID="2",Name="Pay Lumsum Fee for 12 Year"},
                  //new {ID="3",Name="Current Session Fee Paid Offline"},
             }, "ID", "Name", 1);
@@ -1490,8 +1490,8 @@ namespace PSEBONLINE.Controllers
                 // ViewBag.MySch = itemsch.ToList();
 
                 var itemsch = new SelectList(new[]{
-                new {ID="1",Name="Lumsum fee of 12 year or life time already paid"},
-                new {ID="2",Name="Pay Fee for three (3) Years"},
+                new {ID="1",Name="Lumsum fee of 12 year or life time already paid"}
+                //new {ID="2",Name="Pay Fee for three (3) Years"},
                  // new {ID="2",Name="Pay Lumsum Fee for 12 Year"},
                  //new {ID="3",Name="Current Session Fee Paid Offline"},
             }, "ID", "Name", 1);
@@ -1773,7 +1773,7 @@ namespace PSEBONLINE.Controllers
                         //else if (submit.ToLower().Contains("final"))
                         else if (submit.ToLower().Contains("online") || submit.ToLower().Contains("offline"))
                         {
-                            if(submit.Contains("Generate Offline Challan"))
+                            if (submit.Contains("Generate Offline Challan"))
                             {
                                 _affiliationFee.BankCode = "203";
                             }
@@ -1842,7 +1842,7 @@ namespace PSEBONLINE.Controllers
                                     {
                                         CM.FEEMODE = "CASH";
                                     }
-                                    
+
                                     CM.BANK = bankName;
                                     CM.BCODE = BankCode;
                                     CM.BANKCHRG = Convert.ToInt32(0);
@@ -2644,9 +2644,9 @@ namespace PSEBONLINE.Controllers
                     endYear--;
 
                     // Format the new years as a string in "yyyy-yyyy" format
-                     newYearRange = $"{startYear}-{endYear}";
+                    newYearRange = $"{startYear}-{endYear}";
 
-                  
+
 
                 }
                 return newYearRange;

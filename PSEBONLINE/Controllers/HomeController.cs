@@ -3668,6 +3668,7 @@ namespace PSEBONLINE.Controllers
                 Search = "SCHL=" + schl.ToString();
                 FormNM = "'" + FormNM.Replace(",", "','") + "'";
                 Search += "  and type='" + UserType + "' and form_name in(" + FormNM + ")";
+                //Search +=  " and form_name in(" + FormNM + ")";
                 DataSet dsCheckFee = objDB.CheckFeeStatus(schl.ToString(), UserType, FormNM.ToUpper(), date);
 
 

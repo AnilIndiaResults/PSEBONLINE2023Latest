@@ -31,7 +31,6 @@ namespace PSEBONLINE.Controllers
     [RoutePrefix("School")]
     public class SchoolController : Controller
     {
-        SchoolDB schooldb = new SchoolDB();
         private const string BUCKET_NAME = "psebdata";
         private readonly DBContext _context = new DBContext();
         string sp = System.Configuration.ConfigurationManager.AppSettings["upload"];
@@ -12437,7 +12436,8 @@ namespace PSEBONLINE.Controllers
 
                 //var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 //  var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, }, "ID", "Name", 1);
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
 
                 //Subject Code, Subject Name,Pending
@@ -12551,9 +12551,9 @@ namespace PSEBONLINE.Controllers
                 ViewBag.MyClass = itemClass.ToList();
                 ViewBag.SelectedClass = "0";
 
-                // var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 // var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, }, "ID", "Name", 1);
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
 
                 //Subject Code, Subject Name,Pending
@@ -12697,8 +12697,8 @@ namespace PSEBONLINE.Controllers
                 ViewBag.MyStatus = itemStatus.ToList();
                 ViewBag.SelectedStatus = SelectedStatus = "0";
                 //          
-                // var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
 
                 //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" } }, "ID", "Name", 1);
@@ -12816,8 +12816,8 @@ namespace PSEBONLINE.Controllers
                 ViewBag.MyStatus = itemStatus.ToList();
                 ViewBag.SelectedStatus = SelectedStatus = "0";
                 //
-                // var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
 
                 //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, }, "ID", "Name", 1);
@@ -12968,8 +12968,8 @@ namespace PSEBONLINE.Controllers
                 ViewBag.MyStatus = itemStatus.ToList();
                 ViewBag.SelectedStatus = SelectedStatus = "0";
                 //
-                //var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
 
                 //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, }, "ID", "Name", 1);
@@ -13097,8 +13097,8 @@ namespace PSEBONLINE.Controllers
                 ViewBag.MyStatus = itemStatus.ToList();
                 ViewBag.SelectedStatus = SelectedStatus = "0";
                 //
-                //  var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
-                var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                var itemRP = new SelectList(new[] { new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
+                //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, new { ID = "P", Name = "PVT" }, }, "ID", "Name", 1);
                 ViewBag.MyRP = itemRP.ToList();
 
                 //var itemRP = new SelectList(new[] { new { ID = "R", Name = "REG" }, new { ID = "O", Name = "OPEN" }, }, "ID", "Name", 1);
@@ -13376,7 +13376,8 @@ namespace PSEBONLINE.Controllers
                     pageIndex = page.HasValue ? Convert.ToInt32(page) : 1;
                     ViewBag.pagesize = pageIndex;
 
-                    string Search = "Reg.schl like '%%' and FPLot is null and OBTMARKSP is not null and PracFlg=1";
+                    //string Search = "Reg.schl like '%%' and FPLot is null and OBTMARKSP is not null and PracFlg=1";
+                    string Search = "OBTMARKSP is not null and PracFlg=1";
                     string SelectedAction = "0";
                     if (TempData["ViewPracExamFinalSubmitSearch"] != null)
                     {
@@ -13637,8 +13638,11 @@ namespace PSEBONLINE.Controllers
                     int pageIndex = 1;
                     pageIndex = page.HasValue ? Convert.ToInt32(page) : 1;
                     ViewBag.pagesize = pageIndex;
-                    string Search = "Reg.schl like '%%'  ";
-                    Search += " and sb.pcent = '" + SCHL + "'";
+                    //string Search = "Reg.schl like '%%'  ";
+                    //Search += " and sb.pcent = '" + SCHL + "'";
+
+                    //string Search = "Reg.schl like '%%'  ";
+                    string Search = "sb.pcent = '" + SCHL + "'";
 
                     MS.StoreAllData = objDB.ViewPracExamFinalSubmit(SelClass, RP, Cent, Search, Convert.ToInt32(SelectedStatus), pageIndex, SubCode);
 
@@ -13727,7 +13731,8 @@ namespace PSEBONLINE.Controllers
                 if (SCHL != null)
                 {
 
-                    string Search = "Reg.schl like '%%' and FPLot is not null and OBTMARKSP is not null and PracFlg=1";
+                    //string Search = "Reg.schl like '%%' and FPLot is not null and OBTMARKSP is not null and PracFlg=1";
+                    string Search = "OBTMARKSP is not null and PracFlg=1";
 
                     if (frm["SelLot"] != "" && frm["SelLot"] != null)
                     {
@@ -23080,271 +23085,6 @@ namespace PSEBONLINE.Controllers
 
             return new SelectList(list, "Value", "Text");
 
-        }
-
-
-        public ActionResult CalculateFeeAssociate(string id)
-        {
-            PrivatePaymentformViewModel pfvm = new PrivatePaymentformViewModel();
-            AssociateModel am = new AssociateModel();
-
-        string result = AssociateDB.IsValidForChallan(Session["SCHL"].ToString(), 1, out DataSet ds);
-            if (result != string.Empty)
-            {
-                TempData["NotValidForFinalSubmit"] = result;
-                //return View(am);
-                // return RedirectToAction("ViewEAffiliation", "EAffiliation", new { id= Session["eAffiliationAppNo"].ToString() });
-            }
-
-            if (id == null)
-            {
-                return RedirectToAction("Private_Candidate_Examination_Form", "PrivateCandidate");
-            }
-
-            AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
-            DataSet ds1 = schooldb.IsUserInChallan();
-            pfvm.PaymentFormData = ds1;
-            if (pfvm.PaymentFormData == null || pfvm.PaymentFormData.Tables[0].Rows.Count == 0)
-            {
-                ViewBag.Message = "Record Not Found";
-                ViewBag.TotalCount = 0;
-                return View();
-            }
-            else
-            {
-                DataSet dscalFee = ds1; //(DataSet)Session["CalculateFee"];
-                pfvm.TotalFees = Convert.ToInt32(dscalFee.Tables[0].Rows[0]["fee"].ToString());
-                pfvm.TotalLateFees = Convert.ToInt32(dscalFee.Tables[0].Rows[0]["latefee"].ToString());
-                pfvm.TotalCertFees = Convert.ToInt32(dscalFee.Tables[0].Rows[0]["certfee"].ToString());//hard cert fee
-                pfvm.TotalFinalFees = Convert.ToInt32(dscalFee.Tables[0].Rows[0]["totfee"].ToString());
-
-                string rps = NumberToWords(Convert.ToInt32(dscalFee.Tables[0].Rows[0]["totfee"].ToString()));
-                pfvm.TotalFeesInWords = rps;
-                pfvm.FeeDate = dscalFee.Tables[0].Rows[0]["banklastdate"].ToString() != "" ? Convert.ToDateTime(dscalFee.Tables[0].Rows[0]["banklastdate"].ToString()) : DateTime.Now;
-                pfvm.FeeCode = dscalFee.Tables[0].Rows[0]["FEECODE"].ToString();
-                pfvm.FeeCategory = dscalFee.Tables[0].Rows[0]["FEECAT"].ToString();
-                pfvm.BankLastDate = Convert.ToDateTime(dscalFee.Tables[0].Rows[0]["BankLastdate"].ToString());
-                Session["PaymentForm"] = pfvm;
-
-                if (pfvm.TotalFinalFees == 0 && pfvm.TotalFees == 0)
-                {
-                    ViewBag.CheckForm = 1; // only verify for M1 and T1 
-                    Session["CheckFormFee"] = 0;
-                }
-                else
-                {
-                    ViewBag.CheckForm = 0; // only verify for M1 and T1 
-                    Session["CheckFormFee"] = 1;
-                }
-                return View(pfvm);
-            }
-        }
-
-        [HttpPost]
-        public ActionResult CalculateFeeAssociate(PrivatePaymentformViewModel pfvm, FormCollection frm, string PayModValue, string AllowBanks)
-        {
-            PrivateChallanMasterModel CM = new PrivateChallanMasterModel();
-            AbstractLayer.PrivateCandidateDB objDB = new AbstractLayer.PrivateCandidateDB();
-
-
-            if (Session["schl"] == null || Session["schl"].ToString() == "")
-            {
-                return RedirectToAction("Private_Candidate_Examination_Form", "PrivateCandidate");
-            }
-            string roll = Session["schl"].ToString();
-
-            string bankName = "";
-            AllowBanks = pfvm.BankCode;
-            if (AllowBanks == "301" || AllowBanks == "302")
-            {
-                PayModValue = "online";
-                if (AllowBanks == "301")
-                {
-                    bankName = "HDFC Bank";
-                }
-                else if (AllowBanks == "302")
-                {
-                    bankName = "Punjab And Sind Bank";
-                }
-            }
-            else if (AllowBanks == "203")
-            {
-                PayModValue = "hod";
-                bankName = "PSEB HOD";
-            }
-            else if (AllowBanks == "202" || AllowBanks == "204")
-            {
-                PayModValue = "offline";
-                if (AllowBanks == "202")
-                {
-                    bankName = "Punjab National Bank";
-                }
-                else if (AllowBanks == "204")
-                {
-                    bankName = "State Bank of India";
-                }
-            }
-            pfvm.BankName = bankName;
-            if (ModelState.IsValid)
-            {
-                CM.FeeStudentList = "1";
-                PrivatePaymentformViewModel PFVMSession = (PrivatePaymentformViewModel)Session["PaymentForm"];
-                CM.roll = roll;
-                CM.EmpUserId = Session["schl"].ToString();
-                CM.FEE = Convert.ToInt32(PFVMSession.TotalFees);
-                CM.latefee = Convert.ToInt32(PFVMSession.TotalLateFees);
-                CM.addsubfee = Convert.ToInt32(PFVMSession.TotalCertFees);
-                CM.TOTFEE = Convert.ToInt32(PFVMSession.TotalFinalFees);
-                CM.FEECAT = PFVMSession.FeeCategory;
-                CM.FEECODE = PFVMSession.FeeCode;
-                CM.FEEMODE = "CASH";
-                CM.BANK = pfvm.BankName;
-                CM.BCODE = pfvm.BankCode;
-                CM.BANKCHRG = PFVMSession.BankCharges;
-                CM.SchoolCode = Session["schl"].ToString();// PFVMSession.SchoolCode.ToString();                
-                //CM.LOT = PFVMSession.LOTNo;
-                CM.LOT = 1;
-                CM.SCHLREGID = Session["schl"].ToString();                                
-                CM.category = PFVMSession.FeeCategory;
-                CM.type = "candt";
-                CM.CHLNVDATE = DateTime.Now.ToString("dd/MM/yyyy"); //PFVMSession.FeeDate;
-                CM.CHLNDATE = DateTime.Now.ToString("dd/MM/yyyy");
-                CM.ChallanVDateN = PFVMSession.FeeDate; //PFVMSession.FeeDate;                
-
-
-                string CandiMobile = "";
-                // string result = "0";
-
-                if (pfvm.BankCode == null)
-                {
-                    ViewBag.Message = "Please Select Bank";
-                    ViewData["SelectBank"] = "1";
-                    return View(pfvm);
-                }
-
-                string result = objDB.InsertPaymentFormPrivate(CM, frm, out CandiMobile);
-                if (result == "0")
-                {
-                    //--------------Not saved
-                    ViewData["result"] = 0;
-                }
-                if (result == "-1")
-                {
-                    //-----alredy exist
-                    ViewData["result"] = -1;
-                }
-                else
-                {
-                    Session["ChallanID"] = result;
-                    ViewBag.ChallanNo = result;
-                    string paymenttype = CM.BCODE;
-                    string TotfeePG = (CM.TOTFEE).ToString();
-
-                    if (PayModValue.ToString().ToLower().Trim() == "online" && result.ToString().Length > 10)
-                    {
-                        #region Payment Gateyway
-
-                        if (paymenttype.ToUpper() == "301" && ViewBag.ChallanNo != "") /*HDFC*/
-                        {
-                            string AccessCode = ConfigurationManager.AppSettings["CcAvenueAccessCode"];
-                            string CheckoutUrl = ConfigurationManager.AppSettings["CcAvenueCheckoutUrl"];
-                            string WorkingKey = ConfigurationManager.AppSettings["CcAvenueWorkingKey"];
-                            //******************
-                            string invoiceNumber = ViewBag.ChallanNo;
-                            string amount = TotfeePG;
-                            //***************
-                            var queryParameter = new CCACrypto();
-
-                            string strURL = GatewayController.BuildCcAvenueRequestParameters(invoiceNumber, amount);
-
-                            return View("../Gateway/CcAvenue", new CcAvenueViewModel(queryParameter.Encrypt
-                                       (strURL, WorkingKey), AccessCode, CheckoutUrl));
-
-                        }
-                        else if (paymenttype.ToUpper() == "302" && ViewBag.ChallanNo != "")/*ATOM*/
-                        {
-
-                            string TransactionID = encrypt.QueryStringModule.Encrypt(ViewBag.ChallanNo);
-                            string TransactionAmount = encrypt.QueryStringModule.Encrypt(TotfeePG);
-                            string clientCode = CM.APPNO;
-                            // User Details
-                            string udf1CustName = encrypt.QueryStringModule.Encrypt(CM.SCHLREGID); // roll number
-                            string udf2CustEmail = CM.FEECAT; /// Kindly submit Appno/Refno in client id, Fee cat in Emailid (ATOM)
-                            string udf3CustMob = encrypt.QueryStringModule.Encrypt(CandiMobile);
-
-                            //AtomCheckoutUrl(string ChallanNo, string amt, string clientCode, string cmn, string cme, string cmno)
-                            return RedirectToAction("AtomCheckoutUrl", "Gateway", new { ChallanNo = TransactionID, amt = TransactionAmount, clientCode = clientCode, cmn = udf1CustName, cme = udf2CustEmail, cmno = udf3CustMob });
-
-                        }
-                        #endregion Payment Gateyway
-                    }
-                    else
-                    {
-                        CM.CHLNVDATE = (Convert.ToString(PFVMSession.FeeDate)).Substring(0, 10);
-                        //  string Sms = "Your Challan no. " + result + " generated  for Catg " + CM.category + " and Ref No. " + CM.FeeStudentList + " valid till Dt " + CM.CHLNVDATE + ". Regards PSEB";
-                        try
-                        {
-                            //    string getSms = objCommon.gosms(CandiMobile, Sms);
-                            // string getSms = objCommon.gosms("9711819184", Sms);
-                        }
-                        catch (Exception) { }
-
-                        ModelState.Clear();
-                        //--For Showing Message---------//                   
-                        return RedirectToAction("GenerateChallaan", "PrivateCandidate", new { ChallanId = result });
-                    }
-                }
-            }
-            return View(pfvm);
-        }
-
-        public string NumberToWords(int number)
-        {
-            if (number == 0)
-                return "zero";
-
-            if (number < 0)
-                return "minus " + NumberToWords(Math.Abs(number));
-
-            string words = "";
-
-            if ((number / 1000000) > 0)
-            {
-                words += NumberToWords(number / 1000000) + " million ";
-                number %= 1000000;
-            }
-
-            if ((number / 1000) > 0)
-            {
-                words += NumberToWords(number / 1000) + " thousand ";
-                number %= 1000;
-            }
-
-            if ((number / 100) > 0)
-            {
-                words += NumberToWords(number / 100) + " hundred ";
-                number %= 100;
-            }
-
-            if (number > 0)
-            {
-                if (words != "")
-                    words += "and ";
-
-                var unitsMap = new[] { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
-                var tensMap = new[] { "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
-
-                if (number < 20)
-                    words += unitsMap[number];
-                else
-                {
-                    words += tensMap[number / 10];
-                    if ((number % 10) > 0)
-                        words += "-" + unitsMap[number % 10];
-                }
-            }
-
-            return words;
         }
 
     }
